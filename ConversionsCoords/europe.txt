@@ -1,0 +1,63 @@
+Ellipsoide="Bessel" "Bessel 1841" 6377397 0.0816968312
+Ellipsoide="Hayford 24" "International Hayford 1924" 6378388 0.0819918900
+Ellipsoide="Danish 1876" "Danish Andrae 1876" 6377019.25666 0.0815815883
+Ellipsoide="Airy 1830" "Airy 1830" 6377563.396 0.0816733724
+
+Datum="RT 90" "Rikets koordinatsystem 1990" "Bessel" 414.1 41.3 603.1 -0.8551163377 2.1413174055 -7.0227298286 0
+Projection "Transverse Mercator"="RT90V0:-15" "RT 90 2.5 gon V 0:-15" "RT 90" 1 1500000 0 15°48'29.8'' 0°
+Projection "Transverse Mercator"="RT90V0:-15 bis" "RT 90 2.5 gon V 0:-15 bis" "WGS84" 1.0000056102 1500064.274 -667.711 15°48'22.624306'' 0°
+Multiple "Transverse Mercator Multiple"="RT90 2.5 gon" "RT90 2.5 gon (multi-zone)" "RT 90" 1 1500000 0 0 11°18'29.8'' 2.5g
+Projection "Transverse Mercator"="RT90V61:-1" "RT 90 5 gon V 61:-1" "RT 90" 1 100000 -6100000 13°33'29.8'' 0°
+
+Datum="RD 1918" "RD Netherlands 1918" "Bessel" 565.036 49.914 465.839 -0.4094 +0.3597 -1.86854 -4.0772
+Projection "Stéréographique Bitangente"="Netherlands" "Projection Pays-Bas" "RD 1918" 0.9999079 155000 463000 5°23'15.5'' 52°09'22.178''
+
+Datum="RM40" "Roma 1940" "Hayford 24" -104.1 -49.1 -9.9 0.971 -2.917 0.714 -11.68
+Datum="RM40 Sardaigne" "Roma 1940 (Sardaigne)" "Hayford 24" -168.6 -34.0 38.7 -0.374 -0.679 -1.379 -9.48
+Datum="RM40 Sicile" "Roma 1940 (Sicile)" "Hayford 24" -50.2 -50.4 84.8 -0.690 -2.012 0.459 -28.08
+Projection "Transverse Mercator"="fuso Ovest 40" "fuso Ovest Roma40" "RM40" 0.9996 1500000 0 9° 0°
+Projection "Transverse Mercator"="fuso Est 40" "fuso Est Roma40" "RM40" 0.9996 2520000 0 15° 0°
+
+Datum="Rauenberg" "Rauenberg - DHDN (Potsdam Datum)" "Bessel" 587 16 393
+Multiple "Transverse Mercator Multiple"="Deutsch KG" "Kauss-Grüger pour l'Allemagne" "Rauenberg" 1 2500000 0 0 3° 3°
+
+Datum="LUREF" "LUxemburg REference Frame" "Hayford 24" -265.983 76.918 20.182 -0.4099 -2.9332 2.6881 0.43
+Projection "Transverse Mercator"="PG Lu" "Projection Gauss Luxembourg" "LUREF" 1 80000 100000 6°10' 49°50'
+
+Datum="BD 72" "Belgian datum 72" "Hayford 24" -106.868628 52.297783 -103.723893 0.336570 -0.456955 1.842183 -1.0000012747
+Projection "Lambert Conique Sécant"="LT 72" "Lambert 1972 Belgique" "BD 72" 150000.0130000000 5400088.4380000001 4°22'02.952'' 90° 49°50'00.00204'' 51°10'00.00204''
+Projection "Lambert Conique Sécant"="LT 08" "Lambert 2008 Belgique" "WGS84" 649328 665262 4°21'33.177'' 50°47'52.134'' 49°50' 51°10'
+
+Datum="CH03" "Suisse 1903" "Bessel" 674 15 405
+Datum="CH03+" "Suisse 1903+" "Bessel" 674 15 405
+Projection "Gauss Rosenmund"="MN03" "Mensuration nationale 1903" "CH03" 600000.0000000000 200000.0000000000 7°26'22.50'' 46°57'08.66''
+Projection "Gauss Rosenmund"="MN95" "Mensuration nationale 1995" "CH03+" 2600000.0000000000 1200000.0000000000 7°26'22.50'' 46°57'08.66''
+
+Datum="Reykjavík 1900" "Reykjavík Datum of 1900" "Danish 1876" 556.020 -168.701 942.364 -4.154 0.269 2.279 -3.729
+Datum="Hjörsey 1955" "Hjörsey Datum of 1955" "Hayford 24" -73 +46 -86
+Projection "Lambert Conique Tangent"="Islandic Lambert 1900" "Islandic Conformal Conic on Reykjavík 1900" "Reykjavík 1900" 1 0 0 -19°01'19.65'' 65°
+Multiple "Transverse Mercator Multiple"="Islandic KG 55" "Islandic Kauss-Grüger Transverse Mercator" "Hjörsey 1955" 1 500000 500000 0 -15° -3°
+Projection "Lambert Conique Tangent"="Islandic Lambert 55" "Islandic Conformal Conic on Hjörsey 1955" "Hjörsey 1955" 1 500000 500000 -18° 65°
+Projection "Lambert Conique Sécant"="Islandic Lambert 93" "Islandic Secant COnic on ISN93" "WGS84" 500000 500000 -19° 65° 64°15' 65°45'
+
+Datum="AT_MGI" "Militärgeographisches Institut Hermannskogel Habsburgwarte 1871" "Bessel" 577.33 90.1 463.9 -5.137 -1.474 -5.297 2.42
+Projection "Transverse Mercator"="Autriche 3" "österreich Kennziffer 3" "AT_MGI" 1 3500000 0 9° 0°
+Projection "Transverse Mercator"="Autriche 4" "österreich Kennziffer 4" "AT_MGI" 1 4500000 0 12° 0°
+Projection "Transverse Mercator"="Autriche 5" "österreich Kennziffer 5" "AT_MGI" 1 5500000 0 15° 0°
+Projection "Transverse Mercator"="Autriche 6" "österreich Kennziffer 6" "AT_MGI" 1 6500000 0 18° 0°
+
+Datum="OSGB36" "Ordonance Survey of Great Britain 1936" "Airy 1830" 446.448 -125.157 542.060 -0.1502 -0.2470 -0.8421 -20.4894 
+Projection "Transverse Mercator"="English National Grid" "English National Grid" "OSGB36" 0.9996012717 400000 100000 -2° 49°
+
+Datum="Lisboa" "Lisboa Bessel" "Bessel" -302.58 -61.360 103.047 
+Datum="Lisboa" "Lisboa Hayford" "Hayford 24" -302.58 -61.360 103.047 
+Datum="Datum 73" "Datum 1973 Portugal" "Hayford 24" -223.116 109.825 36.871
+Datum="Porto Santo" "Porto Santo 1936 Madère" "Hayford 24" -524.544 -235.514 285.877
+Datum="Sâo Bras" "Sâo Bras Açores" "Hayford 24" -203.584 96.902 -62.965
+Projection "Transverse Mercator"="Portugal continental" "Carte Militaire du Portugal Continental" "Lisboa Hayford" 1 300000 200000 -8°07'54.862'' 0°
+Projection "Transverse Mercator"="Sâo Jorges" "Sâo Jorges Açores" "Sâo Bras" 1 0 0 -28° 38°45'
+Projection "Transverse Mercator"="Ile de Faial" "Ile de Faial Açores" "Sâo Bras" 1 0 0 -28°42' 38°45'
+Projection "Transverse Mercator"="Ile de Pico" "Ile de Pico Açores" "Sâo Bras" 1 0 0 -28°20' 38°45'
+Projection "Transverse Mercator"="Ile de Graciosa" "Ile de Graciosa Açores" "Sâo Bras" 1 0 0 -28° 38°45'
+Projection "Transverse Mercator"="Ile de Porto Santo" "Ile de Porto Santo Madère" "Porto Santo" 1 0 0 -16°20'01.2304'' 33°03'23.9412''
+Projection "Transverse Mercator"="Ile de Madère et Désert" "Ile de Madère et Désert" "Porto Santo" 1 0 0 -16°55' 32°45'

@@ -1,0 +1,1201 @@
+object dlgEditStylesObjets: TdlgEditStylesObjets
+  Left = 704
+  Height = 517
+  Top = 256
+  Width = 881
+  BorderStyle = bsDialog
+  Caption = 'dlgEditStylesObjets'
+  ClientHeight = 517
+  ClientWidth = 881
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '2.0.0.4'
+  object BitBtn1: TBitBtn
+    Left = 758
+    Height = 31
+    Top = 484
+    Width = 120
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 0
+  end
+  object PageControl1: TPageControl
+    Left = 4
+    Height = 448
+    Top = 32
+    Width = 874
+    ActivePage = tabshtTextes
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    TabIndex = 3
+    TabOrder = 1
+    object tabshtCourbes: TTabSheet
+      Caption = 'tabshtCourbes'
+      ClientHeight = 419
+      ClientWidth = 866
+      object grbxStyleCourbe: TGroupBox
+        Left = 188
+        Height = 374
+        Top = 6
+        Width = 675
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Caption = 'grbxStyleCourbe'
+        ClientHeight = 353
+        ClientWidth = 671
+        TabOrder = 0
+        object btnCouleurCourbe: TStaticText
+          Left = 162
+          Height = 25
+          Top = 84
+          Width = 80
+          BorderStyle = sbsSingle
+          Color = clRed
+          OnClick = btnCouleurCourbeClick
+          ParentColor = False
+          TabOrder = 0
+          Transparent = False
+        end
+        object Label1: TLabel
+          Left = 246
+          Height = 16
+          Top = 172
+          Width = 24
+          Caption = 'mm'
+          ParentColor = False
+        end
+        object Label2: TLabel
+          Left = 246
+          Height = 16
+          Top = 200
+          Width = 16
+          Caption = 'px'
+          ParentColor = False
+        end
+        object editLongBarbules: TCurrencyEdit
+          Left = 162
+          Height = 24
+          Top = 144
+          Width = 80
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00;-,0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 1
+          Value = 0
+        end
+        object Label3: TLabel
+          Left = 246
+          Height = 16
+          Top = 144
+          Width = 12
+          Caption = 'm'
+          ParentColor = False
+        end
+        object editDescStyleCourbe: TEdit
+          Left = 162
+          Height = 24
+          Top = 28
+          Width = 507
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 2
+        end
+        object editSVGStyleCourbe: TEdit
+          Left = 162
+          Height = 24
+          Top = 0
+          Width = 507
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 3
+        end
+        object cmbTypesBarbules: TComboBox
+          Left = 162
+          Height = 24
+          Top = 114
+          Width = 507
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 16
+          Style = csDropDownList
+          TabOrder = 4
+        end
+        object editCourbeWidth: TSpinEdit
+          Left = 162
+          Height = 24
+          Top = 200
+          Width = 80
+          MaxValue = 40
+          TabOrder = 5
+        end
+        object editPrintCourbeWidth: TFloatSpinEdit
+          Left = 162
+          Height = 24
+          Top = 172
+          Width = 80
+          Increment = 0.1
+          MinValue = 0
+          TabOrder = 6
+          Value = 2
+        end
+        object lbDescStyleCourbe: TLabel
+          Left = 2
+          Height = 16
+          Top = 28
+          Width = 120
+          Caption = 'lbDescStyleCourbe'
+          ParentColor = False
+        end
+        object lbSVGStyleCourbe: TLabel
+          Left = 2
+          Height = 16
+          Top = 0
+          Width = 118
+          Caption = 'lbSVGStyleCourbe'
+          ParentColor = False
+        end
+        object lbCourbeLargeurEcran: TLabel
+          Left = 2
+          Height = 16
+          Top = 200
+          Width = 144
+          Caption = 'lbCourbeLargeurEcran'
+          ParentColor = False
+        end
+        object lbCourbeLargeurPrn: TLabel
+          Left = 2
+          Height = 16
+          Top = 172
+          Width = 130
+          Caption = 'lbCourbeLargeurPrn'
+          ParentColor = False
+        end
+        object lbCourbeCouleur: TLabel
+          Left = 2
+          Height = 16
+          Top = 84
+          Width = 108
+          Caption = 'lbCourbeCouleur'
+          ParentColor = False
+        end
+        object lbTypeBarbules: TLabel
+          Left = 2
+          Height = 16
+          Top = 114
+          Width = 98
+          Caption = 'lbTypeBarbules'
+          ParentColor = False
+        end
+        object lbTailleBarbules: TLabel
+          Left = 2
+          Height = 16
+          Top = 144
+          Width = 103
+          Caption = 'lbTailleBarbules'
+          ParentColor = False
+        end
+        object lbSeuilVisibiliteCourbe: TLabel
+          Left = 2
+          Height = 16
+          Top = 56
+          Width = 146
+          Caption = 'lbSeuilVisibiliteCourbe'
+          ParentColor = False
+        end
+        object editSeuilVisibiliteCourbe: TCurrencyEdit
+          Left = 162
+          Height = 24
+          Top = 56
+          Width = 92
+          Alignment = taRightJustify
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 7
+          Value = 100
+        end
+        object lbSeuilCourbeHint: TLabel
+          Left = 258
+          Height = 16
+          Top = 56
+          Width = 116
+          Caption = 'lbSeuilCourbeHint'
+          ParentColor = False
+        end
+      end
+      object lsbStylesCourbe: TListBox
+        Left = 0
+        Height = 408
+        Top = 6
+        Width = 184
+        Anchors = [akTop, akLeft, akBottom]
+        ItemHeight = 0
+        OnClick = lsbStylesCourbeClick
+        TabOrder = 1
+      end
+      object btnApplyStylesCourbes: TBitBtn
+        Left = 641
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Apply'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          8000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000
+          8000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000
+          8000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0008000008000008000008000008000008000C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000800000800000800000
+          8000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000
+          008000008000008000008000C0C0C0008000008000008000008000C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C000
+          8000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080000080000080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080
+          00008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnApplyStylesCourbesClick
+        TabOrder = 2
+      end
+      object btnRestoreStylesCourbes: TBitBtn
+        Left = 762
+        Height = 30
+        Top = 385
+        Width = 101
+        Anchors = [akRight, akBottom]
+        Caption = 'Restore'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C080800080800080
+          8000808000808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C08080008080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0808000
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0808000C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0808000C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000000080000080
+          0000800000800000800000800000800000800000800000800000800000800000
+          800000800000FF0000FF808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FF
+          0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FFC0C0C00000FF0000FF
+          0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000
+          FF0000FF0000FFC0C0C00000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0
+          C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FFC0C0C0C0C0C00000FF0000FF
+          C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000
+          FFC0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF00
+          00FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnRestoreStylesCourbesClick
+        TabOrder = 3
+      end
+      object btnAddStyleCourbe: TBitBtn
+        Left = 196
+        Height = 30
+        Top = 268
+        Width = 111
+        Caption = 'Ajouter style'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000C0C0C0C0C0C0000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnAddStyleCourbeClick
+        TabOrder = 4
+      end
+    end
+    object tabshtLignes: TTabSheet
+      Caption = 'tabshtLignes'
+      ClientHeight = 419
+      ClientWidth = 866
+      object btnApplyStylesLignes: TBitBtn
+        Left = 641
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Apply'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          8000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000
+          8000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000
+          8000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0008000008000008000008000008000008000C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000800000800000800000
+          8000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000
+          008000008000008000008000C0C0C0008000008000008000008000C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C000
+          8000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080000080000080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080
+          00008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnApplyStylesLignesClick
+        TabOrder = 0
+      end
+      object lsbStylesLignes: TListBox
+        Left = 0
+        Height = 408
+        Top = 7
+        Width = 184
+        Anchors = [akTop, akLeft, akBottom]
+        ItemHeight = 0
+        OnClick = lsbStylesLignesClick
+        TabOrder = 1
+      end
+      object grbxStyleLigne: TGroupBox
+        Left = 188
+        Height = 372
+        Top = 7
+        Width = 675
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Caption = 'grbxStyleLigne'
+        ClientHeight = 351
+        ClientWidth = 671
+        TabOrder = 2
+        object editDescStyleLigne: TEdit
+          Left = 157
+          Height = 24
+          Top = 28
+          Width = 511
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 0
+        end
+        object editSVGStyleLigne: TEdit
+          Left = 157
+          Height = 24
+          Top = 0
+          Width = 511
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 1
+        end
+        object btnCouleurLigne: TStaticText
+          Left = 157
+          Height = 25
+          Top = 84
+          Width = 80
+          BorderStyle = sbsSingle
+          Color = clRed
+          OnClick = btnCouleurLigneClick
+          ParentColor = False
+          TabOrder = 2
+          Transparent = False
+        end
+        object editPrintLigneWidth: TFloatSpinEdit
+          Left = 157
+          Height = 24
+          Top = 115
+          Width = 80
+          Increment = 0.1
+          MinValue = 0
+          TabOrder = 3
+          Value = 0
+        end
+        object Label5: TLabel
+          Left = 241
+          Height = 16
+          Top = 115
+          Width = 24
+          Caption = 'mm'
+          ParentColor = False
+        end
+        object editLigneWidth: TSpinEdit
+          Left = 157
+          Height = 24
+          Top = 143
+          Width = 80
+          MaxValue = 40
+          TabOrder = 4
+        end
+        object Label6: TLabel
+          Left = 241
+          Height = 16
+          Top = 143
+          Width = 16
+          Caption = 'px'
+          ParentColor = False
+        end
+        object lbSVGStyleLigne: TLabel
+          Left = 2
+          Height = 16
+          Top = 0
+          Width = 108
+          Caption = 'lbSVGStyleLigne'
+          ParentColor = False
+        end
+        object lbDescStyleLigne: TLabel
+          Left = 2
+          Height = 16
+          Top = 28
+          Width = 110
+          Caption = 'lbDescStyleLigne'
+          ParentColor = False
+        end
+        object lbLigneLargeurPrn: TLabel
+          Left = 2
+          Height = 16
+          Top = 115
+          Width = 120
+          Caption = 'lbLigneLargeurPrn'
+          ParentColor = False
+        end
+        object lbLigneLargeurEcran: TLabel
+          Left = 2
+          Height = 16
+          Top = 143
+          Width = 134
+          Caption = 'lbLigneLargeurEcran'
+          ParentColor = False
+        end
+        object lbLigneCouleur: TLabel
+          Left = 2
+          Height = 16
+          Top = 84
+          Width = 98
+          Caption = 'lbLigneCouleur'
+          ParentColor = False
+        end
+        object lbSeuilVisibiliteLigne: TLabel
+          Left = 2
+          Height = 16
+          Top = 56
+          Width = 136
+          Caption = 'lbSeuilVisibiliteLigne'
+          ParentColor = False
+        end
+        object editSeuilVisibiliteLigne: TCurrencyEdit
+          Left = 157
+          Height = 24
+          Top = 56
+          Width = 92
+          Alignment = taRightJustify
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 5
+          Value = 100
+        end
+        object lbSeuilLigneHint: TLabel
+          Left = 258
+          Height = 16
+          Top = 56
+          Width = 106
+          Caption = 'lbSeuilLigneHint'
+          ParentColor = False
+        end
+      end
+      object btnRestoreStylesLignes: TBitBtn
+        Left = 753
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Restore'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C080800080800080
+          8000808000808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C08080008080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0808000
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0808000C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0808000C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000000080000080
+          0000800000800000800000800000800000800000800000800000800000800000
+          800000800000FF0000FF808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FF
+          0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FFC0C0C00000FF0000FF
+          0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000
+          FF0000FF0000FFC0C0C00000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0
+          C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FFC0C0C0C0C0C00000FF0000FF
+          C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000
+          FFC0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF00
+          00FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnRestoreStylesLignesClick
+        TabOrder = 3
+      end
+      object btnAddStyleLigne: TBitBtn
+        Left = 188
+        Height = 30
+        Top = 268
+        Width = 111
+        Caption = 'Ajouter style'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000C0C0C0C0C0C0000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnAddStyleLigneClick
+        TabOrder = 4
+      end
+    end
+    object tabshtPolygones: TTabSheet
+      Caption = 'tabshtPolygones'
+      ClientHeight = 419
+      ClientWidth = 866
+      object btnApplyStylesPolygones: TBitBtn
+        Left = 641
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Apply'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          8000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000
+          8000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000
+          8000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0008000008000008000008000008000008000C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000800000800000800000
+          8000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000
+          008000008000008000008000C0C0C0008000008000008000008000C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C000
+          8000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080000080000080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080
+          00008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnApplyStylesPolygonesClick
+        TabOrder = 0
+      end
+      object lsbStylesPolygones: TListBox
+        Left = 0
+        Height = 408
+        Top = 7
+        Width = 184
+        Anchors = [akTop, akLeft, akBottom]
+        ItemHeight = 0
+        OnClick = lsbStylesPolygonesClick
+        TabOrder = 1
+      end
+      object grbxStylePolygone: TGroupBox
+        Left = 188
+        Height = 372
+        Top = 7
+        Width = 674
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Caption = 'grbxStylePolygone'
+        ClientHeight = 351
+        ClientWidth = 670
+        TabOrder = 2
+        object editDescStylePolygone: TEdit
+          Left = 162
+          Height = 24
+          Top = 28
+          Width = 505
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 0
+        end
+        object editSVGStylePolygone: TEdit
+          Left = 162
+          Height = 24
+          Top = 0
+          Width = 505
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 1
+        end
+        object btnCouleurPolygone: TStaticText
+          Left = 162
+          Height = 25
+          Top = 92
+          Width = 80
+          BorderStyle = sbsSingle
+          Color = clRed
+          OnClick = btnCouleurPolygoneClick
+          ParentColor = False
+          TabOrder = 2
+          Transparent = False
+        end
+        object pnlFillPolygone: TPanel
+          Left = 162
+          Height = 50
+          Top = 123
+          Width = 170
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          Color = clFuchsia
+          ParentColor = False
+          TabOrder = 3
+        end
+        object lbSVGStylePolygone: TLabel
+          Left = 2
+          Height = 16
+          Top = 0
+          Width = 132
+          Caption = 'lbSVGStylePolygone'
+          ParentColor = False
+        end
+        object lbDescStylePolygone: TLabel
+          Left = 2
+          Height = 16
+          Top = 28
+          Width = 134
+          Caption = 'lbDescStylePolygone'
+          ParentColor = False
+        end
+        object lbSeuilVisibilitePolygone: TLabel
+          Left = 2
+          Height = 16
+          Top = 56
+          Width = 160
+          Caption = 'lbSeuilVisibilitePolygone'
+          ParentColor = False
+        end
+        object editSeuilVisibilitePolygone: TCurrencyEdit
+          Left = 162
+          Height = 24
+          Top = 56
+          Width = 92
+          Alignment = taRightJustify
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 4
+          Value = 100
+        end
+        object lbSeuilPolygoneHint: TLabel
+          Left = 258
+          Height = 16
+          Top = 56
+          Width = 130
+          Caption = 'lbSeuilPolygoneHint'
+          ParentColor = False
+        end
+      end
+      object btnRestoreStylesLignes1: TBitBtn
+        Left = 752
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Restore'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C080800080800080
+          8000808000808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C08080008080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0808000
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0808000C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0808000C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000000080000080
+          0000800000800000800000800000800000800000800000800000800000800000
+          800000800000FF0000FF808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FF
+          0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FFC0C0C00000FF0000FF
+          0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000
+          FF0000FF0000FFC0C0C00000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0
+          C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FFC0C0C0C0C0C00000FF0000FF
+          C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000
+          FFC0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF00
+          00FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnRestoreStylesLignes1Click
+        TabOrder = 3
+      end
+      object btnAddStylePolygone: TBitBtn
+        Left = 188
+        Height = 30
+        Top = 268
+        Width = 111
+        Caption = 'Ajouter style'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000C0C0C0C0C0C0000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnAddStylePolygoneClick
+        TabOrder = 4
+      end
+    end
+    object tabshtTextes: TTabSheet
+      Caption = 'tabshtTextes'
+      ClientHeight = 419
+      ClientWidth = 866
+      object btnApplyStylesTextes: TBitBtn
+        Left = 641
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Apply'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          8000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000
+          8000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000
+          8000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0008000008000008000008000008000008000C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000800000800000800000800000800000
+          8000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0008000008000
+          008000008000008000008000C0C0C0008000008000008000008000C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C000
+          8000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080000080000080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00080000080000080
+          00008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0008000008000008000008000008000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0008000008000008000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnApplyStylesTextesClick
+        TabOrder = 0
+      end
+      object lsbStylesTextes: TListBox
+        Left = 0
+        Height = 408
+        Top = 7
+        Width = 184
+        Anchors = [akTop, akLeft, akBottom]
+        ItemHeight = 0
+        OnClick = lsbStylesTextesClick
+        TabOrder = 1
+      end
+      object grbxStyleTexte: TGroupBox
+        Left = 188
+        Height = 372
+        Top = 7
+        Width = 675
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Caption = 'grbxStyleTexte'
+        ClientHeight = 351
+        ClientWidth = 671
+        TabOrder = 2
+        object editDescStyleTexte: TEdit
+          Left = 158
+          Height = 24
+          Top = 28
+          Width = 511
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 0
+        end
+        object editSVGStyleTexte: TEdit
+          Left = 158
+          Height = 24
+          Top = 0
+          Width = 511
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 1
+        end
+        object btnStyleTexteAttrs: TStaticText
+          Left = 158
+          Height = 60
+          Top = 84
+          Width = 511
+          Alignment = taCenter
+          Anchors = [akTop, akLeft, akRight]
+          BorderStyle = sbsSingle
+          Caption = 'LOREM IPSUM'
+          Color = clYellow
+          Font.CharSet = ANSI_CHARSET
+          Font.Color = clRed
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          Font.Style = [fsBold]
+          OnClick = btnStyleTexteAttrsClick
+          ParentFont = False
+          ParentColor = False
+          TabOrder = 2
+          Transparent = False
+        end
+        object editStyTxtFontPRNSize: TCurrencyEdit
+          Left = 158
+          Height = 24
+          Top = 148
+          Width = 80
+          Alignment = taRightJustify
+          DisplayFormat = ',0.00;-,0.00'
+          MaxValue = 40
+          MinValue = 1
+          TabOrder = 3
+          Value = 1
+        end
+        object Label4: TLabel
+          Left = 242
+          Height = 16
+          Top = 148
+          Width = 24
+          Caption = 'mm'
+          ParentColor = False
+        end
+        object lbSVGStyleTexte: TLabel
+          Left = 2
+          Height = 16
+          Top = 0
+          Width = 107
+          Caption = 'lbSVGStyleTexte'
+          ParentColor = False
+        end
+        object lbDescStyleTexte: TLabel
+          Left = 2
+          Height = 16
+          Top = 28
+          Width = 109
+          Caption = 'lbDescStyleTexte'
+          ParentColor = False
+        end
+        object lbTexteAttributs: TLabel
+          Left = 2
+          Height = 16
+          Top = 84
+          Width = 99
+          Caption = 'lbTexteAttributs'
+          ParentColor = False
+        end
+        object lbTexteHauteurPrn: TLabel
+          Left = 2
+          Height = 16
+          Top = 148
+          Width = 119
+          Caption = 'lbTexteHauteurPrn'
+          ParentColor = False
+        end
+        object editSeuilVisibiliteTexte: TCurrencyEdit
+          Left = 158
+          Height = 24
+          Top = 56
+          Width = 92
+          Alignment = taRightJustify
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 4
+          Value = 100
+        end
+        object lbSeuilVisibiliteTexte: TLabel
+          Left = 2
+          Height = 16
+          Top = 56
+          Width = 135
+          Caption = 'lbSeuilVisibiliteTexte'
+          ParentColor = False
+        end
+        object lbSeuilTexteHint: TLabel
+          Left = 258
+          Height = 16
+          Top = 56
+          Width = 105
+          Caption = 'lbSeuilTexteHint'
+          ParentColor = False
+        end
+      end
+      object btnRestoreStylesLignes2: TBitBtn
+        Left = 753
+        Height = 30
+        Top = 385
+        Width = 110
+        Anchors = [akRight, akBottom]
+        Caption = 'Restore'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C080800080800080
+          8000808000808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C08080008080
+          00C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0808000
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0808000C0C0C0C0C0C0808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000C0C0C0808000C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0808000808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0808000000080000080
+          0000800000800000800000800000800000800000800000800000800000800000
+          800000800000FF0000FF808000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FF
+          0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FF0000FFC0C0C00000FF0000FF
+          0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000
+          FF0000FF0000FFC0C0C00000FF0000FF0000FF0000FF0000FF0000FFC0C0C0C0
+          C0C0C0C0C0C0C0C00000FF0000FF0000FF0000FFC0C0C0C0C0C00000FF0000FF
+          C0C0C00000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000
+          FFC0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C0C0C0C0C0C0C00000FF0000FF00
+          00FF0000FF0000FF0000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnRestoreStylesLignes2Click
+        TabOrder = 3
+      end
+      object btnAddStyleTexte: TBitBtn
+        Left = 188
+        Height = 30
+        Top = 268
+        Width = 111
+        Caption = 'Ajouter style'
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000C0C0C0C0C0C0000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000
+          0000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        }
+        OnClick = btnAddStyleTexteClick
+        TabOrder = 4
+      end
+    end
+  end
+  object btnSaveStyles: TBitBtn
+    Left = 634
+    Height = 31
+    Top = 484
+    Width = 120
+    Anchors = [akRight, akBottom]
+    Caption = 'Sauver styles'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C000000000000000000000000000
+      0000000000000000000000000000000000000000000000C0C0C0C0C0C0C0C0C0
+      000000000000808080000000000000000000000000C0C0C0C0C0C00000008080
+      80808080000000C0C0C0C0C0C000000080808080808080808000000000000000
+      0000000000C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0000000
+      808080808080808080000000000000000000000000C0C0C0C0C0C00000008080
+      80808080000000C0C0C0C0C0C000000080808080808080808000000000000000
+      0000000000000000000000000000808080808080000000C0C0C0C0C0C0000000
+      8080808080808080808080808080808080808080808080808080808080808080
+      80808080000000C0C0C0C0C0C000000080808080808080808080808080808080
+      8080808080808080808080808080808080808080000000C0C0C0C0C0C0000000
+      8080808080808080800000000000000000000000000000000000008080808080
+      80808080000000C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0000000
+      808080808080000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000008080
+      80808080000000C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0000000
+      808080808080000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000008080
+      80808080000000C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0000000808080808080000000C0C0C0C0C0C0000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+    }
+    OnClick = btnSaveStylesClick
+    TabOrder = 2
+  end
+  object btnOpenStyles: TBitBtn
+    Left = 510
+    Height = 31
+    Top = 484
+    Width = 120
+    Anchors = [akRight, akBottom]
+    Caption = 'Ouvrir styles'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C000008000008000008000008000008000008000
+      0080000080000080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000080
+      008080008080008080008080008080008080008080008080000080C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C000008000008000808000808000808000808000
+      8080008080008080008080000080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000080
+      00FFFF0000800080800080800080800080800080800080800080800080800000
+      80C0C0C0C0C0C0C0C0C0C0C0C000008000FFFF00FFFF00008000808000808000
+      8080008080008080008080008080008080000080C0C0C0C0C0C0C0C0C0000080
+      00FFFF00FFFF00FFFF0000800080800080800080800080800080800080800080
+      80008080000080C0C0C0C0C0C000008000FFFF00FFFF00FFFF00FFFF00008000
+      0080000080000080000080000080000080000080000080000080C0C0C0000080
+      00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF000080C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C000008000FFFF00FFFF00FFFF00FFFF00FFFF00
+      FFFF00FFFF00FFFF00FFFF000080C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000080
+      00FFFF00FFFF00FFFF000080000080000080000080000080000080C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000080000080000080C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000000000C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0000000C0C0C0C0C0C0C0C0C0000000C0C0C0000000C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000000000C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+    }
+    OnClick = btnOpenStylesClick
+    TabOrder = 3
+  end
+  object cmbTypesStylesSheet: TComboBox
+    Left = 156
+    Height = 24
+    Top = 4
+    Width = 424
+    ItemHeight = 16
+    Style = csDropDownList
+    TabOrder = 4
+  end
+  object Label7: TLabel
+    Left = 4
+    Height = 16
+    Top = 4
+    Width = 144
+    Caption = 'Feuilles de style pour: '
+    ParentColor = False
+  end
+end

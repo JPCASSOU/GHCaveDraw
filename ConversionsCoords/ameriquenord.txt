@@ -1,0 +1,6 @@
+Ellipsoide="Clarke66" "Clarke 1866" 6378206 0.0822718540
+Datum="NAD 27" "North American Datum 1927" "Clarke66" -22 160 190
+Datum="NAD 83" "North American Datum 1983" "GRS 80" 0 0 0
+Projection "Hotine"="Alaska 5001" "Alaska Zone 1" "WGS84" 0.9999 5000000 -5000000 -133°40' 57° -36.8698976458°
+Multiple "Transverse Mercator Multiple"="MTM NAD27" "Modified Transverse Mercator NAD27" "NAD 27" 0.9999 304800 0 10000000 -52.5° -3°
+Multiple "Transverse Mercator Multiple"="MTM NAD83" "Modified Transverse Mercator NAD83" "NAD 83" 0.9999 304800 0 10000000 -52.5° -3°

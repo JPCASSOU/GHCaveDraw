@@ -1,0 +1,9 @@
+object dlgPrintingCenter: TdlgPrintingCenter
+  Left = 402
+  Height = 605
+  Top = 188
+  Width = 887
+  Caption = 'Centre d''impression'
+  Position = poScreenCenter
+  LCLVersion = '1.8.0.6'
+end

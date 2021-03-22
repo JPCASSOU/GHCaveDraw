@@ -1,0 +1,425 @@
+object dlgParametrerVue2D: TdlgParametrerVue2D
+  Left = 752
+  Height = 326
+  Top = 367
+  Width = 516
+  BorderStyle = bsDialog
+  Caption = 'dlgParametrerVue2D'
+  ClientHeight = 326
+  ClientWidth = 516
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '1.8.0.6'
+  object pnlQuadrillage: TPanel
+    Left = 4
+    Height = 84
+    Top = 4
+    Width = 508
+    Anchors = [akTop, akLeft, akRight]
+    BevelOuter = bvLowered
+    ClientHeight = 84
+    ClientWidth = 508
+    TabOrder = 0
+    object cmbTypeQuadrillage: TComboBox
+      Left = 4
+      Height = 24
+      Top = 28
+      Width = 124
+      ItemHeight = 16
+      ItemIndex = 0
+      Items.Strings = (
+        'Grille'
+        'Croix'
+      )
+      Style = csDropDownList
+      TabOrder = 0
+      Text = 'Grille'
+    end
+    object chkDispMainGrid: TCheckBox
+      Left = 152
+      Height = 20
+      Top = 28
+      Width = 152
+      Anchors = [akTop, akRight]
+      AutoSize = False
+      Caption = 'chkDispMainGrid'
+      TabOrder = 1
+    end
+    object chkDispSecGrid: TCheckBox
+      Left = 152
+      Height = 20
+      Top = 56
+      Width = 144
+      Anchors = [akTop, akRight]
+      AutoSize = False
+      Caption = 'chkDispSecGrid'
+      TabOrder = 2
+    end
+    object editMainGrdSpacing: TCurrencyEdit
+      Left = 313
+      Height = 24
+      Top = 28
+      Width = 80
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      Anchors = [akTop, akRight]
+      MaxValue = 1000
+      MinValue = 10
+      TabOrder = 3
+      Value = 100
+    end
+    object btnMainGrdColor: TColorButton
+      Left = 420
+      Height = 25
+      Top = 28
+      Width = 84
+      Anchors = [akTop, akRight]
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clAqua
+    end
+    object editSecGrdSpacing: TCurrencyEdit
+      Left = 313
+      Height = 24
+      Top = 56
+      Width = 80
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      Anchors = [akTop, akRight]
+      MaxValue = 1000
+      MinValue = 10
+      TabOrder = 4
+      Value = 100
+    end
+    object btnSecGrdColor: TColorButton
+      Left = 420
+      Height = 25
+      Top = 56
+      Width = 84
+      Anchors = [akTop, akRight]
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clBlue
+    end
+    object editTailleCroix: TCurrencyEdit
+      Left = 4
+      Height = 24
+      Top = 56
+      Width = 124
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 5
+      Value = 10
+    end
+    object Label1: TLabel
+      Left = 397
+      Height = 16
+      Top = 32
+      Width = 12
+      Anchors = [akTop, akRight]
+      Caption = 'm'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 397
+      Height = 16
+      Top = 60
+      Width = 12
+      Anchors = [akTop, akRight]
+      Caption = 'm'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 132
+      Height = 16
+      Top = 28
+      Width = 12
+      Caption = 'm'
+      ParentColor = False
+    end
+    object chkDispQuadrilles: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 4
+      Width = 134
+      Caption = 'chkDispQuadrilles'
+      Checked = True
+      OnChange = chkDispQuadrillesChange
+      State = cbChecked
+      TabOrder = 6
+    end
+  end
+  object pnlEchelleNord: TPanel
+    Left = 4
+    Height = 54
+    Top = 92
+    Width = 214
+    BevelOuter = bvLowered
+    ClientHeight = 54
+    ClientWidth = 214
+    TabOrder = 1
+    object editTailleEchelle: TCurrencyEdit
+      Left = 4
+      Height = 24
+      Top = 26
+      Width = 48
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 10
+      TabOrder = 0
+      Value = 25
+    end
+    object Label4: TLabel
+      Left = 60
+      Height = 16
+      Top = 30
+      Width = 12
+      Caption = 'm'
+      ParentColor = False
+    end
+    object chkDispEchelleNord: TCheckBox
+      Left = 6
+      Height = 20
+      Top = 4
+      Width = 146
+      Caption = 'chkDispEchelleNord'
+      Checked = True
+      OnChange = chkDispEchelleNordChange
+      State = cbChecked
+      TabOrder = 1
+    end
+  end
+  object pnlScrapsParDefaut: TPanel
+    Left = 224
+    Height = 54
+    Top = 92
+    Width = 216
+    BevelOuter = bvLowered
+    ClientHeight = 54
+    ClientWidth = 216
+    TabOrder = 2
+    object btnScrapColorDefault: TColorButton
+      Left = 134
+      Height = 24
+      Top = 26
+      Width = 75
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clWhite
+    end
+    object chkDoDrawScrapsMonochromes: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 26
+      Width = 103
+      Caption = 'Monochrome'
+      TabOrder = 0
+    end
+    object chkDispScraps: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 4
+      Width = 63
+      Caption = 'Scraps'
+      Checked = True
+      OnChange = chkDispScrapsChange
+      State = cbChecked
+      TabOrder = 1
+    end
+  end
+  object pnlEchelleNord2: TPanel
+    Left = 4
+    Height = 76
+    Top = 212
+    Width = 508
+    Anchors = [akTop, akLeft, akRight]
+    BevelOuter = bvLowered
+    ClientHeight = 76
+    ClientWidth = 508
+    TabOrder = 3
+    object chkDispTextes: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 4
+      Width = 111
+      Caption = 'chkDispTextes'
+      Checked = True
+      OnChange = chkDispTextesChange
+      State = cbChecked
+      TabOrder = 0
+    end
+    object chkDispIDStations: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 133
+      Caption = 'chkDispIDStations'
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+    end
+    object chkDispTexteDebug: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 52
+      Width = 146
+      Caption = 'chkDispTexteDebug'
+      Checked = True
+      State = cbChecked
+      TabOrder = 2
+    end
+    object chkDispBBXGroupes: TCheckBox
+      Left = 216
+      Height = 20
+      Top = 4
+      Width = 149
+      Caption = 'chkDispBBXGroupes'
+      TabOrder = 3
+    end
+    object chkListerPOI: TCheckBox
+      Left = 216
+      Height = 20
+      Top = 28
+      Width = 100
+      Caption = 'chkListerPOI'
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+    end
+    object chkDispPhotos: TCheckBox
+      Left = 216
+      Height = 20
+      Top = 52
+      Width = 112
+      Caption = 'chkDispPhotos'
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+    end
+    object chkDispImages: TCheckBox
+      Left = 420
+      Height = 20
+      Top = 4
+      Width = 66
+      Caption = 'Images'
+      TabOrder = 6
+    end
+  end
+  object pnlDispCenterlines: TPanel
+    Left = 4
+    Height = 56
+    Top = 151
+    Width = 260
+    BevelOuter = bvLowered
+    ClientHeight = 56
+    ClientWidth = 260
+    TabOrder = 4
+    object chkDispPenteSuperieureA: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 149
+      AutoSize = False
+      Caption = 'chkDispPenteSuperieureA'
+      OnChange = chkDispPenteSuperieureAChange
+      TabOrder = 0
+    end
+    object editLimiteDispPente: TCurrencyEdit
+      Left = 180
+      Height = 24
+      Top = 28
+      Width = 41
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      Anchors = [akTop, akRight]
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 10
+    end
+    object Label5: TLabel
+      Left = 230
+      Height = 16
+      Top = 32
+      Width = 24
+      Anchors = [akTop, akRight]
+      Caption = 'deg'
+      ParentColor = False
+    end
+    object chkDispCenterLine: TCheckBox
+      Left = 5
+      Height = 20
+      Top = 4
+      Width = 139
+      Caption = 'chkDispCenterLine'
+      Checked = True
+      OnChange = chkDispCenterLineChange
+      State = cbChecked
+      TabOrder = 2
+    end
+  end
+  object BitBtn1: TBitBtn
+    Left = 289
+    Height = 30
+    Top = 294
+    Width = 108
+    Anchors = [akRight, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 5
+  end
+  object BitBtn2: TBitBtn
+    Left = 406
+    Height = 30
+    Top = 294
+    Width = 108
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 6
+  end
+  object Panel1: TPanel
+    Left = 268
+    Height = 56
+    Top = 151
+    Width = 172
+    BevelOuter = bvLowered
+    ClientHeight = 56
+    ClientWidth = 172
+    TabOrder = 7
+    object btnBackgroundColor: TColorButton
+      Left = 5
+      Height = 28
+      Top = 24
+      Width = 132
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clLime
+    end
+    object Label6: TLabel
+      Left = 5
+      Height = 16
+      Top = 4
+      Width = 102
+      Caption = 'Couleur de fond'
+      ParentColor = False
+    end
+  end
+end

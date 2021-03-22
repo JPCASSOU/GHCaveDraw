@@ -1,0 +1,674 @@
+object dlgPrintingCenter: TdlgPrintingCenter
+  Left = 136
+  Height = 666
+  Top = 47
+  Width = 1106
+  Caption = 'dlgPrintingCenter'
+  ClientHeight = 666
+  ClientWidth = 1106
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '1.6.0.4'
+  object grbxPrinters: TGroupBox
+    Left = 4
+    Height = 109
+    Top = 1
+    Width = 277
+    Caption = 'grbxPrinters'
+    ClientHeight = 88
+    ClientWidth = 273
+    TabOrder = 0
+    object cmbPrinters: TComboBox
+      Left = 2
+      Height = 24
+      Top = 0
+      Width = 268
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 16
+      OnChange = cmbPrintersChange
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object lbOrientation: TLabel
+      Left = 2
+      Height = 16
+      Top = 48
+      Width = 83
+      Caption = 'lbOrientation'
+      ParentColor = False
+    end
+    object lbPageFormat: TLabel
+      Left = 2
+      Height = 16
+      Top = 68
+      Width = 90
+      Caption = 'lbPageFormat'
+      ParentColor = False
+    end
+    object btnConfigPrinter: TButton
+      Left = 154
+      Height = 25
+      Top = 28
+      Width = 116
+      Anchors = [akTop, akRight]
+      Caption = 'btnConfigPrinter'
+      OnClick = btnConfigPrinterClick
+      TabOrder = 1
+    end
+    object lbCurrentPrinter: TLabel
+      Left = 2
+      Height = 16
+      Top = 28
+      Width = 102
+      Caption = 'lbCurrentPrinter'
+      ParentColor = False
+    end
+  end
+  object pnlCadre: TPanel
+    Left = 286
+    Height = 620
+    Top = 4
+    Width = 817
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    ClientHeight = 620
+    ClientWidth = 817
+    TabOrder = 1
+    object PaintBoxVue: TPaintBox
+      Left = 1
+      Height = 618
+      Top = 1
+      Width = 815
+      Align = alClient
+      OnDblClick = PaintBoxVueDblClick
+      OnMouseDown = PaintBoxVueMouseDown
+      OnMouseMove = PaintBoxVueMouseMove
+      OnPaint = PaintBoxVuePaint
+    end
+  end
+  object pnlProgressPrinting: TPanel
+    Left = 296
+    Height = 54
+    Top = 352
+    Width = 800
+    Anchors = [akTop, akLeft, akRight]
+    ClientHeight = 54
+    ClientWidth = 800
+    TabOrder = 2
+    Visible = False
+    object progbarPrinting: TProgressBar
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 790
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      TabOrder = 0
+    end
+    object lbPrintCurrent: TLabel
+      Left = 4
+      Height = 17
+      Top = 4
+      Width = 790
+      Alignment = taCenter
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      Caption = 'lbPrintCurrent'
+      ParentColor = False
+    end
+  end
+  object grbxQuadrillage: TGroupBox
+    Left = 4
+    Height = 104
+    Top = 196
+    Width = 277
+    Caption = 'grbxQuadrillage'
+    ClientHeight = 83
+    ClientWidth = 273
+    TabOrder = 3
+    object cmbUsualQdrSpacing: TComboBox
+      Left = 98
+      Height = 24
+      Top = 28
+      Width = 172
+      ItemHeight = 16
+      ItemIndex = 5
+      Items.Strings = (
+        '10'
+        '20'
+        '25'
+        '40'
+        '50'
+        '100'
+        '200'
+        '250'
+        '400'
+        '500'
+        '1000'
+        '2000'
+      )
+      OnChange = cmbUsualQdrSpacingChange
+      TabOrder = 0
+      Text = '100'
+    end
+    object cmbTypeQdr: TComboBox
+      Left = 98
+      Height = 24
+      Top = 0
+      Width = 172
+      ItemHeight = 16
+      ItemIndex = 1
+      Items.Strings = (
+        'Aucun'
+        'Grille'
+        'Croix'
+      )
+      Style = csDropDownList
+      TabOrder = 1
+      Text = 'Grille'
+    end
+    object lbQdrColor: TStaticText
+      Left = 174
+      Height = 26
+      Top = 56
+      Width = 70
+      BorderStyle = sbsSunken
+      Color = clRed
+      OnClick = lbQdrColorClick
+      ParentColor = False
+      TabOrder = 2
+      Transparent = False
+    end
+    object editCrossSize: TCurrencyEdit
+      Left = 98
+      Height = 24
+      Top = 56
+      Width = 63
+      Alignment = taRightJustify
+      DisplayFormat = '0'
+      MaxValue = 1000
+      MinValue = 0
+      TabOrder = 3
+      Value = 10
+    end
+    object lbGrdSpacing: TLabel
+      Left = 2
+      Height = 16
+      Top = 28
+      Width = 87
+      Caption = 'lbGrdSpacing'
+      ParentColor = False
+    end
+    object lbTypeGrd: TLabel
+      Left = 2
+      Height = 16
+      Top = 0
+      Width = 65
+      Caption = 'lbTypeGrd'
+      ParentColor = False
+    end
+    object lbTailleCroix: TLabel
+      Left = 2
+      Height = 16
+      Top = 56
+      Width = 81
+      Caption = 'lbTailleCroix'
+      ParentColor = False
+    end
+  end
+  object lbMouseCoordinates: TStaticText
+    Left = 284
+    Height = 19
+    Top = 626
+    Width = 354
+    Anchors = [akLeft, akBottom]
+    BorderStyle = sbsSunken
+    Caption = 'lbMouseCoordinates'
+    TabOrder = 4
+  end
+  object lbNbPages: TStaticText
+    Left = 640
+    Height = 19
+    Top = 626
+    Width = 230
+    Anchors = [akLeft, akBottom]
+    BorderStyle = sbsSunken
+    Caption = 'lbNbPages'
+    TabOrder = 5
+  end
+  object lbMessages: TLabel
+    Left = 284
+    Height = 16
+    Top = 647
+    Width = 73
+    Anchors = [akLeft, akBottom]
+    Caption = 'lbMessages'
+    ParentColor = False
+  end
+  object lbModeTravail: TLabel
+    Left = 4
+    Height = 16
+    Top = 812
+    Width = 90
+    Caption = 'lbModeTravail'
+    ParentColor = False
+  end
+  object grbxZoneDessin: TGroupBox
+    Left = 4
+    Height = 180
+    Top = 312
+    Width = 277
+    Caption = 'grbxZoneDessin'
+    ClientHeight = 159
+    ClientWidth = 273
+    TabOrder = 6
+    object lbMini: TLabel
+      Left = 2
+      Height = 17
+      Top = 52
+      Width = 44
+      AutoSize = False
+      Caption = 'Mini'
+      ParentColor = False
+    end
+    object lbMaxi: TLabel
+      Left = 2
+      Height = 17
+      Top = 24
+      Width = 44
+      AutoSize = False
+      Caption = 'Maxi'
+      ParentColor = False
+    end
+    object lbXAxis: TLabel
+      Left = 66
+      Height = 17
+      Top = 0
+      Width = 100
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'X'
+      ParentColor = False
+    end
+    object lbYAxis: TLabel
+      Left = 169
+      Height = 17
+      Top = 0
+      Width = 100
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Y'
+      ParentColor = False
+    end
+    object editZoneDessMinX: TCurrencyEdit
+      Left = 66
+      Height = 24
+      Top = 24
+      Width = 100
+      Alignment = taRightJustify
+      DisplayFormat = '0.00'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 0
+      Value = 6666666
+    end
+    object editZoneDessMinY: TCurrencyEdit
+      Left = 169
+      Height = 24
+      Top = 24
+      Width = 100
+      Alignment = taRightJustify
+      DisplayFormat = '0.00'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 6666666
+    end
+    object editZoneDessMaxX: TCurrencyEdit
+      Left = 66
+      Height = 24
+      Top = 52
+      Width = 100
+      Alignment = taRightJustify
+      DisplayFormat = '0.00'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 2
+      Value = 6666666
+    end
+    object editZoneDessMaxY: TCurrencyEdit
+      Left = 169
+      Height = 24
+      Top = 52
+      Width = 100
+      Alignment = taRightJustify
+      DisplayFormat = '0.00'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 3
+      Value = 6666666
+    end
+    object lbMaxi1: TLabel
+      Left = 2
+      Height = 17
+      Top = 80
+      Width = 44
+      AutoSize = False
+      Caption = 'Maxi'
+      ParentColor = False
+    end
+    object lbMini1: TLabel
+      Left = 2
+      Height = 17
+      Top = 108
+      Width = 44
+      AutoSize = False
+      Caption = 'Mini'
+      ParentColor = False
+    end
+    object editEtendueX2: TCurrencyEdit
+      Left = 66
+      Height = 24
+      Top = 80
+      Width = 100
+      Alignment = taRightJustify
+      Color = 11599871
+      DisplayFormat = '0.00'
+      Enabled = False
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 4
+      Value = 6666666
+    end
+    object editEtendueX1: TCurrencyEdit
+      Left = 66
+      Height = 24
+      Top = 108
+      Width = 100
+      Alignment = taRightJustify
+      Color = 11599871
+      DisplayFormat = '0.00'
+      Enabled = False
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 5
+      Value = 6666666
+    end
+    object editEtendueY1: TCurrencyEdit
+      Left = 170
+      Height = 24
+      Top = 108
+      Width = 100
+      Alignment = taRightJustify
+      Color = 11599871
+      DisplayFormat = '0.00'
+      Enabled = False
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 6
+      Value = 6666666
+    end
+    object editEtendueY2: TCurrencyEdit
+      Left = 170
+      Height = 24
+      Top = 80
+      Width = 100
+      Alignment = taRightJustify
+      Color = 11599871
+      DisplayFormat = '0.00'
+      Enabled = False
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 7
+      Value = 6666666
+    end
+    object btnDefinirZone: TButton
+      Left = 66
+      Height = 25
+      Top = 136
+      Width = 100
+      Caption = 'btnDefinirZone'
+      OnClick = btnDefinirZoneClick
+      TabOrder = 8
+    end
+  end
+  object grbxEchelle: TGroupBox
+    Left = 4
+    Height = 72
+    Top = 116
+    Width = 277
+    Caption = 'grbxEchelle'
+    ClientHeight = 51
+    ClientWidth = 273
+    TabOrder = 7
+    object editLongBarreEchelle: TCurrencyEdit
+      Left = 98
+      Height = 24
+      Top = 28
+      Width = 60
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 0
+      Value = 0
+    end
+    object editHautBarreEchelle: TCurrencyEdit
+      Left = 182
+      Height = 24
+      Top = 28
+      Width = 60
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 0
+    end
+    object editEchelle: TComboBox
+      Left = 98
+      Height = 24
+      Top = 0
+      Width = 144
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 16
+      ItemIndex = 5
+      Items.Strings = (
+        '100'
+        '200'
+        '250'
+        '400'
+        '500'
+        '1000'
+        '1500'
+        '2000'
+        '2500'
+        '4000'
+        '5000'
+        '10000'
+        '20000'
+        '25000'
+        '50000'
+      )
+      OnChange = editEchelleChange
+      TabOrder = 2
+      Text = '1000'
+    end
+    object btnApplyEchelle: TButton
+      Left = 242
+      Height = 25
+      Top = 0
+      Width = 28
+      Anchors = [akTop, akRight]
+      Caption = 'V'
+      OnClick = btnApplyEchelleClick
+      TabOrder = 3
+    end
+    object lbEchelle: TLabel
+      Left = 2
+      Height = 16
+      Top = 0
+      Width = 59
+      Caption = 'lbEchelle'
+      ParentColor = False
+    end
+    object Label1: TLabel
+      Left = 162
+      Height = 17
+      Top = 32
+      Width = 16
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'x'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 246
+      Height = 16
+      Top = 32
+      Width = 12
+      Caption = 'm'
+      ParentColor = False
+    end
+    object lbRegle: TLabel
+      Left = 2
+      Height = 16
+      Top = 28
+      Width = 49
+      Caption = 'lbRegle'
+      ParentColor = False
+    end
+  end
+  object btnClose: TBitBtn
+    Left = 993
+    Height = 30
+    Top = 633
+    Width = 110
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 8
+  end
+  object btnImprimer: TBitBtn
+    Left = 880
+    Height = 30
+    Top = 633
+    Width = 110
+    Anchors = [akRight, akBottom]
+    Caption = 'btnImprimer'
+    Glyph.Data = {
+      36030000424D3603000000000000360000002800000010000000100000000100
+      1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000C0C0C0C0C0C0C0C0C0000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000C0C0C0000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000C0C0C0
+      000000000000000000000000000000000000000000C0C0C0C0C0C0C0C0C00000
+      00000000C0C0C0000000000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000C0C0C0808080FFFFFF000080FFFFFFFFFFFFFF
+      0000FF0000FFFFFFFFFFFF000080FFFFFF808080C0C0C0000000000000000000
+      808080FFFFFF000080FF0000FFFFFFFF0000FFFFFFFFFFFFFFFFFF000080FFFF
+      FF808080000000000000C0C0C0C0C0C0808080FFFFFF000080FFFFFFFF0000FF
+      0000FF0000FFFFFFFFFFFF000080FFFFFF808080C0C0C0C0C0C0C0C0C0C0C0C0
+      808080FFFFFF000080FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000080FFFF
+      FF808080C0C0C0C0C0C0C0C0C0C0C0C0808080FFFFFF00008000008000008000
+      0080000080000080000080000080FFFFFF808080C0C0C0C0C0C0C0C0C0C0C0C0
+      808080FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+      FF808080C0C0C0C0C0C0C0C0C0C0C0C080808080808080808080808080808080
+      8080808080808080808080808080808080808080C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+    }
+    OnClick = btnImprimerClick
+    TabOrder = 9
+  end
+  object grbxElementsDessines: TGroupBox
+    Left = 4
+    Height = 132
+    Top = 496
+    Width = 277
+    Caption = 'grbxElementsDessines'
+    ClientHeight = 111
+    ClientWidth = 273
+    TabOrder = 10
+    object chkDoPrintPhotos: TCheckBox
+      Left = 6
+      Height = 20
+      Top = 40
+      Width = 132
+      Caption = 'chkDoPrintPhotos'
+      OnChange = chkDoPrintPhotosChange
+      TabOrder = 0
+    end
+    object btnStylesObjets: TBitBtn
+      Left = 130
+      Height = 30
+      Top = 8
+      Width = 135
+      Caption = 'btnStylesObjets'
+      Glyph.Data = {
+        36030000424D3603000000000000360000002800000010000000100000000100
+        1800000000000003000064000000640000000000000000000000C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000
+        FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000FFC0C0C0C0C0C00000FFC0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C080000080000080000080000080000080000000
+        00FF0000FF0000FF800000800000800000800000800000C0C0C0800000C0C0C0
+        C0C0C0800000C0C0C0C0C0C08000000000FF0000FF0000FFC0C0C0C0C0C08000
+        00C0C0C0C0C0C0800000800000C0C0C0C0C0C0800000C0C0C0C0C0C080000000
+        00FF0000FF0000FF0000FFC0C0C0800000C0C0C0C0C0C0800000800000800000
+        8000008000008000008000008000008000008000008000008000008000008000
+        00800000800000800000800000C0C0C0C0C0C0800000C0C0C0C0C0C0800000C0
+        C0C0C0C0C0800000C0C0C0C0C0C0800000C0C0C0C0C0C0800000800000C0C0C0
+        C0C0C0800000C0C0C0C0C0C0800000C0C0C0C0C0C0800000C0C0C0C0C0C08000
+        00C0C0C0C0C0C0800000C0C0C080000080000080000080000080000080000080
+        0000800000800000800000800000800000800000800000C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+        C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+      }
+      OnClick = btnStylesObjetsClick
+      TabOrder = 1
+    end
+    object lbDessinConduits: TLabel
+      Left = 2
+      Height = 16
+      Top = 68
+      Width = 108
+      Caption = 'lbDessinConduits'
+      ParentColor = False
+    end
+    object cmbModeDessinConduits: TComboBox
+      Left = 6
+      Height = 24
+      Top = 84
+      Width = 172
+      ItemHeight = 16
+      Style = csDropDownList
+      TabOrder = 2
+    end
+  end
+end

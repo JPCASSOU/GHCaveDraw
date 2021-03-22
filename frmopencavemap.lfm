@@ -1,0 +1,370 @@
+object dlgOpenCaveMap: TdlgOpenCaveMap
+  Left = 117
+  Height = 642
+  Top = 71
+  Width = 1245
+  Caption = 'dlgOpenCaveMap'
+  ClientHeight = 642
+  ClientWidth = 1245
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '1.8.0.6'
+  object Button1: TButton
+    Left = 195
+    Height = 25
+    Top = 7
+    Width = 128
+    Action = acConnecter
+    TabOrder = 0
+  end
+  object lbConnexionOK: TStaticText
+    Left = 195
+    Height = 25
+    Top = 36
+    Width = 128
+    BorderStyle = sbsSingle
+    Color = clRed
+    ParentColor = False
+    TabOrder = 1
+  end
+  object lsbCavitesInDataBase: TListBox
+    Left = 4
+    Height = 305
+    Top = 196
+    Width = 1238
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ItemHeight = 20
+    OnClick = lsbCavitesInDataBaseClick
+    OnDrawItem = lsbCavitesInDataBaseDrawItem
+    Style = lbOwnerDrawFixed
+    TabOrder = 2
+  end
+  object editLogin: TEdit
+    Left = 8
+    Height = 24
+    Top = 8
+    Width = 180
+    TabOrder = 3
+    Text = 'JPCASSOU'
+  end
+  object editPassword: TEdit
+    Left = 8
+    Height = 24
+    Top = 36
+    Width = 180
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 4
+    Text = 'enclume'
+  end
+  object BitBtn2: TBitBtn
+    Left = 1100
+    Height = 34
+    Top = 604
+    Width = 139
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 5
+  end
+  object pnlUtilisateur: TPanel
+    Left = 8
+    Height = 100
+    Top = 64
+    Width = 315
+    BevelOuter = bvLowered
+    ClientHeight = 100
+    ClientWidth = 315
+    TabOrder = 6
+    object Label1: TLabel
+      Left = 4
+      Height = 16
+      Top = 4
+      Width = 64
+      Caption = 'Utilisateur'
+      ParentColor = False
+    end
+    object lbUserName: TStaticText
+      Left = 104
+      Height = 20
+      Top = 4
+      Width = 208
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 0
+    end
+    object lbUserLogin: TStaticText
+      Left = 104
+      Height = 20
+      Top = 28
+      Width = 208
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 1
+    end
+    object lbUserID: TStaticText
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 96
+      BorderStyle = sbsSunken
+      TabOrder = 2
+    end
+    object lbUserDateInscription: TStaticText
+      Left = 104
+      Height = 20
+      Top = 52
+      Width = 208
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 3
+    end
+    object Label2: TLabel
+      Left = 4
+      Height = 16
+      Top = 52
+      Width = 84
+      Caption = 'Inscrit depuis'
+      ParentColor = False
+    end
+    object lbUserMail: TStaticText
+      Left = 4
+      Height = 20
+      Top = 76
+      Width = 308
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 4
+    end
+  end
+  object Button13: TButton
+    Left = 780
+    Height = 25
+    Top = 8
+    Width = 127
+    Caption = 'AddCavite'
+    OnClick = Button13Click
+    TabOrder = 7
+  end
+  object editCommentairesModifs: TMemo
+    Left = 779
+    Height = 118
+    Top = 36
+    Width = 460
+    Anchors = [akTop, akLeft, akRight]
+    Lines.Strings = (
+      'editCommentairesModifs'
+    )
+    TabOrder = 8
+  end
+  object hcColonnes: THeaderControl
+    Left = 4
+    Height = 26
+    Top = 172
+    Width = 1238
+    DragReorder = False
+    Sections = <    
+      item
+        Alignment = taLeftJustify
+        Text = 'ID cavité'
+        Width = 80
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'EPSG'
+        Width = 60
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Nom cavité'
+        Width = 360
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Création'
+        Width = 160
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Mise à jour'
+        Width = 160
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Groupes'
+        Width = 80
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Scraps'
+        Width = 80
+        Visible = True
+      end>
+    OnSectionResize = hcColonnesSectionResize
+    Anchors = [akTop, akLeft, akRight]
+  end
+  object Panel1: TPanel
+    Left = 4
+    Height = 90
+    Top = 506
+    Width = 1237
+    Anchors = [akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    ClientHeight = 90
+    ClientWidth = 1237
+    TabOrder = 10
+    OnClick = Panel1Click
+    object Edit1: TEdit
+      Left = 4
+      Height = 24
+      Top = 4
+      Width = 1127
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+      Text = 'SELECT MAX(IDCavite) from Cavites;'
+    end
+    object Edit2: TEdit
+      Left = 4
+      Height = 24
+      Top = 60
+      Width = 260
+      TabOrder = 1
+      Text = 'Edit2'
+    end
+    object Button3: TButton
+      Left = 1135
+      Height = 25
+      Top = 4
+      Width = 98
+      Anchors = [akTop, akRight]
+      Caption = 'Button3'
+      OnClick = Button3Click
+      TabOrder = 2
+    end
+  end
+  object pnlBDDActions: TPanel
+    Left = 328
+    Height = 156
+    Top = 8
+    Width = 266
+    BevelOuter = bvLowered
+    ClientHeight = 156
+    ClientWidth = 266
+    TabOrder = 11
+    object Button11: TButton
+      Left = 4
+      Height = 25
+      Top = 4
+      Width = 258
+      Caption = 'Envoyer vers la BDD'
+      OnClick = Button11Click
+      TabOrder = 0
+    end
+    object Button12: TButton
+      Left = 4
+      Height = 25
+      Top = 32
+      Width = 258
+      Caption = 'Extraire depuis BDD'
+      OnClick = Button12Click
+      TabOrder = 1
+    end
+    object Button15: TButton
+      Left = 4
+      Height = 25
+      Top = 60
+      Width = 258
+      Caption = 'Détruire les données de la cavité'
+      OnClick = Button15Click
+      TabOrder = 2
+    end
+    object Button2: TButton
+      Left = 4
+      Height = 25
+      Top = 88
+      Width = 258
+      Caption = 'Vider les tables d''objets'
+      OnClick = Button2Click
+      TabOrder = 3
+    end
+    object chkViderToutesTables: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 120
+      Width = 160
+      Caption = 'chkViderToutesTables'
+      TabOrder = 4
+    end
+    object editNumCavite: TCurrencyEdit
+      Left = 177
+      Height = 24
+      Top = 120
+      Width = 85
+      Alignment = taRightJustify
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 5
+      Value = 0
+    end
+  end
+  object lbDBMessages: TStaticText
+    Left = 5
+    Height = 21
+    Top = 616
+    Width = 935
+    Anchors = [akLeft, akRight, akBottom]
+    BorderStyle = sbsSunken
+    Caption = 'lbDBMessages'
+    TabOrder = 12
+  end
+  object ActionList1: TActionList
+    left = 1132
+    top = 68
+    object acConnecter: TAction
+      Caption = 'Connexion'
+      OnExecute = acConnecterExecute
+    end
+    object acUpdateTableBasePoints: TAction
+      Caption = 'MAJ BasePoints'
+    end
+    object acUpdateTableGroupes: TAction
+      Caption = 'MAJ Groupes'
+    end
+    object acUpdateTableScraps: TAction
+      Caption = 'MAJ Scraps'
+    end
+    object acUpdateTableCourbes: TAction
+      Caption = 'MAJ Courbes'
+    end
+    object acUpdateTablePolylines: TAction
+      Caption = 'MAJ Polylignes'
+    end
+    object acUpdateTablePolygones: TAction
+      Caption = 'MAJ Polygones'
+    end
+    object acUpdateTableSymboles: TAction
+      Caption = 'MAJ Symboles'
+    end
+    object acUpdateTableTextes: TAction
+      Caption = 'MAJ Textes'
+    end
+    object acUpdateTableSimplesLignes: TAction
+      Caption = 'MAJ Lignes'
+    end
+  end
+end

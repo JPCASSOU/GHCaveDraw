@@ -1,0 +1,205 @@
+object dlgConvertisseurSibert: TdlgConvertisseurSibert
+  Left = 576
+  Height = 414
+  Top = 191
+  Width = 597
+  Caption = 'dlgConvertisseurSibert'
+  ClientHeight = 414
+  ClientWidth = 597
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '1.0.1.3'
+  object Button1: TButton
+    Left = 8
+    Height = 25
+    Top = 380
+    Width = 75
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 0
+  end
+  object ComboSource: TComboBox
+    Left = 12
+    Height = 21
+    Top = 76
+    Width = 251
+    ItemHeight = 13
+    OnChange = ComboSourceChange
+    OnExit = ComboSourceExit
+    TabOrder = 1
+    Text = 'ComboSource'
+  end
+  object ComboDestination: TComboBox
+    Left = 10
+    Height = 21
+    Top = 160
+    Width = 251
+    ItemHeight = 13
+    OnChange = ComboDestinationChange
+    TabOrder = 2
+    Text = 'ComboDestination'
+  end
+  object EditDescription1: TEdit
+    Left = 12
+    Height = 21
+    Top = 100
+    Width = 244
+    TabOrder = 3
+    Text = 'EditDescription1'
+  end
+  object CheckSourceParis: TCheckBox
+    Left = 12
+    Height = 17
+    Top = 56
+    Width = 99
+    Caption = 'Méridien de Paris'
+    TabOrder = 4
+  end
+  object Label2: TLabel
+    Left = 304
+    Height = 14
+    Top = 76
+    Width = 32
+    Caption = 'Label2'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 304
+    Height = 14
+    Top = 100
+    Width = 32
+    Caption = 'Label3'
+    ParentColor = False
+  end
+  object EditFuseauSource: TEdit
+    Left = 10
+    Height = 21
+    Top = 32
+    Width = 244
+    TabOrder = 5
+    Text = 'EditFuseauSource'
+  end
+  object EditDescription2: TEdit
+    Left = 8
+    Height = 21
+    Top = 188
+    Width = 248
+    TabOrder = 6
+    Text = 'EditDescription2'
+  end
+  object Label12: TLabel
+    Left = 304
+    Height = 14
+    Top = 160
+    Width = 38
+    Caption = 'Label12'
+    ParentColor = False
+  end
+  object Label13: TLabel
+    Left = 304
+    Height = 14
+    Top = 184
+    Width = 38
+    Caption = 'Label13'
+    ParentColor = False
+  end
+  object CheckDestParis: TCheckBox
+    Left = 12
+    Height = 17
+    Top = 216
+    Width = 99
+    Caption = 'Méridien de Paris'
+    TabOrder = 7
+  end
+  object RadioUnite: TRadioGroup
+    Left = 387
+    Height = 146
+    Top = 58
+    Width = 153
+    AutoFill = True
+    Caption = 'RadioUnite'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 128
+    ClientWidth = 149
+    ItemIndex = 0
+    Items.Strings = (
+      'Degrés décimaux'
+      'Degrés, minutes'
+      'Degrés, minutes, secondes'
+      'Grades'
+    )
+    TabOrder = 8
+  end
+  object Button2: TButton
+    Left = 388
+    Height = 25
+    Top = 208
+    Width = 75
+    Caption = 'Button2'
+    OnClick = Button2Click
+    TabOrder = 9
+  end
+  object EditFuseauDest: TEdit
+    Left = 10
+    Height = 21
+    Top = 236
+    Width = 244
+    TabOrder = 10
+    Text = 'EditFuseauDest'
+  end
+  object EditXSource: TEdit
+    Left = 10
+    Height = 21
+    Top = 268
+    Width = 118
+    TabOrder = 11
+    Text = 'EditXSource'
+  end
+  object EditYSource: TEdit
+    Left = 136
+    Height = 21
+    Top = 268
+    Width = 124
+    TabOrder = 12
+    Text = 'EditYSource'
+  end
+  object EditConvergence: TEdit
+    Left = 8
+    Height = 21
+    Top = 304
+    Width = 132
+    TabOrder = 13
+    Text = 'EditConvergence'
+  end
+  object EditAlteration: TEdit
+    Left = 8
+    Height = 21
+    Top = 328
+    Width = 132
+    TabOrder = 14
+    Text = 'EditAlteration'
+  end
+  object EditXDest: TEdit
+    Left = 313
+    Height = 21
+    Top = 295
+    Width = 144
+    TabOrder = 15
+    Text = 'EditXDest'
+  end
+  object EditYDest: TEdit
+    Left = 312
+    Height = 21
+    Top = 320
+    Width = 145
+    TabOrder = 16
+    Text = 'EditYDest'
+  end
+end

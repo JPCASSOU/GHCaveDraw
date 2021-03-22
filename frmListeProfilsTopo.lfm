@@ -1,0 +1,219 @@
+object dlgLesProfilsTopo: TdlgLesProfilsTopo
+  Left = 249
+  Height = 758
+  Top = 349
+  Width = 1264
+  Caption = 'dlgLesProfilsTopo'
+  ClientHeight = 758
+  ClientWidth = 1264
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '1.8.0.6'
+  object BitBtn1: TBitBtn
+    Left = 1150
+    Height = 30
+    Top = 724
+    Width = 111
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 5
+    Height = 714
+    Top = 4
+    Width = 1256
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    ClientHeight = 714
+    ClientWidth = 1256
+    TabOrder = 1
+    object PairSplitter1: TPairSplitter
+      Left = 1
+      Height = 712
+      Top = 1
+      Width = 1254
+      Align = alClient
+      Position = 324
+      object PairSplitterSide1: TPairSplitterSide
+        Cursor = crArrow
+        Left = 0
+        Height = 712
+        Top = 0
+        Width = 324
+        ClientWidth = 324
+        ClientHeight = 712
+        object mnlMaillages: TPanel
+          Left = 0
+          Height = 398
+          Top = 44
+          Width = 319
+          Anchors = [akTop, akLeft, akRight]
+          BevelOuter = bvLowered
+          ClientHeight = 398
+          ClientWidth = 319
+          TabOrder = 0
+          object lsbProfilsTopoMaillage: TListBox
+            Left = 4
+            Height = 350
+            Top = 24
+            Width = 309
+            Anchors = [akTop, akLeft, akRight, akBottom]
+            ItemHeight = 20
+            OnDrawItem = lsbProfilsTopoMaillageDrawItem
+            OnSelectionChange = lsbProfilsTopoMaillageSelectionChange
+            Style = lbOwnerDrawFixed
+            TabOrder = 0
+          end
+          object HeaderControl1: THeaderControl
+            Left = 4
+            Height = 22
+            Top = 4
+            Width = 309
+            DragReorder = False
+            Sections = <            
+              item
+                Alignment = taCenter
+                MaxWidth = 60
+                MinWidth = 40
+                Text = 'ID'
+                Width = 40
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Width = 25
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'Nom'
+                Width = 666
+                Visible = True
+              end>
+            Anchors = [akTop, akLeft, akRight]
+          end
+          object lbNbProfilsTopo: TLabel
+            Left = 4
+            Height = 16
+            Top = 380
+            Width = 100
+            Anchors = [akLeft, akBottom]
+            Caption = 'lbNbProfilsTopo'
+            ParentColor = False
+          end
+        end
+        object btnModifierProfil: TButton
+          Left = 4
+          Height = 25
+          Top = 448
+          Width = 175
+          Caption = 'btnModifierProfil'
+          OnClick = btnModifierProfilClick
+          TabOrder = 1
+        end
+        object btnSupprimerProfil: TButton
+          Left = 4
+          Height = 25
+          Top = 476
+          Width = 175
+          Caption = 'btnSupprimerProfil'
+          OnClick = btnSupprimerProfilClick
+          TabOrder = 2
+        end
+        object btnSaveProfils: TButton
+          Left = 4
+          Height = 25
+          Top = 516
+          Width = 175
+          Caption = 'btnSaveProfils'
+          OnClick = btnSaveProfilsClick
+          TabOrder = 3
+        end
+        object btnLoadProfils: TButton
+          Left = 4
+          Height = 25
+          Top = 544
+          Width = 175
+          Caption = 'btnLoadProfils'
+          OnClick = btnLoadProfilsClick
+          TabOrder = 4
+        end
+      end
+      object PairSplitterSide2: TPairSplitterSide
+        Cursor = crArrow
+        Left = 329
+        Height = 712
+        Top = 0
+        Width = 925
+        ClientWidth = 925
+        ClientHeight = 712
+        inline CdrProfilTopo1: TCdrProfilTopo
+          Height = 712
+          Width = 925
+          ClientHeight = 712
+          ClientWidth = 925
+          inherited PageControl1: TPageControl
+            Height = 638
+            Width = 923
+            inherited tabShtConduits: TTabSheet
+              ClientHeight = 609
+              ClientWidth = 915
+              inherited Panel1: TPanel
+                Height = 601
+                Width = 908
+                ClientHeight = 601
+                ClientWidth = 908
+                inherited lsbGaleriesRecoupees: TListBox
+                  Height = 549
+                  Width = 900
+                end
+                inherited lbNbConduitsRecoupes: TLabel
+                  Top = 581
+                end
+                inherited HeaderControl1: THeaderControl
+                  Width = 900
+                end
+              end
+            end
+          end
+          inherited pnlProfil1: TPanel
+            Width = 923
+            ClientWidth = 923
+            inherited editNomProfil: TEdit
+              Width = 505
+            end
+            inherited editX1: TCurrencyEdit
+              Left = 621
+            end
+            inherited editY1: TCurrencyEdit
+              Left = 621
+            end
+            inherited editX2: TCurrencyEdit
+              Left = 733
+            end
+            inherited editY2: TCurrencyEdit
+              Left = 733
+            end
+            inherited Label1: TLabel
+              Left = 597
+            end
+            inherited Label2: TLabel
+              Left = 597
+            end
+            inherited btnRecalculer: TButton
+              Left = 845
+            end
+          end
+        end
+      end
+    end
+  end
+end

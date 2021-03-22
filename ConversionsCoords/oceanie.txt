@@ -1,0 +1,7 @@
+Ellipsoide="Hayford 24" "International Hayford 1924" 6378388 0.0819918900
+Datum="NZGD 49" "New Zealand Geodetic Datum 1949" "Hayford 24" 59 -5 187 0.4700000000 -0.1000000000 1.0240000000 -4.59930
+Projection "New Zealand Map Grid"="NZMG 49" "New Zealand Map Grid 1949" "NZGD 49" 2510000.0000000000 6023150.0000000000 173° -41°
+
+Datum="DOS 65" "Santo 1965 Datum Vanauta" "Hayford 24" 170 42 84
+Projection "Transverse Mercator"="SANTO" "Ile de Santo Vanauta (utm santo)" "DOS 65" 1 80467.132 9520116.783 -15°35'58.0294'' 167°06'34.8479''
+Projection "Transverse Mercator"="EFATE" "Ile Efate Vanauta (système TM77)" "DOS 65" 1.000007294 14845.106 17541.065 -17°40'54.2815'' 168°15'42.2815''

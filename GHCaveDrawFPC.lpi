@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="GHCaveDrawFPC"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="2"/>
+      <MinorVersionNr Value="71"/>
+      <RevisionNr Value="8"/>
+      <BuildNr Value="1"/>
+      <Language Value="040C"/>
+      <Attributes pvaDebug="True"/>
+      <StringTable Comments="Version du 06/10/2015" CompanyName="JP CASSOU" InternalName="GHCaveDrawFPC" LegalCopyright="JP CASSOU 1989 - 2015" LegalTrademarks="GNU General Public License 3" ProductName="GHCaveDraw" ProductVersion="2.718"/>
+    </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <DestinationDirectory Value="C:\Users\jean-pierre.cassou\Desktop\Projets_Lazarus_a_publier\GHCaveDraw"/>
+      <CompressFinally Value="False"/>
+      <OpenInFileMan Value="True"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <RequiredPackages Count="10">
+      <Item1>
+        <PackageName Value="lazmrumenu"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="zcomponent"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="SQLDBLaz"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="SynEdit"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="Printer4Lazarus"/>
+      </Item5>
+      <Item6>
+        <PackageName Value="pack_powerpdf"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="BGRABitmapPack"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="lazbarcodes"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="rxnew"/>
+      </Item9>
+      <Item10>
+        <PackageName Value="LCL"/>
+      </Item10>
+    </RequiredPackages>
+    <Units Count="65">
+      <Unit0>
+        <Filename Value="GHCaveDrawFPC.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="mainfrmeditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="MainFrmEditor"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="cdrdessincanvasbgra.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CadreDessinBGRA"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="cdrdessincanvasBGRA"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="CompilationParameters.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="frmJournal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgProcessing"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="GeneralFunctions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="GHCD_Types.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="UnitGraphismesProvisoires.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="UnitDocDessin.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="SVG_PS_Declarations.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="SVGCanvasUnit.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="UnitMessages_fr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="calldialogsghcavedraw.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="CallDialogsGHCaveDraw"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="frmGroupes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgGroupe"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="frmtextobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgTextObject"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmTextObject"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="frmeditstylesobjet.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgEditStylesObjets"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmEditStylesObjet"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="unitcenterlinesbasepoints.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitCenterlinesBasePoints"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="unitdessinooo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitDessinOOo"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="unitexporttoodg.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportToODG"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="svg_odg_styles.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="frmeditscraps.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgEditScrap"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmEditScraps"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="geometrypolygonesutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GeometryPolygonesUtils"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="unitfindobjects.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitFindObjects"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="cdrlistegroupes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CadreListeGroupesForMainWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="CdrListeGroupes"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="cdrhierarchieobjets.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CadreHierarchieObjets"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="CdrHierarchieObjets"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="frmhierarchieobjets.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgHierarchieObjets"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmHierarchieObjets"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="CadreDessinBGRARedessinEcran.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="DocDessinLoadFromFile.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="DocDessinSaveToFile.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="DocDessinExportToSVG.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="DocDessinExporterScrapsToKMLorOSM.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="unittghcavedrawdrawingcontext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitTGHCaveDrawDrawingContext"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="unitatlashtml.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitAtlasHTML"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="frmtimageobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgTImageObject"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmTImageObject"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="CadreDessinAfficherDebugVariables.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="frmparametrageatlas.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgParametrageAtlas"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmParametrageAtlas"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="unitsectionstransversales.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitSectionsTransversales"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="frmediteurtexte.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgEditeurTexte"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmEditeurTexte"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="unitfreehandcourbe.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitFreeHandCourbe"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="unitsimplificationcourbe.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitSimplificationCourbe"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="frmopencavemap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgOpenCaveMap"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmOpenCaveMap"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="unitopencavemap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitOpenCaveMap"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="dlgediteursectiontransversale.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmEditeurSections"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlgEditeurSectionTransversale"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="cdrsectiontransversale.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CadreSectionTransversale"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="cdrSectionTransversale"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="unitcrosssectiondrwctxt.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitCrossSectionDrwCtxt"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="unit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+        <UnitName Value="Unit1"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="frmexporttherion.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgExportToTherion"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmExportTherion"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="unittherionscrap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitTherionScrap"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="frmexporttosig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgExportSIG"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmExportToSIG"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="frmListeGroupes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgListeGroupes"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="DrawItemListeGroupes.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="unitgenererfichepointtopo.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitGenererFichePointTopo"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="unitclippingpolygonesbyscrap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unitClippingPolygonesByScrap"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="frmCentreImpression.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgPrintingCenter"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="frmParametrerVue2D.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgParametrerVue2D"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="cadreghcdeditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CdrGHCDTextEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="CadreGHCDEditor"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="frmlistepoi.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgListePOI"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmListePOI"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="unitkmlexport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitKMLExport"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="cadreediteurtexte.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CdrTextEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="CadreEditeurTexte"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="unitleafletexport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitLeafletExport"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="frmobjetsofgroupe.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgObjetsOfGroupe"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmObjetsOfGroupe"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="unitexporttherion.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportTherion"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="frmdisplaysupergroupes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="dlgDisplaySuperGroupes"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmDisplaySuperGroupes"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="cadrelistboxgroupes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CdrListBoxGroupes"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="CadreListboxGroupes"/>
+      </Unit63>
+      <Unit64>
+        <Filename Value="unitexportgeojson.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportGeoJSON"/>
+      </Unit64>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="GHCaveDrawFPC"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <Libraries Value="\usr\X11R6\lib"/>
+      <OtherUnitFiles Value="ConversionsCoords"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <SmartLinkUnit Value="True"/>
+      <TargetCPU Value="i386"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="False"/>
+      </Debugging>
+      <LinkSmart Value="True"/>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <WriteFPCLogo Value="False"/>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

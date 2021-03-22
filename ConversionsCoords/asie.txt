@@ -1,0 +1,5 @@
+Ellipsoide="Krassovsky" "Krassovsky 1940" 6378245 0.0818133340169
+Datum="Vientiane 82" "Vientiane 1982" "Krassovsky" 42 -115 -30
+Datum="Vientiane 93" "Vientiane 1993" "Krassovsky" 44 -12 -32
+Datum="Lao 97" "The Lao National Datum 1997" "Krassovsky" 44.585 -131.212 -39.544
+Projection "Transverse Mercator"="Laos Map 82" "Laos Map Projection 1982" "Vientiane 82" 1 18500000 0 105° 0°

@@ -1,0 +1,7 @@
+Ellipsoide="Hayford 24" "International Hayford 1924" 6378388 0.08199189
+Datum="TANA 25" "Tananarive 1925" "Hayford 24" -198.383 -240.517 -107.909
+Projection "Gauss Laborde Oblique"="Laborde" "Laborde Madagascar" "TANA 25" 0.9995 400000 800000 46.43722917° -21g 21g
+
+Ellipsoide="Clarke80" "Clarke 1880" 6378249.2 0.0824832568
+Datum="Le Pouce" "Le Pouce 1934" "Clarke80" -91.824 -292.222 -115.604 -1.01 19.74 22.14 -23.1582
+Projection "Lambert Conique Tangent"="Maurice 34" "Grille Nationale Maurice 1934" "Le Pouce" 1 1000000 1000000 57°31'18.58'' -20°11'42.25''

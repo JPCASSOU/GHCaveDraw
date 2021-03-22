@@ -1,0 +1,85 @@
+Ellipsoide="Clarke66" "Clarke 1866" 6378206 0.0822718540
+Ellipsoide="Clarke80" "Clarke 1880" 6378249 0.0824832568
+Ellipsoide="Hayford 09" "Hayford 1909" 6378388 0.0819918900
+Ellipsoide="Hayford 24" "International Hayford 1924" 6378388 0.0819918900
+
+Datum="St-Pierre et Miquelon 1950" "St-Pierre et Miquelon 1950" "Hayford 24" +30 +430 +368
+Projection "UTM Fuseau"="St-Pierre-Miquelon 50" "St-Pierre et Miquelon 1950" "St-Pierre et Miquelon 1950" 21 0
+
+Datum="Fort-Marigot" "Guadeloupe (Fort-Marigot)" "Hayford 24" +136.596 +248.148 -429.789
+Datum="Ste-Anne" "Guadeloupe (Ste-Anne)" "Hayford 24" -472.29 -5.63 -304.12 0.4362 -0.8374 0.2563 1.8984
+Projection "UTM Fuseau"="Guadeloupe FM" "UTM20 Guadeloupe (Fort-Marigot)" "Fort-Marigot" 20 0
+Projection "UTM Fuseau"="Guadeloupe SA" "UTM20 Guadeloupe (Ste-Anne)" "Ste-Anne" 20 0
+
+Datum="Fort-Desaix" "Martinique (Fort-Desaix)" "Hayford 24" 126.93 547.94 130.41 -2.7867 5.1612 -0.8584 13.8227 
+Projection "UTM Fuseau"="Martinique FD" "UTM20 Martinique (Fort-Desaix)" "Fort-Desaix" 20 0
+
+Datum="CSG67" "Guyane (CSG67)" "Hayford 24" -193.066 236.993 105.447 0.4814 -0.8074 0.1276 1.5649
+Datum="RGFG95" "Guyane (RGFG95)" "GRS 80" +2 +2 -2
+Projection "UTM Fuseau"="Guyane 67-21" "Guyane (CSG67)" "CSG67" 21 0
+Projection "UTM Fuseau"="Guyane 67-22" "Guyane (CSG67)" "CSG67" 22 0
+Projection "UTM Fuseau"="Guyane 95-21" "Guyane (RGFG95)" "RGFG95" 21 0
+Projection "UTM Fuseau"="Guyane 95-22" "Guyane (RGFG95)" "RGFG95" 22 0
+
+Datum="Piton-des-Neiges" "Réunion (Piton-des-Neiges)" "Hayford 24" 789.524 -626.486 -89.904 0.6006 76.7946 -10.5788 -32.3241
+Datum="RGR 92" "Réunion (RGR 92)" "GRS 80" 0 0 0
+Projection "Gauss Laborde Courbure"="Réunion PN" "Réunion (Piton-des-Neiges)" "Piton-des-Neiges" 1 160000 50000 55°32' -21°07'
+Projection "UTM Fuseau"="Réunion RGR92" "Réunion (RGR 92)" "RGR 92" 40 1
+
+Datum="Combani 1950" "Mayotte (Combani 1950)" "Hayford 24" -599.928 -275.552 -195.665 -0.0835 -0.4715 0.0602 49.2814
+Datum="Cadastre 1997" "Mayotte (Cadastre 1997)" "Hayford 24" -381.788 -57.501 -256.673
+Projection "UTM Fuseau"="Mayotte 1950" "Mayotte (Combani 1950)" "Combani 1950" 38 1
+Projection "UTM Fuseau"="Mayotte 1997" "Mayotte (Cadastre 1997)" "Cadastre 1997" 38 1
+Projection "UTM Fuseau"="Mayotte 2004" "Mayotte (RGM04)" "WGS84" 38 1
+
+Datum="K0 1949" "Kerguelen -K0 1949" "Hayford 24" +145 -187 +103
+Projection "UTM Fuseau"="Kerguelen 1949" "Kerguelen -K0 1949" "K0 1949" 42 1
+
+Datum="Petrels-IGN 1972" "Terre Adélie (Petrels-IGN 1972)" "Hayford 24" +365 +194 +166
+Datum="Pointe Géologie-Perroud 1950" "Terre Adélie (Pointe Géologie-Perroud 1950)" "Hayford 24" +325 +154 +172
+Projection "Stéréographique Polaire"="Terre Adélie Petrels" "Terre Adélie (Petrels-IGN 1972)" "Petrels-IGN 1972" 0.9995341 0 0 39°09' 1
+Projection "Stéréographique Polaire"="Terre Adélie Pointe Géologie" "Terre Adélie (Pointe Géologie-Perroud 1950)" "Pointe Géologie-Perroud 1950" 0.9995341 0 0 39°09' 1
+
+Datum="IGN56 LIFOU" "IGN56 LIFOU - ILES LOYAUTE - Nouvelle Calédonie" "Hayford 24" 137.092 131.660 91.475 -1.943600 -11.599324 -4.332090  -7.482352
+Datum="IGN53 MARE" "IGN53 MARE - ILES LOYAUTE - Nouvelle Calédonie" "Hayford 24" -408.809 366.856 -412.987 1.884178 -0.530793 2.165473 -121.099322
+Datum="ST87 OUVEA" "ST87 OUVEA - ILES LOYAUTE - Nouvelle Calédonie" "GRS 80" -122.383 -188.696 103.344 3.51074 -4.96679 -5.70456 4.47981
+Datum="IGN72 GRANDE TERRE" "IGN72 GRANDE TERRE - Nouvelle Calédonie" "Hayford 24" 97.295 -263.247 310.882 -1.599871 0.838616 3.140889 13.325904
+Datum="ST84 - ILE DES PINS" "ST84 - ILE DES PINS - Nouvelle Calédonie" "Hayford 24" 244.416 85.339 168.114 -8.935342 7.752301 12.595307  14.267971
+Datum="ST71 - BELEP" "ST71 - BELEP - Nouvelle Calédonie" "Hayford 24" -480.260 -438.320 -643.429 16.311867 20.172100 -4.034890  -111.700181
+Datum="NEA74 - NOUMEA" "NEA74 - NOUMEA - Nouvelle Calédonie" "Hayford 24" -166.207 -154.777 254.831 -37.544387 7.701146 -10.202481 -30.859839
+
+Projection "UTM Fuseau"="UTM58 Lifou 56" "Nouvelle-Calédonie (Lifou) IGN56" "IGN56 LIFOU" 58 1
+Projection "UTM Fuseau"="UTM58 Maré 53" "Nouvelle-Calédonie (Maré) IGN53" "IGN53 MARE" 58 1
+Projection "UTM Fuseau"="UTM58 ST87" "Nouvelle-Calédonie (Ouvéa) ST87" "ST87 OUVEA" 58 1
+Projection "UTM Fuseau"="UTM57 RGNC 1991" "Réseau Géodésique de Nouvelle-Calédonie 1991" "WGS84" 57 1
+Projection "UTM Fuseau"="UTM58 RGNC 1991" "Réseau Géodésique de Nouvelle-Calédonie 1991" "WGS84" 58 1
+Projection "UTM Fuseau"="UTM59 RGNC 1991" "Réseau Géodésique de Nouvelle-Calédonie 1991" "WGS84" 59 1
+Projection "Lambert Conique Sécant"="Lambert Nouvelle Calédonie" "Lambert Nouvelle-Calédonie RGNC91" "WGS84" 400000 300000 166° -21°30' -20°40' -22°20'
+Projection "UTM Fuseau"="UTM58 IGN72 GRANDE TERRE" "Nouvelle-Calédonie IGN72" "IGN72 GRANDE TERRE" 58 1
+Projection "UTM Fuseau"="UTM58 ST84-ILE DES PINS" "Nouvelle-Calédonie ST84" "ST84 - ILE DES PINS" 58 1
+Projection "UTM Fuseau"="UTM58 ST71-BELEP" "Nouvelle-Calédonie ST71" "ST71 - BELEP" 58 1
+Projection "Lambert Conique Sécant"="Lambert Nouméa" "Lambert Nouméa NEA74" "NEA74 - NOUMEA" 0.660 1.020 166°26'32.7327'' -22°16'10.8903'' -22°14'40.8903'' -22°17'40.8903''
+Projection "Lambert Conique Sécant"="Lambert Nouméa2" "Lambert Nouméa 2 NEA74" "NEA74 - NOUMEA" 8.313 -2.354 166°26'33'' -22°16'11'' -22°14'41'' -22°17'41''
+
+Datum="Tahiti 79" "IGN 1979 Tahiti" "Hayford 24" 221.45300 152.94800 176.76800 2.38470 1.38960 0.87700 11.47410
+Datum="MOOREA 87" "MOOREA 87" "Hayford 24" 215.91000 149.59300 176.22900 3.26240 1.69200 1.15710 10.47730
+Datum="MAUPITI 83" "MAUPITI 83" "Hayford 24" 216.96500 86.95900 23.95600
+Datum="BOR-HUA-RTA-TAA 51-54" "BOR-HUA-RTA-TAA 51-54" "Hayford 24" 72.36600 345.91800 79.48600 -1.60450 -0.88230 -0.55650 1.37460
+Datum="Nuku Hiva" "Îles Marquises (Nuku Hiva) IGN72" "Hayford 24" -165.80400 -216.72000 -180.50500 0.64340 0.45120 0.07910 -7.42040
+Datum="HIVA OA (IGN 63)" "HIVA OA (IGN 63)" "Hayford 24" -410.79300 -55.04900 -80.74600 2.57790 2.35140 0.66640 -17.33110
+Datum="UA HUKA (IGN 72)" "UA HUKA (IGN 72)" "Hayford 24" -1363.85700 -1362.68700 -398.81100 4.53220 6.75790 1.05740 -268.36100
+Datum="UA POU (IGN 72)" "UA POU (IGN 72)" "Hayford 24" -259.62300 -297.61200 -197.83300 -1.48660 -2.12240 -0.46120 -27.02490
+Datum="TAHUATA (IGN 63)" "TAHUATA (IGN 63)" "Hayford 24" -374.78700 58.40700 0.95700 16.21110 11.46260 5.53570 0.54090
+Datum="FATU IVA (MHEFO 55)" "FATU IVA (MHEFO 55)" "Hayford 24" -347.17500 -1078.12500 -2623.92200 -33.88750 70.67730 -9.39430 -186.07400
+
+Datum="Tahaa" "Îles de la Société (Tahaa)" "Hayford 24" +65 +342 +77
+Datum="Tahiti-Terme Nord" "Îles de la Société (Tahiti-Terme Nord)" "Hayford 24" +162 +117 +154
+Datum="MOP78" "Wallis (MOP78)" "Hayford 24" +252 -132 -125
+
+Projection "UTM Fuseau"="UTM6 Tahiti 79" "IGN 1979 Tahiti" "Tahiti 79" 6 1
+Projection "UTM Fuseau"="UTM6 MOOREA 87" "MOOREA 87" "MOOREA 87" 6 1
+Projection "UTM Fuseau"="Îles de la Société Tahiti" "Îles de la Société (Tahiti-Terme Nord)" "Tahiti-Terme Nord" 7 1
+Projection "UTM Fuseau"="Wallis" "Wallis (MOP78)" "MOP78" 1 1
+Projection "UTM Fuseau"="Îles de la Société Tahaa" "Îles de la Société (Tahaa)" "Tahaa" 5 1
+Projection "UTM Fuseau"="Îles Marquises IGN72" "Îles Marquises (Nuku Hiva) IGN72" "Nuku Hiva" 7 1
+

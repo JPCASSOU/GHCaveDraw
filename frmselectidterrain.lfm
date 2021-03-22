@@ -1,0 +1,71 @@
+object dlgSelectIDTerrain: TdlgSelectIDTerrain
+  Left = 930
+  Height = 463
+  Top = 270
+  Width = 553
+  Caption = 'dlgSelectIDTerrain'
+  ClientHeight = 463
+  ClientWidth = 553
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -27
+  Font.Name = 'Arial Narrow'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '1.6.0.4'
+  object editIDTerrainToFind: TEdit
+    Left = 4
+    Height = 39
+    Top = 4
+    Width = 424
+    Anchors = [akTop, akLeft, akRight]
+    OnChange = editIDTerrainToFindChange
+    TabOrder = 0
+  end
+  object BitBtn1: TBitBtn
+    Left = 254
+    Height = 40
+    Top = 420
+    Width = 144
+    Anchors = [akRight, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object BitBtn2: TBitBtn
+    Left = 406
+    Height = 40
+    Top = 420
+    Width = 144
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 2
+  end
+  object lsbIDsTerrain: TListBox
+    Left = 4
+    Height = 364
+    Top = 48
+    Width = 546
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Columns = 3
+    ItemHeight = 0
+    OnClick = lsbIDsTerrainClick
+    TabOrder = 3
+  end
+  object Label1: TLabel
+    Left = 480
+    Height = 31
+    Top = 4
+    Width = 70
+    Anchors = [akTop, akRight]
+    AutoSize = False
+    Caption = 'Label1'
+    ParentColor = False
+  end
+end

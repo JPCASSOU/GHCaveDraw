@@ -1,0 +1,116 @@
+object dlgListePOI: TdlgListePOI
+  Left = 670
+  Height = 505
+  Top = 170
+  Width = 769
+  Caption = 'dlgListePOI'
+  ClientHeight = 505
+  ClientWidth = 769
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '2.0.0.4'
+  object BitBtn1: TBitBtn
+    Left = 628
+    Height = 30
+    Top = 472
+    Width = 139
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 0
+  end
+  object lbNbPOIs: TStaticText
+    Left = 4
+    Height = 20
+    Top = 476
+    Width = 253
+    Anchors = [akLeft, akBottom]
+    BorderStyle = sbsSunken
+    Caption = 'lbNbPOIs'
+    TabOrder = 1
+  end
+  object Button1: TButton
+    Left = 480
+    Height = 30
+    Top = 472
+    Width = 139
+    Caption = 'Copier la liste'
+    OnClick = Button1Click
+    TabOrder = 2
+  end
+  object Panel1: TPanel
+    Left = 4
+    Height = 464
+    Top = 2
+    Width = 762
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    ClientHeight = 464
+    ClientWidth = 762
+    TabOrder = 3
+    object hcColonnes: THeaderControl
+      Left = 1
+      Height = 22
+      Top = 2
+      Width = 758
+      DragReorder = False
+      Sections = <      
+        item
+          Alignment = taLeftJustify
+          Text = 'Station'
+          Width = 90
+          Visible = True
+        end      
+        item
+          Alignment = taLeftJustify
+          Text = 'ID Terrain'
+          Width = 120
+          Visible = True
+        end      
+        item
+          Alignment = taLeftJustify
+          Text = 'X'
+          Width = 120
+          Visible = True
+        end      
+        item
+          Alignment = taLeftJustify
+          Text = 'Y'
+          Width = 120
+          Visible = True
+        end      
+        item
+          Alignment = taLeftJustify
+          Text = 'Z'
+          Width = 80
+          Visible = True
+        end      
+        item
+          Alignment = taLeftJustify
+          Text = 'Description'
+          Width = 666
+          Visible = True
+        end>
+      OnSectionResize = hcColonnesSectionResize
+      Anchors = [akTop, akLeft, akRight]
+    end
+    object lsbPOI: TListBox
+      Left = 1
+      Height = 438
+      Top = 23
+      Width = 758
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      ItemHeight = 0
+      OnDrawItem = lsbPOIDrawItem
+      Style = lbOwnerDrawFixed
+      TabOrder = 1
+    end
+  end
+end

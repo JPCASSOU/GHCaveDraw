@@ -1,0 +1,326 @@
+object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
+  Left = 190
+  Height = 689
+  Top = 51
+  Width = 1084
+  Caption = 'dlgDisplaySuperGroupes'
+  ClientHeight = 689
+  ClientWidth = 1084
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '2.0.6.0'
+  object PairSplitter1: TPairSplitter
+    Left = 4
+    Height = 653
+    Top = 3
+    Width = 1075
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Position = 460
+    object PairSplitterSide1: TPairSplitterSide
+      Cursor = crArrow
+      Left = 0
+      Height = 653
+      Top = 0
+      Width = 460
+      ClientWidth = 460
+      ClientHeight = 653
+      object PairSplitter2: TPairSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 653
+        Top = 0
+        Width = 460
+        Align = alClient
+        Position = 285
+        SplitterType = pstVertical
+        object PairSplitterSide3: TPairSplitterSide
+          Cursor = crArrow
+          Left = 0
+          Height = 285
+          Top = 0
+          Width = 460
+          ClientWidth = 460
+          ClientHeight = 285
+          object Panel2: TPanel
+            Left = 0
+            Height = 285
+            Top = 0
+            Width = 460
+            Align = alClient
+            Anchors = [akTop, akLeft, akRight]
+            BevelOuter = bvLowered
+            ClientHeight = 285
+            ClientWidth = 460
+            TabOrder = 0
+            object lbNbSuperGroupes: TLabel
+              Left = 6
+              Height = 15
+              Top = 4
+              Width = 98
+              Caption = 'n supergroupes'
+              ParentColor = False
+              ParentShowHint = False
+              ShowHint = True
+            end
+            object lsbSuperGroupes: TListBox
+              Left = 6
+              Height = 230
+              Top = 24
+              Width = 448
+              Anchors = [akTop, akLeft, akRight, akBottom]
+              ItemHeight = 0
+              OnSelectionChange = lsbSuperGroupesSelectionChange
+              ScrollWidth = 446
+              TabOrder = 0
+              TopIndex = -1
+            end
+            object btnAddSuperGroupe: TButton
+              Left = 244
+              Height = 25
+              Top = 258
+              Width = 108
+              Anchors = [akRight, akBottom]
+              Caption = 'Nouveau'
+              OnClick = btnAddSuperGroupeClick
+              TabOrder = 1
+            end
+            object btnSupprimerSuperGroupe: TButton
+              Left = 355
+              Height = 25
+              Top = 258
+              Width = 99
+              Anchors = [akRight, akBottom]
+              Caption = 'Supprimer'
+              TabOrder = 2
+            end
+          end
+        end
+        object PairSplitterSide4: TPairSplitterSide
+          Cursor = crArrow
+          Left = 0
+          Height = 363
+          Top = 290
+          Width = 460
+          ClientWidth = 460
+          ClientHeight = 363
+          object grbxCurrentSuperGroupe: TGroupBox
+            Left = 0
+            Height = 363
+            Top = 0
+            Width = 460
+            Align = alClient
+            Caption = 'Supergroupe'
+            ClientHeight = 347
+            ClientWidth = 458
+            TabOrder = 0
+            object editNomSupergroupe: TEdit
+              Left = 4
+              Height = 27
+              Top = 22
+              Width = 450
+              Anchors = [akTop, akLeft, akRight]
+              TabOrder = 0
+            end
+            object Label2: TLabel
+              Left = 4
+              Height = 15
+              Top = 4
+              Width = 29
+              Caption = 'Nom'
+              ParentColor = False
+            end
+            object lsbGroupesOfSuperGroupe: TListBox
+              Left = 4
+              Height = 275
+              Top = 71
+              Width = 354
+              Anchors = [akTop, akLeft, akRight, akBottom]
+              ItemHeight = 0
+              ScrollWidth = 352
+              TabOrder = 1
+              TopIndex = -1
+            end
+            object lbNbGroupesAssocies: TLabel
+              Left = 4
+              Height = 15
+              Top = 52
+              Width = 53
+              Caption = 'Groupes'
+              ParentColor = False
+            end
+            object btnClearListeGroupesOfSG: TButton
+              Left = 362
+              Height = 25
+              Top = 100
+              Width = 92
+              Anchors = [akTop, akRight]
+              Caption = 'Vider'
+              OnClick = btnClearListeGroupesOfSGClick
+              TabOrder = 2
+            end
+            object Button1: TButton
+              Left = 362
+              Height = 25
+              Top = 72
+              Width = 92
+              Anchors = [akTop, akRight]
+              Caption = 'Supprimer'
+              OnClick = Button1Click
+              TabOrder = 3
+            end
+            object btnModifyCurrSuperGroupe: TButton
+              Left = 362
+              Height = 25
+              Top = 321
+              Width = 92
+              Anchors = [akRight, akBottom]
+              Caption = 'Appliquer'
+              OnClick = btnModifyCurrSuperGroupeClick
+              TabOrder = 4
+            end
+            object btnGroupeDepuisTexte: TButton
+              Left = 362
+              Height = 25
+              Top = 128
+              Width = 92
+              Anchors = [akTop, akRight]
+              Caption = 'Depuis texte'
+              OnClick = btnGroupeDepuisTexteClick
+              TabOrder = 5
+            end
+          end
+        end
+      end
+    end
+    object PairSplitterSide2: TPairSplitterSide
+      Cursor = crArrow
+      Left = 465
+      Height = 653
+      Top = 0
+      Width = 610
+      ClientWidth = 610
+      ClientHeight = 653
+      object Panel1: TPanel
+        Left = 0
+        Height = 617
+        Top = 0
+        Width = 610
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BevelOuter = bvLowered
+        ClientHeight = 617
+        ClientWidth = 610
+        TabOrder = 0
+        inline CdrListBoxGroupes1: TCdrListBoxGroupes
+          Left = 1
+          Height = 615
+          Top = 1
+          Width = 608
+          ClientHeight = 615
+          ClientWidth = 608
+          DesignLeft = 737
+          DesignTop = 322
+          inherited Label1: TLabel
+            Height = 15
+            Width = 65
+          end
+          inherited lbNbGroupes: TLabel
+            Left = 521
+            Height = 15
+            Width = 82
+          end
+          inherited editFindingGroupe: TEdit
+            Height = 27
+            Width = 603
+          end
+          inherited hcColonnes: THeaderControl
+            Left = 4
+            Top = 48
+            Width = 598
+            Sections = <            
+              item
+                Alignment = taLeftJustify
+                Width = 20
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'V'
+                Width = 25
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'X'
+                Width = 25
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'Coul.'
+                Width = 30
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'No'
+                Width = 40
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'ZOrder'
+                Width = 55
+                Visible = True
+              end            
+              item
+                Alignment = taLeftJustify
+                Text = 'Nom'
+                Width = 200
+                Visible = True
+              end>
+          end
+          inherited lsbGroupes: TListBox
+            Height = 544
+            Width = 601
+            ScrollWidth = 599
+          end
+        end
+      end
+      object btnAddGrpsAtCurrSuperGroupe: TButton
+        Left = 3
+        Height = 25
+        Top = 624
+        Width = 183
+        Anchors = [akLeft]
+        Caption = 'Ajouter au supergroupe'
+        OnClick = btnAddGrpsAtCurrSuperGroupeClick
+        TabOrder = 1
+      end
+      object btnMarquerDepuisSupergroupe: TButton
+        Left = 208
+        Height = 25
+        Top = 622
+        Width = 212
+        Anchors = [akLeft, akBottom]
+        Caption = 'Marquer depuis supergroupe'
+        OnClick = btnMarquerDepuisSupergroupeClick
+        TabOrder = 2
+      end
+    end
+  end
+  object StaticText1: TStaticText
+    Left = 4
+    Height = 17
+    Top = 664
+    Width = 968
+    Anchors = [akLeft, akBottom]
+    Caption = 'StaticText1'
+    TabOrder = 1
+  end
+end

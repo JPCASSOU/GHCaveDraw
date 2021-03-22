@@ -1,0 +1,359 @@
+object frmDistanceStations: TfrmDistanceStations
+  Left = 373
+  Height = 255
+  Top = 234
+  Width = 449
+  BorderStyle = bsDialog
+  Caption = 'frmDistanceStations'
+  ClientHeight = 255
+  ClientWidth = 449
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '1.6.0.4'
+  object BitBtn1: TBitBtn
+    Left = 328
+    Height = 32
+    Top = 219
+    Width = 119
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 4
+    Height = 16
+    Top = 164
+    Width = 79
+    Alignment = taRightJustify
+    AutoSize = False
+    Caption = 'Dist. totale'
+    ParentColor = False
+    OnClick = Label1Click
+  end
+  object Label2: TLabel
+    Left = 4
+    Height = 16
+    Top = 20
+    Width = 56
+    Caption = 'Station 1'
+    ParentColor = False
+  end
+  object lbXStation1: TStaticText
+    Left = 88
+    Height = 24
+    Top = 48
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = '9999999.000'
+    TabOrder = 1
+  end
+  object lbXStation2: TStaticText
+    Left = 88
+    Height = 24
+    Top = 104
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbXStation2'
+    TabOrder = 2
+  end
+  object editSt1: TCurrencyEdit
+    Left = 68
+    Height = 24
+    Top = 20
+    Width = 72
+    Alignment = taRightJustify
+    DecimalPlaces = 0
+    DisplayFormat = '0'
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 3
+    Value = 69699
+  end
+  object editSt2: TCurrencyEdit
+    Left = 68
+    Height = 24
+    Top = 76
+    Width = 72
+    Alignment = taRightJustify
+    DecimalPlaces = 0
+    DisplayFormat = '0'
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 4
+    Value = 69699
+  end
+  object editPt1: TCurrencyEdit
+    Left = 142
+    Height = 24
+    Top = 20
+    Width = 72
+    Alignment = taRightJustify
+    DecimalPlaces = 0
+    DisplayFormat = '0'
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 5
+    Value = 69699
+  end
+  object editPt2: TCurrencyEdit
+    Left = 142
+    Height = 24
+    Top = 76
+    Width = 72
+    Alignment = taRightJustify
+    DecimalPlaces = 0
+    DisplayFormat = '0'
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 6
+    Value = 69699
+  end
+  object Button1: TButton
+    Left = 216
+    Height = 24
+    Top = 20
+    Width = 36
+    Caption = '...'
+    OnClick = Button1Click
+    TabOrder = 7
+  end
+  object Button2: TButton
+    Left = 216
+    Height = 24
+    Top = 76
+    Width = 36
+    Caption = '...'
+    OnClick = Button2Click
+    TabOrder = 8
+  end
+  object Button3: TButton
+    Left = 408
+    Height = 24
+    Top = 20
+    Width = 36
+    Caption = '...'
+    OnClick = Button3Click
+    TabOrder = 9
+  end
+  object Button4: TButton
+    Left = 408
+    Height = 24
+    Top = 76
+    Width = 36
+    Caption = '...'
+    OnClick = Button4Click
+    TabOrder = 10
+  end
+  object editIDLitteralSt1: TEdit
+    Left = 256
+    Height = 24
+    Top = 20
+    Width = 148
+    TabOrder = 11
+    Text = 'editIDLitteralSt1'
+  end
+  object editIDLitteralSt2: TEdit
+    Left = 256
+    Height = 24
+    Top = 76
+    Width = 148
+    TabOrder = 12
+    Text = 'editIDLitteralSt2'
+  end
+  object lbYStation1: TStaticText
+    Left = 208
+    Height = 24
+    Top = 48
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbYStation1'
+    TabOrder = 13
+  end
+  object lbYStation2: TStaticText
+    Left = 208
+    Height = 24
+    Top = 104
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbYStation2'
+    TabOrder = 14
+  end
+  object lbZStation1: TStaticText
+    Left = 328
+    Height = 24
+    Top = 48
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbZStation1'
+    TabOrder = 15
+  end
+  object lbZStation2: TStaticText
+    Left = 328
+    Height = 24
+    Top = 104
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbZStation2'
+    TabOrder = 16
+  end
+  object Label6: TLabel
+    Left = 256
+    Height = 16
+    Top = 0
+    Width = 62
+    Alignment = taCenter
+    Caption = 'ID Litteral'
+    ParentColor = False
+  end
+  object Label7: TLabel
+    Left = 70
+    Height = 16
+    Top = 0
+    Width = 22
+    Alignment = taCenter
+    Caption = 'Ser'
+    ParentColor = False
+  end
+  object Label8: TLabel
+    Left = 144
+    Height = 16
+    Top = 0
+    Width = 13
+    Alignment = taCenter
+    Caption = 'Pt'
+    ParentColor = False
+  end
+  object lbDistanceXYZ: TStaticText
+    Left = 88
+    Height = 21
+    Top = 164
+    Width = 136
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbDistanceXYZ'
+    TabOrder = 17
+  end
+  object lbDX: TStaticText
+    Left = 88
+    Height = 21
+    Top = 136
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbDX'
+    TabOrder = 18
+  end
+  object lbDY: TStaticText
+    Left = 208
+    Height = 21
+    Top = 136
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbDY'
+    TabOrder = 19
+  end
+  object lbDZ: TStaticText
+    Left = 328
+    Height = 21
+    Top = 136
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbDZ'
+    TabOrder = 20
+  end
+  object Label9: TLabel
+    Left = 4
+    Height = 16
+    Top = 76
+    Width = 56
+    Caption = 'Station 2'
+    ParentColor = False
+  end
+  object Label10: TLabel
+    Left = 4
+    Height = 16
+    Top = 192
+    Width = 79
+    Alignment = taRightJustify
+    AutoSize = False
+    Caption = 'Dist. plane'
+    ParentColor = False
+  end
+  object lbDistanceXY: TStaticText
+    Left = 88
+    Height = 21
+    Top = 192
+    Width = 136
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbDistanceXY'
+    TabOrder = 21
+  end
+  object Label11: TLabel
+    Left = 4
+    Height = 21
+    Top = 136
+    Width = 79
+    Alignment = taRightJustify
+    AutoSize = False
+    Caption = 'Delta'
+    ParentColor = False
+  end
+  object lbAzimut: TStaticText
+    Left = 328
+    Height = 21
+    Top = 164
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbAzimut'
+    TabOrder = 22
+  end
+  object lbInclinaison: TStaticText
+    Left = 328
+    Height = 21
+    Top = 192
+    Width = 116
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = 'lbInclinaison'
+    TabOrder = 23
+  end
+  object Label15: TLabel
+    Left = 228
+    Height = 19
+    Top = 164
+    Width = 94
+    Alignment = taRightJustify
+    AutoSize = False
+    Caption = 'Azimut'
+    ParentColor = False
+  end
+  object Label16: TLabel
+    Left = 228
+    Height = 19
+    Top = 192
+    Width = 91
+    Alignment = taRightJustify
+    AutoSize = False
+    Caption = 'Inclin.'
+    ParentColor = False
+  end
+end

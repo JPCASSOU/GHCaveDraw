@@ -1,0 +1,40 @@
+# ELLIPSOIDES
+# 	Nom	Description	a	e
+Ellipsoide	Clarke80	Clarke 1880	6378249.2	0.0824832568
+Ellipsoide	Hayford09	Hayford 1909	6378388	0.08199189
+Ellipsoide	Plessis	Plessis 1840	6376523	0.0804334508
+
+# DATUMS
+# 	Nom	Description	Ellipsoide	TX	TY	TZ	RX	RY	RZ	Scale	Grille de correction
+Datum	NTF	Nouvelle Triangulation Francaise	Clarke80	-168	-60	320	0	0	0	1.00	*
+Datum	ED50	European Datum	Hayford 09	-84	-97	-117	0	0	0	1.00	*
+Datum	ATG	Ancienne triangulation francaise	Plessis	1118	23	66	0	0	0	1.00	*
+
+# PROJECTIONS
+# 	Nom	Description	a	e
+
+Projection	Lambert Conique Secant	LT93	Lambert-93	WGS84	700000	6600000	3	46.50	44.8166666667	0	# NE PAS MODIFIER !
+Projection	Lambert Conique Tangent	LT1	Lambert I Carto	NTF	0.99987734	600000	1200000	2.3372291667	49.5
+Projection	Lambert Conique Tangent	LT2	Lambert II Carto	NTF	0.99987742	600000	200000	2.3372291667	46.8
+Projection	Lambert Conique Tangent	LT3	Lambert III Carto	NTF	0.9998775	600000	3200000	2.3372291667	44.1
+Projection	Lambert Conique Tangent	LT2+	Lambert II etendu	NTF	0.99987742	600000	2200000	2.3372291667
+Projection	Lambert Conique Tangent	LT4	Lambert IV Carto Corse	NTF	0.99994471	234.358	185861.369	2.3372291667	42.165
+Projection	Lambert Conique Secant	CC42	Conique Conforme Zone 1	WGS84	1700000	1200000	3	42	41.25	42.75
+Projection	Lambert Conique Secant	CC43	Conique Conforme Zone 2	WGS84	1700000	2200000	3	43	42.25	43.75
+Projection	Lambert Conique Secant	CC44	Conique Conforme Zone 3	WGS84	1700000	3200000	3	44	43.25	44.75
+Projection	Lambert Conique Secant	CC45	Conique Conforme Zone 4	WGS84	1700000	4200000	3	45	44.25	45.75
+Projection	Lambert Conique Secant	CC46	Conique Conforme Zone 5	WGS84	1700000	5200000	3	46	45.25	46.75
+Projection	Lambert Conique Secant	CC47	Conique Conforme Zone 6	WGS84	1700000	6200000	3	47	46.25	47.75
+Projection	Lambert Conique Secant	CC48	Conique Conforme Zone 7	WGS84	1700000	7200000	3	48	47.25	48.75
+Projection	Lambert Conique Secant	CC49	Conique Conforme Zone 8	WGS84	1700000	8200000	3	49	48.25	49.75
+Projection	Lambert Conique Secant	CC50	Conique Conforme Zone 9	WGS84	1700000	9200000	3	50	49.25	50.75
+
+# MULTIPLES
+# 	Nom	Description	a	e
+
+Multiple	Transverse Mercator Multiple	UTM	Universal Transverse Mercator	WGS84	0.9996	500000	0	10000000	-177	6
+Multiple	Transverse Mercator Multiple	UTM29	Universal Transverse Mercator	WGS84	0.9996	500000	1	0	-3	6
+Multiple	Transverse Mercator Multiple	UTM30	Universal Transverse Mercator	WGS84	0.9996	500000	1	0	3	6
+Multiple	Transverse Mercator Multiple	UTM31	Universal Transverse Mercator	WGS84	0.9996	500000	1	0	9	6
+Multiple	Transverse Mercator Multiple	UTM32	Universal Transverse Mercator	WGS84	0.9996	500000	1	0	15	6
+Multiple	Transverse Mercator Multiple	UTM ED50	Universal Transverse Mercator	ED50	0.9996	500000	0	10000000	-177	6

@@ -1,0 +1,553 @@
+object dlgTImageObject: TdlgTImageObject
+  Left = 497
+  Height = 730
+  Top = 218
+  Width = 1022
+  Caption = 'dlgTImageObject'
+  ClientHeight = 730
+  ClientWidth = 1022
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '2.0.0.4'
+  object BitBtn1: TBitBtn
+    Left = 664
+    Height = 28
+    Top = 700
+    Width = 114
+    Anchors = [akRight, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 0
+  end
+  object BitBtn2: TBitBtn
+    Left = 784
+    Height = 28
+    Top = 700
+    Width = 114
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 1
+  end
+  object Panel1: TPanel
+    Left = 4
+    Height = 662
+    Top = 32
+    Width = 1016
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    Caption = 'Panel1'
+    ClientHeight = 662
+    ClientWidth = 1016
+    TabOrder = 2
+    object lbCoordSouris: TStaticText
+      Left = 683
+      Height = 21
+      Top = 634
+      Width = 329
+      Anchors = [akRight, akBottom]
+      Caption = '---'
+      TabOrder = 0
+    end
+    object sclImgOpacity: TScrollBar
+      Left = 196
+      Height = 24
+      Top = 4
+      Width = 594
+      Anchors = [akTop, akLeft, akRight]
+      Max = 255
+      PageSize = 0
+      Position = 128
+      TabOrder = 1
+      OnChange = sclImgOpacityChange
+    end
+    object pnlImage: TPanel
+      Left = 200
+      Height = 600
+      Top = 32
+      Width = 811
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BevelOuter = bvLowered
+      ClientHeight = 600
+      ClientWidth = 811
+      TabOrder = 2
+      object ScrollBox1: TScrollBox
+        Left = 1
+        Height = 598
+        Top = 1
+        Width = 809
+        HorzScrollBar.Page = 564
+        VertScrollBar.Page = 380
+        Align = alClient
+        ClientHeight = 594
+        ClientWidth = 805
+        TabOrder = 0
+        object pbxImage: TPaintBox
+          Left = 0
+          Height = 380
+          Top = 0
+          Width = 564
+          OnMouseDown = pbxImageMouseDown
+          OnMouseMove = pbxImageMouseMove
+          OnPaint = pbxImagePaint
+        end
+      end
+    end
+    object pnlCalibration: TPanel
+      Left = 2
+      Height = 630
+      Top = 4
+      Width = 198
+      Anchors = [akTop, akLeft, akBottom]
+      BevelInner = bvRaised
+      BevelOuter = bvLowered
+      ClientHeight = 630
+      ClientWidth = 198
+      TabOrder = 3
+      object Panel2: TPanel
+        Left = 4
+        Height = 176
+        Top = 4
+        Width = 188
+        BevelOuter = bvLowered
+        ClientHeight = 176
+        ClientWidth = 188
+        TabOrder = 0
+        object chkPickPT1: TCheckBox
+          Left = 8
+          Height = 20
+          Hint = 'Cliquer sur l''image pour positionner le point de calibrage'
+          Top = 8
+          Width = 107
+          Caption = 'Premier point'
+          OnChange = chkPickPT1Change
+          TabOrder = 0
+        end
+        object Label8: TLabel
+          Left = 8
+          Height = 16
+          Top = 28
+          Width = 81
+          Caption = 'Station topo:'
+          ParentColor = False
+        end
+        object editPT1IDTerrain: TEdit
+          Left = 8
+          Height = 24
+          Top = 44
+          Width = 120
+          TabOrder = 1
+        end
+        object btnFindPT1: TButton
+          Left = 132
+          Height = 25
+          Top = 44
+          Width = 51
+          Caption = 'Find'
+          OnClick = btnFindPT1Click
+          TabOrder = 2
+        end
+        object Label6: TLabel
+          Left = 8
+          Height = 16
+          Top = 100
+          Width = 108
+          Caption = 'Ou coordonnées:'
+          ParentColor = False
+        end
+        object Label1: TLabel
+          Left = 8
+          Height = 16
+          Top = 120
+          Width = 21
+          Caption = 'X ='
+          ParentColor = False
+        end
+        object Label2: TLabel
+          Left = 8
+          Height = 16
+          Top = 148
+          Width = 20
+          Caption = 'Y ='
+          ParentColor = False
+        end
+        object editYReelPT1: TCurrencyEdit
+          Left = 34
+          Height = 24
+          Top = 148
+          Width = 97
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 3
+          Value = 0
+        end
+        object lbMousePosX1: TStaticText
+          Left = 132
+          Height = 24
+          Top = 120
+          Width = 51
+          Alignment = taRightJustify
+          BorderStyle = sbsSunken
+          Caption = '0'
+          TabOrder = 4
+        end
+        object lbMousePosY1: TStaticText
+          Left = 132
+          Height = 24
+          Top = 148
+          Width = 51
+          Alignment = taRightJustify
+          BorderStyle = sbsSunken
+          Caption = '0'
+          TabOrder = 5
+        end
+        object editXReelPT1: TCurrencyEdit
+          Left = 34
+          Height = 24
+          Top = 120
+          Width = 97
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 6
+          Value = 0
+        end
+        object lbFoundStationP1: TStaticText
+          Left = 8
+          Height = 19
+          Top = 72
+          Width = 120
+          BorderStyle = sbsSunken
+          Caption = '--'
+          TabOrder = 7
+        end
+      end
+      object Panel3: TPanel
+        Left = 4
+        Height = 176
+        Top = 184
+        Width = 188
+        BevelOuter = bvLowered
+        ClientHeight = 176
+        ClientWidth = 188
+        TabOrder = 1
+        object btnFindPT2: TButton
+          Left = 136
+          Height = 25
+          Top = 44
+          Width = 47
+          Caption = 'Find'
+          OnClick = btnFindPT2Click
+          TabOrder = 0
+        end
+        object editPT2IDTerrain: TEdit
+          Left = 8
+          Height = 24
+          Top = 44
+          Width = 120
+          TabOrder = 1
+        end
+        object chkPickPT2: TCheckBox
+          Left = 8
+          Height = 20
+          Hint = 'Cliquer sur l''image pour positionner le point de calibrage'
+          Top = 8
+          Width = 104
+          Caption = 'Second point'
+          OnChange = chkPickPT2Change
+          TabOrder = 2
+        end
+        object Label9: TLabel
+          Left = 8
+          Height = 16
+          Top = 28
+          Width = 81
+          Caption = 'Station topo:'
+          ParentColor = False
+        end
+        object lbMousePosY2: TStaticText
+          Left = 132
+          Height = 24
+          Top = 148
+          Width = 51
+          Alignment = taRightJustify
+          BorderStyle = sbsSunken
+          Caption = '0'
+          TabOrder = 3
+        end
+        object lbMousePosX2: TStaticText
+          Left = 132
+          Height = 24
+          Top = 120
+          Width = 51
+          Alignment = taRightJustify
+          BorderStyle = sbsSunken
+          Caption = '0'
+          TabOrder = 4
+        end
+        object editYReelPT2: TCurrencyEdit
+          Left = 34
+          Height = 24
+          Top = 148
+          Width = 97
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 5
+          Value = 100
+        end
+        object Label4: TLabel
+          Left = 8
+          Height = 16
+          Top = 148
+          Width = 20
+          Caption = 'Y ='
+          ParentColor = False
+        end
+        object editXReelPT2: TCurrencyEdit
+          Left = 34
+          Height = 24
+          Top = 120
+          Width = 97
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 6
+          Value = 100
+        end
+        object Label3: TLabel
+          Left = 8
+          Height = 16
+          Top = 120
+          Width = 21
+          Caption = 'X ='
+          ParentColor = False
+        end
+        object Label7: TLabel
+          Left = 8
+          Height = 16
+          Top = 100
+          Width = 108
+          Caption = 'Ou coordonnées:'
+          ParentColor = False
+        end
+        object lbFoundStationP2: TStaticText
+          Left = 8
+          Height = 19
+          Top = 72
+          Width = 120
+          BorderStyle = sbsSunken
+          Caption = '--'
+          TabOrder = 7
+        end
+      end
+      object Button2: TButton
+        Left = 4
+        Height = 25
+        Top = 364
+        Width = 188
+        Caption = 'Calculer'
+        OnClick = Button2Click
+        TabOrder = 2
+      end
+      object Panel4: TPanel
+        Left = 4
+        Height = 168
+        Top = 392
+        Width = 188
+        BevelOuter = bvLowered
+        ClientHeight = 168
+        ClientWidth = 188
+        TabOrder = 3
+        object Label10: TLabel
+          Left = 4
+          Height = 16
+          Top = 8
+          Width = 106
+          Caption = 'Coin bas gauche'
+          ParentColor = False
+        end
+        object Label11: TLabel
+          Left = 4
+          Height = 16
+          Top = 28
+          Width = 21
+          Caption = 'X ='
+          ParentColor = False
+        end
+        object Label12: TLabel
+          Left = 4
+          Height = 16
+          Top = 56
+          Width = 20
+          Caption = 'Y ='
+          ParentColor = False
+        end
+        object editX1Img: TCurrencyEdit
+          Left = 36
+          Height = 24
+          Top = 28
+          Width = 144
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 0
+          Value = 0
+        end
+        object editY1Img: TCurrencyEdit
+          Left = 36
+          Height = 24
+          Top = 56
+          Width = 144
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 1
+          Value = 0
+        end
+        object Label13: TLabel
+          Left = 4
+          Height = 16
+          Top = 88
+          Width = 94
+          Caption = 'Coin haut droit'
+          ParentColor = False
+        end
+        object Label14: TLabel
+          Left = 4
+          Height = 16
+          Top = 108
+          Width = 21
+          Caption = 'X ='
+          ParentColor = False
+        end
+        object Label15: TLabel
+          Left = 4
+          Height = 16
+          Top = 136
+          Width = 20
+          Caption = 'Y ='
+          ParentColor = False
+        end
+        object editX2Img: TCurrencyEdit
+          Left = 36
+          Height = 24
+          Top = 108
+          Width = 144
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          Anchors = [akTop, akRight]
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 2
+          Value = 0
+        end
+        object editY2Img: TCurrencyEdit
+          Left = 36
+          Height = 24
+          Top = 136
+          Width = 144
+          Alignment = taRightJustify
+          DisplayFormat = '0.00;-0.00'
+          Anchors = [akTop, akRight]
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 3
+          Value = 0
+        end
+      end
+    end
+    object lbHintTodo: TStaticText
+      Left = 2
+      Height = 24
+      Top = 635
+      Width = 612
+      Anchors = [akLeft, akRight, akBottom]
+      BorderStyle = sbsSunken
+      Color = clYellow
+      ParentColor = False
+      TabOrder = 4
+    end
+  end
+  object btnOuvrirImg: TButton
+    Left = 4
+    Height = 25
+    Top = 4
+    Width = 193
+    Caption = 'Ouvrir'
+    OnClick = btnOuvrirImgClick
+    TabOrder = 3
+  end
+  object Label5: TLabel
+    Left = 4
+    Height = 16
+    Top = 700
+    Width = 71
+    Anchors = [akLeft, akBottom]
+    Caption = 'Description'
+    ParentColor = False
+  end
+  object editDescroImage: TEdit
+    Left = 88
+    Height = 24
+    Top = 700
+    Width = 500
+    Anchors = [akLeft, akBottom]
+    TabOrder = 4
+  end
+  object lbFileNameImage: TLabel
+    Left = 240
+    Height = 16
+    Top = 4
+    Width = 113
+    Caption = 'lbFileNameImage'
+    ParentColor = False
+  end
+  object lbSizeImage: TLabel
+    Left = 664
+    Height = 16
+    Top = 8
+    Width = 80
+    Caption = 'lbSizeImage'
+    ParentColor = False
+  end
+  object lbCalibrationOK: TStaticText
+    Left = 908
+    Height = 24
+    Top = 4
+    Width = 112
+    Anchors = [akTop, akRight]
+    BorderStyle = sbsSunken
+    Color = clRed
+    ParentColor = False
+    TabOrder = 5
+  end
+  object BitBtn3: TBitBtn
+    Left = 904
+    Height = 28
+    Top = 700
+    Width = 114
+    Anchors = [akLeft, akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkHelp
+    OnClick = BitBtn3Click
+    TabOrder = 6
+  end
+end

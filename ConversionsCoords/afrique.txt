@@ -1,0 +1,20 @@
+Ellipsoide="Clarke80" "Clarke 1880" 6378249.2 0.0824832568
+Datum="Merchich" "Merchich Maroc 1924" "Clarke80" 31 146 47
+Projection "Lambert Conique Tangent"="LT MA I" "Lambert Maroc Zone I (Nord)" "Merchich" 0.999625769 500000 300000 -5.4° 33.3°
+Projection "Lambert Conique Tangent"="LT MA II" "Lambert Maroc Zone II (Sud)" "Merchich" 0.999615596 500000 300000 -5.4° 29.7°
+Projection "Lambert Conique Tangent"="LT MA III" "Lambert Maroc Zone III" "Merchich" 0.999616304 1200000 400000 -5.4° 26.1°
+Projection "Lambert Conique Tangent"="LT MA IV" "Lambert Maroc Zone IV" "Merchich" 0.999616437 1500000 400000 -5.4° 22.5°
+
+Datum="Voirol 75" "Colonne Voirol 1875" "Clarke80" -73 -247 227
+Datum="Voirol 60" "Colonne Voirol 1960" "Clarke80" -123 -206 219
+Datum="Nord Sahara 59" "Système Nord Sahara 1959" "Clarke80" -159 -77 311
+Projection "Lambert Conique Tangent"="Nord Algerie (V60)" "Zone Nord Algérie sur Voirol 1960" "Voirol 60" 0.999625544 500135 300090 3g 40g
+Projection "Lambert Conique Tangent"="Sud Algerie (V60)" "Zone Sud Algérie sur Voirol 1960" "Voirol 60" 0.999625769 500135 300090 3g 37g
+Projection "Lambert Conique Tangent"="Nord Algerie (V75)" "Zone Nord Algérie sur Voirol 1875" "Voirol 75" 0.999625544 500000 300000 3g 40g
+Projection "Lambert Conique Tangent"="Sud Algerie (V75)" "Zone Sud Algérie sur Voirol 1875" "Voirol 75" 0.999625769 500000 300000 3g 37g
+
+Datum="Carthage 25" "Carthage 1925" "Clarke80" -263 6 431
+Projection "Lambert Conique Tangent"="Nord Tunisie IGN" "Lambert Carthage Nord Tunisie (IGN)" "Carthage 25" 0.999625544 500000 300000 11g 40g
+Projection "Lambert Conique Tangent"="Sud Tunisie IGN" "Lambert Carthage Sud Tunisie (IGN)" "Carthage 25" 0.999625769 500000 300000 11g 37g
+Projection "Lambert Conique Tangent"="Nord Tunisie OTC" "Lambert Carthage Nord Tunisie (OTC)" "Carthage 25" 0.999625544 0 0 11g 40g
+Projection "Lambert Conique Tangent"="Sud Tunisie OTC" "Lambert Carthage Sud Tunisie (OTC)" "Carthage 25" 0.999625769 0 0 11g 37g

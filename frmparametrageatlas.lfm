@@ -1,0 +1,285 @@
+object dlgParametrageAtlas: TdlgParametrageAtlas
+  Left = 784
+  Height = 300
+  Top = 566
+  Width = 711
+  BorderStyle = bsDialog
+  Caption = 'dlgParametrageAtlas'
+  ClientHeight = 300
+  ClientWidth = 711
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '1.8.0.6'
+  object btnClose: TBitBtn
+    Left = 566
+    Height = 34
+    Top = 263
+    Width = 143
+    Anchors = [akRight, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 0
+  end
+  object btnGenererAtlas: TButton
+    Left = 412
+    Height = 34
+    Top = 263
+    Width = 143
+    Anchors = [akRight, akBottom]
+    Caption = 'Générer'
+    OnClick = btnGenererAtlasClick
+    TabOrder = 1
+  end
+  object editDossierDestination: TDirectoryEdit
+    Left = 163
+    Height = 24
+    Top = 4
+    Width = 544
+    ShowHidden = False
+    ButtonWidth = 23
+    NumGlyphs = 1
+    Anchors = [akTop, akLeft, akRight]
+    MaxLength = 0
+    TabOrder = 2
+  end
+  object lbDossierDestination: TLabel
+    Left = 4
+    Height = 16
+    Top = 4
+    Width = 129
+    Caption = 'lbDossierDestination'
+    ParentColor = False
+  end
+  object grbxEcrans: TGroupBox
+    Left = 4
+    Height = 85
+    Top = 36
+    Width = 703
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'grbxEcrans'
+    ClientHeight = 64
+    ClientWidth = 699
+    TabOrder = 3
+    object lbEcransUsuels: TLabel
+      Left = 4
+      Height = 16
+      Top = 4
+      Width = 95
+      Caption = 'lbEcransUsuels'
+      ParentColor = False
+    end
+    object cmbResolutionEcrans: TComboBox
+      Left = 156
+      Height = 24
+      Top = 4
+      Width = 539
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 16
+      OnSelect = cmbResolutionEcransSelect
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object editMonitorWidth: TCurrencyEdit
+      Left = 156
+      Height = 24
+      Top = 36
+      Width = 82
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 0
+    end
+    object editMonitorHeight: TCurrencyEdit
+      Left = 252
+      Height = 24
+      Top = 36
+      Width = 80
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 2
+      Value = 0
+    end
+    object editDescResolEcran: TEdit
+      Left = 336
+      Height = 24
+      Top = 36
+      Width = 359
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 3
+    end
+    object Label1: TLabel
+      Left = 240
+      Height = 16
+      Top = 39
+      Width = 8
+      Caption = 'x'
+      ParentColor = False
+    end
+  end
+  object grbxOptionsAtlas: TGroupBox
+    Left = 4
+    Height = 109
+    Top = 124
+    Width = 703
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'grbxOptionsAtlas'
+    ClientHeight = 88
+    ClientWidth = 699
+    TabOrder = 4
+    object editImgTopoWidthPX: TCurrencyEdit
+      Left = 260
+      Height = 24
+      Top = 4
+      Width = 102
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 0
+      Value = 800
+    end
+    object editImgTopoHeightPX: TCurrencyEdit
+      Left = 440
+      Height = 24
+      Top = 4
+      Width = 102
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 0
+      MinValue = 0
+      TabOrder = 1
+      Value = 800
+    end
+    object Label2: TLabel
+      Left = 552
+      Height = 16
+      Top = 4
+      Width = 16
+      Caption = 'px'
+      ParentColor = False
+    end
+    object lbDimensionsImageTopo: TLabel
+      Left = 3
+      Height = 16
+      Top = 4
+      Width = 156
+      Caption = 'lbDimensionsImageTopo'
+      ParentColor = False
+    end
+    object editEtendueTopoX: TCurrencyEdit
+      Left = 260
+      Height = 24
+      Top = 32
+      Width = 102
+      Alignment = taRightJustify
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      MaxValue = 1000
+      MinValue = 10
+      TabOrder = 2
+      Value = 100
+    end
+    object Label4: TLabel
+      Left = 372
+      Height = 16
+      Top = 36
+      Width = 12
+      Caption = 'm'
+      ParentColor = False
+    end
+    object chkCopyright: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 60
+      Width = 103
+      Caption = 'chkCopyright'
+      Checked = True
+      State = cbChecked
+      TabOrder = 3
+    end
+    object Label5: TLabel
+      Left = 204
+      Height = 16
+      Top = 4
+      Width = 50
+      Caption = 'Largeur'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 384
+      Height = 16
+      Top = 4
+      Width = 50
+      Caption = 'Hauteur'
+      ParentColor = False
+    end
+    object Label6: TLabel
+      Left = 141
+      Height = 16
+      Top = 32
+      Width = 113
+      Caption = 'La largeur couvre'
+      ParentColor = False
+    end
+    object editMentionsCopyright: TComboBox
+      Left = 156
+      Height = 24
+      Top = 60
+      Width = 540
+      ItemHeight = 16
+      TabOrder = 4
+    end
+  end
+  object pnlProgression: TPanel
+    Left = 4
+    Height = 57
+    Top = 238
+    Width = 403
+    Anchors = [akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    ClientHeight = 57
+    ClientWidth = 403
+    TabOrder = 5
+    object ProgressBar1: TProgressBar
+      Left = 5
+      Height = 12
+      Top = 20
+      Width = 393
+      Anchors = [akTop, akLeft, akRight]
+      Smooth = True
+      TabOrder = 0
+    end
+    object lbProgress: TLabel
+      Left = 5
+      Height = 16
+      Top = 2
+      Width = 67
+      Caption = 'lbProgress'
+      ParentColor = False
+    end
+    object lbEtapeTravail: TLabel
+      Left = 5
+      Height = 16
+      Top = 36
+      Width = 393
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = False
+      ParentColor = False
+    end
+  end
+end

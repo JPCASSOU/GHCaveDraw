@@ -1,0 +1,436 @@
+object OCMFrontal: TOCMFrontal
+  Left = 36
+  Height = 663
+  Top = 143
+  Width = 1254
+  Caption = 'OCMFrontal'
+  ClientHeight = 663
+  ClientWidth = 1254
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  OnClose = FormClose
+  OnShow = FormShow
+  LCLVersion = '1.6.0.4'
+  object Button1: TButton
+    Left = 212
+    Height = 24
+    Top = 11
+    Width = 139
+    Action = acConnecter1
+    TabOrder = 0
+  end
+  object lbConnexionOK: TStaticText
+    Left = 212
+    Height = 24
+    Top = 49
+    Width = 139
+    BorderStyle = sbsSingle
+    Color = clRed
+    ParentColor = False
+    TabOrder = 1
+  end
+  object BitBtn1: TBitBtn
+    Left = 1113
+    Height = 34
+    Top = 620
+    Width = 135
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 2
+  end
+  object editNumCavite: TCurrencyEdit
+    Left = 104
+    Height = 24
+    Top = 264
+    Width = 80
+    Alignment = taRightJustify
+    DisplayFormat = '0'
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 3
+    Value = 0
+  end
+  object editLogin: TEdit
+    Left = 9
+    Height = 24
+    Top = 11
+    Width = 196
+    TabOrder = 4
+    Text = 'JPCASSOU'
+  end
+  object editPassword: TEdit
+    Left = 9
+    Height = 24
+    Top = 49
+    Width = 196
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 5
+    Text = 'enclume'
+  end
+  object BitBtn2: TBitBtn
+    Left = 973
+    Height = 34
+    Top = 620
+    Width = 135
+    Anchors = [akRight, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 6
+  end
+  object pnlUtilisateur: TPanel
+    Left = 8
+    Height = 100
+    Top = 100
+    Width = 343
+    BevelOuter = bvLowered
+    ClientHeight = 100
+    ClientWidth = 343
+    TabOrder = 7
+    object Label1: TLabel
+      Left = 4
+      Height = 16
+      Top = 4
+      Width = 64
+      Caption = 'Utilisateur'
+      ParentColor = False
+    end
+    object lbUserName: TStaticText
+      Left = 104
+      Height = 20
+      Top = 4
+      Width = 236
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 0
+    end
+    object lbUserLogin: TStaticText
+      Left = 104
+      Height = 20
+      Top = 28
+      Width = 236
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 1
+    end
+    object lbUserID: TStaticText
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 96
+      BorderStyle = sbsSunken
+      TabOrder = 2
+    end
+    object lbUserDateInscription: TStaticText
+      Left = 104
+      Height = 20
+      Top = 52
+      Width = 236
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 3
+    end
+    object Label2: TLabel
+      Left = 4
+      Height = 16
+      Top = 52
+      Width = 84
+      Caption = 'Inscrit depuis'
+      ParentColor = False
+    end
+    object lbUserMail: TStaticText
+      Left = 4
+      Height = 20
+      Top = 76
+      Width = 336
+      Anchors = [akTop, akLeft, akRight]
+      BorderStyle = sbsSunken
+      TabOrder = 4
+    end
+  end
+  object Edit1: TEdit
+    Left = 9
+    Height = 24
+    Top = 425
+    Width = 988
+    Anchors = [akLeft, akRight, akBottom]
+    TabOrder = 8
+    Text = 'SELECT MAX(IDCavite) from Cavites;'
+  end
+  object Button3: TButton
+    Left = 1003
+    Height = 25
+    Top = 424
+    Width = 98
+    Anchors = [akLeft, akRight, akBottom]
+    Caption = 'Button3'
+    TabOrder = 9
+  end
+  object Edit2: TEdit
+    Left = 9
+    Height = 24
+    Top = 453
+    Width = 260
+    Anchors = [akLeft, akRight, akBottom]
+    TabOrder = 10
+    Text = 'Edit2'
+  end
+  object lsbMessages: TListBox
+    Left = 8
+    Height = 132
+    Top = 484
+    Width = 1240
+    Anchors = [akLeft, akRight, akBottom]
+    ItemHeight = 0
+    TabOrder = 11
+  end
+  object PageControl1: TPageControl
+    Left = 376
+    Height = 408
+    Top = 8
+    Width = 864
+    ActivePage = TabSheet1
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    TabIndex = 0
+    TabOrder = 12
+    object TabSheet1: TTabSheet
+      Caption = 'TabSheet1'
+      ClientHeight = 379
+      ClientWidth = 856
+      object DBGrid1: TDBGrid
+        Left = 4
+        Height = 272
+        Top = 4
+        Width = 848
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        AutoFillColumns = True
+        Color = clWindow
+        Columns = <>
+        DataSource = DataSrcUsers
+        TabOrder = 0
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Arial'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        TitleFont.Style = [fsBold]
+      end
+      object DBEdit1: TDBEdit
+        Left = 108
+        Height = 24
+        Top = 288
+        Width = 224
+        DataField = 'NomUtilisateur'
+        DataSource = DataSrcUsers
+        CharCase = ecNormal
+        MaxLength = 200
+        TabOrder = 1
+      end
+      object DBDateTimePicker1: TDBDateTimePicker
+        Left = 364
+        Height = 24
+        Top = 288
+        Width = 152
+        DataField = 'DateInscription'
+        DataSource = DataSrcUsers
+        ReadOnly = False
+        CenturyFrom = 1941
+        MaxDate = 2958465
+        MinDate = -53780
+        AutoSize = False
+        TabOrder = 2
+        TrailingSeparator = False
+        TextForNullDate = 'NULL'
+        LeadingZeros = True
+        Kind = dtkDate
+        TimeFormat = tf24
+        TimeDisplay = tdHMS
+        DateMode = dmComboBox
+        UseDefaultSeparators = True
+        HideDateTimeParts = []
+        MonthNames = 'Long'
+      end
+      object DBEdit2: TDBEdit
+        Left = 109
+        Height = 24
+        Top = 319
+        Width = 405
+        DataField = 'Email'
+        DataSource = DataSrcUsers
+        CharCase = ecNormal
+        MaxLength = 320
+        TabOrder = 3
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+      ClientHeight = 379
+      ClientWidth = 856
+      object DBGrid2: TDBGrid
+        Left = 4
+        Height = 286
+        Top = 4
+        Width = 849
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Color = clWindow
+        Columns = <>
+        DataSource = DataSrcCavites
+        TabOrder = 0
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Arial'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        TitleFont.Style = [fsBold]
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'TabSheet3'
+      ClientHeight = 379
+      ClientWidth = 856
+      object RxDBGrid1: TRxDBGrid
+        Left = 24
+        Height = 332
+        Top = 14
+        Width = 776
+        TitleButtons = False
+        AutoSort = False
+        OptionsRx = [rdgHighlightFocusRow]
+        Color = clWindow
+        FocusColor = clRed
+        SelectedColor = clBlue
+        GridLineStyle = psSolid
+        DataSource = DataSrcUsers
+        Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete]
+        ParentColor = False
+        Scrollbars = ssBoth
+        TabOrder = 0
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Arial'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        TitleFont.Style = [fsBold]
+        TitleStyle = tsStandard
+        OnCellClick = RxDBGrid1CellClick
+      end
+    end
+  end
+  object ActionList1: TActionList
+    left = 1160
+    top = 96
+    object acConnecter: TAction
+      Caption = 'Connexion'
+      OnExecute = acConnecterExecute
+    end
+    object acUpdateTableBasePoints: TAction
+      Caption = 'MAJ BasePoints'
+    end
+    object acUpdateTableGroupes: TAction
+      Caption = 'MAJ Groupes'
+    end
+    object acUpdateTableScraps: TAction
+      Caption = 'MAJ Scraps'
+    end
+    object acUpdateTableCourbes: TAction
+      Caption = 'MAJ Courbes'
+    end
+    object acUpdateTablePolylines: TAction
+      Caption = 'MAJ Polylignes'
+    end
+    object acUpdateTablePolygones: TAction
+      Caption = 'MAJ Polygones'
+    end
+    object acUpdateTableSymboles: TAction
+      Caption = 'MAJ Symboles'
+    end
+    object acUpdateTableTextes: TAction
+      Caption = 'MAJ Textes'
+    end
+    object acUpdateTableSimplesLignes: TAction
+      Caption = 'MAJ Lignes'
+    end
+  end
+  object acConnecter1: TAction
+    Caption = 'Connexion'
+    OnExecute = acConnecterExecute
+  end
+  object acUpdateTableBasePoints1: TAction
+    Caption = 'MAJ BasePoints'
+  end
+  object acUpdateTableGroupes1: TAction
+    Caption = 'MAJ Groupes'
+  end
+  object acUpdateTableScraps1: TAction
+    Caption = 'MAJ Scraps'
+  end
+  object acUpdateTableCourbes1: TAction
+    Caption = 'MAJ Courbes'
+  end
+  object acUpdateTablePolylines1: TAction
+    Caption = 'MAJ Polylignes'
+  end
+  object acUpdateTablePolygones1: TAction
+    Caption = 'MAJ Polygones'
+  end
+  object acUpdateTableSymboles1: TAction
+    Caption = 'MAJ Symboles'
+  end
+  object acUpdateTableTextes1: TAction
+    Caption = 'MAJ Textes'
+  end
+  object acUpdateTableSimplesLignes1: TAction
+    Caption = 'MAJ Lignes'
+  end
+  object ZConnexion1: TZConnection
+    ControlsCodePage = cCP_UTF8
+    AutoEncodeStrings = False
+    Connected = True
+    HostName = '127.0.0.1'
+    Port = 3306
+    Database = 'OpenCaveMap'
+    User = 'root'
+    Protocol = 'mysql-5'
+    left = 120
+    top = 216
+  end
+  object ZQuery1: TZQuery
+    Connection = ZConnexion1
+    Params = <>
+    left = 168
+    top = 220
+  end
+  object ZTableUsers: TZTable
+    Connection = ZConnexion1
+    Active = True
+    TableName = 'utilisateurs'
+    left = 236
+    top = 220
+  end
+  object DataSrcUsers: TDataSource
+    DataSet = ZTableUsers
+    left = 300
+    top = 220
+  end
+  object DataSrcCavites: TDataSource
+    DataSet = ZTableCavites
+    left = 300
+    top = 272
+  end
+  object ZTableCavites: TZTable
+    Connection = ZConnexion1
+    Active = True
+    TableName = 'cavites'
+    left = 236
+    top = 272
+  end
+end

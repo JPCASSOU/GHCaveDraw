@@ -1,0 +1,248 @@
+object frmSelectTexteAttributs: TfrmSelectTexteAttributs
+  Left = 242
+  Height = 303
+  Top = 178
+  Width = 509
+  BorderStyle = bsDialog
+  Caption = 'frmSelectTexteAttributs'
+  ClientHeight = 303
+  ClientWidth = 509
+  Font.CharSet = ANSI_CHARSET
+  Font.Color = clBlack
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '1.0.1.3'
+  object Label1: TLabel
+    Left = 12
+    Height = 17
+    Top = 8
+    Width = 44
+    Caption = 'Label1'
+    ParentColor = False
+  end
+  object editFontName: TEdit
+    Left = 80
+    Height = 24
+    Top = 8
+    Width = 188
+    TabOrder = 0
+    Text = 'editFontName'
+  end
+  object btnFontColor: TColorButton
+    Left = 80
+    Height = 25
+    Top = 40
+    Width = 132
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clRed
+  end
+  object GroupBox1: TGroupBox
+    Left = 40
+    Height = 117
+    Top = 144
+    Width = 333
+    Caption = 'GroupBox1'
+    ClientHeight = 99
+    ClientWidth = 329
+    TabOrder = 1
+    object RadioButton1: TRadioButton
+      Left = 7
+      Height = 17
+      Top = 71
+      Width = 20
+      Checked = True
+      TabOrder = 8
+      TabStop = True
+    end
+    object Label2: TLabel
+      Left = 39
+      Height = 38
+      Top = 31
+      Width = 249
+      Caption = 'LOREM    IPSUM'
+      Font.CharSet = ANSI_CHARSET
+      Font.Color = clBlack
+      Font.Height = -32
+      Font.Name = 'Arial'
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object RadioButton2: TRadioButton
+      Left = 167
+      Height = 17
+      Top = 71
+      Width = 20
+      TabOrder = 0
+    end
+    object RadioButton3: TRadioButton
+      Left = 299
+      Height = 17
+      Top = 71
+      Width = 20
+      TabOrder = 1
+    end
+    object RadioButton4: TRadioButton
+      Left = 7
+      Height = 17
+      Top = 43
+      Width = 20
+      TabOrder = 2
+    end
+    object RadioButton5: TRadioButton
+      Left = 167
+      Height = 17
+      Top = 43
+      Width = 20
+      TabOrder = 3
+    end
+    object RadioButton6: TRadioButton
+      Left = 299
+      Height = 17
+      Top = 43
+      Width = 20
+      TabOrder = 4
+    end
+    object RadioButton7: TRadioButton
+      Left = 7
+      Height = 17
+      Top = 15
+      Width = 20
+      TabOrder = 5
+    end
+    object RadioButton8: TRadioButton
+      Left = 167
+      Height = 17
+      Top = 15
+      Width = 20
+      TabOrder = 6
+    end
+    object RadioButton9: TRadioButton
+      Left = 299
+      Height = 17
+      Top = 15
+      Width = 20
+      TabOrder = 7
+    end
+  end
+  object btnBackColor: TColorButton
+    Left = 80
+    Height = 25
+    Top = 72
+    Width = 132
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlue
+  end
+  object editHauteurTexte: TCurrencyEdit
+    Left = 79
+    Height = 24
+    Top = 100
+    Width = 80
+    Alignment = taRightJustify
+    MaxValue = 0
+    MinValue = 0
+    TabOrder = 2
+    Value = 0
+  end
+  object Label3: TLabel
+    Left = 164
+    Height = 17
+    Top = 107
+    Width = 25
+    Caption = 'mm'
+    ParentColor = False
+  end
+  object chkBold: TCheckBox
+    Left = 218
+    Height = 26
+    Top = 107
+    Width = 34
+    Caption = 'B'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+  end
+  object chkItalic: TCheckBox
+    Left = 264
+    Height = 27
+    Top = 107
+    Width = 30
+    AutoSize = False
+    Caption = 'I'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold, fsItalic]
+    ParentFont = False
+    TabOrder = 4
+  end
+  object chkUnderline: TCheckBox
+    Left = 304
+    Height = 26
+    Top = 107
+    Width = 33
+    Caption = 'U'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold, fsUnderline]
+    ParentFont = False
+    TabOrder = 5
+  end
+  object BitBtn1: TBitBtn
+    Left = 300
+    Height = 30
+    Top = 269
+    Width = 99
+    Anchors = [akRight, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 6
+  end
+  object BitBtn2: TBitBtn
+    Left = 408
+    Height = 30
+    Top = 269
+    Width = 98
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 7
+  end
+  object editAngleRot: TCurrencyEdit
+    Left = 388
+    Height = 24
+    Top = 8
+    Width = 80
+    Alignment = taRightJustify
+    DisplayFormat = '0'
+    MaxValue = 360
+    MinValue = 0
+    TabOrder = 8
+    Value = 0
+  end
+end

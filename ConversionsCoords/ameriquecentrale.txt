@@ -1,0 +1,4 @@
+Ellipsoide="Clarke66" "Clarke 1866" 6378206.4 0.082271854223
+Datum="Ocotepeque 1935" "Ocotepeque 1935 (Costa Rica)" "GRS 80" 205 96 -98
+Projection "Lambert Conique Sécant"="LT Norte" "Lambert Norte Costa Rica" "Ocotepeque 1935" 500000 271820.522 -84°20' 10°28' 11° 9°56'
+Projection "Lambert Conique Sécant"="LT Sure" "Lambert Sure Costa Rica" "Ocotepeque 1935" 500000 327987.436 -83°40' 9° 9°32' 8°28'

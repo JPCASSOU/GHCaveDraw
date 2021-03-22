@@ -1,0 +1,168 @@
+object dlgEditScrap: TdlgEditScrap
+  Left = 513
+  Height = 476
+  Top = 285
+  Width = 731
+  Caption = 'dlgEditScrap'
+  ClientHeight = 476
+  ClientWidth = 731
+  Font.CharSet = ANSI_CHARSET
+  Font.Height = -13
+  Font.Name = 'Arial'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
+  Font.Style = [fsBold]
+  Position = poScreenCenter
+  LCLVersion = '2.0.0.4'
+  object BitBtn1: TBitBtn
+    Left = 528
+    Height = 30
+    Top = 443
+    Width = 96
+    Anchors = [akRight, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 0
+  end
+  object BitBtn2: TBitBtn
+    Left = 631
+    Height = 30
+    Top = 443
+    Width = 96
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 4
+    Height = 16
+    Top = 8
+    Width = 29
+    Caption = 'Nom'
+    ParentColor = False
+  end
+  object editNomScrap: TEdit
+    Left = 136
+    Height = 24
+    Top = 8
+    Width = 591
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 2
+    Text = 'editNomScrap'
+  end
+  object btnColorScrap: TColorButton
+    Left = 136
+    Height = 25
+    Top = 40
+    Width = 120
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = 15251385
+  end
+  object lbColorScrap: TLabel
+    Left = 4
+    Height = 16
+    Top = 40
+    Width = 83
+    Caption = 'lbColorScrap'
+    ParentColor = False
+  end
+  object lbColorScrap1: TLabel
+    Left = 4
+    Height = 16
+    Top = 100
+    Width = 47
+    Caption = 'Groupe'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 4
+    Height = 16
+    Top = 72
+    Width = 49
+    Caption = 'Opacité'
+    ParentColor = False
+  end
+  object sclOpacite: TScrollBar
+    Left = 136
+    Height = 24
+    Top = 72
+    Width = 532
+    Anchors = [akTop, akLeft, akRight]
+    LargeChange = 10
+    Max = 255
+    PageSize = 0
+    Position = 128
+    TabOrder = 3
+    OnChange = sclOpaciteChange
+  end
+  object lbNumGroupe: TStaticText
+    Left = 4
+    Height = 21
+    Top = 120
+    Width = 102
+    BorderStyle = sbsSingle
+    Caption = '00'
+    TabOrder = 4
+  end
+  object editOpacite: TCurrencyEdit
+    Left = 671
+    Height = 24
+    Top = 72
+    Width = 56
+    Alignment = taRightJustify
+    CheckOnExit = True
+    DecimalPlaces = 0
+    DisplayFormat = '0'
+    Anchors = [akTop, akRight]
+    MaxLength = 3
+    MaxValue = 255
+    MinValue = 0
+    TabOrder = 5
+    Value = 0
+  end
+  object Panel1: TPanel
+    Left = 133
+    Height = 335
+    Top = 101
+    Width = 591
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvLowered
+    ClientHeight = 335
+    ClientWidth = 591
+    TabOrder = 6
+    inline CdrListBoxGroupes1: TCdrListBoxGroupes
+      Left = 1
+      Height = 333
+      Top = 1
+      Width = 589
+      ClientHeight = 333
+      ClientWidth = 589
+      inherited Label1: TLabel
+        Height = 16
+        Width = 68
+      end
+      inherited lbNbGroupes: TLabel
+        Left = 502
+        Height = 16
+        Width = 82
+      end
+      inherited editFindingGroupe: TEdit
+        Height = 24
+        Width = 584
+      end
+      inherited hcColonnes: THeaderControl
+        Width = 582
+      end
+      inherited lsbGroupes: TListBox
+        Height = 262
+        Width = 582
+      end
+    end
+  end
+end

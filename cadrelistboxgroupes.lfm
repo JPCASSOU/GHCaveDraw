@@ -1,0 +1,100 @@
+object CdrListBoxGroupes: TCdrListBoxGroupes
+  Left = 0
+  Height = 622
+  Top = 0
+  Width = 849
+  Align = alClient
+  ClientHeight = 622
+  ClientWidth = 849
+  TabOrder = 0
+  DesignLeft = 842
+  DesignTop = 314
+  object Label1: TLabel
+    Left = 2
+    Height = 15
+    Top = 0
+    Width = 55
+    Caption = 'Recherche'
+    ParentColor = False
+    ParentShowHint = False
+    ShowHint = True
+  end
+  object lbNbGroupes: TLabel
+    Left = 774
+    Height = 15
+    Top = 0
+    Width = 70
+    Anchors = [akTop, akRight]
+    Caption = 'lbNbGroupes'
+    ParentColor = False
+  end
+  object editFindingGroupe: TEdit
+    Left = 2
+    Height = 23
+    Hint = 'Saisir un texte dans la boîte ci-contre.'#13#10'Pour accéder à un groupe par son numéro, saisir un "=" puis le numéro du groupe'
+    Top = 20
+    Width = 844
+    Anchors = [akTop, akLeft, akRight]
+    OnChange = editFindingGroupeChange
+    ParentShowHint = False
+    TabOrder = 0
+  end
+  object hcColonnes: THeaderControl
+    Left = 2
+    Height = 20
+    Top = 47
+    Width = 842
+    DragReorder = False
+    Sections = <    
+      item
+        Alignment = taLeftJustify
+        Width = 20
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'V'
+        Width = 25
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Coul.'
+        Width = 30
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'No'
+        Width = 40
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'ZOrder'
+        Width = 55
+        Visible = True
+      end    
+      item
+        Alignment = taLeftJustify
+        Text = 'Nom'
+        Width = 200
+        Visible = True
+      end>
+    OnSectionResize = hcColonnesSectionResize
+    Anchors = [akTop, akLeft, akRight]
+  end
+  object lsbGroupes: TListBox
+    Left = 2
+    Height = 551
+    Top = 68
+    Width = 842
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ItemHeight = 0
+    OnDblClick = lsbGroupesDblClick
+    OnDrawItem = lsbGroupesDrawItem
+    OnSelectionChange = lsbGroupesSelectionChange
+    Style = lbOwnerDrawVariable
+    TabOrder = 2
+  end
+end
