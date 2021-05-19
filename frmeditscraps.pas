@@ -20,6 +20,7 @@ type
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     btnColorScrap: TColorButton;
+    btnColorScrapFromGroupe: TButton;
     CdrListBoxGroupes1: TCdrListBoxGroupes;
     editOpacite: TCurrencyEdit;
     editNomScrap: TEdit;
@@ -30,6 +31,7 @@ type
     Panel1: TPanel;
     sclOpacite: TScrollBar;
     lbNumGroupe: TStaticText;
+    procedure btnColorScrapFromGroupeClick(Sender: TObject);
     procedure sclOpaciteChange(Sender: TObject);
   private
     { private declarations }
@@ -69,6 +71,17 @@ begin
   editOpacite.AsInteger := sclOpacite.Position;
 end;
 
+procedure TdlgEditScrap.btnColorScrapFromGroupeClick(Sender: TObject);
+var
+  QIDGroupe: TIDGroupeEntites;
+  Grp: TGroupeEntites;
+begin
+  QIDGroupe    := FMyDocDessin.GetIndexGroupeByInternalIdx(CdrListBoxGroupes1.GetSelectedIndex());
+  if (QIDGroupe = -1) then exit;
+  Grp := FMyDocDessin.GetGroupeByIDGroupe(QIDGroupe);
+  btnColorScrap.ButtonColor := Grp.CouleurGroupe;
+end;
+
 procedure TdlgEditScrap.ExtractGroupe(const Idx: TIDGroupeEntites);
 var
   EWE: TIDGroupeEntites;
@@ -88,6 +101,7 @@ begin
   QIdx := FMyDocDessin.GetInternalIdxGroupe(FScrap.IDGroupe);
   CdrListBoxGroupes1.Initialiser(FMyDocDessin, QIdx, false, ExtractGroupe, nil);
   btnColorScrap.ButtonColor  := FScrap.Couleur;
+  btnColorScrapFromGroupe.Caption:= 'Celle du groupe';
   editNomScrap.Text          := FScrap.Nom;
   sclOpacite.Position        := FScrap.Opacite;
   editOpacite.AsInteger      := sclOpacite.Position;

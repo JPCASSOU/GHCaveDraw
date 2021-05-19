@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="11"/>
+    <BuildModes Active="Default"/>
+    <Units Count="27">
+      <Unit0>
+        <Filename Value="GHCaveDrawViewer.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <CursorPos X="14" Y="6"/>
+        <UsageCount Value="39"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="mainfrmViewer.pas"/>
+        <ComponentName Value="MainWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="416"/>
+        <CursorPos X="26" Y="427"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="GHCD_Types.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="92" Y="3"/>
+        <UsageCount Value="20"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="UnitDocDessin.pas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="3403"/>
+        <CursorPos X="73" Y="3425"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="clipper.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="10" Y="2"/>
+        <UsageCount Value="8"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="CompilationParameters.inc"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="frmGroupes.pas"/>
+        <ComponentName Value="dlgGroupe"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="29" Y="5"/>
+        <UsageCount Value="20"/>
+        <LoadedDesigner Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="cdrdessincanvasbgra.pas"/>
+        <ComponentName Value="CadreDessinBGRA"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="cdrdessincanvasBGRA"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="723"/>
+        <CursorPos X="60" Y="743"/>
+        <UsageCount Value="19"/>
+        <LoadedDesigner Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="UnitMessages_fr.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="217"/>
+        <CursorPos X="90" Y="250"/>
+        <UsageCount Value="19"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="GeneralFunctions.pas"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="1718"/>
+        <CursorPos Y="1742"/>
+        <UsageCount Value="19"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="DocDessinLoadFromFile.inc"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="511"/>
+        <CursorPos Y="556"/>
+        <UsageCount Value="19"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="DocDessinSaveToFile.inc"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="355"/>
+        <CursorPos X="59" Y="380"/>
+        <UsageCount Value="17"/>
+        <Loaded Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="viewermainfrm.pas"/>
+        <HasResources Value="True"/>
+        <UnitName Value="ViewerMainFrm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="19" Y="4"/>
+        <UsageCount Value="9"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="frmMaintenanceDocument.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="48" Y="8"/>
+        <UsageCount Value="9"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\paszlib\src\ziputils.pas"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\paszlib\src\paszlib.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="60"/>
+        <CursorPos X="10" Y="85"/>
+        <UsageCount Value="10"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\paszlib\src\zbase.pas"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\zlib\src\zlib.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1042"/>
+        <CursorPos X="59" Y="1053"/>
+        <UsageCount Value="9"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\ctypes.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="19"/>
+        <CursorPos X="88" Y="22"/>
+        <UsageCount Value="9"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="unitlistessimpleswithgeneriques.pas"/>
+        <UnitName Value="UnitListesSimplesWithGeneriques"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="83"/>
+        <CursorPos X="105" Y="104"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\systemh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="393"/>
+        <CursorPos X="28" Y="406"/>
+        <UsageCount Value="14"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\paszlib\src\gzio.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="861"/>
+        <CursorPos X="49" Y="899"/>
+        <UsageCount Value="9"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="calldialogsghcavedraw.pas"/>
+        <UnitName Value="CallDialogsGHCaveDraw"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="571"/>
+        <CursorPos X="42" Y="608"/>
+        <UsageCount Value="15"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="dlghelpsystem.pas"/>
+        <ComponentName Value="frmHelpSystem"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlgHelpSystem"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="813"/>
+        <CursorPos X="93" Y="839"/>
+        <UsageCount Value="15"/>
+        <LoadedDesigner Value="True"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="mainfrmeditor.pas"/>
+        <UnitName Value="MainFrmEditor"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2881"/>
+        <CursorPos X="38" Y="2907"/>
+        <UsageCount Value="15"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="cdrlistegroupes.pas"/>
+        <UnitName Value="CdrListeGroupes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="49"/>
+        <CursorPos X="25" Y="73"/>
+        <UsageCount Value="14"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="mainfrmViewer.lfm"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit26>
+    </Units>
+    <JumpHistory Count="28" HistoryIndex="27">
+      <Position1>
+        <Filename Value="mainfrmViewer.pas"/>
+        <Caret Line="439" Column="15" TopLine="420"/>
+      </Position1>
+      <Position2>
+        <Filename Value="mainfrmViewer.pas"/>
+        <Caret Line="653" Column="49" TopLine="636"/>
+      </Position2>
+      <Position3>
+        <Filename Value="mainfrmViewer.pas"/>
+        <Caret Line="681" Column="18" TopLine="665"/>
+      </Position3>
+      <Position4>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="328" Column="14" TopLine="304"/>
+      </Position4>
+      <Position5>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2577" Column="4" TopLine="2555"/>
+      </Position5>
+      <Position6>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2566" Column="51" TopLine="2547"/>
+      </Position6>
+      <Position7>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="324" Column="14" TopLine="299"/>
+      </Position7>
+      <Position8>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2519" Column="43" TopLine="2495"/>
+      </Position8>
+      <Position9>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="433" Column="14" TopLine="410"/>
+      </Position9>
+      <Position10>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="430" Column="15" TopLine="412"/>
+      </Position10>
+      <Position11>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="431" Column="15" TopLine="414"/>
+      </Position11>
+      <Position12>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2867" Column="35" TopLine="2852"/>
+      </Position12>
+      <Position13>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="431" Column="14" TopLine="407"/>
+      </Position13>
+      <Position14>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2647" Column="5" TopLine="2635"/>
+      </Position14>
+      <Position15>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="432" Column="14" TopLine="408"/>
+      </Position15>
+      <Position16>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2698" Column="5" TopLine="2685"/>
+      </Position16>
+      <Position17>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="433" Column="14" TopLine="409"/>
+      </Position17>
+      <Position18>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2598" Column="3" TopLine="2586"/>
+      </Position18>
+      <Position19>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="434" Column="14" TopLine="410"/>
+      </Position19>
+      <Position20>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2750" Column="5" TopLine="2739"/>
+      </Position20>
+      <Position21>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="435" Column="14" TopLine="411"/>
+      </Position21>
+      <Position22>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2792" Column="5" TopLine="2781"/>
+      </Position22>
+      <Position23>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="436" Column="14" TopLine="412"/>
+      </Position23>
+      <Position24>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="2834" Column="3" TopLine="2823"/>
+      </Position24>
+      <Position25>
+        <Filename Value="UnitDocDessin.pas"/>
+        <Caret Line="430" Column="14" TopLine="413"/>
+      </Position25>
+      <Position26>
+        <Filename Value="mainfrmViewer.lfm"/>
+      </Position26>
+      <Position27>
+        <Filename Value="mainfrmViewer.pas"/>
+        <Caret Line="450" Column="55" TopLine="416"/>
+      </Position27>
+      <Position28>
+        <Filename Value="mainfrmViewer.pas"/>
+        <Caret Line="449" Column="55" TopLine="415"/>
+      </Position28>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode="default"/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches Count="2">
+      <Item1>
+        <Expression Value="outils"/>
+      </Item1>
+      <Item2>
+        <Expression Value="unit"/>
+      </Item2>
+    </Watches>
+  </Debugging>
+</CONFIG>

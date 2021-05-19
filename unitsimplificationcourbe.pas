@@ -62,8 +62,7 @@ var
   P0, P1, PB, U, W: TPoint2Df;
 begin
   // Is there anything to simplify?
-  if k <= j + 1 then exit;
-
+  if (k <= (j + 1)) then exit;
   P0 := Orig[j];
   P1 := Orig[k];
   U  := VecMinInt2D(P1, P0); // Segment vector
@@ -75,7 +74,6 @@ begin
   for i := j + 1 to k - 1 do begin
     W  := VecMinInt2D(Orig[i], P0);
     CW := DotProdInt2D(W, U);
-
     // Distance of point Orig[i] from segment
     if (CW <= 0) then
     begin

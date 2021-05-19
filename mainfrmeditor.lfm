@@ -1,7 +1,7 @@
 object MainWindow: TMainWindow
-  Left = 102
+  Left = 67
   Height = 892
-  Top = 113
+  Top = 272
   Width = 1537
   AllowDropFiles = True
   Caption = 'MainWindow'
@@ -699,15 +699,15 @@ object MainWindow: TMainWindow
               end
             end
           end
-          object PageControl1: TPageControl
+          object pagectrlScrapsImages: TPageControl
             Left = 0
             Height = 174
             Top = 0
             Width = 386
-            ActivePage = TabSheet3
-            TabIndex = 1
+            ActivePage = TabSheet2
+            TabIndex = 0
             TabOrder = 1
-            OnChange = PageControl1Change
+            OnChange = pagectrlScrapsImagesChange
             object TabSheet2: TTabSheet
               Caption = 'Scraps et polygones'
               ClientHeight = 145
@@ -789,26 +789,6 @@ object MainWindow: TMainWindow
                 Caption = 'Scrap'
                 ParentColor = False
               end
-              object btnAddcurrPolylinIdxToList: TButton
-                Left = 175
-                Height = 25
-                Top = 32
-                Width = 142
-                Anchors = [akTop, akRight]
-                Caption = 'btnAddcurrPolylinIdxToList'
-                OnClick = btnAddcurrPolylinIdxToListClick
-                TabOrder = 6
-              end
-              object btnAddcurrCourbeIdxToList: TButton
-                Left = 27
-                Height = 25
-                Top = 32
-                Width = 141
-                Anchors = [akTop, akRight]
-                Caption = 'Ajouter courbe courante'
-                OnClick = btnAddcurrCourbeIdxToListClick
-                TabOrder = 7
-              end
               object btnHelpEditFamillesCourbes: TButton
                 Left = 349
                 Height = 25
@@ -817,7 +797,7 @@ object MainWindow: TMainWindow
                 Anchors = [akTop, akRight]
                 Caption = '?'
                 OnClick = btnHelpEditFamillesCourbesClick
-                TabOrder = 8
+                TabOrder = 6
               end
               object btnActionsCourbe: TButton
                 Left = 268
@@ -827,7 +807,7 @@ object MainWindow: TMainWindow
                 Anchors = [akTop, akRight]
                 Caption = 'Actions ...'
                 OnClick = btnActionsCourbeClick
-                TabOrder = 9
+                TabOrder = 7
               end
               object Button1: TButton
                 Left = 241
@@ -837,7 +817,7 @@ object MainWindow: TMainWindow
                 Anchors = [akTop, akRight]
                 Caption = 'X'
                 OnClick = Button1Click
-                TabOrder = 10
+                TabOrder = 8
               end
               object editNumsCourbesPoly: TMemo
                 Left = 0
@@ -845,7 +825,8 @@ object MainWindow: TMainWindow
                 Top = 60
                 Width = 239
                 Anchors = [akTop, akLeft, akRight, akBottom]
-                TabOrder = 11
+                OnChange = editNumsCourbesPolyChange
+                TabOrder = 9
               end
               object Button2: TButton
                 Left = 319
@@ -855,7 +836,7 @@ object MainWindow: TMainWindow
                 Anchors = [akTop, akRight]
                 Caption = ';'
                 OnClick = Button2Click
-                TabOrder = 12
+                TabOrder = 10
               end
               object Button6: TButton
                 Left = 351
@@ -865,7 +846,16 @@ object MainWindow: TMainWindow
                 Anchors = [akTop, akRight]
                 Caption = '-'
                 OnClick = Button6Click
-                TabOrder = 13
+                TabOrder = 11
+              end
+              object btnAddIdxCurrObjectAtListForScraps: TButton
+                Left = 0
+                Height = 25
+                Top = 32
+                Width = 316
+                Anchors = [akTop, akLeft, akRight]
+                Caption = 'btnAddIdxCurrObjectAtListForScraps'
+                TabOrder = 12
               end
             end
             object TabSheet3: TTabSheet
@@ -945,77 +935,57 @@ object MainWindow: TMainWindow
         end
         object pnlPopUpActionsCourbes: TPanel
           Left = 228
-          Height = 218
+          Height = 194
           Top = 212
           Width = 154
           BevelOuter = bvLowered
-          ClientHeight = 218
+          ClientHeight = 194
           ClientWidth = 154
           TabOrder = 1
-          object btnGenererScrapdepuisTexte: TButton
-            Left = 4
-            Height = 24
-            Top = 21
-            Width = 146
-            Anchors = [akTop, akLeft, akRight]
-            Caption = 'Depuis courbes'
-            OnClick = btnGenererScrapdepuisTexteClick
-            TabOrder = 0
-          end
           object btnConcatCourbes: TButton
-            Left = 3
+            Left = 4
             Height = 25
-            Top = 93
+            Top = 141
             Width = 147
             Anchors = [akTop, akLeft, akRight]
             Caption = 'Courbes'
             OnClick = btnConcatCourbesClick
-            TabOrder = 1
-          end
-          object btnScrapFromPolyligne: TButton
-            Left = 4
-            Height = 25
-            Top = 44
-            Width = 146
-            Anchors = [akTop, akLeft, akRight]
-            Caption = 'Depuis polylignes'
-            OnClick = btnScrapFromPolyligneClick
-            TabOrder = 2
+            TabOrder = 0
           end
           object Button4: TButton
             Left = 3
             Height = 25
-            Top = 164
+            Top = 72
             Width = 147
             Anchors = [akTop, akLeft, akRight]
             Caption = 'Polygone par scrap'
             OnClick = Button4Click
-            TabOrder = 3
+            TabOrder = 1
           end
           object Button5: TButton
             Left = 3
             Height = 25
-            Top = 188
+            Top = 96
             Width = 147
             Anchors = [akTop, akLeft, akRight]
             Caption = 'Tout le groupe courant'
             OnClick = Button5Click
-            TabOrder = 4
+            TabOrder = 2
           end
           object Polylignes: TButton
-            Left = 3
+            Left = 4
             Height = 25
-            Top = 117
+            Top = 165
             Width = 147
             Anchors = [akTop, akLeft, akRight]
             Caption = 'Polylignes'
             OnClick = PolylignesClick
-            TabOrder = 5
+            TabOrder = 3
           end
           object Label2: TLabel
-            Left = 3
+            Left = 4
             Height = 16
-            Top = 76
+            Top = 124
             Width = 147
             Alignment = taCenter
             Anchors = [akTop, akLeft, akRight]
@@ -1051,9 +1021,9 @@ object MainWindow: TMainWindow
             ParentFont = False
           end
           object Label4: TLabel
-            Left = 3
+            Left = 4
             Height = 16
-            Top = 148
+            Top = 52
             Width = 147
             Alignment = taCenter
             Anchors = [akTop, akLeft, akRight]
@@ -1069,6 +1039,15 @@ object MainWindow: TMainWindow
             ParentColor = False
             ParentFont = False
           end
+          object btnGenererScrapDepuisPolytope: TButton
+            Left = 4
+            Height = 25
+            Top = 24
+            Width = 147
+            Anchors = [akTop, akLeft, akRight]
+            Caption = 'btnGenererScrapDepuisPolytope'
+            TabOrder = 4
+          end
         end
         object pnlBoutons: TPanel
           Left = 0
@@ -1081,7 +1060,7 @@ object MainWindow: TMainWindow
           ClientWidth = 405
           TabOrder = 2
           object SpeedButton1: TSpeedButton
-            Left = 4
+            Left = 2
             Height = 28
             Top = 4
             Width = 28
@@ -1499,8 +1478,8 @@ object MainWindow: TMainWindow
   end
   object actlstMenus: TActionList
     Images = imglstActionsMenus
-    left = 1044
-    top = 24
+    left = 1264
+    top = 240
     object acZoomAll: TAction
       Category = 'Affichage'
       Caption = 'acZoomAll'
@@ -1690,10 +1669,6 @@ object MainWindow: TMainWindow
     object acMergeLastPolygones: TAction
       Category = 'CombineObjects'
       Caption = 'acMergeLastPolygones'
-    end
-    object acGenererScrapDepuisCourbes: TAction
-      Category = 'Edition'
-      Caption = 'acGenererScrapDepuisCourbes'
     end
     object acGenererScrapDepuisGroupe: TAction
       Category = 'Groupes'
@@ -2005,8 +1980,8 @@ object MainWindow: TMainWindow
   end
   object MainMenu1: TMainMenu
     Images = imglstActionsMenus
-    left = 944
-    top = 12
+    left = 1196
+    top = 244
     object mnuFichier: TMenuItem
       Caption = '&Fichier'
       object MenuItem51: TMenuItem
@@ -2288,8 +2263,8 @@ object MainWindow: TMainWindow
     end
   end
   object imglstActionsMenus: TImageList
-    left = 1000
-    top = 12
+    left = 1308
+    top = 248
     Bitmap = {
       4C69350000001000000010000000C0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
       C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
@@ -3992,8 +3967,8 @@ object MainWindow: TMainWindow
   end
   object aclstBoutons: TActionList
     Images = imglstButtonsDessin
-    left = 1080
-    top = 12
+    left = 1140
+    top = 232
     object acSetModeTravailNone: TAction
       Category = 'ModesDeDtravail'
       Caption = 'acSetModeTravailNone'
@@ -4496,6 +4471,30 @@ object MainWindow: TMainWindow
       Caption = 'acTexteCotationExterieure'
       ImageIndex = 92
       OnExecute = acTexteCotationExterieureExecute
+    end
+    object acAddCurrCourbeAtListForScraps: TAction
+      Category = 'ListeForScraps'
+      Caption = 'acAddCurrCourbeAtListForScraps'
+      OnExecute = acAddCurrCourbeAtListForScrapsExecute
+    end
+    object acAddCurrPolylineAtListForScraps: TAction
+      Category = 'ListeForScraps'
+      Caption = 'acAddCurrPolylineAtListForScraps'
+      OnExecute = acAddCurrPolylineAtListForScrapsExecute
+    end
+    object acGenererScrapFromCourbes: TAction
+      Category = 'ListeForScraps'
+      Caption = 'acGenererScrapFromCourbes'
+      OnExecute = acGenererScrapFromCourbesExecute
+    end
+    object acGenererScrapFromPolylines: TAction
+      Category = 'ListeForScraps'
+      Caption = 'acGenererScrapFromPolylines'
+      OnExecute = acGenererScrapFromPolylinesExecute
+    end
+    object acDummy: TAction
+      Caption = '----'
+      OnExecute = acDummyExecute
     end
   end
   object imglstButtonsDessin: TImageList

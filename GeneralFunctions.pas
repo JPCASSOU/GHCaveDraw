@@ -1370,8 +1370,73 @@ begin
 end;
 
 function CreateSandTexture(tx, ty: integer): TBGRABitmap;
+const
+  blurSize     = 5;
+  tile_overlap = 4;
+var
+  QTileOverlap : LongInt;
+  WU      : TRect;
+  temp    : TBGRABitmap;
+  phong   : TPhongShading;
 begin
+  QTileOverlap := 4;
+  // GetPart crée également l'objet Temp
+  result := CreateCyclicPerlinNoiseMap(128, 128, 0.01, 0.01, 0.07000);
+  // Bumped procedural texture
+  WU := MakeTRect(-tile_overlap,-tile_overlap,tx+tile_overlap,ty+tile_overlap);
+  temp:= result.GetPart(WU) as TBGRABitmap;
+  BGRAReplace(temp,temp.FilterBlurRadial(blurSize,rbFast));
+  try
+    phong := TPhongShading.Create;
+    phong.LightSourceDistanceFactor := 0;
+    phong.LightDestFactor           := 0;
+    phong.LightSourceIntensity      := 150;
+    phong.LightPositionZ            := 80;
+    phong.LightColor := BGRA(255, 255, 255, 0);
 
+    phong.NegativeDiffusionFactor   := 0.30;
+    phong.SpecularIndex             := 20;
+    phong.AmbientFactor            := 0.400;
+    phong.Draw(Result, Temp, 20, -blurSize,-blurSize, BGRA(241, 207, 0, 255));
+  finally
+    FreeAndNil(phong);
+    FreeAndNil(temp);
+  end;
+end;
+
+function CreateClayTexture(tx,ty: integer): TBGRABitmap;
+const
+  blurSize     = 5;
+  tile_overlap = 4;
+var
+  QTileOverlap : LongInt;
+  WU      : TRect;
+  temp    : TBGRABitmap;
+  phong   : TPhongShading;
+begin
+  QTileOverlap := 4;
+  // GetPart crée également l'objet Temp
+  result := CreateCyclicPerlinNoiseMap(128, 128,  0.08, 0.08, 0.21000);
+  // Bumped procedural texture
+  WU := MakeTRect(-tile_overlap,-tile_overlap,tx+tile_overlap,ty+tile_overlap);
+  temp:= result.GetPart(WU) as TBGRABitmap;
+  BGRAReplace(temp,temp.FilterBlurRadial(blurSize,rbFast));
+  try
+    phong := TPhongShading.Create;
+    phong.LightSourceDistanceFactor := 0;
+    phong.LightDestFactor           := 0;
+    phong.LightSourceIntensity      := 150;
+    phong.LightPositionZ            := 80;
+    phong.LightColor := BGRA(255, 255, 255, 0);
+
+    phong.NegativeDiffusionFactor   := 0.30;
+    phong.SpecularIndex             := 20;
+    phong.AmbientFactor            := 0.400;
+    phong.Draw(Result, Temp, 20, -blurSize,-blurSize, BGRA(191, 132, 70, 255));
+  finally
+    FreeAndNil(phong);
+    FreeAndNil(temp);
+  end;
 end;
 
 // texture de pierre

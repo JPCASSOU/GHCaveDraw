@@ -7,8 +7,8 @@ object CdrTextEditor: TCdrTextEditor
   ClientHeight = 456
   ClientWidth = 587
   TabOrder = 0
-  DesignLeft = 647
-  DesignTop = 271
+  DesignLeft = 1076
+  DesignTop = 386
   object Panel1: TPanel
     Left = 0
     Height = 35

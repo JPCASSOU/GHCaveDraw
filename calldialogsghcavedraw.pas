@@ -64,8 +64,6 @@ uses
   // dialogue d'édition de style d'objets
   function EditerStylesObjets(const MyDocDessin: TDocumentDessin; const PF: TProcRefreshStyles): boolean;
 
-  // sélection des zooms
-  function GetPresetedZoom(const MyTableauZooms: TTableauZooms; const NoZoom: integer): integer;
   // garnir une combobox avec les types de symboles
   procedure RemplirComboTypesSymboles(const CB: TComboBox; const Idx: integer);
   procedure RemplirComboTypesCourbes(const CB: TComboBox; const Idx: integer);
@@ -159,16 +157,13 @@ var
   DLG: TdlgDisplaySuperGroupes;
 begin
   QTodo := 0;
-
   DLG := TdlgDisplaySuperGroupes.Create(Application);
   try
     if (DLG.Initialiser(MyDocDessin)) then DLG.ShowModal;
-
     DLG.Finaliser();
   finally
     DLG.Release;
   end;
-
 end;
 
 procedure DisplayObjetsOfThisGroupe(const MyDocDessin: TDocumentDessin; const QIdx: TIDGroupeEntites);
@@ -233,31 +228,6 @@ begin
   end;
 end;
 
-// sélection des zooms
-function GetPresetedZoom(const MyTableauZooms: TTableauZooms; const NoZoom: integer): integer;
-begin
-  Result := -1;
-  if (NoZoom = -1) then
-  begin
-    ShowMessage('Pas de niveau de zoom sauvegardé');
-    Exit;
-  end
-  else
-  begin
-    (*
-    with TdlgSelectZooms.Create(Application) do begin
-      try
-        TableauZooms := MyTableauZooms;
-        QInit;
-        ShowModal;
-        if (ModalResult = mrOK) then Result := lsbZooms.ItemIndex;
-      finally
-        Release;
-      end;
-    end;
-    //*)
-  end;
-end;
 // Question Oui-Non
 function QuestionOuiNon(const Msg: string): boolean;
 begin

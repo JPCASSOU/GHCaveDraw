@@ -544,10 +544,6 @@ type
     procedure VolatileTraceTexte(const Cnv: TCanvas; const XX, YY: Double; const T: string);
     procedure VolatileTraceVers(const Cnv: TCanvas; const XX, YY: Double; const Drawn: boolean);
     procedure VolatileTraceCercle(const Cnv: TCanvas; const XX, YY: Double; const R: integer);
-
-
-
-
   private
     FEditableDrawing     : boolean;
     FParamsVue2D         : TParamsVue2D;
@@ -558,7 +554,6 @@ type
     FModeSelectionEntites: TModeSelectionEntites;
     // modes de travail de la zone de dessin
     FModeTravailCanvas: TModeTravailCanvas;
-
     // sémaphore pour le dessin
     FRedessinInProcess: boolean;
     // nom de fichier image pour le dessin
@@ -1198,7 +1193,6 @@ begin
   SC := FDocumentDessin.GetScrap(FCurrentScrapIdx);
   if (EditerScrap(FDocumentDessin, SC)) then
   begin
-    //ShowMessage(SC.Nom);
     FDocumentDessin.PutScrap(FCurrentScrapIdx, SC);
   end;
   SetModeTravail(mtNONE);
@@ -1887,8 +1881,9 @@ begin
     lbModeTravail.Caption  := Format('%s (' + FORMAT_BASEPOINT + ')', [GetResourceString(rsMSG_READY), FCurrentBasePoint.IDStation]) ;
     SetMsgInLbMessage(errNONE, GetResourceString(rsMSG_READY));
     ResetViewLimits();
-    FRedessinInProcess := False;
+
     Vue.Invalidate; // RedessinEcran(false);
+    FRedessinInProcess := False;
     Result := True;
   //except
   //end;
@@ -2074,12 +2069,6 @@ begin
             PointIsInRectangle(MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y), R0);
 end;
 
-// dessin de courbes de Bézier
-// TODO: Procédure d'ajout d'un nouveau type d'objet: Ecrire ici le code de dessin
-
-
-
-
 // charger et initialiser fichier dessin
 function TCadreDessinBGRA.ChargerInitialiserDessin(const FichierDessin: TStringDirectoryFileName; const Editable: boolean): boolean;
 var
@@ -2119,8 +2108,6 @@ begin
     ActualiserCmbListeDesGroupes();
     // accrochage des popups
     if (FEditableDrawing) then self.PopupMenu := PopUpGeneral else self.PopupMenu := nil;
-
-
     FDoDraw := True;
     Result := True;
   except

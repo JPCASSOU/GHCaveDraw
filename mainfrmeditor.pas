@@ -165,6 +165,11 @@ type
     acDisplayPOI: TAction;
     acListerObjetsCurrGroupe: TAction;
     acGestionSupergroupes: TAction;
+    acAddCurrCourbeAtListForScraps: TAction;
+    acAddCurrPolylineAtListForScraps: TAction;
+    acGenererScrapFromCourbes: TAction;
+    acGenererScrapFromPolylines: TAction;
+    acDummy: TAction;
     acUndoDeleteImage: TAction;
     acUndoDeleteTexte: TAction;
     Action2: TAction;
@@ -195,7 +200,6 @@ type
     acMergeLastPolylines: TAction;
     acMergePolygones: TAction;
     acMergeLastPolygones: TAction;
-    acGenererScrapDepuisCourbes: TAction;
     acGenererScrapDepuisGroupe: TAction;
     acExportImgAllReseau: TAction;
     Action4: TAction;
@@ -229,7 +233,6 @@ type
     acZoomWindow: TAction;
     acZoomAll: TAction;
     actlstMenus: TActionList;
-    btnAddcurrCourbeIdxToList: TButton;
     btnDrwObjMode1: TSpeedButton;
     btnDrwObjMode10: TSpeedButton;
     btnDrwObjMode11: TSpeedButton;
@@ -298,7 +301,6 @@ type
     btnDrwTypeObjet7: TSpeedButton;
     btnDrwTypeObjet8: TSpeedButton;
     btnDrwTypeObjet9: TSpeedButton;
-    btnGenererScrapdepuisTexte: TButton;
     btnMergeObjects: TButton;
     btnPickScrap2: TButton;
     btnDeleteImage: TButton;
@@ -306,8 +308,6 @@ type
     btnActionsCourbe: TButton;
     btnConcatCourbes: TButton;
     btnPickScrap1: TButton;
-    btnScrapFromPolyligne: TButton;
-    btnAddcurrPolylinIdxToList: TButton;
     btnHelpEditFamillesCourbes: TButton;
     Button1: TButton;
     btnMoveUp: TButton;
@@ -317,6 +317,8 @@ type
     Button4: TButton;
     Button5: TButton;
     Button6: TButton;
+    btnAddIdxCurrObjectAtListForScraps: TButton;
+    btnGenererScrapDepuisPolytope: TButton;
     CadreDessinBGRA1: TCadreDessinBGRA;
     CadreListeGroupesForMainWindow1: TCadreListeGroupesForMainWindow;
 
@@ -431,7 +433,7 @@ type
     MenuItem9: TMenuItem;
     mnuAFFICHAGE: TMenuItem;
     mnuFichier: TMenuItem;
-    PageControl1: TPageControl;
+    pagectrlScrapsImages: TPageControl;
     PairSplitter1: TPairSplitter;
     PairSplitterSide1: TPairSplitterSide;
     PairSplitterSide2: TPairSplitterSide;
@@ -455,6 +457,8 @@ type
     StaticText2: TStaticText;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
+    procedure acAddCurrCourbeAtListForScrapsExecute(Sender: TObject);
+    procedure acAddCurrPolylineAtListForScrapsExecute(Sender: TObject);
     procedure acAproposExecute(Sender: TObject);
     procedure acCalcAllBoundingBoxesExecute(Sender: TObject);
     procedure acChargerCanevasTopoExecute(Sender: TObject);
@@ -480,6 +484,7 @@ type
     procedure acDeleteLastSymboleExecute(Sender: TObject);
     procedure acDeleteLastTexteExecute(Sender: TObject);
     procedure acDisplayPOIExecute(Sender: TObject);
+    procedure acDummyExecute(Sender: TObject);
     procedure acEditCourbeExecute(Sender: TObject);
     procedure acEditLigneExecute(Sender: TObject);
     procedure acEditObjetExecute(Sender: TObject);
@@ -498,6 +503,8 @@ type
     procedure acGenererDessinOOoDrawExecute(Sender: TObject);
     procedure acGenererGCDFromCurrGroupeExecute(Sender: TObject);
     procedure acGenererScrapDepuisGroupeExecute(Sender: TObject);
+    procedure acGenererScrapFromCourbesExecute(Sender: TObject);
+    procedure acGenererScrapFromPolylinesExecute(Sender: TObject);
     procedure acGestionSupergroupesExecute(Sender: TObject);
     procedure acLigneFlecheExecute(Sender: TObject);
     procedure acLigneFractureExecute(Sender: TObject);
@@ -613,12 +620,11 @@ type
     procedure acZoomPlusExecute(Sender: TObject);
     procedure acZoomWindowExecute(Sender: TObject);
     procedure btnActionsCourbeClick(Sender: TObject);
-    procedure btnAddcurrCourbeIdxToListClick(Sender: TObject);
-    procedure btnAddcurrPolylinIdxToListClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure CadreDessinBGRA1Click(Sender: TObject);
     procedure CoolBar1Change(Sender: TObject);
+    procedure editNumsCourbesPolyChange(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
     procedure lsbGroupesClick(Sender: TObject);
     procedure MenuItem84Click(Sender: TObject);
@@ -652,7 +658,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure lsbImagesClickCheck(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
-    procedure PageControl1Change(Sender: TObject);
+    procedure pagectrlScrapsImagesChange(Sender: TObject);
+    procedure VueClick(Sender: TObject);
 
   private
     // nom du fichier actuel
@@ -807,9 +814,6 @@ begin
   //*)
 end;
 
-
-
-
 procedure TMainWindow.PurgerBoutonsDrw;
 begin
   S666(btnDrwTypeObjet1, acNewNone);
@@ -922,8 +926,6 @@ begin
         S666(btnDrwObjMode20, acSymboleGrotteDeSurface);
         S666(btnDrwObjMode21, acSymboleGouffreDeSurface);
         S666(btnDrwObjMode22, acSymbolePointRemarquable);
-
-
       end;
     mtDRAW_TEXTE:
       begin
@@ -965,7 +967,6 @@ begin
   FD := CadreDessinBGRA1.GetDocDessin();
   FD.SetProcAfficherProgression(nil); //****
   Result := CadreDessinBGRA1.ChargerInitialiserDessin(MonDessin, True);
-
   chkCenterlinesInExternalFile.Checked := FD.CenterlinesIsIncludeFileGCP();
   if Not(Result) then
   begin
@@ -1008,6 +1009,9 @@ var
 begin
   AfficherMessage(Format('%s.InitialiserGHC()', [ClassName]));
   SetNomFichierActuel('SansNom.gcd');
+  btnAddIdxCurrObjectAtListForScraps.Action := acDummy;
+  btnGenererScrapDepuisPolytope.Action      := acDummy;
+  lbNatureObj.Caption := '';
   // armement des menus
   ShowMenus(False);
   CadreDessinBGRA1.MyProcGetInfoBasePoint := DispInfoBasePoint;
@@ -1383,6 +1387,14 @@ begin
   btnDeleteImage.Caption          := GetResourceString(rsBTN_DELETE_IMAGE);
   // mesure de distance
   S777(acMesureDistance           , rsBTN_MESURE_DISTANCE);
+  // pour l'ajout à la liste des contours de scraps
+  S777(acDummy                          ,  rsAC_DUMMY);
+  S777(acAddCurrCourbeAtListForScraps   ,  rsACN_ADD_CURR_CURVE_AT_SCRAPLISTE);
+  S777(acAddCurrPolylineAtListForScraps ,  rsACN_ADD_CURR_POLYLIN_AT_SCRAPLISTE);
+
+  S777(acGenererScrapFromCourbes        ,  rsACN_GENERER_SCRAP_FROM_COURBE);
+  S777(acGenererScrapFromPolylines      ,  rsACN_GENERER_SCRAP_FROM_POLYLINE);
+
   // activer OpenCaveMap
   S777(acOpenCaveMap, 'OpenCaveMap');
   {$IFDEF OPENCAVEMAP}
@@ -1495,7 +1507,10 @@ procedure TMainWindow.acSetModeTravailNoneExecute(Sender: TObject);
 begin
   CadreDessinBGRA1.SetModeTravail(mtNONE);
   PurgerBoutonsDrw();
-  btnMergeObjects.Action      := nil;
+  btnMergeObjects.Action           := acDummy;//nil;
+  btnAddIdxCurrObjectAtListForScraps.Action := acDummy;
+  btnGenererScrapDepuisPolytope.Action      := acDummy;
+  lbNatureObj.Caption := '';
 end;
 
 
@@ -1840,21 +1855,9 @@ begin
   pnlPopUpActionsCourbes.Visible := not pnlPopUpActionsCourbes.Visible;
 end;
 
-procedure TMainWindow.btnAddcurrCourbeIdxToListClick(Sender: TObject);
-var
-  EWE: Integer;
-begin
-  EWE := CadreDessinBGRA1.GetCurrCourbeIdx();
-  editNumsCourbesPoly.Text := editNumsCourbesPoly.Text + Format('%d', [EWE]);
-end;
 
-procedure TMainWindow.btnAddcurrPolylinIdxToListClick(Sender: TObject);
-var
-  EWE: Integer;
-begin
-  EWE := CadreDessinBGRA1.GetCurrPolylineIdx();
-  editNumsCourbesPoly.Text := editNumsCourbesPoly.Text + Format('%d', [EWE]);
-end;
+
+
 
 procedure TMainWindow.Button2Click(Sender: TObject);
 begin
@@ -2041,6 +2044,7 @@ var
   OutCourbe: TCourbe;
   IdxGrp: TIDGroupeEntites;
 begin
+  Exit;
   IdxGrp := CadreDessinBGRA1.GetCurrentGroupeIdx;
   GenererCourbeDepuisLstCourbes(editNumsCourbesPoly.Text, IdxGrp, OutCourbe);
 end;
@@ -2050,6 +2054,7 @@ var
   IdxGrp: TIDGroupeEntites;
   OutPolyligne: TPolyLigne;
 begin
+  Exit; // Fonction à déboguer
   IdxGrp := CadreDessinBGRA1.GetCurrentGroupeIdx;
   GenererPolyligneDepuisLstPolylignes(editNumsCourbesPoly.Text, IdxGrp, OutPolyligne);
 end;
@@ -2340,6 +2345,8 @@ end;
 
 
 
+
+
 procedure TMainWindow.acGenererScrapDepuisGroupeExecute(Sender: TObject);
 var
   ScrapOut: TScrap;
@@ -2352,6 +2359,24 @@ begin
 
   GenererUnScrapDepuisLesParoisDunGroupe(FD, WU, ScrapOut);
   CadreDessinBGRA1.RefreshVue();
+end;
+
+procedure TMainWindow.acGenererScrapFromCourbesExecute(Sender: TObject);
+var
+  ScrapOut: TScrap;
+  IdxGrp: TIDGroupeEntites;
+begin
+  IdxGrp := CadreDessinBGRA1.GetCurrentGroupeIdx;
+  GenererScrapDepuisStrListeIdxCourbes(editNumsCourbesPoly.Text, IdxGrp, ScrapOut);
+end;
+
+procedure TMainWindow.acGenererScrapFromPolylinesExecute(Sender: TObject);
+var
+  IdxGrp: TIDGroupeEntites;
+  ScrapOut: TScrap;
+begin
+  IdxGrp := CadreDessinBGRA1.GetCurrentGroupeIdx;
+  GenererScrapDepuisStrListeIdxPolylignes(editNumsCourbesPoly.Text, IdxGrp, ScrapOut);
 end;
 
 procedure TMainWindow.acGestionSupergroupesExecute(Sender: TObject);
@@ -2490,6 +2515,7 @@ end;
 procedure TMainWindow.acNewImageExecute(Sender: TObject);
 begin
   CadreDessinBGRA1.SetModeTravail(mtDRAW_IMAGE);
+  pagectrlScrapsImages.ActivePageIndex := 1;
 end;
 
 
@@ -2565,15 +2591,37 @@ procedure TMainWindow.SetPnlCombinerObjets(const M: TModeTravailCanvas;
                                            const Descro: string);
 begin
   CadreDessinBGRA1.SetModeTravail(M);
+  pagectrlScrapsImages.ActivePageIndex := 0;
   btnMergeObjects.Action        := qAcMerge;
   case M of
     mtSELECT_SCRAP     : lbNatureObj.Caption := 'Scrap';
     mtSELECT_POLYGONE  : lbNatureObj.Caption := 'Polygone';
-    mtSELECT_COURBE    : lbNatureObj.Caption := 'Courbe';
-    mtSELECT_POLYLIGNE : lbNatureObj.Caption := 'Polyligne';
+    //mtSELECT_COURBE    : lbNatureObj.Caption := 'Courbe';
+    //mtSELECT_POLYLIGNE : lbNatureObj.Caption := 'Polyligne';
   else
-    pass;//  pnlCombinerObjets.Enabled := false;
+    lbNatureObj.Caption := '';
+    //pass;//  pnlCombinerObjets.Enabled := false;
   end;
+  // actions pour l'ajout d'objets pour la génération des scraps
+  //TODO: Fusionner les bouttons [btnAddIdxCurrObjectAtList] et
+  case M of
+    mtSELECT_COURBE    :
+      begin
+        btnAddIdxCurrObjectAtListForScraps.Action := acAddCurrCourbeAtListForScraps;
+        btnGenererScrapDepuisPolytope.Action      := acGenererScrapFromCourbes;
+
+      end;
+    mtSELECT_POLYLIGNE :
+      begin
+        btnAddIdxCurrObjectAtListForScraps.Action := acAddCurrPolylineAtListForScraps;
+        btnGenererScrapDepuisPolytope.Action      := acGenererScrapFromPolylines;
+      end
+  else
+    btnAddIdxCurrObjectAtListForScraps.Action := acDummy;
+    btnGenererScrapDepuisPolytope.Action      := acDummy;
+  end;
+  //*)
+
 end;
 
 procedure TMainWindow.acEditScrapExecute(Sender: TObject);
@@ -2771,6 +2819,11 @@ begin
   DisplayPOI(FD);
 end;
 
+procedure TMainWindow.acDummyExecute(Sender: TObject);
+begin
+  pass;
+end;
+
 procedure TMainWindow.acCourbeParoisCacheesExecute(Sender: TObject);
 begin
    CadreDessinBGRA1.SetCurrentNatureCourbe(nocPAROIS_CACHEE);
@@ -2812,6 +2865,22 @@ end;
 procedure TMainWindow.acAproposExecute(Sender: TObject);
 begin
   DisplayHelpSystem(CadreDessinBGRA1.GetDocDessin, '');
+end;
+
+procedure TMainWindow.acAddCurrCourbeAtListForScrapsExecute(Sender: TObject);
+var
+  EWE: Integer;
+begin
+  EWE := CadreDessinBGRA1.GetCurrCourbeIdx();
+  editNumsCourbesPoly.Text := editNumsCourbesPoly.Text + Format('%d', [EWE]);
+end;
+
+procedure TMainWindow.acAddCurrPolylineAtListForScrapsExecute(Sender: TObject);
+var
+  EWE: Integer;
+begin
+  EWE := CadreDessinBGRA1.GetCurrPolylineIdx();
+  editNumsCourbesPoly.Text := editNumsCourbesPoly.Text + Format('%d', [EWE]);
 end;
 
 procedure TMainWindow.acCalcAllBoundingBoxesExecute(Sender: TObject);
@@ -2973,6 +3042,11 @@ begin
 end;
 
 procedure TMainWindow.CoolBar1Change(Sender: TObject);
+begin
+
+end;
+
+procedure TMainWindow.editNumsCourbesPolyChange(Sender: TObject);
 begin
 
 end;
@@ -3736,10 +3810,16 @@ begin
   end;
 end;
 
-procedure TMainWindow.PageControl1Change(Sender: TObject);
+procedure TMainWindow.pagectrlScrapsImagesChange(Sender: TObject);
 begin
-  //pnlPopUpActionsCourbes.Visible := (1 = PageControl1.ActivePageIndex);
+  //pnlPopUpActionsCourbes.Visible := (1 = pagectrlScrapsImages.ActivePageIndex);
 end;
+
+procedure TMainWindow.VueClick(Sender: TObject);
+begin
+
+end;
+
 procedure TMainWindow.DisplayCurrentSuperGroupe(const SG: TSuperGroupe);
 begin
   lbSuperGroupeName.Caption := SG.NomSuperGroupe;

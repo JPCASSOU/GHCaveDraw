@@ -2,9 +2,8 @@ unit UnitMessages_fr;
 {$codepage UTF8}
 
 interface
-const
-  ListeStylesCourbes: array[0 .. 11]
-                      of string = ('Défaut', // nocDEFAULT                      //rsBTN_COURBE_NONE               = 'Défaut';
+const ListeStylesCourbes: array[0 .. 11] of string = (
+                                   'Défaut', // nocDEFAULT                      //rsBTN_COURBE_NONE               = 'Défaut';
                                    'Paroi', // nocPAROI                         //rsBTN_COURBE_PAROI              = 'Paroi';
                                    'Paroi cachée', // nocPAROIS_CACHEE          //rsBTN_COURBE_PAROI_CACHEE       = 'Paroi cachée';
                                    'Ecoulement', // nocECOULEMENT               //rsBTN_COURBE_ECOULEMENT         = 'Ecoulement';
@@ -18,9 +17,8 @@ const
                                    'Paroi éclatée' // nocPAROI_FRACASSEE
                                   );
 
-const
-  ListeStylesLignes: array [0 .. 5]
-                     of string = ('Défaut',  // nolDEFAULT                             rsBTN_LIGNE_NONE
+const ListeStylesLignes: array [0 .. 5] of string = (
+                                  'Défaut',  // nolDEFAULT                             rsBTN_LIGNE_NONE
                                   'Flèches', // nolFLECHE                              rsBTN_LIGNE_FLECHE
                                   'Fractures',  // nolFRACTURE                         rsBTN_LIGNE_FRACTURES
                                   'Lignes de pentes',  // nolPENTE                      rsBTN_LIGNE_PENTE
@@ -29,9 +27,8 @@ const
                                   );
 
 
-const
-  ListeStylesPolygones: array [0 .. 13]
-                      of string = ('Défaut',         //  nopDEFAULT
+const ListeStylesPolygones: array [0 .. 13] of string = (
+                                   'Défaut',         //  nopDEFAULT
                                    'Lac',            //  nopLAC                 rsBTN_POLYGONE_LAC
                                    'Argile',         //  nopARGILE              rsBTN_POLYGONE_ARGILE
                                    'Sable',          //  nopSABLE               rsBTN_POLYGONE_SABLE
@@ -47,12 +44,8 @@ const
                                    'Masque'
                                    );
 
-
-
-
-const
-  ListeStylesTextes: array [0 .. 7]
-                     of string = ('Débogage (non imprimé)',    // notDEBUG              rsBTN_TEXTE_DEBUG
+const ListeStylesTextes: array [0 .. 7] of string = (
+                                  'Débogage (non imprimé)',    // notDEBUG              rsBTN_TEXTE_DEBUG
                                   'Titres',                    // notTITRES             rsBTN_TEXTE_TITRES
                                   'Sous-titres',               // notSOUS_TITRES        rsBTN_TEXTE_SOUS_TITRES
                                   'Cotation',                  // notCOTATION           rsBTN_TEXTE_COTATION
@@ -61,12 +54,8 @@ const
                                   'Lieu-dit',                  // notLIEU_DIT           rsBTN_TEXTE_LIEU_DIT
                                   'Cotation extérieure'
                                   );
-
-
-
-const
-  ListeNatureSymboles: array [0 .. 21]
-                       of string = ('Photo',                        // nosPHOTO                          nosPHOTO
+const ListeNatureSymboles: array [0 .. 21] of string = (
+                                    'Photo',                        // nosPHOTO                          nosPHOTO
                                     'Entrée',                       // nosENTREE                         nosENTREE
                                     'Point topo',                   // nosPOINT_TOPO                     nosPOINT_TOPO
                                     'Point fixe',                   // nosPOINT_FIXE                     nosPOINT_FIXE
@@ -89,9 +78,8 @@ const
                                     'Grotte isolée',                // nosGROTTE_SURFACE,
                                     'Point remarquable'             // nosPOINT_REMARQUABLE
                                     );
-const
-  ListeTypesBarbules: array[0 .. 4]
-                      of string = ('Aucune',
+const ListeTypesBarbules: array[0 .. 4] of string = (
+                                   'Aucune',
                                    'Ressaut ou puits',
                                    'Surplomb',
                                    'Chenal de voûte',
@@ -574,7 +562,7 @@ resourcestring
   rsPRN_NOPRINTER                            = 'Pas d''imprimante installée';
   rsPRN_TBPRINTER                            = 'Imprimante';
   rsPRN_TBDRAW                               = 'Dessin';
-  rsPRN_TITLE                                = 'Centre dimpression [%s]';
+  rsPRN_TITLE                                = 'Centre d''impression [%s]';
   rsPRN_CHKPOLY                              = 'Polygonales';
   rsPRN_CHKFILL                              = 'Remplissage';
   rsPRN_CHKWALLS                             = 'Parois';
@@ -610,20 +598,11 @@ resourcestring
   rsREGLE                                    = 'Règle';
   rsIDSTATION_NOT_FOUND                      = 'Station "%s" introuvable';
 
-(*
-const
-  ListeStylesCourbes: array [0 .. 9]
-                      of string = (rsBTN_COURBE_NONE,
-                                   rsBTN_COURBE_PAROI,
-                                   rsBTN_COURBE_PAROI_CACHEE,
-                                   rsBTN_COURBE_ECOULEMENT,
-                                   rsBTN_COURBE_LIGNES_PENTE,
-                                   rsBTN_COURBE_RESSAUT,
-                                   rsBTN_COURBE_SURPLOMB,
-                                   rsBTN_COURBE_CHENAL,
-                                   rsBTN_COURBE_MINI_RESSAUT,
-                                   rsBTN_COURBE_PAROI_INCERTAINE);
-//*)
+  rsAC_DUMMY                                 = '---';
+  rsACN_ADD_CURR_CURVE_AT_SCRAPLISTE         = 'Ajouter courbe courante';
+  rsACN_ADD_CURR_POLYLIN_AT_SCRAPLISTE       = 'Ajouter polyligne courante';
+  rsACN_GENERER_SCRAP_FROM_COURBE            = 'Depuis courbes';
+  rsACN_GENERER_SCRAP_FROM_POLYLINE          = 'Depuis polylignes';
 implementation
 
 end.

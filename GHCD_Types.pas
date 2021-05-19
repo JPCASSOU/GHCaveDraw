@@ -89,7 +89,6 @@ type TZoomParameters = record
   X2      : double;
   Y2      : double;
 end;
-type TTableauZooms = TStrings; ////array[0..MAX_ARRAY_ZOOMS] of TZoomParameters;
 
 // rectangle 2D
 type TRect2Df = record

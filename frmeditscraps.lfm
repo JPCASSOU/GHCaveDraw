@@ -165,4 +165,13 @@ object dlgEditScrap: TdlgEditScrap
       end
     end
   end
+  object btnColorScrapFromGroupe: TButton
+    Left = 264
+    Height = 25
+    Top = 40
+    Width = 168
+    Caption = 'btnColorScrapFromGroupe'
+    OnClick = btnColorScrapFromGroupeClick
+    TabOrder = 7
+  end
 end
