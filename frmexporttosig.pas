@@ -25,6 +25,8 @@ type
     btnColorSilhouette: TColorButton;
     btnDoExport: TButton;
     btnChooseSystemeEPSG: TButton;
+    chkgbxFormatsOutput: TCheckGroup;
+    chkWithMetadata: TCheckBox;
     chkWithPOI: TCheckBox;
     chkWithCenterlines: TCheckBox;
     chkWithEntrances: TCheckBox;
@@ -44,19 +46,16 @@ type
     Panel2: TPanel;
     pnlProgression: TPanel;
     ProgressBar1: TProgressBar;
-    rgbxFormatsOutput: TRadioGroup;
     StaticText1: TStaticText;
     StaticText2: TStaticText;
     trkBarTransparence: TTrackBar;
     procedure btnChooseSystemeEPSGClick(Sender: TObject);
     procedure btnDoExportClick(Sender: TObject);
-    procedure rgbxFormatsOutputClick(Sender: TObject);
   private
     { private declarations }
     FMyDocDessin: TDocumentDessin;
     //FConversionSystem: TConversionSysteme; // le convertisseur est contenu dans TDocumentDessin
     procedure AfficherProgression(const Etape: string; const Min, Max, Position: integer);
-    procedure SetFileFilter(const F, D: string);
     procedure ListerCoordsSystems();
   public
     { public declarations }
@@ -90,30 +89,29 @@ begin
   if (chkWithCenterlines.Checked) then WithExportGIS := WithExportGIS + [gisWITH_CENTERLINES];
   if (chkWithEntrances.Checked)   then WithExportGIS := WithExportGIS + [gisWITH_ENTRANCES];
   if (chkWithPOI.Checked)         then WithExportGIS := WithExportGIS + [gisWITH_POI];
+  if (chkWithMetadata.Checked)    then WithExportGIS := WithExportGIS + [gisWITH_METADATA];
   FMyDocDessin.SetProcAfficherProgression(self.AfficherProgression);
-  case rgbxFormatsOutput.ItemIndex of
-    0: FMyDocDessin.ExporterScrapsToKML(editFileName.FileName,
-                                         chkDoUseDefaultStyle.Checked,
-                                         btnColorSilhouette.ButtonColor,
-                                         255 - trkBarTransparence.Position,
-                                         WithExportGIS);
-
-    1: FMyDocDessin.GenererCarteLeaflet(editFileName.FileName,
+  if (chkgbxFormatsOutput.Checked[0]) then
+    FMyDocDessin.GenererCarteLeaflet(ChangeFileExt(editFileName.FileName, '.htm'),
                                              editMapWidth.AsInteger, editMapHeight.AsInteger,
                                              chkDoUseDefaultStyle.Checked,
                                              btnColorSilhouette.ButtonColor,
                                              255 - trkBarTransparence.Position,
                                              WithExportGIS);
-    2: FMyDocDessin.ExporterScrapsToGeoJSON(editFileName.FileName,
+  if (chkgbxFormatsOutput.Checked[1]) then
+    FMyDocDessin.ExporterScrapsToKML(ChangeFileExt(editFileName.FileName, '.kml'),
+                                     chkDoUseDefaultStyle.Checked,
+                                     btnColorSilhouette.ButtonColor,
+                                     255 - trkBarTransparence.Position,
+                                     WithExportGIS);
+  if (chkgbxFormatsOutput.Checked[2]) then
+    FMyDocDessin.ExporterScrapsToGeoJSON(ChangeFileExt(editFileName.FileName, '.json'),
                                             chkDoUseDefaultStyle.Checked,
                                             btnColorSilhouette.ButtonColor,
                                             255 - trkBarTransparence.Position,
                                             WithExportGIS);
-
-  else
-    ;
-  end;
   FMyDocDessin.SetProcAfficherProgression(nil);
+  ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
   pnlProgression.Visible := False;
 end;
 
@@ -160,12 +158,14 @@ begin
     editMapHeight.AsInteger := Screen.Height - 200;
 
 
-    editFileName.FileName      := 'scraps.kml';
+    editFileName.FileName      := 'scraps';
     editFileName.DialogOptions := editFileName.DialogOptions + [ofOverwritePrompt];
     editFileName.InitialDir    := GetGHCaveDrawDirectory();
-    SetFileFilter('Fichier Google Earth', 'kml');
+    editFileName.Filter        := 'Map files|*.htm;*.kml;*.json';
+    chkgbxFormatsOutput.Checked[0] := True;
+    chkgbxFormatsOutput.Checked[1] := True;
+    chkgbxFormatsOutput.Checked[2] := True;
 
-    rgbxFormatsOutput.ItemIndex    := 0;
     chkDoUseDefaultStyle.Checked   := True;
     btnColorSilhouette.ButtonColor := clBlue;
     trkBarTransparence.Position    := 64;
@@ -174,21 +174,9 @@ begin
   end;
 end;
 
-procedure TdlgExportSIG.rgbxFormatsOutputClick(Sender: TObject);
-begin
-  case rgbxFormatsOutput.ItemIndex of
-    0: SetFileFilter('Fichier Google Earth', 'kml');
-    1: SetFileFilter('Document-programme Leaflet', 'htm');
-    2: SetFileFilter('Fichier GeoJSON', 'json');
-  end;
-end;
 
-procedure TdlgExportSIG.SetFileFilter(const F, D: string);
-begin
-  editFileName.Filter := Format('%s (*.%s)|*.%s', [F, D, D]);
-  editFileName.DefaultExt := '.' + D;
-  editFileName.FileName := ChangeFileExt(editFileName.FileName, '.' + D);
-end;
+
+
 
 procedure TdlgExportSIG.ListerCoordsSystems();
 var

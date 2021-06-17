@@ -267,13 +267,12 @@ function TdlgTImageObject.GetCoordsGCS(const QX, QY: integer): TPoint2Df;
 var
   dx, dy: Double;
 begin
-  Result := MakeTPoint2Df(-1.00, -1.00);
+  Result.setFrom(-1.00, -1.00);
   if (FCalibrationIsOK) then
   begin
     dx := FC2.X - FC1.X;
     dy := FC2.Y - FC1.Y;
-    Result.X := FC1.X + dx * QX / pbxImage.Width;
-    Result.Y := FC1.Y + dy * QY / pbxImage.Height;
+    Result.setFrom(FC1.X + dx * QX / pbxImage.Width, FC1.Y + dy * QY / pbxImage.Height);
   end;
 end;
 
@@ -427,8 +426,8 @@ begin
   AfficherMessage(Format('%s.CalculerLimitesReellesImage:', [self.ClassName]));
   Result := false;
   try
-    P1 := MakeTPoint2Df(editXReelPT1.Value , editYReelPT1.Value);
-    P2 := MakeTPoint2Df(editXReelPT2.Value , editYReelPT2.Value);
+    P1.setFrom(editXReelPT1.Value , editYReelPT1.Value);
+    P2.setFrom(editXReelPT2.Value , editYReelPT2.Value);
     AfficherMessage(Format('-- %d, %d -> %d, %d', [FCalibrationPT1.X, FCalibrationPT1.Y,
                                                    FCalibrationPT2.X, FCalibrationPT2.X]));
 
@@ -444,13 +443,13 @@ begin
     rx := dx / ix;
     ry := dy / iy;
 
-    FC1 := MakeTPoint2Df(P1.X - FCalibrationPT1.X * rx,
-                        P1.Y + (FMyTmpBuff.Height - FCalibrationPT1.Y) * ry);
-    FC2 := MakeTPoint2Df(P1.X + (FMyTmpBuff.Width  - FCalibrationPT1.X) * rx,
-                        P1.Y - FCalibrationPT1.Y * ry);
+    FC1.setFrom(P1.X - FCalibrationPT1.X * rx,
+                P1.Y + (FMyTmpBuff.Height - FCalibrationPT1.Y) * ry);
+    FC2.setFrom(P1.X + (FMyTmpBuff.Width  - FCalibrationPT1.X) * rx,
+                P1.Y - FCalibrationPT1.Y * ry);
 
     // position réelle des coins de l'image
-    FImageObject.PositionCoinsImage := MakeTRect2Df(FC1.X, FC1.Y, FC2.X, FC2.Y);
+    FImageObject.PositionCoinsImage.setFrom(FC1, FC2);
     // image activée par défaut
     FImageObject.Displayed := True;
     // opacité

@@ -821,12 +821,7 @@ begin
   Result.NomSuperGroupe := Trim(EWE[2]);
   Result.Displayed := (StrToIntDef(EWE[3], 1) = 1);
   //Result.Locked    := (StrToIntDef(EWE[4], 0) = 0);
-  (*
-  Result.Decalage  := MakeTPoint3Df(ConvertirEnNombreReel(EWE[5], 0.00),
-                                    ConvertirEnNombreReel(EWE[6], 0.00),
-                                    ConvertirEnNombreReel(EWE[7], 0.00));  //*)
-  Result.ListeGroupes := StrToArrayOfIdxGroupes(EWE[8]);
-  //AfficherMessage(Result.NomSuperGroupe);
+   Result.ListeGroupes := StrToArrayOfIdxGroupes(EWE[8]);
 end;
 function TDocumentDessin.ExtractGroupeFromStr(const S: string): TGroupeEntites;
 var
@@ -841,9 +836,9 @@ begin
   Result.IDGroupeEntites := StrToIntDef(EWE[1], 0);
   Result.NomGroupe     := Trim(EWE[2]);
   Result.CouleurGroupe := TColor(StrToIntDef(EWE[3], 0));
-  Result.Decalage      := MakeTPoint3Df(ConvertirEnNombreReel(EWE[4], 0.00),
-                                        ConvertirEnNombreReel(EWE[5], 0.00),
-                                        ConvertirEnNombreReel(EWE[6], 0.00));
+  Result.Decalage.setFrom(ConvertirEnNombreReel(EWE[4], 0.00),
+                          ConvertirEnNombreReel(EWE[5], 0.00),
+                          ConvertirEnNombreReel(EWE[6], 0.00));
 
   //Result.IDSuperGroupe := 0; // StrToIntDef(EWE[7], 0);
   Result.Visible       := True;
@@ -887,12 +882,12 @@ begin
   Result.IDStationP1 := StrToInt64Def(EWE[1], -1);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.OffsetP1    := MakeTPoint3Df(ConvertirEnNombreReel(EWE[2], 0.00),
-                                      ConvertirEnNombreReel(EWE[3], 0.00),
-                                      ConvertirEnNombreReel(EWE[4], 0.00));
-  Result.TangP1      := MakeTPoint3Df(ConvertirEnNombreReel(EWE[5], 0.00),
-                                      ConvertirEnNombreReel(EWE[6], 0.00),
-                                      0.00);
+  Result.OffsetP1.setFrom(ConvertirEnNombreReel(EWE[2], 0.00),
+                          ConvertirEnNombreReel(EWE[3], 0.00),
+                          ConvertirEnNombreReel(EWE[4], 0.00));
+  Result.TangP1.setFrom(  ConvertirEnNombreReel(EWE[5], 0.00),
+                          ConvertirEnNombreReel(EWE[6], 0.00),
+                          0.00);
   // argument 7 zappé
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   Result.IDStationP2 := Trim(EWE[8]);
@@ -900,12 +895,12 @@ begin
   Result.IDStationP2 := StrToInt64Def(EWE[8], -1);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.OffsetP2    := MakeTPoint3Df(ConvertirEnNombreReel(EWE[9], 0.00),
-                                      ConvertirEnNombreReel(EWE[10], 0.00),
-                                      ConvertirEnNombreReel(EWE[11], 0.00));
-  Result.TangP2      := MakeTPoint3Df(ConvertirEnNombreReel(EWE[12], 0.00),
-                                      ConvertirEnNombreReel(EWE[13], 0.00),
-                                      0.00);
+  Result.OffsetP2.setFrom(ConvertirEnNombreReel(EWE[9], 0.00),
+                          ConvertirEnNombreReel(EWE[10], 0.00),
+                          ConvertirEnNombreReel(EWE[11], 0.00));
+  Result.TangP2.setFrom(  ConvertirEnNombreReel(EWE[12], 0.00),
+                          ConvertirEnNombreReel(EWE[13], 0.00),
+                          0.00);
 end;
 function TDocumentDessin.ExtractVertexPolyFromStr(const S: string): TVertexPolygon;
 var
@@ -918,9 +913,9 @@ begin
   Result.IDStation := StrToInt64Def(EWE[1], -1);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.Offset    := MakeTPoint3Df(ConvertirEnNombreReel(EWE[2], 0.00),
-                                    ConvertirEnNombreReel(EWE[3], 0.00),
-                                    ConvertirEnNombreReel(EWE[4], 0.00));
+  Result.Offset.setFrom(ConvertirEnNombreReel(EWE[2], 0.00),
+                        ConvertirEnNombreReel(EWE[3], 0.00),
+                        ConvertirEnNombreReel(EWE[4], 0.00));
 end;
 function TDocumentDessin.ExtractSimpleLineFromStr(const NoLigneFichier: integer; const S: string): TSimpleLigne;
 var
@@ -935,19 +930,18 @@ begin
   {$ELSE}
   Result.IDBaseStExt1  := StrToIntDef(EWE[4], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-
-  Result.OffsetExtr1   := MakeTPoint3Df(ConvertirEnNombreReel(EWE[5], 0.00),
-                                        ConvertirEnNombreReel(EWE[6], 0.00),
-                                        ConvertirEnNombreReel(EWE[7], 0.00));
+  Result.OffsetExtr1.setFrom(ConvertirEnNombreReel(EWE[5], 0.00),
+                             ConvertirEnNombreReel(EWE[6], 0.00),
+                             ConvertirEnNombreReel(EWE[7], 0.00));
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   Result.IDBaseStExt2 := EWE[8];
   {$ELSE}
   Result.IDBaseStExt2  := StrToIntDef(EWE[8], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.OffsetExtr2   := MakeTPoint3Df(ConvertirEnNombreReel(EWE[9], 0.00),
-                                        ConvertirEnNombreReel(EWE[10], 0.00),
-                                        ConvertirEnNombreReel(EWE[11], 0.00));
+  Result.OffsetExtr2.setFrom(ConvertirEnNombreReel(EWE[9], 0.00),
+                             ConvertirEnNombreReel(EWE[10], 0.00),
+                             ConvertirEnNombreReel(EWE[11], 0.00));
   Result.MarkToDelete  := false;
   Result.LastModified  := StrToDateTimeDef(EWE[12], Now());
   WU := Ord(Result.IDStyleLigne);
@@ -968,9 +962,9 @@ begin
   Result.IDBaseStation := StrToInt64Def(EWE[5], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.Offset        := MakeTPoint3Df(ConvertirEnNombreReel(EWE[6], 0.00),
-                                        ConvertirEnNombreReel(EWE[7], 0.00),
-                                        ConvertirEnNombreReel(EWE[8], 0.00));
+  Result.Offset.setFrom(ConvertirEnNombreReel(EWE[6], 0.00),
+                        ConvertirEnNombreReel(EWE[7], 0.00),
+                        ConvertirEnNombreReel(EWE[8], 0.00));
   Result.AngleRot      := ConvertirEnNombreReel(EWE[9], 0.00);
   Result.ScaleX        := ConvertirEnNombreReel(EWE[10], 1.00);
   Result.ScaleY        := ConvertirEnNombreReel(EWE[11], 1.00);
@@ -996,9 +990,9 @@ begin
   Result.IDBaseSt      := StrToInt64Def(EWE[4], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.Offset        := MakeTPoint3Df(ConvertirEnNombreReel(EWE[5], 0.00),
-                                        ConvertirEnNombreReel(EWE[6], 0.00),
-                                        ConvertirEnNombreReel(EWE[7], 0.00));
+  Result.Offset.setFrom(ConvertirEnNombreReel(EWE[5], 0.00),
+                        ConvertirEnNombreReel(EWE[6], 0.00),
+                        ConvertirEnNombreReel(EWE[7], 0.00));
   Result.Alignment     := StrToIntDef(EWE[8], 0);
   Result.MaxLength     := StrToIntDef(EWE[9], -1);
   Result.Text          := Trim(EWE[10]);
@@ -1022,8 +1016,8 @@ var
   BP: TBaseStation;
 begin
   AfficherMessage(Format('%s.SetMiniEtMaxi()', [ClassName]));
-  FCoordsMini := MakeTPoint3Df(+INFINITE, +INFINITE, +INFINITE);
-  FCoordsMaxi := MakeTPoint3Df(-INFINITE, -INFINITE, -INFINITE);
+  FCoordsMini.setFrom( INFINITE,  INFINITE,  INFINITE);
+  FCoordsMaxi.setFrom(-INFINITE, -INFINITE, -INFINITE);
   for i:= 0 to FCenterLines.GetNbBasePoints - 1 do
   begin
     BP := FCenterLines.GetBasePoint(i);
@@ -1394,17 +1388,14 @@ var
 begin
   errCode := 0;
   Result := P;
-  Result.BoundingBox.C1 := MakeTPoint2Df( INFINITE,  INFINITE);
-  Result.BoundingBox.C2 := MakeTPoint2Df(-INFINITE, -INFINITE);
+
+  Result.BoundingBox.Reset();
   for i := 0 to High(P.Sommets) do
   begin
     V  := P.Sommets[i];
     GetCoordsGCSWithoutGroupe(V.IDStation, V.Offset, PT, ErrCode);
     if (ErrCode = -1) then Exit;
-    if (PT.X < Result.BoundingBox.C1.X) then Result.BoundingBox.C1.X := PT.X;
-    if (PT.Y < Result.BoundingBox.C1.Y) then Result.BoundingBox.C1.Y := PT.Y;
-    if (PT.X > Result.BoundingBox.C2.X) then Result.BoundingBox.C2.X := PT.X;
-    if (PT.Y > Result.BoundingBox.C2.Y) then Result.BoundingBox.C2.Y := PT.Y;
+    result.BoundingBox.updateFromPoint(PT);
   end;
 end;
 procedure TDocumentDessin.DeleteScrap(const Idx: integer);
@@ -1548,8 +1539,7 @@ var
 begin
   Result := Grp;
   // box initiale = carré unitaire au centre du dessin
-  Result.BoundingBox.C1 := MakeTPoint2Df( INFINITE,  INFINITE);
-  Result.BoundingBox.C2 := MakeTPoint2Df(-INFINITE, -INFINITE);
+  Result.BoundingBox.Reset();
   // parcours des tables
   NbObj := GetNbScraps();
   if (NbObj > 0) then begin // scraps
@@ -1747,14 +1737,14 @@ var
   begin
     GetCoordsGCSWithoutGroupe(A.IDStationP1, A.OffsetP1, P0, ErrCode);
     if (ErrCode = -1) then Exit;
-    P1 := MakeTPoint2Df(P0.X + A.TangP1.X, P0.Y + A.TangP1.Y);
+    P1.setFrom(P0.X + A.TangP1.X, P0.Y + A.TangP1.Y);
     GetCoordsGCSWithoutGroupe(A.IDStationP2, A.OffsetP2, P3, ErrCode);
     if (ErrCode = -1) then Exit;
-    P2 := MakeTPoint2Df(P3.X + A.TangP2.X, P3.Y + A.TangP2.Y);
+    P2.setFrom(P3.X + A.TangP2.X, P3.Y + A.TangP2.Y);
     Bezier := CalcBezierCurve(P0, P1, P2, P3, 20);
     for s := 0 to High(Bezier) do
     begin
-      PT := MakeTPoint2Df(Bezier[s].X, Bezier[s].Y);
+      PT.setFrom(Bezier[s].X, Bezier[s].Y);
       if (Pt.X > Result.BoundingBox.C2.X) then Result.BoundingBox.C2.X := PT.X;
       if (Pt.Y > Result.BoundingBox.C2.Y) then Result.BoundingBox.C2.Y := PT.Y;
       if (Pt.X < Result.BoundingBox.C1.X) then Result.BoundingBox.C1.X := PT.X;
@@ -1763,8 +1753,8 @@ var
   end;
 begin
   Result := C;
-  Result.BoundingBox.C1 := MakeTPoint2Df( INFINITE,  INFINITE);
-  Result.BoundingBox.C2 := MakeTPoint2Df(-INFINITE, -INFINITE);
+  Result.BoundingBox.C1.setFrom( INFINITE,  INFINITE);
+  Result.BoundingBox.C2.setFrom(-INFINITE, -INFINITE);
   for i := 0 to High(C.Arcs) do SetBoundingBox(C.Arcs[i]);
 end;
 // convertir en tableau de points 2D une courbe de bézier au format GHCD
@@ -1784,7 +1774,7 @@ begin
   for i := 0 to Nb do
   begin
     if (not GetBasePointByIndex(P[i].IDStation, BS1)) then Exit;
-    arrPt2Df[i] := MakeTPoint2Df(BS1.PosStation.X + P[i].Offset.X, BS1.PosStation.Y + P[i].Offset.Y);
+    arrPt2Df[i].setFrom(BS1.PosStation.X + P[i].Offset.X, BS1.PosStation.Y + P[i].Offset.Y);
   end;
   // contrôle: on jarte les polygones dégénérés
   for i := 0 to Nb do
@@ -1825,26 +1815,26 @@ begin
     if (not GetBasePointByIndex(Arcs[i].IDStationP2, BS2)) then Exit;
     // Rappel: Le décalage des groupes est du ressort de la balise <g>
     // point d'ancrage 1:
-    P1 := MakeTPoint2Df(BS1.PosStation.X + Arcs[i].OffsetP1.X,
-                        BS1.PosStation.Y + Arcs[i].OffsetP1.Y);
+    P1.setFrom(BS1.PosStation.X + Arcs[i].OffsetP1.X,
+               BS1.PosStation.Y + Arcs[i].OffsetP1.Y);
     // points de contrôle
-    P2 := MakeTPoint2Df(BS1.PosStation.X + Arcs[i].OffsetP1.X + Arcs[i].TangP1.X,
-                        BS1.PosStation.Y + Arcs[i].OffsetP1.Y + Arcs[i].TangP1.Y);
-    P3 := MakeTPoint2Df(BS2.PosStation.X + Arcs[i].OffsetP2.X + Arcs[i].TangP2.X,
-                        BS2.PosStation.Y + Arcs[i].OffsetP2.Y + Arcs[i].TangP2.Y);
+    P2.setFrom(BS1.PosStation.X + Arcs[i].OffsetP1.X + Arcs[i].TangP1.X,
+               BS1.PosStation.Y + Arcs[i].OffsetP1.Y + Arcs[i].TangP1.Y);
+    P3.setFrom(BS2.PosStation.X + Arcs[i].OffsetP2.X + Arcs[i].TangP2.X,
+               BS2.PosStation.Y + Arcs[i].OffsetP2.Y + Arcs[i].TangP2.Y);
     // point d'ancrage 1:
-    P4 := MakeTPoint2Df(BS2.PosStation.X + Arcs[i].OffsetP2.X,
-                        BS2.PosStation.Y + Arcs[i].OffsetP2.Y);
+    P4.setFrom(BS2.PosStation.X + Arcs[i].OffsetP2.X,
+               BS2.PosStation.Y + Arcs[i].OffsetP2.Y);
     if (i = 0) then
     begin  // point de départ de la courbe
-      arrPt2Df[Idx] := MakeTPoint2Df(P1.X, P1.Y);
+      arrPt2Df[Idx].setFrom(P1.X, P1.Y);
       Inc(Idx);
     end;
-    arrPt2Df[Idx] := MakeTPoint2Df(P2.X, P2.Y);
+    arrPt2Df[Idx].setFrom(P2.X, P2.Y);
     Inc(Idx);
-    arrPt2Df[Idx] := MakeTPoint2Df(P3.X, P3.Y);
+    arrPt2Df[Idx].setFrom(P3.X, P3.Y);
     Inc(Idx);
-    arrPt2Df[Idx] := MakeTPoint2Df(P4.X, P4.Y);
+    arrPt2Df[Idx].setFrom(P4.X, P4.Y);
     Inc(Idx);
   end;
   Result := true;
@@ -1911,8 +1901,7 @@ var
 begin
   errCode := 0;
   Result := P;
-  Result.BoundingBox.C1 := MakeTPoint2Df( INFINITE,  INFINITE);
-  Result.BoundingBox.C2 := MakeTPoint2Df(-INFINITE, -INFINITE);
+  Result.BoundingBox.Reset();
   for i := 0 to High(P.Sommets) do
   begin
     V  := P.Sommets[i];
@@ -1979,8 +1968,7 @@ var
 begin
   errCode := 0;
   Result := P;
-  Result.BoundingBox.C1 := MakeTPoint2Df( INFINITE,  INFINITE);
-  Result.BoundingBox.C2 := MakeTPoint2Df(-INFINITE, -INFINITE);
+  Result.BoundingBox.Reset();
   //SetBoundingBox(C.Arcs[0], True); // extrémité 1 de la courbe
   for i := 0 to High(P.Sommets) do
   begin
@@ -2610,9 +2598,8 @@ begin
             BS := GetNearBasepoint(PM.X, PM.Y, BS, false);
             if (BS.IDStation <> OldIdxBasePt) then Result += 1;
             V.IDStation := BS.IDStation;                                                         // nouvelle ID
-            V.Offset := MakeTPoint3Df(PM.X - BS.PosStation.X, PM.Y - BS.PosStation.Y, 0.00);     // calcul du décalage
-            EWE.Sommets[i] := V;
-                                                                         // et mise à jour
+            V.Offset.setFrom(PM.X - BS.PosStation.X, PM.Y - BS.PosStation.Y, 0.00);     // calcul du décalage
+            EWE.Sommets[i] := V;                                                                               // et mise à jour
           end;
         end;
 
@@ -2659,9 +2646,9 @@ begin
             // comptage du nombre de points modifiés
             if (BS.IDStation <> OldIdxBasePt) then Result += 1;
             V.IDStation := BS.IDStation;                            // nouvelle ID
-            V.Offset := MakeTPoint3Df(PM.X - BS.PosStation.X,       // calcul du décalage
-                                      PM.Y - BS.PosStation.Y,
-                                      0.00);
+            V.Offset.setFrom(PM.X - BS.PosStation.X,       // calcul du décalage
+                             PM.Y - BS.PosStation.Y,
+                             0.00);
             EWE.Sommets[i] := V;                                    // et mise à jour
 
           end;
@@ -2712,12 +2699,11 @@ begin
             // nouvelle ID
             V.IDStation := BS.IDStation;
             // calcul du décalage
-            V.Offset := MakeTPoint3Df(PM.X - BS.PosStation.X,
-                                      PM.Y - BS.PosStation.Y,
-                                      0.00);
+            V.Offset.setFrom(PM.X - BS.PosStation.X,
+                             PM.Y - BS.PosStation.Y,
+                             0.00);
             // et mise à jour
             EWE.Sommets[i] := V;
-
           end;
         end;
       end;
@@ -2755,12 +2741,12 @@ begin
         // nouvelle ID
         EWE.IDBaseStExt1 := BS1.IDStation;
         EWE.IDBaseStExt2 := BS2.IDStation;
-        EWE.OffsetExtr1  := MakeTPoint3Df(PM1.X - BS1.PosStation.X,
-                                          PM1.Y - BS1.PosStation.Y,
-                                          0.00);
-        EWE.OffsetExtr2  := MakeTPoint3Df(PM2.X - BS2.PosStation.X,
-                                          PM2.Y - BS2.PosStation.Y,
-                                          0.00);
+        EWE.OffsetExtr1.setFrom(PM1.X - BS1.PosStation.X,
+                                PM1.Y - BS1.PosStation.Y,
+                                0.00);
+        EWE.OffsetExtr2.setFrom(PM2.X - BS2.PosStation.X,
+                                PM2.Y - BS2.PosStation.Y,
+                                0.00);
         // et on actualise avec le scrap modifié
         PutSimpleLigne(QIdx, EWE);
       end;
@@ -2800,9 +2786,9 @@ begin
           // nouvelle ID
           EWE.IDBaseStation := BS.IDStation;
           // calcul du décalage
-          EWE.Offset := MakeTPoint3Df(PM.X - BS.PosStation.X,
-                                      PM.Y - BS.PosStation.Y,
-                                      0.00);
+          EWE.Offset.setFrom(PM.X - BS.PosStation.X,
+                             PM.Y - BS.PosStation.Y,
+                             0.00);
         end;
         // et on actualise avec le scrap modifié
         PutSymbole(QIdx, EWE);
@@ -2842,9 +2828,9 @@ begin
           // nouvelle ID
           EWE.IDBaseSt := BS.IDStation;
           // calcul du décalage
-          EWE.Offset := MakeTPoint3Df(PM.X - BS.PosStation.X,
-                                      PM.Y - BS.PosStation.Y,
-                                      0.00);
+          EWE.Offset.setFrom(PM.X - BS.PosStation.X,
+                             PM.Y - BS.PosStation.Y,
+                             0.00);
         end;
         // et on actualise avec l'objet modifié
         PutTexte(QIdx, EWE);
@@ -2891,12 +2877,12 @@ begin
 
             QArc.IDStationP1 := BS1.IDStation;                        // nouvelle ID
             QArc.IDStationP2 := BS2.IDStation;
-            QArc.OffsetP1 := MakeTPoint3Df(PM1.X - BS1.PosStation.X,  // calcul du décalage
-                                           PM1.Y - BS1.PosStation.Y,
-                                           0.00);
-            QArc.OffsetP2 := MakeTPoint3Df(PM2.X - BS2.PosStation.X,
-                                           PM2.Y - BS2.PosStation.Y,
-                                           0.00);
+            QArc.OffsetP1.setFrom(PM1.X - BS1.PosStation.X,  // calcul du décalage
+                                  PM1.Y - BS1.PosStation.Y,
+                                  0.00);
+            QArc.OffsetP2.setFrom(PM2.X - BS2.PosStation.X,
+                                  PM2.Y - BS2.PosStation.Y,
+                                  0.00);
             EWE.Arcs[i] := QArc;                                      // et mise à jour
           end;
           PutCourbe(QIdx, EWE);        // et on actualise avec l'objet modifié
@@ -3816,12 +3802,9 @@ begin
     if (GetBasePointByIndex(V0.IDStation, BS0) AND
         GetBasePointByIndex(V1.IDStation, BS1)) then
     begin
-      PP0 := MakeTPoint2Df(BS0.PosStation.X + V0.Offset.X,
-                           BS0.PosStation.Y + V0.Offset.Y);
-      PP1 := MakeTPoint2Df(BS1.PosStation.X + V1.Offset.X,
-                           BS1.PosStation.Y + V1.Offset.Y);
-      d := Hypot(PP1.X - PP0.X,
-                 PP1.Y - PP0.Y);
+      PP0.setFrom(BS0.PosStation.X + V0.Offset.X, BS0.PosStation.Y + V0.Offset.Y);
+      PP1.setFrom(BS1.PosStation.X + V1.Offset.X, BS1.PosStation.Y + V1.Offset.Y);
+      d := Hypot(PP1.X - PP0.X, PP1.Y - PP0.Y);
       if (d > 200.00) then Exit;
     end;
   end;
@@ -4193,7 +4176,7 @@ begin
   Result := false;
   Superficie := 0.00;
   Perimetre  := 0.00;
-  CG := MakeTPoint2Df(0.00, 0.00);
+  CG.Empty();
   try
     n := High(P);
     if (n < 2) then Exit; // polygone de moins de trois sommets = aucun sens
@@ -4204,8 +4187,7 @@ begin
     for i := 0 to n do
     begin
       if (Not GetBasePointByIndex(P[i].IDStation, BP)) then Exit;
-      MyPolygoneFerme[i] := MakeTPoint2Df(BP.PosStation.X + P[i].Offset.X,
-                                          BP.PosStation.Y + P[i].Offset.Y);
+      MyPolygoneFerme[i].setFrom(BP.PosStation.X + P[i].Offset.X,  BP.PosStation.Y + P[i].Offset.Y);
     end;
     // fermer
     MyPolygoneFerme[m] := MyPolygoneFerme[0];
@@ -4221,7 +4203,6 @@ begin
     Superficie := 0.5 * Abs(Superficie) ;
     AfficherMessage(Format('Superficie: %.2f, Perimetre = %.2f', [Superficie, Perimetre]));
     // centre de gravité  https://en.wikipedia.org/wiki/Polygon#Properties
-
     for i := 0 to m - 1 do
     begin
       V1 := MyPolygoneFerme[i];
@@ -4611,7 +4592,7 @@ var
     PP: TPoint2Df;
     P1, P2: TProjUV;
   begin
-    EWE := Format('Scrap%d', [IdxScrap]);
+    EWE := IIF (gisWITH_METADATA in WithExportGIS, Format('Scrap%d', [IdxScrap]), 'Metadata unavailable');
     WU  := IIF(DoUseDefaultStyle, SCRAP_BY_DEFAULT, EWE);
     MyKMLExport.BeginPolygon(EWE, WU);
     for v := 0 to High(AScrap.Sommets) do
@@ -4619,7 +4600,7 @@ var
       VX := AScrap.Sommets[v];
       if (GetBasePointByIndex(VX.IDStation, BS)) then
       begin
-        PP := MakeTPoint2Df(BS.PosStation.X + VX.Offset.X, BS.PosStation.Y + VX.Offset.Y);
+        PP.setFrom(BS.PosStation.X + VX.Offset.X, BS.PosStation.Y + VX.Offset.Y);
         P1.U := PP.X;  P1.V := PP.Y;
         P2 := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, P1);
         MyKMLExport.AddVertex(P2.U, P2.V, BS.PosStation.Z);
@@ -4702,11 +4683,7 @@ var
 
 begin
   Result := false;
-  AfficherMessageErreur(Format('%s.ExporterScrapsToKML: EPSG:%d; %s ', [
-                         ClassName,
-                         FCodeEPSG,
-                         QFileName
-                         ]));
+  AfficherMessageErreur(Format('%s.ExporterScrapsToKML: EPSG:%d; %s ', [ClassName, FCodeEPSG, QFileName]));
   NbScraps := self.GetNbScraps();
   if (0 = NbScraps) then Exit;
   MyKMLExport := TKMLExport.Create;
@@ -4735,21 +4712,23 @@ begin
       end;
 
       MyKMLExport.EndFolder(4, FOLDER_Scraps);
-      // les entrées
-      if (gisWITH_ENTRANCES in WithExportGIS) then
+      // les entrées (seulement si avec métadonnées activées)
+      if (gisWITH_METADATA in WithExportGIS) then
       begin
-        MyKMLExport.BeginFolder(4, FOLDER_Entrances);
-          WriteEntrances();
-        MyKMLExport.EndFolder(4, FOLDER_Entrances);
+        if (gisWITH_ENTRANCES in WithExportGIS) then
+        begin
+          MyKMLExport.BeginFolder(4, FOLDER_Entrances);
+            WriteEntrances();
+          MyKMLExport.EndFolder(4, FOLDER_Entrances);
+        end;
+        // les POI
+        if (gisWITH_POI in WithExportGIS) then
+        begin
+          MyKMLExport.BeginFolder(4, FOLDER_POI);
+            WritePOIs();
+          MyKMLExport.EndFolder(4, FOLDER_POI);
+        end;
       end;
-      // les POI
-      if (gisWITH_POI in WithExportGIS) then
-      begin
-        MyKMLExport.BeginFolder(4, FOLDER_POI);
-          WritePOIs();
-        MyKMLExport.EndFolder(4, FOLDER_POI);
-      end;
-
       MyKMLExport.Finaliser();
     end;
     Result := True;
@@ -4804,13 +4783,15 @@ var
     V: TVertexPolygon;
     BS: TBaseStation;P2: TProjUV;
     MyGroupe: TGroupeEntites;
+    QAT: String;
   begin
-    MyLeafletExport.WrtLinFmt(' // Scrap%d - %s', [IdxScrap, QScrap.Nom]);
+    if (gisWITH_METADATA in WithExportGIS) then MyLeafletExport.WrtLinFmt(' // Scrap%d - %s', [IdxScrap, QScrap.Nom]);
     //MyLeafletExport.DefineStylePoly(0.05, MyScrap.Couleur, MyScrap.Couleur, 255, MyScrap.Opacite);
     MyLeafletExport.DefineStylePoly(1.00, DefaultColor, DefaultColor, 255, 255);
 
     MyGroupe := GetGroupeByIDGroupe(QScrap.IDGroupe);
-    MyLeafletExport.BeginPolygon(MyGroupe.NomGroupe, '');
+    QAT := IIF (gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
+    MyLeafletExport.BeginPolygon(QAT, '');
 
     Nb := Length(QScrap.Sommets) - 1;
     for ii := 0 to Nb - 1 do
@@ -4876,9 +4857,9 @@ begin
   // calcul du centroide
   Coin1 := self.GetCoordsMini();
   Coin2 := self.GetCoordsMaxi();
-  Centroide := MakeTPoint3Df(0.50 * (Coin1.X + Coin2.X),
-                             0.50 * (Coin1.Y + Coin2.Y),
-                             0.50 * (Coin1.Z + Coin2.Z));
+  Centroide.setFrom(0.50 * (Coin1.X + Coin2.X),
+                    0.50 * (Coin1.Y + Coin2.Y),
+                    0.50 * (Coin1.Z + Coin2.Z));
   QCentroideLonLat := MiouMiou(Centroide.X, Centroide.Y); //FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, QCentroideXY);
   MyLeafletExport := TLeafletExport.Create;
   try
@@ -4890,6 +4871,14 @@ begin
       MyLeafletExport.AddLayer(VAR_LAYER_POI        , 'Points d''intérêt');
       MyLeafletExport.AddLayer(VAR_LAYER_PointsTopo , 'Stations topo');
       MyLeafletExport.WriteHeader();
+        // les options WithExportGIS;
+        MyLeafletExport.WriteLine(' // Options WithExportGIS: Scraps +');
+        if (gisWITH_ENTRANCES   in WithExportGIS) then MyLeafletExport.WriteLine(' // Entrances +');
+        if (gisWITH_POI         in WithExportGIS) then MyLeafletExport.WriteLine(' // POIs +');
+        if (gisWITH_METADATA    in WithExportGIS) then MyLeafletExport.WriteLine(' // Metadata +');
+        if (gisWITH_CENTERLINES in WithExportGIS) then MyLeafletExport.WriteLine(' // Centerlines +');
+        MyLeafletExport.WriteLine(' // -----------------------');
+
         // scraps
         MyLeafletExport.setCurrentLayer(IDX_LAYER_SCRAPS);
         for i := 0 to NbScraps - 1 do
@@ -4898,62 +4887,66 @@ begin
           DessinerScrap(i, MyScrap, '', 0);
           if (assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
         end;
-        // entrées
-        MyLeafletExport.setCurrentLayer(IDX_LAYER_ENTRANCES);
-        NbSymboles := GetNbSymboles();
-        if (NbSymboles > 0) then // and (gisWITH_ENTRANCES in WithExportGIS)) then
+        // Entrées, POIs, Points topo: exportés ssi métadonnées activées
+        if (gisWITH_METADATA in WithExportGIS) then
         begin
-          //VarCond := MyLeafletExport.getLeafletVarNameDispEntrances();
-          //MyLeafletExport.BeginConditionalSection(True, VarCond);
+          // entrées
+          MyLeafletExport.setCurrentLayer(IDX_LAYER_ENTRANCES);
+          NbSymboles := GetNbSymboles();
+          if (NbSymboles > 0) then // and (gisWITH_ENTRANCES in WithExportGIS)) then
+          begin
+            //VarCond := MyLeafletExport.getLeafletVarNameDispEntrances();
+            //MyLeafletExport.BeginConditionalSection(True, VarCond);
+              for i := 0 to NbSymboles - 1 do
+              begin
+                MySymbole := GetSymbole(i);
+                if (nosGROTTE_SURFACE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
+              end;
+            //MyLeafletExport.EndConditionalSection(VarCond);
+          end;
+          // POIs
+          MyLeafletExport.setCurrentLayer(IDX_LAYER_POI);
+          NbSymboles := GetNbSymboles();
+          if (NbSymboles > 0) then // and (gisWITH_POI in WithExportGIS)) then
+          begin
             for i := 0 to NbSymboles - 1 do
             begin
               MySymbole := GetSymbole(i);
-              if (nosGROTTE_SURFACE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
+              if (nosPOINT_REMARQUABLE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
             end;
-          //MyLeafletExport.EndConditionalSection(VarCond);
-        end;
-        // POIs
-        MyLeafletExport.setCurrentLayer(IDX_LAYER_POI);
-        NbSymboles := GetNbSymboles();
-        if (NbSymboles > 0) then // and (gisWITH_POI in WithExportGIS)) then
-        begin
+          end;
+          // Points topo
+          MyLeafletExport.setCurrentLayer(IDX_LAYER_STATIONS);
+          MyLeafletExport.DefineStylePoly(0.0, clRed, clRed, 255, 255);
+          VarCond := MyLeafletExport.getLeafletVarNameDispStations();
+          MyLeafletExport.BeginConditionalSection(True, VarCond);
+            for i := 0 to GetNbBaseStations() - 1 do
+            begin
+              MyBaseStation:= GetBaseStation(i);
+              {$IFDEF TIDBASEPOINT_AS_TEXT}
+              if (MyBaseStation.IDStation <> '') then DessinerBaseStation(MyBaseStation);
+              {$ELSE}
+              if (MyBaseStation.IDStation > 0)   then DessinerBaseStation(MyBaseStation);
+              {$ENDIF TIDBASEPOINT_AS_TEXT}
+            end;
+          MyLeafletExport.EndConditionalSection(VarCond);
 
-          for i := 0 to NbSymboles - 1 do
-          begin
-            MySymbole := GetSymbole(i);
-            if (nosPOINT_REMARQUABLE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
-          end;
-        end;
-        // Points topo
-        MyLeafletExport.setCurrentLayer(IDX_LAYER_STATIONS);
-        MyLeafletExport.DefineStylePoly(0.0, clRed, clRed, 255, 255);
-        VarCond := MyLeafletExport.getLeafletVarNameDispStations();
-        MyLeafletExport.BeginConditionalSection(True, VarCond);
-          for i := 0 to GetNbBaseStations() - 1 do
-          begin
-            MyBaseStation:= GetBaseStation(i);
-            {$IFDEF TIDBASEPOINT_AS_TEXT}
-            if (MyBaseStation.IDStation <> '') then DessinerBaseStation(MyBaseStation);
-            {$ELSE}
-            if (MyBaseStation.IDStation > 0)   then DessinerBaseStation(MyBaseStation);
-            {$ENDIF TIDBASEPOINT_AS_TEXT}
-          end;
-        MyLeafletExport.EndConditionalSection(VarCond);
+          MyLeafletExport.setCurrentLayer(IDX_LAYER_CENTERLINES);
+          MyLeafletExport.DefineStylePoly(0.0, clRed, clRed, 255, 255);
+          VarCond := MyLeafletExport.getLeafletVarNameDispCenterlines();
+          MyLeafletExport.BeginConditionalSection(True, VarCond);
+            for i := 0 to GetNbBaseStations() - 1 do
+            begin
+              MyBaseStation:= GetBaseStation(i);
+              {$IFDEF TIDBASEPOINT_AS_TEXT}
+              if (MyBaseStation.IDStation <> '') then DessinerViseeCenterline(MyBaseStation);
+              {$ELSE}
+              if (MyBaseStation.IDStation > 0)   then DessinerViseeCenterline(MyBaseStation);
+              {$ENDIF TIDBASEPOINT_AS_TEXT}
+            end;
+          MyLeafletExport.EndConditionalSection(VarCond);
 
-        MyLeafletExport.setCurrentLayer(IDX_LAYER_CENTERLINES);
-        MyLeafletExport.DefineStylePoly(0.0, clRed, clRed, 255, 255);
-        VarCond := MyLeafletExport.getLeafletVarNameDispCenterlines();
-        MyLeafletExport.BeginConditionalSection(True, VarCond);
-          for i := 0 to GetNbBaseStations() - 1 do
-          begin
-            MyBaseStation:= GetBaseStation(i);
-            {$IFDEF TIDBASEPOINT_AS_TEXT}
-            if (MyBaseStation.IDStation <> '') then DessinerViseeCenterline(MyBaseStation);
-            {$ELSE}
-            if (MyBaseStation.IDStation > 0)   then DessinerViseeCenterline(MyBaseStation);
-            {$ENDIF TIDBASEPOINT_AS_TEXT}
-          end;
-        MyLeafletExport.EndConditionalSection(VarCond);
+        end; // if (gisWITH_METADATA in WithExportGIS) then
         MyLeafletExport.WriteFooter();
     end;
     MyLeafletExport.Finaliser();
@@ -4984,9 +4977,11 @@ var
     V: TVertexPolygon;
     BS: TBaseStation;P2: TProjUV;
     MyGroupe: TGroupeEntites;
+    QAT: String;
   begin
     MyGroupe := GetGroupeByIDGroupe(QScrap.IDGroupe);
-    MyExportGeoJSON.BeginPolygon(MyGroupe.NomGroupe, '');
+    QAT := IIF(gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
+    MyExportGeoJSON.BeginPolygon(QAT, '');
     Nb := Length(QScrap.Sommets) - 1;
     for ii := 0 to Nb - 1 do
     begin
@@ -5007,9 +5002,9 @@ begin
   // calcul du centroide
   Coin1 := self.GetCoordsMini();
   Coin2 := self.GetCoordsMaxi();
-  Centroide := MakeTPoint3Df(0.50 * (Coin1.X + Coin2.X),
-                             0.50 * (Coin1.Y + Coin2.Y),
-                             0.50 * (Coin1.Z + Coin2.Z));
+  Centroide.setFrom(0.50 * (Coin1.X + Coin2.X),
+                    0.50 * (Coin1.Y + Coin2.Y),
+                    0.50 * (Coin1.Z + Coin2.Z));
   QCentroideLonLat := MiouMiou(Centroide.X, Centroide.Y); //FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, QCentroideX
   MyExportGeoJSON := TGeoJSONExport.Create;
   try
@@ -5046,8 +5041,7 @@ begin
     for i := 0 to Nb - 1 do
     begin
       MyGroupe := GetGroupe(i);
-      WU := MakeTRect2Df(MyGroupe.BoundingBox.C1.X, MyGroupe.BoundingBox.C1.Y,
-                         MyGroupe.BoundingBox.C2.X, MyGroupe.BoundingBox.C2.Y);
+      WU.setFrom(MyGroupe.BoundingBox.C1, MyGroupe.BoundingBox.C2);
       if (IntersectRectangles(WU, LimitesVues)) then LS.Add(Format('%d - %s', [MyGroupe.IDGroupeEntites, MyGroupe.NomGroupe]));
     end;
     Result := (LS.Count > 0);

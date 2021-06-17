@@ -215,9 +215,9 @@ procedure TCrossSectionPolyProvisoire.AddVertexByXY(const QX, QY: double);
 var
   V: TCrossSectionVertexCourbe;
 begin
-  V.Position := MakeTPoint2Df(QX, QY);
-  V.TangDroite := MakeTPoint2Df(0.00, 0.00);
-  V.TangGauche := MakeTPoint2Df(0.00, 0.00);
+  V.Position.setFrom(QX, QY);
+  V.TangDroite.Empty();
+  V.TangGauche.Empty();
   self.AddVertex(V);
 end;
 
@@ -357,7 +357,7 @@ begin
   for i:=0 to High(P.Vertexes) do
   begin
     VC := GetVertex(i);
-    P.Vertexes[i] := MakeTPoint2Df(VC.Position.X, VC.Position.Y);
+    P.Vertexes[i].setFrom(VC.Position.X, VC.Position.Y);
   end;
   P.IDStylePolygone := FMyPolygone.IDStylePolygone;
   Result := true;
@@ -430,7 +430,7 @@ begin
   V1.Position.X := CV.Arcs[n].CoordsP2.X;
   V1.Position.Y := CV.Arcs[n].CoordsP2.Y;
   V1.TangGauche := CV.Arcs[n].TangP2; //
-  V1.TangDroite := MakeTPoint2Df(0.0, 0.0);
+  V1.TangDroite.Empty();
   AddVertex(V1);
   // contrôle
   (*
@@ -802,9 +802,9 @@ function TCourbePolygoneProvisoire.ExtractXYFromTVertexCourbe(const QV: TVertexC
  var
    BP: TBaseStation;
  begin
-   Result := MakeTPoint2Df(0.00, 0.00);
+   Result.Empty();
    if (not FDocDessin.GetBasePointByIndex(QV.IDStation, BP)) then exit;
-   Result := MakeTPoint2Df(BP.PosStation.X + QV.Offset.X, BP.PosStation.Y + QV.Offset.Y);
+   Result.setFrom(BP.PosStation.X + QV.Offset.X, BP.PosStation.Y + QV.Offset.Y);
  end;
 
 function TCourbePolygoneProvisoire.GetLongueurDeveloppee(const B: boolean; const QX, QY: double): double;
@@ -892,6 +892,7 @@ var
   QNbPts, IdxStart, IdxEnd, IdxTableau: Integer;
 begin
   Result := false;
+  AngleTg1 := 0.00; AngleTg2 := 0.00;
   PurgerVertex(DIST_MERGE_VERTEX);
   QNbPts := GetNbVertex();
   //AfficherMessage(Format('%s.GenerateCourbe: (%d points) (%d stations)',[ClassName, QNbPts, FDocDessin.GetNbBaseStations]));
@@ -902,7 +903,7 @@ begin
     Exit;
   end;
   SetLength(CResult.Arcs, 1);
-  Delta := MakeTPoint2Df(0.0, 0.0);
+  Delta.Empty();
   SetLength(CResult.Arcs, QNbPts-1);
   // TODO: C'est dans ce secteur qu'il faut gérer le mode ByDefault
   for i := 1 to QNbPts-1 do
@@ -1012,10 +1013,8 @@ begin
       if (FDocDessin.GetBasePointByIndex(PE0.IDStation, BP0) AND
           FDocDessin.GetBasePointByIndex(PE1.IDStation, BP1)) then
       begin
-        PS0 := MakeTPoint2Df(BP0.PosStation.X + PE0.Offset.X,
-                             BP0.PosStation.Y + PE0.Offset.Y);
-        PS1 := MakeTPoint2Df(BP1.PosStation.X + PE1.Offset.X,
-                             BP1.PosStation.Y + PE1.Offset.Y);
+        PS0.setFrom(BP0.PosStation.X + PE0.Offset.X, BP0.PosStation.Y + PE0.Offset.Y);
+        PS1.setFrom(BP1.PosStation.X + PE1.Offset.X, BP1.PosStation.Y + PE1.Offset.Y);
         QDelta := hypot(PS1.X - PS0.X, PS1.Y - PS0.Y);
         P.Closed := (TOL_FERMETURE > QDelta);
       end;
@@ -1183,9 +1182,9 @@ var
   begin
     BST := FDocDessin.GetNearBasepoint(Miou.X, Miou.Y, WU, QBasePointLocked);
     V.IDStation := BST.IDStation;
-    V.Offset := MakeTPoint3Df(Miou.X - BST.PosStation.X,
-                              Miou.Y - BST.PosStation.y,
-                                       BST.PosStation.Z);
+    V.Offset.setFrom(Miou.X - BST.PosStation.X,
+                     Miou.Y - BST.PosStation.y,
+                     BST.PosStation.Z);
     self.AddVertex(V);
   end;
 begin
@@ -1238,9 +1237,9 @@ begin
     begin
       BP := FDocDessin.GetNearBasepoint(X, Y, BP, false);   // rechercher le basepoint le plus proche
       EWE.IDStation := BP.IDStation;
-      EWE.Offset := MakeTPoint3Df(X - BP.PosStation.X,      // calculer l'offset
-                                  Y - BP.PosStation.Y,
-                                  BP.PosStation.Z);
+      EWE.Offset.setFrom(X - BP.PosStation.X,      // calculer l'offset
+                         Y - BP.PosStation.Y,
+                         BP.PosStation.Z);
       InsertVertex(WU, EWE);                                // insérer le vertex
       Result := True;                                       // valeur de retour
     end;

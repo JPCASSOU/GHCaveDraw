@@ -492,21 +492,17 @@ var
       for i:=0 to FNbPagesX-1 do
         for j:=0 to FNbPagesY-1 do
         begin
-          PM := MakeTPoint2Df(FRXMini + i * L1, FRYMini + j * H1);
+          PM.setFrom(FRXMini + i * L1, FRYMini + j * H1);
           R666.X1 := PM.X;
           R666.Y1 := PM.Y;
 
           P1   := GetCoordsPlan(PM);
-          PM := MakeTPoint2Df(FRXMini + (1+i) * L1, FRYMini + (1+j) * H1);
+          PM.setFrom(FRXMini + (1+i) * L1, FRYMini + (1+j) * H1);
           R666.X2 := PM.X;
           R666.Y2 := PM.Y;
-
           P2   := GetCoordsPlan(PM);
           Brush.Style := bsSolid;      // toujours spécifier styles de brosses
-          if (FTableauPagesDrawn[i,j]) then
-            Brush.Color:=clWhite
-          else
-            Brush.Color:=clGray;
+          Brush.Color := IIF(FTableauPagesDrawn[i,j], clWhite, clGray);
 
           Rectangle(P1.X, P1.Y, P2.X, P2.Y);
           //TextOut(p1.X + 2, p1.Y-(Font.Height shl 2), format('%d.%d',[i,j]));
@@ -534,8 +530,8 @@ var
     while (A < Coin2.X) do
     begin
       // AfficherMessage(Format('%.2f  %.2f',[A, QdrEspc]));
-      C1 := MakeTPoint2Df(A, Coin1.Y);
-      C2 := MakeTPoint2Df(A, Coin2.Y);
+      C1.setFrom(A, Coin1.Y);
+      C2.setFrom(A, Coin2.Y);
       P1 := GetCoordsPlan(C1);
       P2 := GetCoordsPlan(C2);
 
@@ -547,8 +543,8 @@ var
     A := QdrSpc * t;
     while (A < Coin2.Y) do
     begin
-      C1 := MakeTPoint2Df(Coin1.X, A);
-      C2 := MakeTPoint2Df(Coin2.X, A);
+      C1.setFrom(Coin1.X, A);
+      C2.setFrom(Coin2.X, A);
       P1 := GetCoordsPlan(C1);
       P2 := GetCoordsPlan(C2);
       TmpBuffer.Canvas.MoveTo(P1.X, P1.Y);
@@ -576,9 +572,9 @@ var
       E := FDocTopo.GetBaseStation(i);
       //if (E.Type_Entite = tgENTRANCE) then Continue;
       if (Not E.Enabled) then Continue;  // prise en compte du MétaFiltre
-      PM := MakeTPoint2Df(E.PosExtr0.X, E.PosExtr0.Y);
+      PM.setFrom(E.PosExtr0.X, E.PosExtr0.Y);
       P1 := GetCoordsPlan(PM);
-      PM := MakeTPoint2Df(E.PosStation.X, E.PosStation.Y);
+      PM.setFrom(E.PosStation.X, E.PosStation.Y);
       P2 := GetCoordsPlan(PM);
       TmpBuffer.Canvas.Pen.Color   := E.Couleur;
       TmpBuffer.Canvas.Line(P1, P2);

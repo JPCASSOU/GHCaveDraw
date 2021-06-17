@@ -585,11 +585,6 @@ object MainWindow: TMainWindow
             inherited lbColorGroupe: TStaticText
               Top = 790
             end
-            inherited PopupNotifier1: TPopupNotifier
-              Icon.Data = {
-                07544269746D617000000000
-              }
-            end
           end
         end
       end

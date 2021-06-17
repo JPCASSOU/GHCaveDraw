@@ -532,7 +532,7 @@ begin
             MyGroupe.IDGroupeEntites := 0;
             MyGroupe.NomGroupe       := 'Groupe0';
             MyGroupe.CouleurGroupe   := clBlue;
-            MyGroupe.Decalage        := MakeTPoint3Df(0.00, 0.00, 0.00);
+            MyGroupe.Decalage.Empty();
             MyGroupe.DateLastModif   := Now();
             MyGroupe.Filtres         := '';
             //MyGroupe.IDSuperGroupe   := 0;

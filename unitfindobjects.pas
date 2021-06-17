@@ -190,11 +190,9 @@ var
       FDocDessin.GetCoordsGCS(Arc.IDStationP1, QGroupe.IDGroupeEntites, ARC.OffsetP1, P1, errCode);
       if (ErrCode = -1) then Continue;
       // les tangentes sont exprimées par rapport au point de base associé
-      PC1 := MakeTPoint2Df(P1.X + ARC.TangP1.X,
-                           P1.Y + ARC.TangP1.Y);
+      PC1.setFrom(P1.X + ARC.TangP1.X, P1.Y + ARC.TangP1.Y);
       FDocDessin.GetCoordsGCS(Arc.IDStationP2, QGroupe.IDGroupeEntites, ARC.OffsetP2, P2, errCode);
-      PC2 := MakeTPoint2Df(P2.X + ARC.TangP2.X,
-                           P2.Y + ARC.TangP2.Y);
+      PC2.setFrom(P2.X + ARC.TangP2.X, P2.Y + ARC.TangP2.Y);
       if (ErrCode = -1) then Continue;
       Test(P1); Test(PC1); Test(PC2); Test(P2);
       Bezier := CalcBezierCurve(P1, PC1, PC2, P2, 100);
@@ -205,15 +203,12 @@ begin
   FIDNearest := 0;
   MyDistCourante := INFINITE;
   AfficherMessageErreur('Balayage');
-  //QRT := rtoNOT_FOUND;
   self.Resetter;
   NbObj := FDocDessin.GetNbCourbes();
   if (0 = NbObj) then Exit;
   for i := 0 to NbObj - 1 do
   begin
     C := FDocDessin.GetCourbe(i);
-    //GP := GetSecuredGroupeByIDGroupe(C.IDGroupe);
-
     GP := FDocDessin.GetGroupeByIDGroupe(C.IDGroupe);
     if (GroupeIsEditable(GP)) then
     begin

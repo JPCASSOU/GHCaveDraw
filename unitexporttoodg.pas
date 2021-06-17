@@ -92,8 +92,7 @@ begin
   if (FMyDocDessin.GetBasePointByIndex(IDBS, BS)) then;
   begin
    GP := FMyDocDessin.GetGroupeByIDGroupe(IDGroupe);
-   if (GP.DecalageActif) then QDecalage := GP.Decalage
-                         else QDecalage := MakeTPoint3Df(0.00, 0.00, 0.00);
+   if (GP.DecalageActif) then QDecalage := GP.Decalage else QDecalage.Empty();
 
    Result.X := BS.PosStation.X + QDecalage.X + Offset.X;
    Result.Y := BS.PosStation.Y + QDecalage.Y + Offset.Y;

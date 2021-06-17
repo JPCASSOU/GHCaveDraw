@@ -138,14 +138,17 @@ begin
   Result.Y:=Round((FRYMaxi-PM.Y) * FRappScrReal);
 end;
 function TGHCaveDrawDrawingContext.QGetCoordsPlan(const QX, QY: double): TPoint;
+var
+  P1: TPoint2Df;
 begin
-  Result := QGetCoordsPlan(MakeTPoint2Df(QX, QY));
+  P1.setFrom(QX, QY);
+  Result := QGetCoordsPlan(P1);
 end;
 
 function TGHCaveDrawDrawingContext.QGetCoordsMonde(const PP: TPoint): TPoint2Df;
 begin
-  Result.X:=  FInvRappScrReal * PP.X + FRXMini;
-  Result.Y:= -FInvRappScrReal * PP.Y + FRYMaxi;
+  result.setFrom( FInvRappScrReal * PP.X + FRXMini,
+                 -FInvRappScrReal * PP.Y + FRYMaxi);
 end;
 
 
@@ -197,7 +200,7 @@ var
   PP: TPoint;
 begin
   Q := R shr 1;
-  PM := MakeTPoint2Df(XX, YY);
+  PM.setFrom(XX, YY);
   PP := QGetCoordsPlan(PM);
   Self.CanvasBGRA.EllipseC(PP.X, PP.Y, Q, Q);
 end;
@@ -231,8 +234,8 @@ var
   var
     EWE: TPoint2Df;
   begin
-    EWE.X := Centre.X + (ca * dX - sa * dY);
-    EWE.Y := Centre.Y + (sa * dX + ca * dY);
+    EWE.setFrom(Centre.X + (ca * dX - sa * dY),
+                Centre.Y + (sa * dX + ca * dY));
     Result := QGetCoordsPlan(EWE);
   end;
 begin
@@ -336,11 +339,9 @@ end;
 
 procedure TGHCaveDrawDrawingContext.TraceTexte(const XX, YY: Double; const T: string);
 var
-  PM: TPoint2Df;
   PP: TPoint;
 begin
-  PM := MakeTPoint2Df(XX, YY);
-  PP := QGetCoordsPlan(PM);
+  PP := QGetCoordsPlan(XX, YY);
   self.CanvasBGRA.TextOut(PP.X, PP.Y, T);
 end;
 procedure TGHCaveDrawDrawingContext.TraceVers(const PT: TPoint2Df; const Drawn: boolean);
@@ -357,7 +358,7 @@ procedure TGHCaveDrawDrawingContext.TraceVers(const XX, YY: Double; const Drawn:
 var
   PM: TPoint2Df;
 begin
-  PM := MakeTPoint2Df(XX, YY);
+  PM.setFrom(XX, YY);
   self.TraceVers(PM, Drawn);
 end;
 
@@ -380,7 +381,7 @@ var
   dl: Integer;
   dh: Integer;
 begin
-  PM := MakeTPoint2Df(X, Y);
+  PM.setFrom(X, Y);
   PP := QGetCoordsPlan(PM);
   dl := L shr 1;
   dh := H shr 1;
@@ -586,10 +587,12 @@ end;
 function TGHCaveDrawDrawingContext.BasePointIsVisible(const BP: TBaseStation): boolean;
 var
   R0: TRect2Df;
+  P1, P2: TPoint2Df;
 begin
-  R0 := MakeTRect2Df(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
-  result := PointIsInRectangle(MakeTPoint2Df(BP.PosExtr0.X, BP.PosExtr0.Y), R0) OR
-            PointIsInRectangle(MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y), R0);
+  R0.setFrom(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
+  P1.setFrom(BP.PosExtr0.X, BP.PosExtr0.Y);
+  P2.setFrom(BP.PosStation.X, BP.PosStation.Y);
+  result := PointIsInRectangle(P1, R0) OR PointIsInRectangle(P1, R0);
 end;
 //------------------------------------------------------------------------------
 procedure TGHCaveDrawDrawingContext.DessinerBaseStation(const BP: TBaseStation; const QFontHeight: integer);
@@ -606,6 +609,7 @@ procedure TGHCaveDrawDrawingContext.DessinerBaseStation(const BP: TBaseStation; 
     DeltaZ: Extended;
     ar0: double;
     CL: TColor;
+    P1: TPoint2Df;
   begin
     try
       {$IFDEF TIDBASEPOINT_AS_TEXT}
@@ -680,12 +684,13 @@ procedure TGHCaveDrawDrawingContext.DessinerBaseStation(const BP: TBaseStation; 
         if (DeltaZ < 0) then
         begin
           ar := pi + ar;
-          DrawPointeDeFleche(MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y), ar, 0.60);
+          P1.setFrom(BP.PosStation.X, BP.PosStation.Y);
         end
         else
         begin
-          DrawPointeDeFleche(MakeTPoint2Df(BP.PosExtr0.X, BP.PosExtr0.Y), ar, 0.60);
+          P1.setFrom(BP.PosExtr0.X, BP.PosExtr0.Y);
         end;
+        DrawPointeDeFleche(P1, ar, 0.60);
       end;
     except
       ;
@@ -695,15 +700,12 @@ procedure TGHCaveDrawDrawingContext.DessinerBaseStation(const BP: TBaseStation; 
   const
     RD = 10;
   begin
-    DrawShape(BP.PosStation.X, BP.PosStation.Y, 1,
-                        RD, RD,
-                        BP.Couleur, clBlack);
+    DrawShape(BP.PosStation.X, BP.PosStation.Y, 1, RD, RD, BP.Couleur, clBlack);
   end; // procedure DessinerEntree;
 begin
   if (Not BP.Enabled) then Exit;
   if (not BasePointIsVisible(BP)) then Exit;
-  if (BP.TypeStation = 1) then DessinerEntree
-                          else DessinerVisee;
+  if (BP.TypeStation = 1) then DessinerEntree else DessinerVisee;
 end;
 //------------------------------------------------------------------------------
 // définition de styles de courbe
@@ -793,10 +795,10 @@ var
     try
       FDocumentDessin.GetCoordsGCS(A.IDStationP1, MyCourbe.IDGroupe, A.OffsetP1, QResult.PT1, errCode);
       if (ErrCode = -1) then Exit;
-      QResult.Tgt1  := MakeTPoint2Df(A.TangP1.X, A.TangP1.Y);
+      QResult.Tgt1.setFrom(A.TangP1.X, A.TangP1.Y);
       FDocumentDessin.GetCoordsGCS(A.IDStationP2, MyCourbe.IDGroupe, A.OffsetP2, QResult.PT2, errCode);
       if (ErrCode = -1) then Exit;
-      QResult.Tgt2  := MakeTPoint2Df(A.TangP2.X, A.TangP2.Y);
+      QResult.Tgt2.setFrom(A.TangP2.X, A.TangP2.Y);
       QResult.Pas    :=  QStyleCourbe.LongBarbules; // longueur d'un segment de courbe = longueur des barbules
 
     except
@@ -839,8 +841,8 @@ var
 begin
   try
     c1 := FDocumentDessin.GetCoordsMini;
-    PP1 := QGetCoordsPlan(MakeTPoint2Df(c1.X, c1.Y));
-    PP2 := QGetCoordsPlan(MakeTPoint2Df(c1.X, c1.Y - Hauteur));
+    PP1 := QGetCoordsPlan(c1.X, c1.Y);
+    PP2 := QGetCoordsPlan(c1.X, c1.Y - Hauteur);
     Result := PP2.Y - PP1.Y;
   except
     Result := 6;
@@ -860,8 +862,8 @@ var
   L_Barbule: double;
   toto: float;
 begin
-  PC1 := MakeTPoint2Df(B.PT1.X + B.Tgt1.X, B.PT1.Y + B.Tgt1.Y);
-  PC2 := MakeTPoint2Df(B.PT2.X + B.Tgt2.X, B.PT2.Y + B.Tgt2.Y);
+  PC1.setFrom(B.PT1.X + B.Tgt1.X, B.PT1.Y + B.Tgt1.Y);
+  PC2.setFrom(B.PT2.X + B.Tgt2.X, B.PT2.Y + B.Tgt2.Y);
   // si pas de barbules, on trace une vraie courbe de Bezier native
   // et non une polyligne passant par les points calculés avec CalcBezierCurve
   // les calculs suivants étant inutiles
@@ -949,7 +951,6 @@ procedure TGHCaveDrawDrawingContext.DrawCopyright(const QPosition: TPoint2Df; co
 var
   PP: TPoint;
   WU: Extended;
-  PQ: TPoint2Df;
 begin
   WU := 7.00; //FTailleEchelle / 20.00;
   self.CanvasBGRA.Brush.Opacity := 128;
@@ -957,8 +958,7 @@ begin
   self.CanvasBGRA.Font.Color   := clBlack;
   self.CanvasBGRA.Font.Opacity := self.CanvasBGRA.Brush.Opacity;
   // pour amener le point de base en bas gauche du texte
-  PQ := MakeTPoint2Df(QPosition.X, QPosition.Y + WU);
-  PP := QGetCoordsPlan(PQ);
+  PP := QGetCoordsPlan(QPosition.X, QPosition.Y + WU);
   self.CanvasBGRA.TextOut(PP.X, PP.Y, StrCopyright);
 end;
 
@@ -1342,10 +1342,7 @@ begin
         if (QAngle < 0) then QAngle += 360;
         A2 := Ang - PI_2;
         R := 0.350;
-
-        P0 := MakeTPoint2Df(PTD.X + R * cos(A2),
-                            PTD.Y + R * sin(A2));
-        PP := QGetCoordsPlan(P0);
+        PP := QGetCoordsPlan(PTD.X + R * cos(A2), PTD.Y + R * sin(A2));
         self.CanvasBGRA.Font.Color  := clBlack;
         self.CanvasBGRA.Font.Height := CalcFontHeightFromHauteurEnMetres(2.0);
         self.TracerRotatedTexte(PP.X, PP.Y, A1, Format(FMT_DIRECTION_FAILLE,[QAngle]));
@@ -1402,8 +1399,8 @@ var
                                    Q0.X + 4, Q0.Y + 4);
 
     // coordonnées des coins de la photo
-    C1 := MakeTPoint2Df(P0.X + S0.X, P0.Y + S0.Y + EP.ScaleY);
-    C2 := MakeTPoint2Df(P0.X + S0.X + EP.ScaleX, P0.Y + S0.Y);
+    C1.setFrom(P0.X + S0.X, P0.Y + S0.Y + EP.ScaleY);
+    C2.setFrom(P0.X + S0.X + EP.ScaleX, P0.Y + S0.Y);
     // coordonnées écran de la photo
     RR.TopLeft     := self.QGetCoordsPlan(C1);
     RR.BottomRight := self.QGetCoordsPlan(C2);
@@ -1445,12 +1442,12 @@ var
     if (errCode = -1) then Exit;
     A1 := EP.AngleRot + PHI_2;
     AAA := A1 * PI_180;
-    P2  := MakeTPoint2Df(P1.X + EP.ScaleX * cos(AAA),
-                         P1.Y + EP.ScaleX * sin(AAA));
+    P2.setFrom(P1.X + EP.ScaleX * cos(AAA),
+               P1.Y + EP.ScaleX * sin(AAA));
     A1  := EP.AngleRot - PHI_2;
     AAA := A1 * PI_180;
-    P3  := MakeTPoint2Df(P1.X + EP.ScaleX * cos(AAA),
-                         P1.Y + EP.ScaleX * sin(AAA));
+    P3.setFrom(P1.X + EP.ScaleX * cos(AAA),
+               P1.Y + EP.ScaleX * sin(AAA));
     self.DrawTriangle(P1, P2, P3, clBlack, clLime, 255, 255, 0);
   end;
   procedure DrawPointTopo();
@@ -1463,11 +1460,10 @@ var
     A2   := EP.ScaleX * 0.500;
     if (FDocumentDessin.GetBasePointByIndex(EP.IDBaseStation, BP)) then
     begin
-      P0   := MakeTPoint2Df(BP.PosStation.X + GP.Decalage.X,
-                            BP.PosStation.Y + GP.Decalage.Y);
-      P1   := MakeTPoint2Df(P0.X, P0.Y + EP.ScaleX);
-      P2   := MakeTPoint2Df(P0.X + A1, P0.Y - A2);
-      P3   := MakeTPoint2Df(P0.X - A1, P2.Y);
+      P0.setFrom(BP.PosStation.X + GP.Decalage.X,  BP.PosStation.Y + GP.Decalage.Y);
+      P1.setFrom(P0.X, P0.Y + EP.ScaleX);
+      P2.setFrom(P0.X + A1, P0.Y - A2);
+      P3.setFrom(P0.X - A1, P2.Y);
       self.DrawTriangle(P1, P2, P3, clBlack, clRed, 255, 192, 0);
     end;
   end;
@@ -1480,11 +1476,10 @@ var
   begin
     if (FDocumentDessin.GetBasePointByIndex(EP.IDBaseStation, BP)) then
     begin
-      P0   := MakeTPoint2Df(BP.PosStation.X + GP.Decalage.X,
-                            BP.PosStation.Y + GP.Decalage.Y);
+      P0.setFrom(BP.PosStation.X + GP.Decalage.X,  BP.PosStation.Y + GP.Decalage.Y);
       R    := EP.ScaleX * 0.50;
-      P1   := MakeTPoint2Df(P0.X - R, P0.Y - R);
-      P2   := MakeTPoint2Df(P0.X + R, P0.Y + R);
+      P1.setFrom(P0.X - R, P0.Y - R);
+      P2.setFrom(P0.X + R, P0.Y + R);
       self.CanvasBGRA.Pen.Color := clBlack;
       self.CanvasBGRA.Brush.Color := clBlue;
       self.DrawRectangle(P1, P2);
@@ -1499,7 +1494,7 @@ var
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P1, ErrCode);
     if (errCode = -1) then Exit;
     if (Not GP.DecalageActif) then Exit;
-    P2 := MakeTPoint2Df(P1.X - GP.Decalage.X, P1.Y - GP.Decalage.Y);
+    P2.setFrom(P1.X - GP.Decalage.X, P1.Y - GP.Decalage.Y);
     DefineCrayon(psSolid, 0, clGray, 255);
     self.CanvasBGRA.brush.Color:= clBlue;
     self.TraceVers(P1.X, P1.Y, False);
@@ -1524,7 +1519,7 @@ var
     if (errCode = -1) then Exit;
     P1.X := P1.X - EP.ScaleX / 2;
     P1.Y := P1.Y - EP.ScaleY / 2;
-    P2 := MakeTPoint2Df(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
+    P2.setFrom(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
     Pas := (P2.X - P1.X) / nn;
     Moy := (P2.Y - P1.Y) /2;
     // ligne supérieure
@@ -1554,7 +1549,7 @@ var
     if (errCode = -1) then Exit;
     P1.X := P1.X - EP.ScaleX / 2;
     P1.Y := P1.Y - EP.ScaleY / 2;
-    P2 := MakeTPoint2Df(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
+    P2.setFrom(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
     SetLength(ZZ, 7);
     L := (P2.X - P1.X) / 6;
     for i:= 0 to High(ZZ) do
@@ -1580,7 +1575,7 @@ var
     if (errCode = -1) then Exit;
     P1.X := P1.X - EP.ScaleX / 2;
     P1.Y := P1.Y - EP.ScaleY / 2;
-    P2 := MakeTPoint2Df(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
+    P2.setFrom(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
     // ligne de plafond
     DefineCrayon(psSolid, 2, clBlack, 255);
     Self.TraceVers(P1.X, P2.Y, False);
@@ -1613,7 +1608,7 @@ var
     DefineCrayon(psSolid, 1, clBlack, 255);
     for i := 0 to 7 do begin
       T := i * PI_4;
-      P2 := MakeTPoint2Df(P1.X + R * cos(T), P1.Y + R * sin(T));
+      P2.setFrom(P1.X + R * cos(T), P1.Y + R * sin(T));
       self.TraceVers(P1.X, P1.Y, False);
       self.TraceVers(P2.X, P2.Y, True);
     end;
@@ -1632,9 +1627,9 @@ var
 
     X1   := P0.X; // réutilisé plus loin
     S1   := EP.ScaleX / 2;
-    P1   := MakeTPoint2Df(X1 - S1, P0.Y - EP.ScaleY / 2);
-    P2   := MakeTPoint2Df(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
-    P3   := MakeTPoint2Df(X1, P2.Y - S1);
+    P1.setFrom(X1 - S1, P0.Y - EP.ScaleY / 2);
+    P2.setFrom(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
+    P3.setFrom(X1, P2.Y - S1);
     self.TraceVers(P1.X, P2.Y, False);
     self.TraceVers(P3.X, P3.Y, True);
     self.TraceVers(P2.X, P2.Y, True);
@@ -1655,10 +1650,10 @@ var
 
     X1   := P0.X; // réutilisé plus loin
     S1   := EP.ScaleX / 2;
-    P1   := MakeTPoint2Df(X1 - S1, P0.Y - EP.ScaleY / 2);
-    P2   := MakeTPoint2Df(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
-    P3   := MakeTPoint2Df(X1, P2.Y - S1);
-    P4   := MakeTPoint2Df(X1, P1.Y + S1);
+    P1.setFrom(X1 - S1, P0.Y - EP.ScaleY / 2);
+    P2.setFrom(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
+    P3.setFrom(X1, P2.Y - S1);
+    P4.setFrom(X1, P1.Y + S1);
     self.TraceVers(P1.X, P2.Y, False);
     self.TraceVers(P3.X, P3.Y, True);
     self.TraceVers(P2.X, P2.Y, True);
@@ -1682,9 +1677,9 @@ var
 
     X1   := P0.X; // réutilisé plus loin
     S1   := EP.ScaleX / 2;
-    P1   := MakeTPoint2Df(X1 - S1, P0.Y - EP.ScaleY / 2);
-    P2   := MakeTPoint2Df(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
-    P3   := MakeTPoint2Df(X1, P1.Y + S1);
+    P1.setFrom(X1 - S1, P0.Y - EP.ScaleY / 2);
+    P2.setFrom(P1.X + EP.ScaleX, P1.Y + EP.ScaleY);
+    P3.setFrom(X1, P1.Y + S1);
     self.TraceVers(P1.X, P1.Y, False);
     self.TraceVers(P3.X, P3.Y, True);
     self.TraceVers(P2.X, P1.Y, True);
@@ -1706,7 +1701,7 @@ var
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P0, errCode);
     if (errCode = -1) then Exit;
 
-    P1 := MakeTPoint2Df(P0.X + EP.ScaleX, P0.Y + EP.ScaleY);
+    P1.setFrom(P0.X + EP.ScaleX, P0.Y + EP.ScaleY);
     A := ArcTan2(EP.ScaleY, EP.ScaleX);
     Angle := Trunc(A * INV_PI_180);
     AngleTopo := 90 - Angle;
@@ -1746,16 +1741,16 @@ var
 
     FDocumentDessin.GetCoordsGCSPonctObj(EP, PR, errCode);
     if (errCode = -1) then Exit;
-    PS[0] := MakeTPoint2Df(PR.X + EP.ScaleX, PR.Y + 0.50 * EP.ScaleY);
-    PS[1] := MakeTPoint2Df(PR.X, PS[0].Y);
-    PS[2] := MakeTPoint2Df(PS[1].X, PR.Y - 0.50 * EP.ScaleY);
-    PS[3] := MakeTPoint2Df(PS[0].X, PS[2].Y);
+    PS[0].setFrom(PR.X + EP.ScaleX, PR.Y + 0.50 * EP.ScaleY);
+    PS[1].setFrom(PR.X, PS[0].Y);
+    PS[2].setFrom(PS[1].X, PR.Y - 0.50 * EP.ScaleY);
+    PS[3].setFrom(PS[0].X, PS[2].Y);
     PS := RotateSetPoints(EP.AngleRot, PS, PR);
     for i := 0 to N - 1 do PTSV[i] := self.QGetCoordsPlan(PS[i]);
     Self.CanvasBGRA.PolyBezier(PTSV);
     SetLength(PS, 2);
-    PS[0] := MakeTPoint2Df(PR.X - 0.2 * EP.ScaleX, PR.Y);
-    PS[1] := MakeTPoint2Df(PR.X + 1.2 * EP.ScaleX, PR.Y);
+    PS[0].setFrom(PR.X - 0.2 * EP.ScaleX, PR.Y);
+    PS[1].setFrom(PR.X + 1.2 * EP.ScaleX, PR.Y);
     PS := RotateSetPoints(EP.AngleRot, PS, PR);
     Self.TraceVers(PS[0].X, PS[0].Y, False);
     Self.TraceVers(PS[1].X, PS[1].Y, True);
@@ -1836,14 +1831,14 @@ var
         WU1 := QH;
         WU2 := 0.00;
       end;
-      PS[No]   := MakeTPoint2Df(QBP.X + i * QL, QBP.Y);
-      PS[No+1] := MakeTPoint2Df(PS[No].X + L14, PS[No].Y + WU2);
-      PS[No+2] := MakeTPoint2Df(PS[No].X + L14, PS[No].Y + WU1);
-      PS[No+3] := MakeTPoint2Df(PS[No].X + L24, PS[No].Y + WU1);
-      PS[No+4] := MakeTPoint2Df(PS[No+3].X, PS[No+3].Y);
-      PS[No+5] := MakeTPoint2Df(PS[No].X + L34, PS[No].Y + WU1);
-      PS[No+6] := MakeTPoint2Df(PS[No].X + L34, PS[No].Y + WU2);
-      PS[No+7] := MakeTPoint2Df(PS[No].X + QL, PS[No].Y + WU2);
+      PS[No].setFrom(QBP.X + i * QL, QBP.Y);
+      PS[No+1].setFrom(PS[No].X + L14, PS[No].Y + WU2);
+      PS[No+2].setFrom(PS[No].X + L14, PS[No].Y + WU1);
+      PS[No+3].setFrom(PS[No].X + L24, PS[No].Y + WU1);
+      PS[No+4].setFrom(PS[No+3].X, PS[No+3].Y);
+      PS[No+5].setFrom(PS[No].X + L34, PS[No].Y + WU1);
+      PS[No+6].setFrom(PS[No].X + L34, PS[No].Y + WU2);
+      PS[No+7].setFrom(PS[No].X + QL, PS[No].Y + WU2);
     end;
     PS := RotateSetPoints(QR, PS, QBAsePoint);
     for i := 0 to N-1 do  PTSV[i] := QGetCoordsPlan(PS[i]);
@@ -1893,13 +1888,13 @@ var
     if (errCode = -1) then Exit;
     Ux := 0.10 * EP.ScaleX;
     Uy := 0.10 * EP.ScaleY;
-    QP[1] := MakeTPoint2Df(QP[0].X + Ux * LM, QP[0].Y + Uy * LM);
-    QP[2] := MakeTPoint2Df(QP[1].X - Ux * HM, QP[1].Y + Uy * HM);
-    QP[3] := MakeTPoint2Df(QP[2].X + Ux * F1, QP[2].Y + Uy * F1);
-    QP[4] := MakeTPoint2Df(QP[3].X - Ux * D2, QP[3].Y + Uy * D2);
-    QP[5] := MakeTPoint2Df(QP[4].X - Ux * D1, QP[4].Y - Uy * D1);
-    QP[6] := MakeTPoint2Df(QP[5].X + Ux * D2, QP[5].Y - Uy * D2);
-    QP[7] := MakeTPoint2Df(QP[6].X + Ux * F1, QP[6].Y + Uy * F1);
+    QP[1].setFrom(QP[0].X + Ux * LM, QP[0].Y + Uy * LM);
+    QP[2].setFrom(QP[1].X - Ux * HM, QP[1].Y + Uy * HM);
+    QP[3].setFrom(QP[2].X + Ux * F1, QP[2].Y + Uy * F1);
+    QP[4].setFrom(QP[3].X - Ux * D2, QP[3].Y + Uy * D2);
+    QP[5].setFrom(QP[4].X - Ux * D1, QP[4].Y - Uy * D1);
+    QP[6].setFrom(QP[5].X + Ux * D2, QP[5].Y - Uy * D2);
+    QP[7].setFrom(QP[6].X + Ux * F1, QP[6].Y + Uy * F1);
 
     for i:=0 to NB_VTX - 1 do PTSV[i] := QGetCoordsPlan(QP[i]);
     DefineBrosseEtCrayon(bsSolid, clGray, 255, psSolid, 1, clBlack, 255);
@@ -1916,11 +1911,11 @@ var
     A2   := EP.ScaleX * 0.500;
     if (FDocumentDessin.GetBasePointByIndex(EP.IDBaseStation, BP)) then
     begin
-      P0   := MakeTPoint2Df(BP.PosStation.X + GP.Decalage.X + EP.Offset.X,
-                            BP.PosStation.Y + GP.Decalage.Y + EP.Offset.Y);
-      P1   := MakeTPoint2Df(P0.X, P0.Y + EP.ScaleX);
-      P2   := MakeTPoint2Df(P0.X + A1, P0.Y - A2);
-      P3   := MakeTPoint2Df(P0.X - A1, P2.Y);
+      P0.setFrom(BP.PosStation.X + GP.Decalage.X + EP.Offset.X,
+                 BP.PosStation.Y + GP.Decalage.Y + EP.Offset.Y);
+      P1.setFrom(P0.X, P0.Y + EP.ScaleX);
+      P2.setFrom(P0.X + A1, P0.Y - A2);
+      P3.setFrom(P0.X - A1, P2.Y);
       self.DrawTriangle(P1, P2, P3, clRed, clYellow, 255, 255, 3);
     end;
   end;
@@ -1931,8 +1926,8 @@ var
   begin
     if (FDocumentDessin.GetBasePointByIndex(EP.IDBaseStation, BP)) then
     begin
-      C0   := MakeTPoint2Df(BP.PosStation.X + GP.Decalage.X + EP.Offset.X,
-                            BP.PosStation.Y + GP.Decalage.Y + EP.Offset.Y);
+      C0.setFrom(BP.PosStation.X + GP.Decalage.X + EP.Offset.X,
+                 BP.PosStation.Y + GP.Decalage.Y + EP.Offset.Y);
       DrawAsterisk(C0, 2.00, 0.4, clRed);
     end;
   end;
@@ -1948,14 +1943,14 @@ var
   begin
     if (FDocumentDessin.GetBasePointByIndex(EP.IDBaseStation, BP)) then
     begin
-      C0   := MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y);
+      C0.setFrom(BP.PosStation.X, BP.PosStation.Y);
       SetLength(ArrPoints, 6);
-      ArrPoints[0] := MakeTPoint2Df( HALF_WIDTH, -HALF_HEIGHT);
-      ArrPoints[1] := MakeTPoint2Df( HALF_WIDTH,  HALF_HEIGHT / 3);
-      ArrPoints[2] := MakeTPoint2Df( HALF_WIDTH / 3,  HALF_HEIGHT);
-      ArrPoints[3] := MakeTPoint2Df(-HALF_WIDTH / 3,  HALF_HEIGHT);
-      ArrPoints[4] := MakeTPoint2Df(-HALF_WIDTH,  HALF_HEIGHT / 3);
-      ArrPoints[5] := MakeTPoint2Df(-HALF_WIDTH, -HALF_HEIGHT);
+      ArrPoints[0].setFrom( HALF_WIDTH, -HALF_HEIGHT);
+      ArrPoints[1].setFrom( HALF_WIDTH,  HALF_HEIGHT / 3);
+      ArrPoints[2].setFrom( HALF_WIDTH / 3,  HALF_HEIGHT);
+      ArrPoints[3].setFrom(-HALF_WIDTH / 3,  HALF_HEIGHT);
+      ArrPoints[4].setFrom(-HALF_WIDTH,  HALF_HEIGHT / 3);
+      ArrPoints[5].setFrom(-HALF_WIDTH, -HALF_HEIGHT);
       DrawCenteredPolylinePolygone(C0, ArrPoints, clBlack, clGray, 255, 192, 2, True);
     end;
   end;
@@ -1964,17 +1959,16 @@ var
     HALF_WIDTH  = 2.50;
     TIERS_HEIGHT = HALF_WIDTH * 0.667;
   var
-    C0: TPoint2Df;
+    C0, P1, P2, P3: TPoint2Df;
     BP: TBaseStation;
   begin
-    //AfficherMessage('DrawGouffreEnSurface()');
     if (FDocumentDessin.GetBasePointByIndex(EP.IDBaseStation, BP)) then
     begin
-      C0   := MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y);
-      DrawTriangle(MakeTPoint2Df(C0.X - HALF_WIDTH,  C0.Y + TIERS_HEIGHT),
-                   MakeTPoint2Df(C0.X,  C0.Y - 2 * TIERS_HEIGHT),
-                   MakeTPoint2Df(C0.X + HALF_WIDTH,  C0.Y + TIERS_HEIGHT),
-                   clBlack, clBlack, 255, 192, 0);
+      C0.setFrom(BP.PosStation.X, BP.PosStation.Y);
+      P1.setFrom(C0.X - HALF_WIDTH,  C0.Y + TIERS_HEIGHT);
+      P2.setFrom(C0.X,  C0.Y - 2 * TIERS_HEIGHT);
+      P3.setFrom(C0.X + HALF_WIDTH,  C0.Y + TIERS_HEIGHT);
+      DrawTriangle(P1, P2, P3, clBlack, clBlack, 255, 192, 0);
     end;
   end;
 
@@ -2069,22 +2063,22 @@ begin
   QH2  := 0.70 * QH1; // hauteur flèche
   QL1  := L / 50;     // largeur flèche
   PPC1 := QGetCoordsMonde(MakeTPoint(0 + QMarge, QImgHeight - QMarge));
-  PPC2 := MakeTPoint2Df(PPC1.X + FParamsVue2D.TailleEchelle,
-                        PPC1.Y + FParamsVue2D.TailleEchelle / 10);
+  PPC2.setFrom(PPC1.X + FParamsVue2D.TailleEchelle,
+               PPC1.Y + FParamsVue2D.TailleEchelle / 10);
   self.DrawRectangleRempli(PPC1, PPC2, clBlack, clWhite, 192, 128, 0);
   for iii := 0 to 3 do
   begin
     QQ   := IIF(iii mod 2 = 0, 1, 0);
-    EWE1 := MakeTPoint2Df(PPC1.X + iii * FParamsVue2D.TailleEchelle / 4,
-                          PPC1.Y + QQ  * FParamsVue2D.TailleEchelle / 20);
-    EWE2 := MakeTPoint2Df(PPC1.X + (iii + 1) * FParamsVue2D.TailleEchelle / 4,
-                          PPC1.Y + (QQ + 1)  * FParamsVue2D.TailleEchelle / 20);
+    EWE1.setFrom(PPC1.X + iii * FParamsVue2D.TailleEchelle / 4,
+                 PPC1.Y + QQ  * FParamsVue2D.TailleEchelle / 20);
+    EWE2.setFrom(PPC1.X + (iii + 1) * FParamsVue2D.TailleEchelle / 4,
+                 PPC1.Y + (QQ + 1)  * FParamsVue2D.TailleEchelle / 20);
     self.DrawRectangleRempli(EWE1, EWE2, clBlack, clGray, 192, 128, 0);
   end;
   // flèche du Nord
-  PPC3 := MakeTPoint2Df(PPC1.X, PPC1.Y + QH1);
-  PPC4 := MakeTPoint2Df(PPC3.X + QL1, PPC3.Y - QH2);
-  PPC5 := MakeTPoint2Df(PPC1.X, PPC3.Y - QH2);
+  PPC3.setFrom(PPC1.X, PPC1.Y + QH1);
+  PPC4.setFrom(PPC3.X + QL1, PPC3.Y - QH2);
+  PPC5.setFrom(PPC1.X, PPC3.Y - QH2);
   self.TraceVers(PPC1.X, PPC1.Y, False);
   self.TraceVers(PPC3.X, PPC3.Y, True);
   self.DrawTriangle(PPC5, PPC4, PPC3, clBlack, clGray, 255, 192, 0);
@@ -2130,7 +2124,6 @@ procedure TGHCaveDrawDrawingContext.DrawQuadrillage();
   procedure DrawQuadrillageGrille(const QdrSpc: double; const QdrColor: TColor; const QDoDrawCoords: boolean);
   var
     P1, P2: TPoint;
-    C1, C2: TPoint2Df;
     q,t, qy: integer;
     A,B, B0: double;
     S: string;
@@ -2141,10 +2134,8 @@ procedure TGHCaveDrawDrawingContext.DrawQuadrillage();
     qy := self.CanvasBGRA.Height - 1 - self.CanvasBGRA.TextHeight('8');
     while (A < FRXMaxi) do
     begin
-      C1 := MakeTPoint2Df(A, FRYMini);
-      C2 := MakeTPoint2Df(A, FRYMaxi);
-      P1 := self.QGetCoordsPlan(C1);
-      P2 := self.QGetCoordsPlan(C2);
+      P1 := self.QGetCoordsPlan(A, FRYMini);
+      P2 := self.QGetCoordsPlan(A, FRYMaxi);
       self.CanvasBGRA.MoveTo(P1.X, P1.Y);
       self.CanvasBGRA.LineTo(P2.X, P2.Y);
       //-------- Coordonnées en rive
@@ -2161,10 +2152,8 @@ procedure TGHCaveDrawDrawingContext.DrawQuadrillage();
     A := QdrSpc * t;
     while (A < FRYMaxi) do
     begin
-      C1 := MakeTPoint2Df(FRXMini, A);
-      C2 := MakeTPoint2Df(FRXMaxi, A);
-      P1 := self.QGetCoordsPlan(C1);
-      P2 := self.QGetCoordsPlan(C2);
+      P1 := self.QGetCoordsPlan(FRXMini, A);
+      P2 := self.QGetCoordsPlan(FRXMaxi, A);
       self.CanvasBGRA.MoveTo(P1.X, P1.Y);
       self.CanvasBGRA.LineTo(P2.X, P2.Y);
       //-------- Coordonnées en rive
@@ -2199,10 +2188,8 @@ procedure TGHCaveDrawDrawingContext.DrawQuadrillage();
       //self.CanvasBGRA.Font.Height := CalcFontHeightFromHauteurEnMetres();
       while (Ax < FRXMaxi) do
       begin
-        C1 := MakeTPoint2Df(Ax, FRYMini);
-        C2 := MakeTPoint2Df(Ax, FRYMaxi);
-        P1 := self.QGetCoordsPlan(C1);
-        P2 := self.QGetCoordsPlan(C2);
+        P1 := self.QGetCoordsPlan(Ax, FRYMini);
+        P2 := self.QGetCoordsPlan(Ax, FRYMaxi);
         // amorces
         self.CanvasBGRA.MoveTo(P2.X, P2.Y);
         self.CanvasBGRA.LineTo(P2.X, P2.Y + self.CanvasBGRA.Font.Height + 20);
@@ -2214,10 +2201,8 @@ procedure TGHCaveDrawDrawingContext.DrawQuadrillage();
       end;
       while (Ay < FRYMaxi) do
       begin
-        C1 := MakeTPoint2Df(FRXMini, Ay);
-        C2 := MakeTPoint2Df(FRXMaxi, Ay);
-        P1 := self.QGetCoordsPlan(C1);
-        P2 := self.QGetCoordsPlan(C2);
+        P1 := self.QGetCoordsPlan(FRXMini, Ay);
+        P2 := self.QGetCoordsPlan(FRXMaxi, Ay);
         S  := Format('%.0f',[Ay]);
         q  := P1.Y - self.CanvasBGRA.TextHeight(S) div 2;
         // amorces
@@ -2244,10 +2229,10 @@ procedure TGHCaveDrawDrawingContext.DrawQuadrillage();
       Ax := CrossSpc * tx;
       while (Ax < FRXMaxi) do
       begin
-        C1 := MakeTPoint2Df(Ax - CrossSize, Ay);
-        C2 := MakeTPoint2Df(Ax + CrossSize, Ay);
-        C3 := MakeTPoint2Df(Ax, Ay - CrossSize);
-        C4 := MakeTPoint2Df(Ax, Ay + CrossSize);
+        C1.setFrom(Ax - CrossSize, Ay);
+        C2.setFrom(Ax + CrossSize, Ay);
+        C3.setFrom(Ax, Ay - CrossSize);
+        C4.setFrom(Ax, Ay + CrossSize);
         self.TraceVers(C1, false);
         self.TraceVers(C2, true);
         self.TraceVers(C3, false);

@@ -1058,6 +1058,7 @@ procedure TMainWindow.GenererUneEbauche(const QFileName: TStringDirectoryFileNam
 var
   LS: TStringList;
   BP: TBaseStation;
+  P1, P2, P3, P4: TPoint3Df;
   function MakeTBaseStation(const QIDStation      : TIDBaseStation;
                             const QIDTerrain      : string;
                             const QTypeStation    : TTypeStation;
@@ -1087,27 +1088,27 @@ begin
     //CodeEPSG	27573
     LS.Add('CodeEPSG' +#9 + IntToStr(DEFAULT_SYSTEME_COORDONNEES_CODE_EPSG));
     LS.Add(BASEPOINTMARKER);
+    P1.setFrom(392351.45, 3286107.27, 0.00);
+    P2.setFrom(392349.81, 3286106.12, 0.00);
+    P3.setFrom(392350.96, 3286104.48, 0.00);
+    P4.setFrom(392348.66, 3286107.76, 0.00);
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     BP := MakeTBaseStation('1.0', '1.00B', 8, TColor(26367),
     {$ELSE}
     BP := MakeTBaseStation(100010, '1.00B', 8, TColor(26367),
     {$ENDIF TIDBASEPOINT_AS_TEXT}
-                           MakeTPoint3Df(392351.45, 3286107.27, 0.00),
-                           MakeTPoint3Df(392349.81, 3286106.12, 0.00),
-                           MakeTPoint3Df(392350.96, 3286104.48, 0.00),
-                           MakeTPoint3Df(392348.66, 3286107.76, 0.00),
-                           True);
+    P1, P2, P3, P4, True);
     LS.Add(GenererLigneBasepoint(0, BP));
+    P1.setFrom(392349.81, 3286106.12, 0.00);
+    P2.setFrom(392349.65, 3286106.01, 0.00);
+    P3.setFrom(392350.79, 3286104.37, 0.00);
+    P4.setFrom(392348.50, 3286107.64, 0.00);
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     BP := MakeTBaseStation('1.1', '1.00B', 8, TColor(26367),
     {$ELSE}
     BP := MakeTBaseStation(100020, '1.00C', 8, TColor(26367),
     {$ENDIF TIDBASEPOINT_AS_TEXT}
-                           MakeTPoint3Df(392349.81, 3286106.12, 0.00),
-                           MakeTPoint3Df(392349.65, 3286106.01, 0.00),
-                           MakeTPoint3Df(392350.79, 3286104.37, 0.00),
-                           MakeTPoint3Df(392348.50, 3286107.64, 0.00),
-                           True);
+    P1, P2, P3, P4, True);
     LS.Add(GenererLigneBasepoint(0, BP));
     LS.Add(ENDBASEPOINTMARKER);
     LS.SaveToFile(QFileName);
@@ -1496,7 +1497,7 @@ begin
     begin
       QC1 := CadreDessinBGRA1.GetDrwCoinBasGauche();
       QC2 := CadreDessinBGRA1.GetDrwCoinHautDroit();
-      EWE := MakeTRect2Df(QC1.X, QC1.Y, QC2.X, QC2.Y);
+      EWE.setFrom(QC1, QC2);
       CadreDessinBGRA1.ExporterTopoEnImage(QFileName, EWE, Trunc(QAT));
       ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
     end;
@@ -1941,12 +1942,10 @@ begin
   if (WU > 0) then
   begin
     MyImage := FD.GetImage(WU);
-    QAbsPos := MakeTPoint3Df(MyImage.PositionCoinsImage.X1,
-                             MyImage.PositionCoinsImage.Y2,
-                             0.00);
+    QAbsPos.setFrom(MyImage.PositionCoinsImage.X1, MyImage.PositionCoinsImage.Y2, 0.00);
     if (DoDialogTImageObject(FD, MyImage, FD.GetDossierContenantDoc(), QAbsPos, False)) then
     begin
-      ;
+      pass;
     end;
   end;
 end;
@@ -2716,7 +2715,7 @@ begin
       FD.SetMiniEtMaxi;
       QC1 := FD.GetCoordsMini();
       QC2 := FD.GetCoordsMaxi();
-      EWE := MakeTRect2Df(QC1.X, QC1.Y, QC2.X, QC2.Y);
+      EWE.setFrom(QC1, QC2);
       CadreDessinBGRA1.ExporterTopoEnImage(QFileName, EWE, Trunc(QAT));
       ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
     end;

@@ -1017,8 +1017,8 @@ end;
 // conversion de coordonnées
 function TCadreSectionTransversale.GetCoordsPlan (const PM: TPoint2Df): TPoint;
 begin
-  Result.X:=Round((PM.X - FRXMini) * FRappScrReal);
-  Result.Y:=Round((FRYMaxi-PM.Y) * FRappScrReal);
+  Result.X :=Round((PM.X - FRXMini) * FRappScrReal);
+  Result.Y :=Round((FRYMaxi-PM.Y) * FRappScrReal);
 end;
 function TCadreSectionTransversale.GetCoordsMonde(const PP: TPoint): TPoint2Df;
 begin
@@ -1028,8 +1028,11 @@ begin
 end;
 
 function TCadreSectionTransversale.GetCoordsPlan(const QX, QY: double): TPoint;
+var
+  P1: TPoint2Df;
 begin
-  Result := GetCoordsPlan(MakeTPoint2Df(QX, QY));
+  P1.setFrom(QX, QY);
+  Result := GetCoordsPlan(P1);
 end;
 
 //******************************************************************************
@@ -1403,6 +1406,7 @@ var
     EWE: TViseeRayonnante;
     WU: TColor;
     PP, PZ: double;
+    P1, P2: TPoint2Df;
   begin
     n := FHerissonViseesRadiantes.getNbViseesRayonnantes();
     if (n > 0) then
@@ -1423,7 +1427,9 @@ var
     TmpBuffer.RestoreCrayon();
     TmpBuffer.DefineCrayon(psSolid, 0, clMaroon, 255);
     TmpBuffer.DefineBrosse(bsSolid, clRed, 192);
-    TmpBuffer.TraceRectangle(MakeTPoint2Df(-DC, -DC), MakeTPoint2Df(DC, DC));
+    P1.setFrom(-DC, -DC);
+    P2.setFrom(DC, DC);
+    TmpBuffer.TraceRectangle(P1, P2);
     TmpBuffer.RestoreBrosse();
     TmpBuffer.RestoreCrayon();
   end;
@@ -1620,25 +1626,20 @@ end;
 
 procedure TCadreSectionTransversale.VolatileTraceVers(const Cnv: TCanvas; const XX, YY: Double; const Drawn: boolean);
 var
-  PM: TPoint2Df;
   PP: TPoint;
 begin
-  PM := MakeTPoint2Df(XX, YY);
-  PP := GetCoordsPlan(PM);
-  if (Drawn) then Cnv.LineTo(PP.X, PP.Y)
-             else Cnv.MoveTo(PP.X, PP.Y);
+  PP := GetCoordsPlan(XX, YY);
+  if (Drawn) then Cnv.LineTo(PP.X, PP.Y) else Cnv.MoveTo(PP.X, PP.Y);
 end;
 
 procedure TCadreSectionTransversale.VueClick(Sender: TObject);
 begin
-
+  pass;
 end;
 
 procedure TCadreSectionTransversale.VueDblClick(Sender: TObject);
 begin
   if (not FDoDraw) then Exit;
-
-  // réinit crayons
   Vue.Canvas.Pen.Mode   := pmCopy;
   Vue.Canvas.Pen.Style  := psSolid;
   case FModeTravail of
@@ -1685,7 +1686,7 @@ begin
   case FModeTravail of
     mtNONE:
       begin
-        ;
+        pass;
       end;
     // ligne par pointage de deux points
     mtLIGNE_PREMIER_POINT:

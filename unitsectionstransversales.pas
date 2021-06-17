@@ -845,10 +845,10 @@ begin
           SetLength(MyCourbe.Arcs, 1 + Length(MyCourbe.Arcs));
           n := High(MyCourbe.Arcs);
           ACDC := MyCourbe.Arcs[n];
-          ACDC.CoordsP1 := MakeTPoint2Df(ConvertirEnNombreReel(EWE[1], 0.00), ConvertirEnNombreReel(EWE[2], 0.00));
-          ACDC.TangP1   := MakeTPoint2Df(ConvertirEnNombreReel(EWE[3], 0.00), ConvertirEnNombreReel(EWE[4], 0.00));
-          ACDC.TangP2   := MakeTPoint2Df(ConvertirEnNombreReel(EWE[5], 0.00), ConvertirEnNombreReel(EWE[6], 0.00));
-          ACDC.CoordsP2 := MakeTPoint2Df(ConvertirEnNombreReel(EWE[7], 0.00), ConvertirEnNombreReel(EWE[8], 0.00));
+          ACDC.CoordsP1.setFrom(ConvertirEnNombreReel(EWE[1], 0.00), ConvertirEnNombreReel(EWE[2], 0.00));
+          ACDC.TangP1.setFrom(ConvertirEnNombreReel(EWE[3], 0.00), ConvertirEnNombreReel(EWE[4], 0.00));
+          ACDC.TangP2.setFrom(ConvertirEnNombreReel(EWE[5], 0.00), ConvertirEnNombreReel(EWE[6], 0.00));
+          ACDC.CoordsP2.setFrom(ConvertirEnNombreReel(EWE[7], 0.00), ConvertirEnNombreReel(EWE[8], 0.00));
           MyCourbe.Arcs[n] := ACDC;
         end;
         if (HasKeywordOccurred(EWE, END_CROSS_SECTION_A_COURBE)) then
@@ -881,7 +881,7 @@ begin
           SetLength(MyPolygone.Vertexes, 1 + Length(MyPolygone.Vertexes));
           n   := High(MyPolygone.Vertexes);
           VX  := MyPolygone.Vertexes[n];
-          VX := MakeTPoint2Df(ConvertirEnNombreReel(EWE[1], 0.00), ConvertirEnNombreReel(EWE[2], 0.00));
+          VX.setFrom(ConvertirEnNombreReel(EWE[1], 0.00), ConvertirEnNombreReel(EWE[2], 0.00));
           MyPolygone.Vertexes[n] := VX;
         end;
         if (HasKeywordOccurred(EWE, END_CROSS_SECTION_A_POLYGONE)) then
@@ -910,10 +910,10 @@ begin
         begin
           AfficherMessage(Format('%d: Simple line found ', [i]));
           MySimpleLigne.IDStyleLigne := TNatureObjetLigne(strToIntDef(EWE[1], 0));
-          MySimpleLigne.Extr1.X      := ConvertirEnNombreReel(EWE[2], 0.00) ;
-          MySimpleLigne.Extr1.Y      := ConvertirEnNombreReel(EWE[3], 0.00) ;
-          MySimpleLigne.Extr2.X      := ConvertirEnNombreReel(EWE[4], 0.00) ;
-          MySimpleLigne.Extr2.Y      := ConvertirEnNombreReel(EWE[5], 0.00) ;
+          MySimpleLigne.Extr1.setFrom(ConvertirEnNombreReel(EWE[2], 0.00),
+                                      ConvertirEnNombreReel(EWE[3], 0.00));
+          MySimpleLigne.Extr2.setFrom(ConvertirEnNombreReel(EWE[4], 0.00),
+                                      ConvertirEnNombreReel(EWE[5], 0.00));
           // ici, on teste si la ligne est de longueur nulle,
           // ce qui a autant de sens qu'un soutien-gorge 95C chez Jane Brikin
           lol := Hypot(MySimpleLigne.Extr2.X - MySimpleLigne.Extr1.X,
@@ -1369,8 +1369,8 @@ begin
         MyArc := MyCourbe.Arcs[a];
         P1 := MyArc.CoordsP1;
         P4 := MyArc.CoordsP2;
-        P2 := MakeTPoint2Df(P1.X + MyArc.TangP1.X, P1.Y + MyArc.TangP1.Y);
-        P3 := MakeTPoint2Df(P4.X + MyArc.TangP2.X, P4.Y + MyArc.TangP2.Y);
+        P2.setFrom(P1.X + MyArc.TangP1.X, P1.Y + MyArc.TangP1.Y);
+        P3.setFrom(P4.X + MyArc.TangP2.X, P4.Y + MyArc.TangP2.Y);
         PtsCourbes := CalcBezierCurve(P1, P2, P3, P4, NB_SUBDIVS_COURBES);
         for p := 0 to High(PtsCourbes) do MyPolyProvisoire.AddElement(PtsCourbes[p]);
       end;

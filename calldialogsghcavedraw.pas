@@ -505,13 +505,15 @@ function DoDialogTImageObject(const FD: TDocumentDessin;
                               const ImgPosition: TPoint3Df;
                               const DoCreateImage: boolean): boolean;
 var
+  P1: TPoint2Df;
   DLG: TdlgTImageObject;
 begin
   Result := false;
   DLG := TdlgTImageObject.Create(Application);
   try
     DLG.Initialiser(FD, QInitialDir, DoCreateImage);
-    DLG.setPositionPtRefImage(MakeTPoint2Df(ImgPosition.X, ImgPosition.Y), 50.00);
+    P1.setFrom(ImgPosition.X, ImgPosition.Y);
+    DLG.setPositionPtRefImage(P1, 50.00);
     DLG.ShowModal;
     if (DLG.ModalResult = mrOK) then
     begin

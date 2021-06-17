@@ -6,6 +6,7 @@ interface
 
 uses
   GHCD_Types
+  , dateutils
   , GeneralFunctions
   , CallDialogsGHCaveDraw
   , UnitDocDessin
@@ -274,8 +275,6 @@ end;
 procedure TdlgParametrageAtlas.InitCaptions;
 begin
   lbDossierDestination.Caption    := GetResourceString(rsDLG_ATLAS_LB_DOSSIER_DEST);
-
-
   // tailles d'écran
   grbxEcrans.Caption              := GetResourceString(rsDLG_ATLAS_GRBX_TAILLE_ECRAN);
   lbEcransUsuels.Caption          := GetResourceString(rsDLG_ATLAS_USUALLY_RESOLS);
@@ -284,23 +283,23 @@ begin
   lbDimensionsImageTopo.Caption   := GetResourceString(rsDLG_ATLAS_LB_TAILLE_IMAGE);
   chkCopyright.Caption            := GetResourceString(rsDLG_ATLAS_CHK_DISP_COPYRIGHT);
   editMentionsCopyright.Text      := MENTION_CC_BY_SA;
-
   // notes de copyright
   editMentionsCopyright.Clear;
+  editMentionsCopyright.Items.add(format('(c) %d JPCassou', [YearOf(Now())]));
   editMentionsCopyright.Items.Add('CC-BY-SA JPCassou');
-  editMentionsCopyright.Items.Add('CC-BY-SA GRASLourdes');
-  editMentionsCopyright.Items.Add('CC-BY-SA GESAEysines');
   editMentionsCopyright.Items.Add('CC0 JPCassou');
   editMentionsCopyright.Items.Add('CC-BY-NC-SA JPCassou');
+  editMentionsCopyright.Items.Add('CC-BY-SA GRASLourdes');
+  editMentionsCopyright.Items.Add('CC-BY-SA GESAEysines');
   editMentionsCopyright.ItemIndex := 0;
 end;
 procedure TdlgParametrageAtlas.AfficherProgressionGenerationAtlas(const Etape: string; const Min, Max, Position: integer);
 begin
   lbProgress.Caption := Format('Page: %d / %d', [Position+1, Max]);
   lbEtapeTravail.Caption := Etape;
-  ProgressBar1.Min      := 0;
-  ProgressBar1.Max      := Max;
-  ProgressBar1.Position := 1+Position;
+  ProgressBar1.Min       := 0;
+  ProgressBar1.Max       := Max;
+  ProgressBar1.Position  := 1+Position;
 end;
 
 end.

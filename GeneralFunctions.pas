@@ -51,13 +51,13 @@ function GetIconesTexturesDirectory(): string;
 function GetGHCaveDrawVersionAndDateBuild(): string;
 
 // affectation rapide de valeurs (pour éviter des affectations multiples ds le code)
-function MakeTPoint2Df(const QX, QY: double): TPoint2Df;
-function MakeTPoint3Df(const QX, QY, QZ: double): TPoint3Df;
+//function MakeTPoint2Df(const QX, QY: double): TPoint2Df;
+//function MakeTPoint3Df(const QX, QY, QZ: double): TPoint3Df;
 function MakeTPoint(const QX, QY: integer): TPoint;
 function MakeTPoint2DfWithGroupeAndBaseStation(const BP: TBaseStation; const GP: TGroupeEntites; const OffX, OffY: double): TPoint2Df;
 function MakeTPoint2DfWithBaseStationOnly(const BP: TBaseStation; const OffX, OffY: double): TPoint2Df; inline;
 function MakeTRect(const Left, Top, Right, Bottom: Integer): TRect;
-function MakeTRect2Df(const QX1, QY1, QX2, QY2: double): TRect2Df;
+//function MakeTRect2Df(const QX1, QY1, QX2, QY2: double): TRect2Df;
 
 // ifs immédiats
 function IIF(const Condition: boolean; const V1, V2: integer): integer; overload; inline;
@@ -124,7 +124,6 @@ function IsInBoundingBox(const XX, YY: Double; const BB: TBoundingBox): boolean;
 function CCW(const P0, P1, P2: TPoint2Df): integer;
 function Intersect(const D1, D2: TDroite): boolean;    // function Intersect: intersection de deux droites
 function PointDansPolygone(const QX, QY: double; const LstSommets: TLstSommets): boolean;
-function CalcBoundinxBox(const LstSommets: TLstSommets): TBoundingBox;
 function IsValidBoundingBox(const BB: TBoundingBox): boolean;
 
 // fonctions de couleurs
@@ -770,9 +769,9 @@ var
   var
     PT, PQ: TPoint2Df;
   begin
-    PT := MakeTPoint2Df(PP.X - PC.X, PP.Y - PC.Y);                         // réduction au centre
-    PQ := MakeTPoint2Df(ca * PT.X - sa * PT.Y, sa * PT.X + ca * PT.Y);     // rotation locale (/!\ ne pas réutiliser la variable PT sinon effet de bord)
-    Result := MakeTPoint2Df(PQ.X + PC.X, PQ.Y + PC.Y);                     // et on remet en repère général
+    PT.setFrom(PP.X - PC.X, PP.Y - PC.Y);                         // réduction au centre
+    PQ.setFrom(ca * PT.X - sa * PT.Y, sa * PT.X + ca * PT.Y);     // rotation locale (/!\ ne pas réutiliser la variable PT sinon effet de bord)
+    Result.setFrom(PQ.X + PC.X, PQ.Y + PC.Y);                     // et on remet en repère général
   end;
 begin
   // dimensionnement du tableau résultat
@@ -821,11 +820,11 @@ end;
 // vecteurs de mêmes composantes
 function GetConstantVector2D(const Value: double): TPoint2Df;
 begin
-  Result := MakeTPoint2Df(Value, Value);
+  Result.setFrom(Value, Value);
 end;
 function GetConstantVector3D(const Value: double): TPoint3Df;
 begin
-  Result := MakeTPoint3Df(Value, Value, Value);
+  Result.setFrom(Value, Value, Value);
 end;
 
 // tracé de textes avec rotation
@@ -1021,27 +1020,6 @@ begin
   Result := (CountIntersects mod 2) > 0;
 
 end;
-// calcul de la boundingbox d'un groupe de sommets 2D
-function CalcBoundinxBox(const LstSommets: TLstSommets): TBoundingBox;
-var
-  i, Nb: integer;
-  V: TPoint2Df;
-begin
-  Result.C1.X :=  GHCD_Types.INFINITE;
-  Result.C1.Y :=  GHCD_Types.INFINITE;
-  Result.C2.X := -GHCD_Types.INFINITE;
-  Result.C2.Y := -GHCD_Types.INFINITE;
-  Nb          :=  High(LstSommets);
-  if (Nb = 0) then Exit;
-  for i := 0 to Nb do
-  begin
-    V := LstSommets[i];
-    if (V.X < Result.C1.X) then Result.C1.X := V.X;
-    if (V.Y < Result.C1.Y) then Result.C1.Y := V.Y;
-    if (V.X > Result.C2.X) then Result.C2.X := V.X;
-    if (V.Y > Result.C2.Y) then Result.C2.Y := V.Y;
-  end;
-end;
 function IsValidBoundingBox(const BB: TBoundingBox): boolean;
 begin
   Result := (Abs(BB.C2.X - BB.C1.X) < GHCD_Types.INFINITE) and
@@ -1204,13 +1182,6 @@ begin
   Result.Right   := Right;
 end;
 
-function MakeTRect2Df(const QX1, QY1, QX2, QY2: double): TRect2Df;
-begin
-  result.X1 := QX1;
-  result.X2 := QX2;
-  result.Y1 := QY1;
-  result.Y2 := QY2;
-end;
 
 function KMLColor(const R, G, B, A: byte): string; inline;
 begin

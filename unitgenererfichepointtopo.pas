@@ -147,8 +147,7 @@ var
   ii: Integer;
   QQC1: TPoint3Df;
   QQC2: TPoint3Df;
-  PosCopyright: TPoint2Df;
-
+  P1, P2, PosCopyright: TPoint2Df;
 begin
   dx := LimitesDessin.X2 - LimitesDessin.X1;
   dy := LimitesDessin.Y2 - LimitesDessin.Y1;
@@ -241,7 +240,9 @@ begin
                                            255);
     QQC1 := FMyDocDessin.GetCoordsMini();
     QQC2 := FMyDocDessin.GetCoordsMaxi();
-    QGHCaveDrawDrawingContext.DrawRectangle(MakeTPoint2Df(QQC1.X, QQC1.Y), MakeTPoint2Df(QQC2.X, QQC2.Y));
+    P1.setFrom(QQC1.X, QQC1.Y);
+    P2.setFrom(QQC2.X, QQC2.Y);
+    QGHCaveDrawDrawingContext.DrawRectangle(P1, P2);
     QGHCaveDrawDrawingContext.RestoreCrayon();
     // fin conventionnelle
     QGHCaveDrawDrawingContext.EndDrawing();
@@ -366,10 +367,10 @@ begin
     CoinBasGauche := FMyDocDessin.GetCoordsMini();
     QFX := Pixels2MillimetresX(Printer, FImgWidth);
     QFY := Pixels2MillimetresY(Printer, FImgHeight);
-    BBX := MakeTRect2Df(CoinBasGauche.X + QFX * C,
-                        CoinBasGauche.Y + QFY * L,
-                        CoinBasGauche.X + QFX * (C + 1),
-                        CoinBasGauche.Y + QFY * (L + 1));
+    BBX.setFrom(CoinBasGauche.X + QFX * C,
+                CoinBasGauche.Y + QFY * L,
+                CoinBasGauche.X + QFX * (C + 1),
+                CoinBasGauche.Y + QFY * (L + 1));
 
     QExporterTopoEnImage(BBX, TmpBuffer);
     //QDrawCadreImage(QPosImgX, QPosImgY, LargeurExtraitPlan, HauteurExtraitPlan, 1.8);
@@ -444,8 +445,8 @@ begin
   TmpBuffer  := TGHCaveDrawDrawingContext.Create(FImgWidth, FImgHeight,
                                                  BGRA(Red(FParamsVue2D.BackGroundColor), Green(FParamsVue2D.BackGroundColor), Blue(FParamsVue2D.BackGroundColor), 255));
   try
-    BBX := MakeTRect2Df(BP.PosStation.X - HalfWidth, BP.PosStation.Y - HalfWidth,
-                        BP.PosStation.X + HalfWidth, BP.PosStation.X + HalfWidth);
+    BBX.setFrom(BP.PosStation.X - HalfWidth, BP.PosStation.Y - HalfWidth,
+                BP.PosStation.X + HalfWidth, BP.PosStation.X + HalfWidth);
     QExporterTopoEnImage(BBX, TmpBuffer);
     QDrawCadreImage(QPosImgX, QPosImgY, LargeurExtraitPlan, HauteurExtraitPlan, 1.8);
     TmpBuffer.Draw(Printer.Canvas,

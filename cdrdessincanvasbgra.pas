@@ -1279,9 +1279,9 @@ var
 begin
   OT.IDBaseSt  := FCurrentBasePoint.IDStation;
   OT.IDGroupe  := FCurrentGroupeIdx;
-  OT.Offset    := MakeTPoint3Df(FMyPos.X - FCurrentBasePoint.PosStation.X,
-                                FMyPos.Y - FCurrentBasePoint.PosStation.Y,
-                                0.00);
+  OT.Offset.setFrom(FMyPos.X - FCurrentBasePoint.PosStation.X,
+                    FMyPos.Y - FCurrentBasePoint.PosStation.Y,
+                    0.00);
   WU := ProposerTextAlignment(OT.Offset.X, OT.Offset.Y);
   OT.Alignment := WU;
   OT.IDStyleTexte := notDEBUG;
@@ -1588,7 +1588,7 @@ var
   OP: TSymbole;
 begin
   // QAbsPos n'est pas utilisé en mode édition
-  QAbsPos := MakeTPoint3Df( -1.00, -1.00, -1.00);
+  QAbsPos.setFrom(-1.00, -1.00, -1.00);
   OP := FDocumentDessin.GetSymbole(FCurrentSymboleIdx);
   EditerSymboleObject(FDocumentDessin,
                       FCurrentSymboleIdx,
@@ -1610,7 +1610,7 @@ var
   OT: TTextObject;
 begin
   // QAbsPos n'est pas utilisé en mode édition
-  QAbsPos := MakeTPoint3Df( -1.00, -1.00, -1.00);
+  QAbsPos.setFrom(-1.00, -1.00, -1.00);
   OT := FDocumentDessin.GetTexte(FCurrentTextIdx);
   EditerTextObject(FDocumentDessin,
                    FCurrentTextIdx, medMODIF,
@@ -1639,7 +1639,6 @@ begin
   EWE := GetToporobotIDStation(FCurrentBasePoint);
   editFiltre.Text := Format('SERIE=%d;', [EWE.aSerie]);
   acApplyMetaFiltre.Execute;
-
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 end;
 
@@ -1928,20 +1927,12 @@ end;
 // attraper les limites du dessin
 function TCadreDessinBGRA.GetDrwCoinBasGauche(): TPoint2Df;
 begin
-  Result := MakeTPoint2Df(FRXMini, FRYMini);
+  Result.setFrom(FRXMini, FRYMini);
 end;
 function TCadreDessinBGRA.GetDrwCoinHautDroit(): TPoint2Df;
 begin
-  Result := MakeTPoint2Df(FRXMaxi, FRYMaxi);
+  Result.setFrom(FRXMaxi, FRYMaxi);
 end;
-
-
-
-// routines de dessin
-
-
-
-
 
 
 procedure TCadreDessinBGRA.VolatileTraceTexte(const Cnv: TCanvas; const XX,
@@ -1950,15 +1941,10 @@ var
   PM: TPoint2Df;
   PP: TPOINT;
 begin
-  PM := MakeTPoint2Df(XX, YY);
+  PM.setFrom(XX, YY);
   PP := GetCoordsPlan(PM);
   Cnv.TextOut(PP.X, PP.Y, T);
 end;
-
-
-
-
-
 
 
 procedure TCadreDessinBGRA.TraceMarqueurDirectionnel(const Cnv: TCanvas; const XX, YY: double; const Angle: double);
@@ -1966,16 +1952,13 @@ const R = 16;
 var
   sa: float;
   ca: float;
-  PT1: TPoint2Df;
-  PT2: TPoint2Df;
-  PT3: TPoint2Df;
   PP : Array [0..2] of TPoint;
   PP0: TPOINT;
   HalfR: Integer;
 begin
   sincos(Angle, sa, ca);
   HalfR := R div 2;
-  PP0 := GetCoordsPlan(MakeTPoint2Df(XX, YY));
+  PP0 := GetCoordsPlan(XX, YY);
   PP[0] := MakeTPoint(PP0.X + round(R * ca)    , PP0.Y - round(R * sa));
   PP[1] := MakeTPoint(PP0.X - round(HalfR * sa), PP0.Y - round(HalfR * ca));
   PP[2] := MakeTPoint(PP0.X + round(HalfR * sa), PP0.Y + round(HalfR * ca));
@@ -2005,7 +1988,7 @@ var
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 begin
 
-  PP := GetCoordsPlan(MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y));
+  PP := GetCoordsPlan(BP.PosStation.X, BP.PosStation.Y);
   Cnv.Pen.Color    := clBlue;
   Cnv.Pen.Width    := 0;
   Cnv.Brush.Style  := bsSolid;
@@ -2036,13 +2019,11 @@ end;
 
 procedure TCadreDessinBGRA.VolatileTraceCercle(const Cnv: TCanvas; const XX, YY: Double; const R: integer);
 var
-  PM: TPoint2Df;
   PP: TPoint;
   Q : integer;
 begin
   Q := R shr 1;
-  PM := MakeTPoint2Df(XX, YY);
-  PP := GetCoordsPlan(PM);
+  PP := GetCoordsPlan(XX, YY);
   Cnv.EllipseC(PP.X, PP.Y, Q, Q);
 end;
 // test de visibilité d'un groupe dans la vue courante
@@ -2052,21 +2033,20 @@ var
   R1: TRect2Df;
 begin
   Result := false;
-  R0 := MakeTRect2Df(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
-  R1 := MakeTRect2Df(QGroupe.BoundingBox.C1.X,
-                    QGroupe.BoundingBox.C1.Y,
-                    QGroupe.BoundingBox.C2.X,
-                    QGroupe.BoundingBox.C2.Y);
+  R0.setFrom(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
+  R1.setFrom(QGroupe.BoundingBox.C1, QGroupe.BoundingBox.C2);
   result := IntersectRectangles(R0, R1);
 end;
 // une station est visible ?
 function TCadreDessinBGRA.BasePointIsVisible(const BP: TBaseStation): boolean;
 var
   R0: TRect2Df;
+  P1, P2: TPoint2Df;
 begin
-  R0 := MakeTRect2Df(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
-  result := PointIsInRectangle(MakeTPoint2Df(BP.PosExtr0.X, BP.PosExtr0.Y), R0) OR
-            PointIsInRectangle(MakeTPoint2Df(BP.PosStation.X, BP.PosStation.Y), R0);
+  R0.setFrom(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
+  P1.setFrom(BP.PosExtr0.X, BP.PosExtr0.Y);
+  P2.setFrom(BP.PosStation.X, BP.PosStation.Y);
+  result := PointIsInRectangle(P1, R0) OR PointIsInRectangle(P2, R0);
 end;
 
 // charger et initialiser fichier dessin
@@ -3145,8 +3125,11 @@ begin
 end;
 
 function TCadreDessinBGRA.GetCoordsPlan(const QX, QY: double): TPoint;
+var
+  P1: TPoint2Df;
 begin
-  Result := GetCoordsPlan(MakeTPoint2Df(QX, QY));
+  P1.setFrom(QX, QY);
+  Result := GetCoordsPlan(P1);
 end;
 
 //******************************************************************************
@@ -3204,11 +3187,9 @@ end;
 
 procedure TCadreDessinBGRA.VolatileTraceVers(const Cnv: TCanvas; const XX, YY: Double; const Drawn: boolean);
 var
-  PM: TPoint2Df;
   PP: TPoint;
 begin
-  PM := MakeTPoint2Df(XX, YY);
-  PP := GetCoordsPlan(PM);
+  PP := GetCoordsPlan(XX, YY);
   if (Drawn) then Cnv.LineTo(PP.X, PP.Y)
              else Cnv.MoveTo(PP.X, PP.Y);
 end;
@@ -3410,7 +3391,7 @@ begin
       begin
         if (FDoMovePoint) then
         begin
-          FZP1 := GetCoordsPlan(MakeTPoint2Df(FOffsetPoint0.X, FOffsetPoint0.Y));
+          FZP1 := GetCoordsPlan(FOffsetPoint0.X, FOffsetPoint0.Y);
           DrawShapeElastique(X, Y, 1);
           FOffsetPoint1   := FMyPos;
         end;
@@ -3419,7 +3400,7 @@ begin
     mtPOLYGON_MOVE_SOMMET,
     mtPOLYLIN_MOVE_SOMMET:
       begin
-        FZP1 := GetCoordsPlan(MakeTPoint2Df(FOffsetPoint0.X, FOffsetPoint0.Y));
+        FZP1 := GetCoordsPlan(FOffsetPoint0.X, FOffsetPoint0.Y);
         DrawShapeElastique(X, Y, 1);
         FOffsetPoint1   := FMyPos;
       end;
@@ -3545,7 +3526,7 @@ begin
     // pan par sélection de deux points
     mtPAN_PREMIER_POINT:
        begin
-         FZC1 := MakeTPoint2Df(FMyPos.X, FMyPos.Y);
+         FZC1.setFrom(FMyPos.X, FMyPos.Y);
          FZP1 := FPP;
          FZP2 := FPP;
          SetModeTravail(mtPAN_SECOND_POINT);
@@ -3568,7 +3549,7 @@ begin
     // zoom par sélection de deux points
     mtZOOM_PREMIER_COIN:
        begin
-         FZC1 := MakeTPoint2Df(FMyPos.X, FMyPos.Y);
+         FZC1.setFrom(FMyPos.X, FMyPos.Y);
          FZP1 := FPP;
          FZP2 := FPP;
          SetModeTravail(mtZOOM_SECOND_COIN);
@@ -3595,7 +3576,7 @@ begin
     // ligne par pointage de deux points
     mtLIGNE_PREMIER_POINT:
        begin
-         FZC1 := MakeTPoint2Df(FMyPos.X, FMyPos.Y);
+         FZC1.setFrom(FMyPos.X, FMyPos.Y);
          FZP1 := FPP;
          FZP2 := FPP;
          FProcGetInfoBasePoint(FCurrentBasePoint);
@@ -3623,7 +3604,7 @@ begin
     // dessin d'objets ponctuels et de textes
     mtDRAW_SYMBOLE:
       begin
-        QAbsPos := MakeTPoint3Df(FMyPos.X, FMyPos.Y, -1.00);
+        QAbsPos.setFrom(FMyPos.X, FMyPos.Y, -1.00);
         EditerSymboleObject(FDocumentDessin, -1, medCREATION, FCurrentGroupeIdx, FCurrentNatureSymbole, OP, QAbsPos, RafraichirVue);
         // pour ajout d'autres objets
         SetModeTravail(mtDRAW_SYMBOLE);     //SetModeTravail(mtNONE);
@@ -3631,7 +3612,7 @@ begin
       end;
     mtDRAW_TEXTE:
        begin
-         QAbsPos := MakeTPoint3Df(FMyPos.X, FMyPos.Y, 0.00);
+         QAbsPos.setFrom(FMyPos.X, FMyPos.Y, 0.00);
          EditerTextObject(FDocumentDessin, -1, medCREATION, FCurrentGroupeIdx, FCurrentNatureTexte, OT, QAbsPos, RafraichirVue);
          // pour ajout d'autres objets
          SetModeTravail(mtDRAW_TEXTE);     //SetModeTravail(mtNONE);
@@ -3639,7 +3620,7 @@ begin
        end;
     mtDRAW_IMAGE:
       begin
-        QAbsPos := MakeTPoint3Df(FMyPos.X, FMyPos.Y, 0.00);
+        QAbsPos.setFrom(FMyPos.X, FMyPos.Y, 0.00);
         if (DoDialogTImageObject(FDocumentDessin, MyImage, FDocumentDessin.GetDossierContenantDoc(), QAbsPos, True)) then
         begin
           ShowMessage(MyImage.SrcFilename + '; ' + MyImage.Description);
@@ -3980,9 +3961,9 @@ begin
            FCourbePolygoneProvisoire.ClearVertex;
 
            V.IDStation := FCurrentBasePoint.IDStation;  // premier vertex
-           V.Offset := MakeTPoint3Df(FMyPos.X - FCurrentBasePoint.PosStation.X,
-                                     FMyPos.Y - FCurrentBasePoint.PosStation.y,
-                                     FCurrentBasePoint.PosStation.Z);
+           V.Offset.setFrom(FMyPos.X - FCurrentBasePoint.PosStation.X,
+                            FMyPos.Y - FCurrentBasePoint.PosStation.y,
+                            FCurrentBasePoint.PosStation.Z);
            FNoVertex := 0;
            FNoPtCtrl := 0;
            FCourbePolygoneProvisoire.AddVertex(V);
@@ -3995,9 +3976,9 @@ begin
            AfficherMessage(Format('Poly : Au point: ' + FORMAT_BASEPOINT, [FCurrentBasePoint.IDStation]));
            FProcGetInfoBasePoint(FCurrentBasePoint);
            V.IDStation := FCurrentBasePoint.IDStation;
-           V.Offset := MakeTPoint3Df(FMyPos.X - FCurrentBasePoint.PosStation.X,
-                                     FMyPos.Y - FCurrentBasePoint.PosStation.Y,
-                                     0.00);
+           V.Offset.setFrom(FMyPos.X - FCurrentBasePoint.PosStation.X,
+                            FMyPos.Y - FCurrentBasePoint.PosStation.Y,
+                            0.00);
            FCourbePolygoneProvisoire.AddVertex(V);
            Inc(FNoVertex);
            Inc(FNoPtCtrl);
@@ -4360,8 +4341,8 @@ begin
     CV := FDocumentDessin.GetCourbe(q);
     FProcGetCourbe(CV, q);
     BBX := CV.BoundingBox; // on sauvegarde la BoundingBox
-    QPM := MakeTPoint2Df(CV.BoundingBox.C1.X, CV.BoundingBox.C1.Y);
-    QPM := MakeTPoint2Df(CV.BoundingBox.C2.X, CV.BoundingBox.C2.Y);
+    QPM.setFrom(CV.BoundingBox.C1.X, CV.BoundingBox.C1.Y);
+    QPM.setFrom(CV.BoundingBox.C2.X, CV.BoundingBox.C2.Y);
     try
        FCourbePolygoneProvisoire.ClearVertex;
        // récupération du groupe et du style
@@ -4549,7 +4530,7 @@ begin
   if (DoDrawBasePoints) then
   begin
     AfficherMessageErreur('DoDrawBasePoints');
-    OO := MakeTPoint3Df(0.00, 0.00, 0.00);
+    OO.Empty();
     for i:=0 to NB do
     begin
       V := MyScrap.Sommets[i];
@@ -4585,10 +4566,10 @@ var
     try
       FDocumentDessin.GetCoordsGCS(A.IDStationP1, MyCourbe.IDGroupe, A.OffsetP1, QResult.PT1, errCode);
       if (ErrCode = -1) then Exit;
-      QResult.Tgt1  := MakeTPoint2Df(A.TangP1.X, A.TangP1.Y);
+      QResult.Tgt1.setFrom(A.TangP1.X, A.TangP1.Y);
       FDocumentDessin.GetCoordsGCS(A.IDStationP2, MyCourbe.IDGroupe, A.OffsetP2, QResult.PT2, errCode);
       if (ErrCode = -1) then Exit;
-      QResult.Tgt2  := MakeTPoint2Df(A.TangP2.X, A.TangP2.Y);
+      QResult.Tgt2.setFrom(A.TangP2.X, A.TangP2.Y);
       QResult.Pas    :=  QStyleCourbe.LongBarbules; // longueur d'un segment de courbe = longueur des barbules
     except
       errCode := -1;
@@ -4601,8 +4582,8 @@ var
     PC2: TPoint2Df;
     toto: float;
   begin
-    PC1 := MakeTPoint2Df(B.PT1.X + B.Tgt1.X, B.PT1.Y + B.Tgt1.Y);
-    PC2 := MakeTPoint2Df(B.PT2.X + B.Tgt2.X, B.PT2.Y + B.Tgt2.Y);
+    PC1.setFrom(B.PT1.X + B.Tgt1.X, B.PT1.Y + B.Tgt1.Y);
+    PC2.setFrom(B.PT2.X + B.Tgt2.X, B.PT2.Y + B.Tgt2.Y);
     QArcBezier[0] := GetCoordsPlan(B.PT1);
     QArcBezier[1] := GetCoordsPlan(PC1);
     QArcBezier[2] := GetCoordsPlan(PC2);
@@ -4658,7 +4639,7 @@ begin
     if (DoDrawBasePoints) then
     begin
       AfficherMessageErreur('DoDrawBasePoints');
-      OO := MakeTPoint3Df(0.00, 0.00, 0.00);
+      OO.Empty();
       for i:=0 to NB - 1 do
       begin
         AC := MyCourbe.Arcs[i];
@@ -4744,7 +4725,7 @@ begin
   if (DoDrawBasePoints) then
   begin
     AfficherMessageErreur('DoDrawBasePoints');
-    OO := MakeTPoint3Df(0.00, 0.00, 0.00);
+    OO.Empty();
     for i:=0 to NB do
     begin
       V := MyPolygon.Sommets[i];
@@ -4827,7 +4808,7 @@ begin
 
     FDocumentDessin.GetCoordsGCS(V0.IDStation, MyPolyLine.IDGroupe, V0.Offset, PM0, errCode);
     FDocumentDessin.GetCoordsGCS(V1.IDStation, MyPolyLine.IDGroupe, V1.Offset, PM1, errCode);
-    PMMedian := MakeTPoint2Df(0.50*(PM0.X + PM1.X), 0.50*(PM0.Y + PM1.Y));
+    PMMedian.setFrom(0.50*(PM0.X + PM1.X), 0.50*(PM0.Y + PM1.Y));
 
     toto := arctan2(PM1.Y - PM0.Y, PM1.X - PM0.X);
     TraceMarqueurDirectionnel(Cnv, PMMedian.X, PMMedian.Y, toto);
@@ -4942,8 +4923,8 @@ var
 begin
   try
     c1 := FDocumentDessin.GetCoordsMini();
-    PP1 := GetCoordsPlan(MakeTPoint2Df(c1.X, c1.Y));
-    PP2 := GetCoordsPlan(MakeTPoint2Df(c1.X, c1.Y - Hauteur));
+    PP1 := GetCoordsPlan(c1.X, c1.Y);
+    PP2 := GetCoordsPlan(c1.X, c1.Y - Hauteur);
     Result := PP2.Y - PP1.Y;
   except
     Result := 6;

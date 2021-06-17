@@ -134,14 +134,17 @@ begin
 end;
 
 function TCrossSectionDrawingContext.QGetCoordsPlan(const QX, QY: double): TPoint;
+var
+  P1: TPoint2Df;
 begin
-  Result := QGetCoordsPlan(MakeTPoint2Df(QX, QY));
+  P1.setFrom(QX, QY);
+  Result := QGetCoordsPlan(P1);
 end;
 
 function TCrossSectionDrawingContext.QGetCoordsMonde(const PP: TPoint): TPoint2Df;
 begin
-  Result.X:=  FInvRappScrReal * PP.X + FRXMini;
-  Result.Y:= -FInvRappScrReal * PP.Y + FRYMaxi;
+  Result.setFrom( FInvRappScrReal * PP.X + FRXMini,
+                 -FInvRappScrReal * PP.Y + FRYMaxi);
 end;
 
 
@@ -280,21 +283,16 @@ begin
 end;
 
 procedure TCrossSectionDrawingContext.TraceVers(const XX, YY: Double; const Drawn: boolean);
-var
-  PM: TPoint2Df;
 begin
-  PM := MakeTPoint2Df(XX, YY);
-  self.TraceVers(PM, Drawn);
+  self.TraceVers(XX, YY, Drawn);
 end;
 procedure TCrossSectionDrawingContext.TraceCercle(const XX, YY: Double; const R: integer);
 var
   Q: Integer;
-  PM: TPoint2Df;
   PP: TPoint;
 begin
   Q := R shr 1;
-  PM := MakeTPoint2Df(XX, YY);
-  PP := QGetCoordsPlan(PM);
+  PP := QGetCoordsPlan(XX, YY);
   Self.CanvasBGRA.EllipseC(PP.X, PP.Y, Q, Q);
 end;
 
@@ -311,9 +309,9 @@ begin
   self.DefineLinesStyle(MySimpleLigne.IDStyleLigne, QStyleLigne);
   E1 := MySimpleLigne.Extr1;
   E2 := MySimpleLigne.Extr2;
-  PC := MakeTPoint2Df(0.50 * (E1.X + E2.X), 0.50 * (E1.Y + E2.Y));
-  self.TraceVers(E1.X, E1.Y, false);
-  self.TraceVers(E2.X, E2.Y, true);
+  PC.setFrom(0.50 * (E1.X + E2.X), 0.50 * (E1.Y + E2.Y));
+  self.TraceVers(E1, false);
+  self.TraceVers(E2, true);
   case MySimpleLigne.IDStyleLigne of
     nolPENTE:
       begin
@@ -327,7 +325,6 @@ begin
         self.CanvasBGRA.Font.Color  := clBlue;
         self.DrawATexte(PC, 5, Ang, Format('%.0f', [Ang]));
       end;
-
   else
     ;
   end;
@@ -345,8 +342,8 @@ var
     PC1: TPoint2Df;
     PC2: TPoint2Df;
   begin
-    PC1 := MakeTPoint2Df(B.CoordsP1.X + B.TangP1.X, B.CoordsP1.Y + B.TangP1.Y);
-    PC2 := MakeTPoint2Df(B.CoordsP2.X + B.TangP2.X, B.CoordsP2.Y + B.TangP2.Y);
+    PC1.setFrom(B.CoordsP1.X + B.TangP1.X, B.CoordsP1.Y + B.TangP1.Y);
+    PC2.setFrom(B.CoordsP2.X + B.TangP2.X, B.CoordsP2.Y + B.TangP2.Y);
     QArcBezier[0] := QGetCoordsPlan(B.CoordsP1);
     QArcBezier[1] := QGetCoordsPlan(PC1);
     QArcBezier[2] := QGetCoordsPlan(PC2);
@@ -379,7 +376,8 @@ var
   PosTXT: TPoint;
 begin
   DefineTextStyle(MyTexte.IDStyleTexte, QStyleTexte);
-  DrawATexte(MakeTPoint2Df(MyTexte.PosX, MyTexte.PosY), MyTexte.Alignment, 0.00, MyTexte.Text);
+  PM.setFrom(MyTexte.PosX, MyTexte.PosY);
+  DrawATexte(PM, MyTexte.Alignment, 0.00, MyTexte.Text);
 end;
 
 procedure TCrossSectionDrawingContext.DrawATexte(const P: TPoint2Df; const Alignment: byte; const OrientationInDegres: double; const Texte: string);

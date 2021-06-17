@@ -1,7 +1,7 @@
 object dlgParametrageAtlas: TdlgParametrageAtlas
-  Left = 784
+  Left = 334
   Height = 300
-  Top = 566
+  Top = 303
   Width = 711
   BorderStyle = bsDialog
   Caption = 'dlgParametrageAtlas'
@@ -15,7 +15,7 @@ object dlgParametrageAtlas: TdlgParametrageAtlas
   Font.Style = [fsBold]
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '2.0.0.4'
   object btnClose: TBitBtn
     Left = 566
     Height = 34

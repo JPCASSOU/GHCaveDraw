@@ -228,7 +228,7 @@ begin
   FDocumentDessin.SetMiniEtMaxi;
   QC1 := FDocumentDessin.GetCoordsMini();
   QC2 := FDocumentDessin.GetCoordsMaxi();
-  EWE := MakeTRect2Df(QC1.X, QC1.Y, QC2.X, QC2.Y);
+  EWE.setFrom(QC1, QC2);
   self.QExporterTopoEnImage(DossierImages + PathDelim + NOM_IMAGE_MAIN_PAGE,
                            EWE,
                            FTailleCarreEnPixelsX,
@@ -246,7 +246,7 @@ var
   QEtendueCarreEnMetresY: Double;
 begin
   try
-    FDocumentDessin.SetMiniEtMaxi;
+    FDocumentDessin.SetMiniEtMaxi();
     QC1 := FDocumentDessin.GetCoordsMini();
     QC2 := FDocumentDessin.GetCoordsMaxi();
     dx  := QC2.X - QC1.X;
@@ -420,8 +420,8 @@ begin
   MonImage := Format('Carre%dx%d.png', [L, C]);
   QC1 := FDocumentDessin.GetCoordsMini();
   QC2 := FDocumentDessin.GetCoordsMaxi();
-  RectVue := MakeTRect2Df(QC1.X + LargeurReelle * C, QC1.Y + HauteurReelle * L,
-                         QC1.X + LargeurReelle * (1+C), QC1.Y + HauteurReelle * (1+L));
+  RectVue.setFrom(QC1.X + LargeurReelle * C, QC1.Y + HauteurReelle * L,
+                  QC1.X + LargeurReelle * (1+C), QC1.Y + HauteurReelle * (1+L));
 
   self.QExporterTopoEnImage(DossierImages + PathDelim + MonImage, RectVue, FTailleCarreEnPixelsX, FTailleCarreEnPixelsY);
   // créer la page HTML
@@ -504,7 +504,7 @@ var
   ii: Integer;
   QQC1: TPoint3Df;
   QQC2: TPoint3Df;
-  PosCopyright: TPoint2Df;
+  P1, P2, PosCopyright: TPoint2Df;
 begin
   dx := LimitesDessin.X2 - LimitesDessin.X1;
   dy := LimitesDessin.Y2 - LimitesDessin.Y1;
@@ -608,9 +608,11 @@ begin
       TmpBuffer.CanvasBGRA.Pen.color := clBlue;
       QQC1 := FDocumentDessin.GetCoordsMini();
       QQC2 := FDocumentDessin.GetCoordsMaxi();
-      TmpBuffer.DrawRectangle(MakeTPoint2Df(QQC1.X, QQC1.Y), MakeTPoint2Df(QQC2.X, QQC2.Y));
+      P1.setFrom(QQC1.X, QQC1.Y);
+      P2.setFrom(QQC2.X, QQC2.Y);
+      TmpBuffer.DrawRectangle(P1, P2);
       // copyright éventuel
-      PosCopyright := MakeTPoint2Df(LimitesDessin.X1 + 5, LimitesDessin.Y1 + 5);
+      PosCopyright.setFrom(LimitesDessin.X1 + 5, LimitesDessin.Y1 + 5);
       if (FDoDrawCopyright) then TmpBuffer.DrawCopyright(PosCopyright, FStrCopyright);
       // fin conventionnelle
       TmpBuffer.EndDrawing();
@@ -639,11 +641,8 @@ begin
   QFichierHTML := FDossierAtlas + PathDelim + QFileName;
   OpenHTMLDoc(QFichierHTML, 'Atlas en cours de construction', 0);
     WriteLineHTML('<H1>GHCaveDraw reconstruit actuellement l''atlas</H1>');
-
     WriteLineHTML(Format('<P>Génération en cours du carré L%dC%d</P>', [L, C]));
-
     WriteLineHTML(Format('<P>%d carrés générés sur %d</P>', [QQ + 1, QN]));
-
   WriteLineHTML('<HR>');
 
   CloseHTMLMainPage(QFichierHTML);

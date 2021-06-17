@@ -23,22 +23,13 @@ var
     GP := GetGroupeByIDGroupe(OP.IDGroupe);        // groupe
     if (GetBasePointByIndex(OP.IDBaseStation, BP)) then
     begin
-      PM := MakeTPoint2Df(BP.PosStation.X + OP.Offset.X, BP.PosStation.Y + OP.Offset.Y);
+      PM.setFrom(BP.PosStation.X + OP.Offset.X, BP.PosStation.Y + OP.Offset.Y);
       case OP.TypeObject of
-        nosPHOTO:
-          begin // Photo
-            MySVGCanvas.DrawImage(OP.TagTexte, PM.X, PM.Y, OP.ScaleX, OP.ScaleY);
-          end;
-        nosPOINT_TOPO:
-          begin  // Point topo
-            MySVGCanvas.DrawSymbole('symbStation', BP.PosStation.X - R, BP.PosStation.Y - R, 2*R, 2*R, 0.00);
-          end;
-        nosCORRESPONDANCE:
-          begin
-            if (not GP.DecalageActif) then Exit;
-          end;
-        else
-          pass;
+        nosPHOTO          : MySVGCanvas.DrawImage(OP.TagTexte, PM.X, PM.Y, OP.ScaleX, OP.ScaleY);
+        nosPOINT_TOPO     : MySVGCanvas.DrawSymbole('symbStation', BP.PosStation.X - R, BP.PosStation.Y - R, 2*R, 2*R, 0.00);
+        nosCORRESPONDANCE : if (not GP.DecalageActif) then Exit;
+      else
+        pass;
       end;
     end;
   end;
@@ -49,22 +40,14 @@ var
     ST: TStyleTexte;
     BP: TBaseStation;
     GP: TGroupeEntites;
-
     PM: TPoint2Df;
   begin
     ST := GetStyleTexte(Ord(T.IDStyleTexte));                 // style
     GP := GetGroupeByIDGroupe(T.IDGroupe);        // groupe
     if (GetBasePointByIndex(T.IDBaseSt, BP)) then
     begin
-      if (IsValidBaseStation(BP)) then
-      begin
-        // Rappel: Le décalage des groupes est du ressort de la balise <g>
-        PM := MakeTPoint2Df(BP.PosStation.X + T.Offset.X,
-                            BP.PosStation.Y + T.Offset.Y);
-      end else begin // GetCoordsGCS() non utilisé: GetBasePointByIndex() indispensable ici
-
-        PM := MakeTPoint2Df(T.Offset.X, T.Offset.Y);
-      end;
+      if (IsValidBaseStation(BP)) then PM.setFrom(BP.PosStation.X + T.Offset.X, BP.PosStation.Y + T.Offset.Y)
+                                  else PM.setFrom(T.Offset.X, T.Offset.Y);
       S :=InterpreterTexteAnnotation(T.Text, T.MaxLength, BP);
       MySVGCanvas.DrawTexte(ST.NameSVGStyle, T.Alignment, PM.X, PM.Y, 0.00, S);
     end;
@@ -116,10 +99,8 @@ var
     if (GetBasePointByIndex(SL.IDBaseStExt1, BS1) AND
         GetBasePointByIndex(SL.IDBaseStExt2, BS2)) then
     begin
-      PPP1 := MakeTPoint2Df(BS1.PosStation.X + SL.OffsetExtr1.X,
-                            BS1.PosStation.Y + SL.OffsetExtr1.Y);
-      PPP2 := MakeTPoint2Df(BS2.PosStation.X + SL.OffsetExtr2.X,
-                            BS2.PosStation.Y + SL.OffsetExtr2.Y);
+      PPP1.setFrom(BS1.PosStation.X + SL.OffsetExtr1.X,  BS1.PosStation.Y + SL.OffsetExtr1.Y);
+      PPP2.setFrom(BS2.PosStation.X + SL.OffsetExtr2.X,  BS2.PosStation.Y + SL.OffsetExtr2.Y);
     end;
   end;
 
@@ -143,14 +124,12 @@ var
          if (GetBasePointByIndex(A.IDStationP1, BS1) AND
              GetBasePointByIndex(A.IDStationP2, BS2)) then
          begin
-           PP1 := MakeTPoint2Df(BS1.PosStation.X + A.OffsetP1.X,
-                                BS1.PosStation.Y + A.OffsetP1.Y);
-           PP2 := MakeTPoint2Df(BS1.PosStation.X + A.OffsetP1.X + A.TangP1.X,
-                                BS1.PosStation.Y + A.OffsetP1.Y + A.TangP1.Y);
-           PP3 := MakeTPoint2Df(BS2.PosStation.X + A.OffsetP2.X + A.TangP2.X,
-                                BS2.PosStation.Y + A.OffsetP2.Y + A.TangP2.Y);
-           PP4 := MakeTPoint2Df(BS2.PosStation.X + A.OffsetP2.X,
-                                BS2.PosStation.Y + A.OffsetP2.Y);
+           PP1.setFrom(BS1.PosStation.X + A.OffsetP1.X,  BS1.PosStation.Y + A.OffsetP1.Y);
+           PP2.setFrom(BS1.PosStation.X + A.OffsetP1.X + A.TangP1.X,
+                       BS1.PosStation.Y + A.OffsetP1.Y + A.TangP1.Y);
+           PP3.setFrom(BS2.PosStation.X + A.OffsetP2.X + A.TangP2.X,
+                       BS2.PosStation.Y + A.OffsetP2.Y + A.TangP2.Y);
+           PP4.setFrom(BS2.PosStation.X + A.OffsetP2.X,  BS2.PosStation.Y + A.OffsetP2.Y);
            MySVGCanvas.AddBezierArc(PP1.X, PP1.Y, PP2.X, PP2.Y, PP3.X, PP3.Y, PP4.X, PP4.Y);
          end;
       end;
@@ -402,8 +381,7 @@ var
     begin
       QGroupe := GetGroupe(NoGrp);
       // balise de début de groupe
-      if (QGroupe.DecalageActif) then QDecalage := QGroupe.Decalage
-                                 else QDecalage := MakeTPoint3Df(0.0, 0.0, 0.0);
+      if (QGroupe.DecalageActif) then QDecalage := QGroupe.Decalage else QDecalage.Empty();
       MySVGCanvas.BeginGroupe(Format('Groupe_%d',[QGroupe.IDGroupeEntites]), QGroupe.NomGroupe, QDecalage.X, QDecalage.Y);
       // scraps
       NbObj := GetNbScraps();

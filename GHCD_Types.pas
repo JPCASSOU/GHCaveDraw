@@ -54,7 +54,7 @@ type TErrorCodeGeneric = (errNONE, errBUSY, errOK, errWARNING, errERROR, errFATA
 type TStringDirectoryFileName = type UTF8String;
 
 // mode d'export vers logiciels de SIG
-type TWithExportGIS = set of (gisWITH_ENTRANCES, gisWITH_CENTERLINES, gisWITH_POI);
+type TWithExportGIS = set of (gisWITH_ENTRANCES, gisWITH_CENTERLINES, gisWITH_POI, gisWITH_METADATA);
 // liste des styles d'objets
 type TLesStylesObjets = (sdoCURVES, sdoLINES, sdoPOLYGONS, sdoTEXTES);
 
@@ -90,17 +90,7 @@ type TZoomParameters = record
   Y2      : double;
 end;
 
-// rectangle 2D
-type TRect2Df = record
-  X1, Y1: double;
-  X2, Y2: double;
-end;
-// couple série station au format TOPOROBOT + ID de terrain
-type TToporobotIDStation = record
-  aSerie: integer;
-  aStation: integer;
-  aIDTerrain: string;
-end;
+
 // barbules
 // TODO: Procédure d'ajout d'un nouveau type d'objet: Préciser ici le nouvel objet
 type TBarbule = (tbNONE,
@@ -121,14 +111,26 @@ type TIDBaseStation = string;
 type TIDBaseStation = type Int64;
 {$ENDIF TIDBASEPOINT_AS_TEXT}
 type TTypeStation   = byte; //(tsENTRANCE, tsFIXPOINT, tsSHOT);
-type TPoint3Df = record
+type
+
+{ TPoint3Df }
+
+ TPoint3Df = record
   X: double;
   Y: double;
   Z: double;
+  procedure setFrom(const QX, QY, QZ: double);
+  procedure Empty();
 end;
-type TPoint2Df = record
+type
+
+{ TPoint2Df }
+
+ TPoint2Df = record
   X: double;
   Y: double;
+  procedure setFrom(const QX, QY: double);
+  procedure Empty();
 end;
 type TLstSommets = array of TPoint2Df;
 type TDroite = record
@@ -141,9 +143,38 @@ type TArrayIdxObjets = array of Int64;
 //type TArrayPt2Df = array of TPoint2Df;
 type TArrayPoints2Df = array of TPoint2Df;
 // boites englobantes
-type TBoundingBox = record
+type
+
+{ TBoundingBox }
+
+ TBoundingBox = record
   C1 : TPoint2Df;
   C2 : TPoint2Df;
+  procedure Reset();
+  procedure setFrom(const QC1, QC2: TPoint2Df); overload;
+  procedure setFrom(const X1, Y1, X2, Y2: double); overload;
+  procedure updateFromPoint(const PT: TPoint2Df); overload;
+  procedure updateFromPoint(const QX, QY: double); overload;
+end;
+
+// rectangle 2D
+type
+
+{ TRect2Df }
+
+ TRect2Df = record
+  X1, Y1: double;
+  X2, Y2: double;
+  procedure setFrom(const QX1, QY1, QX2, QY2: double); overload;
+  procedure setFrom(const C1, C2: TPoint2Df); overload;
+  procedure setFrom(const C1, C2: TPoint3Df); overload;
+
+end;
+ // couple série station au format TOPOROBOT + ID de terrain
+type TToporobotIDStation = record
+  aSerie: integer;
+  aStation: integer;
+  aIDTerrain: string;
 end;
 
 
@@ -402,6 +433,7 @@ type TPolyLigne = record
   LastModified   : TDateTime;      // date de modification
   Closed         : boolean;
   MarkToDelete   : boolean;
+
 end;
 type TArrayOfTPolyligne = array of TPolyLigne;
 
@@ -1078,6 +1110,99 @@ const
 
 
 implementation
+uses
+  DGCDummyUnit;
+
+{ TRect2Df }
+
+procedure TRect2Df.setFrom(const QX1, QY1, QX2, QY2: double);
+begin
+  self.X1 := QX1;
+  self.Y1 := QY1;
+  self.X2 := QX2;
+  self.Y2 := QY2;
+end;
+
+procedure TRect2Df.setFrom(const C1, C2: TPoint2Df);
+begin
+  self.X1 := C1.X;
+  self.Y1 := C1.Y;
+  self.X2 := C2.X;
+  self.Y2 := C2.Y;
+end;
+
+procedure TRect2Df.setFrom(const C1, C2: TPoint3Df);
+begin
+  self.X1 := C1.X;
+  self.Y1 := C1.Y;
+  self.X2 := C2.X;
+  self.Y2 := C2.Y;
+end;
+
+{ TBoundingBox }
+
+procedure TBoundingBox.Reset();
+begin
+  Self.C1.setFrom( INFINITE,  INFINITE);
+  Self.C2.setFrom(-INFINITE, -INFINITE);
+end;
+
+procedure TBoundingBox.setFrom(const QC1, QC2: TPoint2Df);
+begin
+  self.C1 := QC1;
+  self.C2 := QC2;
+end;
+
+procedure TBoundingBox.setFrom(const X1, Y1, X2, Y2: double);
+begin
+  Self.C1.setFrom(X1, Y2);
+  Self.C2.setFrom(X2, Y2);
+end;
+
+procedure TBoundingBox.updateFromPoint(const PT: TPoint2Df); overload;
+begin
+  if (PT.X < Self.C1.X) then Self.C1.X := PT.X;
+  if (PT.Y < Self.C1.Y) then Self.C1.Y := PT.Y;
+  if (PT.X > Self.C2.X) then Self.C2.X := PT.X;
+  if (PT.Y > Self.C2.Y) then Self.C2.Y := PT.Y;
+end;
+procedure TBoundingBox.updateFromPoint(const QX, QY: double); overload;
+var
+  PT: TPoint2Df;
+begin
+  PT.setFrom(QX, QY);
+  self.updateFromPoint(PT);
+end;
+
+
+{ TPoint2Df }
+
+procedure TPoint2Df.setFrom(const QX, QY: double);
+begin
+  self.X := QX;
+  self.Y := QY;
+end;
+procedure TPoint2Df.Empty();
+begin
+  self.X := 0.00;
+  self.Y := 0.00;
+end;
+
+{ TPoint3Df }
+
+procedure TPoint3Df.setFrom(const QX, QY, QZ: double);
+begin
+  self.X := QX;
+  self.Y := QY;
+  self.Z := QZ;
+end;
+
+procedure TPoint3Df.Empty();
+begin
+  self.X := 0.00;
+  self.Y := 0.00;
+  self.Z := 0.00;
+end;
 
 end.
 

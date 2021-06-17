@@ -97,27 +97,13 @@ begin
   // premier arc
   PP0 := A0.PT1;
   PP3 := A0.PT2;
-  PP1 := MakeTPoint2Df(PP0.X + A0.Tgt1.X, PP0.Y + A0.Tgt1.Y);
-  PP2 := MakeTPoint2Df(PP1.X + A0.Tgt2.X, PP1.Y + A0.Tgt2.Y);
+  PP1.setFrom(PP0.X + A0.Tgt1.X, PP0.Y + A0.Tgt1.Y);
+  PP2.setFrom(PP1.X + A0.Tgt2.X, PP1.Y + A0.Tgt2.Y);
   // deuxième arc
   PQ0 := A1.PT1;
   PQ3 := A1.PT2;
-  PQ1 := MakeTPoint2Df(PQ0.X + A1.Tgt1.X, PQ0.Y + A1.Tgt1.Y);
-  PQ2 := MakeTPoint2Df(PQ1.X + A1.Tgt2.X, PQ1.Y + A1.Tgt2.Y);
-
-
-
-  //(P0+Q0)*(1-t)^3+3*(P1+Q1)*t*(1-t)^2+3*(P2+Q2)*(1-t)*t^2+(P3+Q3)*t^3
-  // avec XCas:
-  //expand((P0+Q0)*(1-t)^3+3*(P1+Q1)*t*(1-t)^2+3*(P2+Q2)*(1-t)*t^2+(P3+Q3)*t^3)
-  // --> 3Q1(-t)2t+3P1(-t)2t+Q3t3-3Q2t3+3Q2t2-6Q1t2+3Q1t+3Q0(-t)2-3Q0t+P3t3-3P2t3+3P2t2-6P1t2+3P1t+3P0(-t)2-3P0t+ (Q0+P0 )(-t)3+Q0+P0
-
-  // simplify((P0+Q0)*(1-t)^3+3*(P1+Q1)*t*(1-t)^2+3*(P2+Q2)*(1-t)*t^2+(P3+Q3)*t^3)
-  // Termes en t3: (-1 P0) t^3  (+3 P1) t^3  (-3 P2) t^3  (+1 P3) t^3  (-1 Q0) t^3  (3 Q1) t^3  (-3 Q2) t^3   (+Q3) t^3
-  // Termes en t2: (+3 P0) t^2  (-6 P1) t^2  (+3 P2) t^2  (+3 Q0) t^2  (-6 Q1) t^2  (3 Q2) t^2
-  // Termes en t : (-3 P0) t    (+3 P1) t    (-3 Q0) t    (+3 Q1) t
-  // Termes en t0: (+1 P0)      (+1 Q0)
-
+  PQ1.setFrom(PQ0.X + A1.Tgt1.X, PQ0.Y + A1.Tgt1.Y);
+  PQ2.setFrom(PQ1.X + A1.Tgt2.X, PQ1.Y + A1.Tgt2.Y);
 end;
 
 
@@ -128,16 +114,16 @@ function MergePolyScrap(const FD: TDocumentDessin; const PP1, PP2: TVertexPolygo
 var
   OpsCSG: TOperationsCSGClipping;
   OP : TClipType;
-  PPP: TPoint2Df;
-  WU : TIDBaseStation;
+  //PPP: TPoint2Df;
+  //WU : TIDBaseStation;
 begin
   OP := TClipType(OpBool);
   Result := errMERGE_SCRAPS_ANY_ERROR;
   OpsCSG := TOperationsCSGClipping.Create;
   try
     OpsCSG.Initialise(FD, PP1, PP2);
-    PPP := MakeTPoint2Df(403480, 3091131);
-    WU := OpsCSG.GetNearBasePointIdx(PPP.X, PPP.Y);
+    //PPP.setFrom(403480, 3091131);
+    //WU := OpsCSG.GetNearBasePointIdx(PPP.X, PPP.Y);
 
     if (OpsCSG.IntersectionVertexPolygonArray()) then
     begin
@@ -202,8 +188,8 @@ function MergePolylignes(const FD: TDocumentDessin; const Obj1, Obj2: TPolyLigne
 var
   PP1, PP2: TVertexPolygonArray;
   OpsCSG: TOperationsCSGClipping;
-  WU: TIDBaseStation;
-  PPP: TPoint2Df;
+  //WU: TIDBaseStation;
+  //PPP: TPoint2Df;
    G1: TGroupeEntites;
   G2: TGroupeEntites;
   OP: TClipType;
@@ -224,8 +210,8 @@ begin
   try
     OpsCSG.Initialise(FD, PP1, PP2);
     //OpsCSG.ListerLesPaths();
-    PPP := MakeTPoint2Df(403480, 3091131);
-    WU := OpsCSG.GetNearBasePointIdx(PPP.X, PPP.Y);
+    //PPP := MakeTPoint2Df(403480, 3091131);
+    //WU := OpsCSG.GetNearBasePointIdx(PPP.X, PPP.Y);
     if (OpsCSG.IntersectionVertexPolygonArray()) then
     begin
       AfficherMessage('-- polygones 1 et 2 se coupent');

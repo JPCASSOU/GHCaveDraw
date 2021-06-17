@@ -78,6 +78,7 @@ var
   dlgParametrerVue2D: TdlgParametrerVue2D;
 
 implementation
+uses DGCDummyUnit;
 
 {$R *.lfm}
 
@@ -205,75 +206,3 @@ begin
 end;
 
 end.
-
-procedure TdlgParametrageAtlas.InitCaptions;
-begin
-  lbDossierDestination.Caption    := GetResourceString(rsDLG_ATLAS_LB_DOSSIER_DEST);
-  // tailles d'écran
-  grbxEcrans.Caption              := GetResourceString(rsDLG_ATLAS_GRBX_TAILLE_ECRAN);
-  lbEcransUsuels.Caption          := GetResourceString(rsDLG_ATLAS_USUALLY_RESOLS);
-  // options de l'atlas
-  grbxOptionsAtlas.Caption        := GetResourceString(rsDLG_ATLAS_GRBX_OPTIONS_ATLAS);
-  lbDimensionsImageTopo.Caption   := GetResourceString(rsDLG_ATLAS_LB_TAILLE_IMAGE);
-  chkCopyright.Caption            := GetResourceString(rsDLG_ATLAS_CHK_DISP_COPYRIGHT);
-  editMentionsCopyright.Text      := MENTION_CC_BY_SA;
-  // options de tracé
-  grbxOptionsDessin.Caption       := GetResourceString(rsDLG_ATLAS_GRBX_OPTIONS_TRACE);
-
-  // checkbox d'affichage
-
-
-  // notes de copyright
-  editMentionsCopyright.Clear;
-  editMentionsCopyright.Items.Add('CC-BY-SA JPCassou');
-  editMentionsCopyright.Items.Add('CC-BY-SA GRASLourdes');
-  editMentionsCopyright.Items.Add('CC-BY-SA GESAEysines');
-  editMentionsCopyright.Items.Add('CC0 JPCassou');
-  editMentionsCopyright.Items.Add('CC-BY-NC-SA JPCassou');
-  editMentionsCopyright.ItemIndex := 0;
-end;
-
-
-
-
-chkDispMainGrid.Caption         := GetResourceString(rsDLG_ATLAS_CHK_DISP_MAIN_GRID);
- chkDispSecGrid.Caption          := GetResourceString(rsDLG_ATLAS_CHK_DISP_SEC_GRID);
-
-
- // tailles d'écran
- grbxEcrans.Caption              := GetResourceString(rsDLG_ATLAS_GRBX_TAILLE_ECRAN);
- lbEcransUsuels.Caption          := GetResourceString(rsDLG_ATLAS_USUALLY_RESOLS);
- // options de l'atlas
- grbxOptionsAtlas.Caption        := GetResourceString(rsDLG_ATLAS_GRBX_OPTIONS_ATLAS);
- lbDimensionsImageTopo.Caption   := GetResourceString(rsDLG_ATLAS_LB_TAILLE_IMAGE);
- chkListerPOI.Caption            := GetResourceString(rsDLG_ATLAS_CHK_DISP_LISTE_POI);
- chkCopyright.Caption            := GetResourceString(rsDLG_ATLAS_CHK_DISP_COPYRIGHT);
- editMentionsCopyright.Text      := MENTION_CC_BY_SA;
- // options de tracé
- grbxOptionsDessin.Caption       := GetResourceString(rsDLG_ATLAS_GRBX_OPTIONS_TRACE);
-
- // checkbox d'affichage
- chkDispBBXGroupes.Caption       := GetResourceString(rsCHK_DISP_BOUNDING_BOX);
- chkDispCenterLine.Caption       := GetResourceString(rsCHK_DISP_CENTERLINE);
- chkDispIDStations.Caption       := GetResourceString(rsCHK_DISP_ID_STATIONS);
- chkDispQuadrilles.Caption       := GetResourceString(rsCHK_DISP_QUADRILLES);
- chkDispEchelleNord.Caption      := GetResourceString(rsCHK_DISP_ECHELLE);
- chkDispTextes.Caption           := GetResourceString(rsCHK_DISP_TEXTES);
- chkDispPhotos.Caption           := GetResourceString(rsCHK_DISP_PHOTOS);
- chkDispScraps.Caption           := GetResourceString(rsCHK_DISP_SCRAPS);
- chkDispTexteDebug.Caption       := GetResourceString(rsCHK_DISP_TEXTE_DEBUG);
- chkDispPenteSuperieureA.Caption := GetResourceString(rsCHK_DISP_PENTES_SUP_A);
-
-chkDispTexteDebug.Caption := rsCHK_DRAW_TEXTE_DEBUG;
-  chkDispIDStations.Caption := rsCHK_DRAW_ID_STATIONS;
-   // checkbox d'affichage
-  chkDispBBXGroupes.Caption       := GetResourceString(rsCHK_DISP_BOUNDING_BOX);
-  chkDispCenterLine.Caption       := GetResourceString(rsCHK_DISP_CENTERLINE);
-  chkDispIDStations.Caption       := GetResourceString(rsCHK_DISP_ID_STATIONS);
-  chkDispQuadrilles.Caption       := GetResourceString(rsCHK_DISP_QUADRILLES);
-  chkDispEchelleNord.Caption      := GetResourceString(rsCHK_DISP_ECHELLE);
-  chkDispTextes.Caption           := GetResourceString(rsCHK_DISP_TEXTES);
-  chkDispPhotos.Caption           := GetResourceString(rsCHK_DISP_PHOTOS);
-  chkDispScraps.Caption           := GetResourceString(rsCHK_DISP_SCRAPS);
-  chkDispTexteDebug.Caption       := GetResourceString(rsCHK_DISP_TEXTE_DEBUG);
-  chkDispPenteSuperieureA.Caption := GetResourceString(rsCHK_DISP_PENTES_SUP_A);
