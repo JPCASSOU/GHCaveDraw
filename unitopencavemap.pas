@@ -171,7 +171,6 @@ end;
 function CalcIdxGroupeForCavite(const QIdxCavite: integer; const QIDGroupe: TIDGroupeEntites): Int64;
 begin
   Result := QIdxCavite * NB_MAX_OBJ_PAR_CAVITE + (QIDGroupe mod NB_MAX_OBJ_PAR_CAVITE);
-  //AfficherMessage(Format('CalcIdxGroupeForCavite: %d %d = %d', [QIdxCavite, QIDGroupe, Result]));
 end;
 function CalcIdxObjetForCavite(const QIdxCavite: integer; const QIDObjet: integer): Int64;
 begin
@@ -186,10 +185,7 @@ var
   FC: TConversionSysteme;
 begin
   FC := FMyDocDessin.GetConvertisseurCoordonnees();
-  //QX := QLon;
-  //QY := QLat;
-  P1.U := QLat;
-  P1.V := QLon;
+  P1.setFrom(QLat, QLon);
   P2   := FC.ConversionSyst1ToSyst2EPSG(4326, FCodeEPSG, P1);
   QX := P2.U;
   QY := P2.V;
@@ -201,7 +197,7 @@ var
   FC: TConversionSysteme;
 begin
   FC := FMyDocDessin.GetConvertisseurCoordonnees();
-  P1.U := QX; P1.V := QY;
+  P1.setFrom(QX, QY);
   P2   := FC.ConversionSyst1ToSyst2EPSG(FCodeEPSG, 4326, P1);
   QLon := P2.V;
   QLat := P2.U;

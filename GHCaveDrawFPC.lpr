@@ -12,7 +12,7 @@ uses
   Forms,
   MainFrmEditor
   {$IFDEF MSWINDOWS}
-  , frmJournal, CadreGHCDEditor, CadreEditeurTexte, frmDisplaySuperGroupes, CadreListboxGroupes, UnitExportGeoJSON
+  , frmJournal //, CadreGHCDEditor, CadreEditeurTexte, frmDisplaySuperGroupes, CadreListboxGroupes, UnitExportGeoJSON, unit2
   {$ENDIF MSWINDOWS}
   ;
 {$R *.res}

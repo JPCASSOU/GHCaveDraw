@@ -12,7 +12,8 @@ uses
   ConvertisseurJPC,
   UnitDocDessin,
   CallDialogsGHCaveDraw,
-  Classes, SysUtils, FileUtil, curredit, Forms,
+  Classes, SysUtils, FileUtil, curredit,
+  Forms,
   Controls, Graphics, Dialogs, Buttons, EditBtn, StdCtrls, ExtCtrls, ComCtrls
   ;
 
@@ -25,6 +26,7 @@ type
     btnColorSilhouette: TColorButton;
     btnDoExport: TButton;
     btnChooseSystemeEPSG: TButton;
+    chkScrapsFilled: TCheckBox;
     chkgbxFormatsOutput: TCheckGroup;
     chkWithMetadata: TCheckBox;
     chkWithPOI: TCheckBox;
@@ -51,6 +53,7 @@ type
     trkBarTransparence: TTrackBar;
     procedure btnChooseSystemeEPSGClick(Sender: TObject);
     procedure btnDoExportClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
     FMyDocDessin: TDocumentDessin;
@@ -95,24 +98,43 @@ begin
     FMyDocDessin.GenererCarteLeaflet(ChangeFileExt(editFileName.FileName, '.htm'),
                                              editMapWidth.AsInteger, editMapHeight.AsInteger,
                                              chkDoUseDefaultStyle.Checked,
+                                             chkScrapsFilled.Checked,
                                              btnColorSilhouette.ButtonColor,
                                              255 - trkBarTransparence.Position,
                                              WithExportGIS);
   if (chkgbxFormatsOutput.Checked[1]) then
     FMyDocDessin.ExporterScrapsToKML(ChangeFileExt(editFileName.FileName, '.kml'),
                                      chkDoUseDefaultStyle.Checked,
+                                     chkScrapsFilled.Checked,
                                      btnColorSilhouette.ButtonColor,
                                      255 - trkBarTransparence.Position,
                                      WithExportGIS);
   if (chkgbxFormatsOutput.Checked[2]) then
     FMyDocDessin.ExporterScrapsToGeoJSON(ChangeFileExt(editFileName.FileName, '.json'),
                                             chkDoUseDefaultStyle.Checked,
+                                            chkScrapsFilled.Checked,
                                             btnColorSilhouette.ButtonColor,
                                             255 - trkBarTransparence.Position,
                                             WithExportGIS);
+  {$IFDEF DXF_SUPPORT}
+  if (chkgbxFormatsOutput.Checked[3]) then
+    FMyDocDessin.ExporterScrapsToDXF(self,
+                                     ChangeFileExt(editFileName.FileName, '.dxf'),
+                                            chkDoUseDefaultStyle.Checked,
+                                            chkScrapsFilled.Checked,
+                                            btnColorSilhouette.ButtonColor,
+                                            255 - trkBarTransparence.Position,
+                                            WithExportGIS);
+
+  {$ENDIF DXF_SUPPORT}
   FMyDocDessin.SetProcAfficherProgression(nil);
   ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
   pnlProgression.Visible := False;
+end;
+
+procedure TdlgExportSIG.FormCreate(Sender: TObject);
+begin
+
 end;
 
 
@@ -165,6 +187,7 @@ begin
     chkgbxFormatsOutput.Checked[0] := True;
     chkgbxFormatsOutput.Checked[1] := True;
     chkgbxFormatsOutput.Checked[2] := True;
+    chkgbxFormatsOutput.Checked[3] := {$IFDEF DXF_SUPPORT}True{$else}False{$ENDIF DXF_SUPPORT};
 
     chkDoUseDefaultStyle.Checked   := True;
     btnColorSilhouette.ButtonColor := clBlue;

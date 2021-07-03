@@ -327,7 +327,6 @@ begin
   Result.PrintLineWidth  := editPrintCourbeWidth.Value;
   Result.LongBarbules    := editLongBarbules.Value;
   result.Barbules        := TBarbule(cmbTypesBarbules.ItemIndex);
-
 end;
 procedure TdlgEditStylesObjets.PutAStyleCourbeInForm(const MS: TStyleCourbe);
 begin
@@ -335,11 +334,11 @@ begin
   editDescStyleCourbe.Text        := FStyleCourbe.DescStyle;
   editSVGStyleCourbe.Text         := FStyleCourbe.NameSVGStyle;
   editSeuilVisibiliteCourbe.Value := FStyleCourbe.SeuilVisibilite;
-  btnCouleurCourbe.Color       := FStyleCourbe.LineColor;
-  editCourbeWidth.Value        := FStyleCourbe.LineWidth;
-  editPrintCourbeWidth.Value   := FStyleCourbe.PrintLineWidth;
-  cmbTypesBarbules.ItemIndex   := ord(FStyleCourbe.Barbules);
-  editLongBarbules.Value       := FStyleCourbe.LongBarbules;
+  btnCouleurCourbe.Color          := FStyleCourbe.LineColor;
+  editCourbeWidth.Value           := FStyleCourbe.LineWidth;
+  editPrintCourbeWidth.Value      := FStyleCourbe.PrintLineWidth;
+  cmbTypesBarbules.ItemIndex      := ord(FStyleCourbe.Barbules);
+  editLongBarbules.Value          := FStyleCourbe.LongBarbules;
 
 end;
 

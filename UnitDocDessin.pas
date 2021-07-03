@@ -56,6 +56,7 @@
 // 03/01/2017: Ajout du type de courbe/polyligne nocMUR_MACONNE pour les murs maçonnés
 // 01/12/2017: Optimisation de GetGroupeByIDGroupe()
 // 29/01/2019: Les objets sont libérés par FreeAndNil(MonObjet); et non par MonObjet.Free;
+// 01/07/2021: Utilisation des quasi-classes
 
 
 // Cette unité comporte les dépendances suivantes:
@@ -82,6 +83,11 @@ uses
   ,UnitKMLExport
   ,UnitLeafletExport
   ,UnitExportGeoJSON
+
+  {$IFDEF DXF_SUPPORT}
+  //,UnitExportDXF
+  ,UnitExportDXF2, UnitDXFObjects
+  {$ENDIF DXF_SUPPORT}
   ,paszlib
   ;
 type
@@ -308,21 +314,32 @@ type
     // export des scraps vers logiciels de SIG
     function ExporterScrapsToKML(const QFileName: string;
                                  const DoUseDefaultStyle: boolean;
+                                 const DoFillScraps: boolean;
                                  const DefaultColor: TColor;
                                  const DefaultOpacity: byte;
                                  const WithExportGIS: TWithExportGIS): boolean;
     function GenererCarteLeaflet(const QFileName: string;
                                  const MapWidth, MapHeight: integer;
                                  const DoUseDefaultStyle: boolean;
+                                 const DoFillScraps: boolean;
                                  const DefaultColor: TColor;
                                  const DefaultOpacity: byte;
                                  const WithExportGIS: TWithExportGIS): boolean;
     function ExporterScrapsToGeoJSON(const QFileName: string;
                                      const DoUseDefaultStyle: boolean;
+                                     const DoFillScraps: boolean;
                                      const DefaultColor: TColor;
                                      const DefaultOpacity: byte;
                                      const WithExportGIS: TWithExportGIS): boolean;
-
+    {$IFDEF DXF_SUPPORT}
+    function ExporterScrapsToDXF(const AOwner: TComponent;
+                                     const QFileName: string;
+                                     const DoUseDefaultStyle: boolean;
+                                     const DoFillScraps: boolean;
+                                     const DefaultColor: TColor;
+                                     const DefaultOpacity: byte;
+                                     const WithExportGIS: TWithExportGIS): boolean;
+    {$ENDIF DXF_SUPPORT}
 
     // retourne le dossier contenant le document
     function GetDossierContenantDoc(): string;
@@ -335,11 +352,16 @@ type
     // détruire TOUS les objets d'un groupe
     function DeleteAllObjectsOfGroupe(const Grp: TGroupeEntites): integer;
     // calcul de l'aire d'un polygone ou d'un scrap
-    procedure CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TVertexPolygonArray; out Area, Perimeter: double);
+    procedure CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out Area, Perimeter: double);
 
-  private
+  strict private
     // convertisseur de coordonnées
     FConversionSysteme: TConversionSysteme;
+    {$IFDEF DXF_SUPPORT}
+    //FMyExportDXF: TDXFExport;
+    {$ENDIF DXF_SUPPORT}
+  private
+
     // IDX groupe courant
     FCurrentIdxGroupe  : TIDGroupeEntites;
     FCurrentGroupe     : TGroupeEntites;
@@ -390,6 +412,7 @@ type
     // index objet trouvé, ou -1 si inexistant
     FIdxObjectFound: Integer;
     // purge des listes
+
     procedure PurgerListeSuperGroupes();
     procedure PurgerListeGroupes();
     procedure PurgerListeScraps();
@@ -437,9 +460,9 @@ type
     function ReattribuerBasePointSymbole(const QIdx: integer; const QIdxGrp: TIDGroupeEntites): integer;
     function ReattribuerBasePointTexte(const QIdx: integer; const QIdxGrp: TIDGroupeEntites): integer;
     // convertir en tableau de points 2D une courbe de bézier au format GHCD
-    function  ConvertirGHCD2StdPolygon(const P: TVertexPolygonArray; out arrPt2Df: TArrayPoints2Df): boolean;
+    function  ConvertirGHCD2StdPolygon(const P: TArrayVertexPolygon; out arrPt2Df: TArrayPoints2Df): boolean;
     // convertir en tableau de points 2D une courbe de bézier
-    function  ConvertirGHCD2StdBezierCourbe(const Arcs: TArcsCourbesArray; out arrPt2Df: TArrayPoints2Df): boolean;
+    function  ConvertirGHCD2StdBezierCourbe(const Arcs: TArrayArcsCourbes; out arrPt2Df: TArrayPoints2Df): boolean;
     // purge des listes
     procedure PurgerListeStyles();
   public
@@ -469,7 +492,7 @@ type
     function FermerPolyligne(var P: TPolyLigne): boolean;
     // calcul de périmètre et de surface
     function CalcSuperficieScrap(const P: TScrap; out Superficie: double; out Perimetre: double): boolean;
-    function CalcSuperficiePerimetre(const P: TVertexPolygonArray; out Superficie: double; out Perimetre: double): boolean;
+    function CalcSuperficiePerimetre(const P: TArrayVertexPolygon; out Superficie: double; out Perimetre: double): boolean;
     function CalcSuperficiePolygone(const P: TPolygone; out Superficie: double; out Perimetre: double): boolean;
     function CalcSuperficiePolyligne(const P: TPolyLigne; out Superficie: double; out Perimetre: double): boolean;
     // utilitaires
@@ -537,7 +560,9 @@ const
   SVG_NAME_MARQUE_STATION_FILL          = 'fill-marque-station';
   SVG_NAME_MARQUE_STATION_CENTREFILL    = 'fill-marque-centre-station';
   SVG_NAME_SCRAP                        = 'fill-scrap';
-// constantes pour sauvegardes
+// constantes pour DXF
+const
+  DXF_LAYERNAME_SCRAPS                  = 'SCRAPS';
 
 
 
@@ -1758,7 +1783,7 @@ begin
   for i := 0 to High(C.Arcs) do SetBoundingBox(C.Arcs[i]);
 end;
 // convertir en tableau de points 2D une courbe de bézier au format GHCD
-function TDocumentDessin.ConvertirGHCD2StdPolygon(const P: TVertexPolygonArray; out arrPt2Df: TArrayPoints2Df): boolean;
+function TDocumentDessin.ConvertirGHCD2StdPolygon(const P: TArrayVertexPolygon; out arrPt2Df: TArrayPoints2Df): boolean;
 const LONG_MAX_COTE_POLY = 100.00;
 var
   i, Nb, q : integer;
@@ -1798,7 +1823,7 @@ begin
 end;
 
 // convertir en tableau de points 2D une courbe de bézier au format GHCD
-function TDocumentDessin.ConvertirGHCD2StdBezierCourbe(const Arcs: TArcsCourbesArray; out arrPt2Df: TArrayPoints2Df): boolean;
+function TDocumentDessin.ConvertirGHCD2StdBezierCourbe(const Arcs: TArrayArcsCourbes; out arrPt2Df: TArrayPoints2Df): boolean;
 var
   i, Nb, Idx: integer;
   BS1, BS2: TBaseStation;
@@ -2076,7 +2101,7 @@ begin
 end;
 // calcul de l'aire et du périmètre d'un polygone, scrap ou polyligne
 // utilisé essentiellement pour la topo des carrières souterraines ou des grandes salles
-procedure TDocumentDessin.CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TVertexPolygonArray; out Area, Perimeter: double);
+procedure TDocumentDessin.CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out Area, Perimeter: double);
 var
   Nb, i, j, ErrCode: Integer;
   V0, V1: TVertexPolygon;
@@ -3291,7 +3316,6 @@ var
   i: integer;
   MyStyleCourbes  : TStyleCourbe;
   MyStyleLignes   : TStyleLigne;
-  StyleFill       : TStyleFill;
   MyStylePolygon  : TStylePolygone;
   MyStyleTexte    : TStyleTexte;
   StyleSymbole    : TStyleSymboles;
@@ -4162,7 +4186,7 @@ begin
 end;
 //******************************************************************************
 // calcul de la superficie d'un polygone ou d'une polyligne
-function TDocumentDessin.CalcSuperficiePerimetre(const P: TVertexPolygonArray; out Superficie: double; out Perimetre: double): boolean;
+function TDocumentDessin.CalcSuperficiePerimetre(const P: TArrayVertexPolygon; out Superficie: double; out Perimetre: double): boolean;
 var
   i, n, m: Integer;
   BP: TBaseStation;
@@ -4566,6 +4590,7 @@ end;
 
 function TDocumentDessin.ExporterScrapsToKML(const QFileName: string;
                                              const DoUseDefaultStyle: boolean;
+                                             const DoFillScraps: boolean;
                                              const DefaultColor: TColor;
                                              const DefaultOpacity: byte;
                                              const WithExportGIS: TWithExportGIS): boolean;
@@ -4594,19 +4619,21 @@ var
   begin
     EWE := IIF (gisWITH_METADATA in WithExportGIS, Format('Scrap%d', [IdxScrap]), 'Metadata unavailable');
     WU  := IIF(DoUseDefaultStyle, SCRAP_BY_DEFAULT, EWE);
-    MyKMLExport.BeginPolygon(EWE, WU);
+    if (DoFillScraps) then MyKMLExport.BeginPolygon(EWE, WU)
+                      else MyKMLExport.BeginPolyline(EWE, WU);
     for v := 0 to High(AScrap.Sommets) do
     begin
       VX := AScrap.Sommets[v];
       if (GetBasePointByIndex(VX.IDStation, BS)) then
       begin
         PP.setFrom(BS.PosStation.X + VX.Offset.X, BS.PosStation.Y + VX.Offset.Y);
-        P1.U := PP.X;  P1.V := PP.Y;
+        P1.setFrom(PP.X, PP.Y);
         P2 := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, P1);
         MyKMLExport.AddVertex(P2.U, P2.V, BS.PosStation.Z);
       end;
     end;
-    MyKMLExport.EndPolygon();
+    if (DoFillScraps) then MyKMLExport.EndPolygon()
+                      else MyKMLExport.EndPolyline();
   end;
   procedure WriteAEntrance(const ASymbole: TSymbole);
   var
@@ -4626,12 +4653,11 @@ var
         {$IFDEF TIDBASEPOINT_AS_TEXT}
         WU := BP.IDStation
         {$ELSE}
-        WU := GetToporobotIDStationAsString(BP, false)
+        WU := BP.GetToporobotIDStationAsString(false)
         {$ENDIF TIDBASEPOINT_AS_TEXT}
       else
         WU := ASymbole.TagTexte;
-      P1.U := BP.PosStation.X;
-      P1.V := BP.PosStation.Y;
+      P1.setFrom(BP.PosStation.X, BP.PosStation.Y);
       P2 := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, P1);
       MyKMLExport.AddPoint(P2.U, P2.V, BP.PosStation.Z, WU, Format('<BR><BR>X = %.0f - Y = %.0f - Z = %.0f', [BP.PosStation.X, BP.PosStation.Y, BP.PosStation.Z]));
     end;
@@ -4652,13 +4678,11 @@ var
         {$IFDEF TIDBASEPOINT_AS_TEXT}
         WU := BP.IDStation
         {$ELSE}
-        WU := GetToporobotIDStationAsString(BP, false)
+        WU := BP.GetToporobotIDStationAsString(false)
         {$ENDIF TIDBASEPOINT_AS_TEXT}
-
       else
-        WU := ASymbole.TagTexte;
-      P1.U := BP.PosStation.X;
-      P1.V := BP.PosStation.Y;
+      WU := ASymbole.TagTexte;
+      P1.setFrom(BP.PosStation.X, BP.PosStation.Y);
       P2 := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, P1);
       MyKMLExport.AddPoint(P2.U, P2.V, BP.PosStation.Z, WU, Format('<BR><BR>X = %.0f - Y = %.0f - Z = %.0f', [BP.PosStation.X, BP.PosStation.Y, BP.PosStation.Z]));
     end;
@@ -4745,6 +4769,7 @@ end;
 function TDocumentDessin.GenererCarteLeaflet(const QFileName: string;
                                              const MapWidth, MapHeight: integer;
                                              const DoUseDefaultStyle: boolean;
+                                             const DoFillScraps: boolean;
                                              const DefaultColor: TColor;
                                              const DefaultOpacity: byte;
                                              const WithExportGIS: TWithExportGIS): boolean;
@@ -4760,7 +4785,7 @@ const
 var
   MyLeafletExport: TLeafletExport;
   Coin1, Coin2 , Centroide: TPoint3Df;
-  QCentroideXY , QCentroideLonLat: TProjUV;
+  QCentroideLonLat: TProjUV;
   i, NbScraps, NbSymboles: Integer;
   MyScrap: TScrap;
   MySymbole: TSymbole;
@@ -4770,8 +4795,7 @@ var
   var
     PT: TProjUV;
   begin
-    PT.U := QX;
-    PT.V := QY;
+    PT.setFrom(QX, QY);
     Result := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, PT);
   end;
   procedure DessinerScrap(const IdxScrap: int64;
@@ -4781,7 +4805,8 @@ var
   var
     ii, Nb: Integer;
     V: TVertexPolygon;
-    BS: TBaseStation;P2: TProjUV;
+    BS: TBaseStation;
+    P2: TProjUV;
     MyGroupe: TGroupeEntites;
     QAT: String;
   begin
@@ -4791,7 +4816,8 @@ var
 
     MyGroupe := GetGroupeByIDGroupe(QScrap.IDGroupe);
     QAT := IIF (gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
-    MyLeafletExport.BeginPolygon(QAT, '');
+    if (DoFillScraps) then MyLeafletExport.BeginPolygon(QAT, '')
+                      else MyLeafletExport.BeginPolyLine(QAT, '');
 
     Nb := Length(QScrap.Sommets) - 1;
     for ii := 0 to Nb - 1 do
@@ -4803,7 +4829,8 @@ var
         MyLeafletExport.AddVertex(P2.U, P2.V, BS.PosStation.Z, ii < (Nb-1));
       end;
     end;
-    MyLeafletExport.EndPolygon();
+    if (DoFillScraps) then MyLeafletExport.EndPolygon()
+                      else MyLeafletExport.EndPolyLine();
   end;
   procedure DessinerSymbole(const IdxSymbole: int64; const QSymbole: TSymbole);
   var
@@ -4818,7 +4845,7 @@ var
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     EWE := BS.IDStation;
     {$ELSE}
-    EWE := GetToporobotIDStationAsString(BS);
+    EWE := BS.getToporobotIDStationAsString();
     {$ENDIF TIDBASEPOINT_AS_TEXT}
       MyLeafletExport.AddPoint(P2.U, P2.V, BS.PosStation.Z, EWE, QSymbole.TagTexte);
     end;
@@ -4832,7 +4859,7 @@ var
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     EWE := BS.IDStation;
     {$ELSE}
-    EWE := GetToporobotIDStationAsString(BS);
+    EWE := BS.GetToporobotIDStationAsString();
     {$ENDIF TIDBASEPOINT_AS_TEXT}
     MyLeafletExport.DrawPoint(P2.U, P2.V, BS.PosStation.Z,
                               0.2,
@@ -4956,7 +4983,12 @@ begin
   end;
 end;
 
-function TDocumentDessin.ExporterScrapsToGeoJSON(const QFileName: string; const DoUseDefaultStyle: boolean; const DefaultColor: TColor; const DefaultOpacity: byte; const WithExportGIS: TWithExportGIS): boolean;
+function TDocumentDessin.ExporterScrapsToGeoJSON(const QFileName: string;
+                                                 const DoUseDefaultStyle: boolean;
+                                                 const DoFillScraps: boolean;
+                                                 const DefaultColor: TColor;
+                                                 const DefaultOpacity: byte;
+                                                 const WithExportGIS: TWithExportGIS): boolean;
 var
   MyExportGeoJSON: TGeoJSONExport;
   NbScraps, i: Integer;
@@ -4967,8 +4999,7 @@ var
   var
     PT: TProjUV;
   begin
-    PT.U := QX;
-    PT.V := QY;
+    PT.setFrom(QX, QY);
     Result := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, PT);
   end;
   procedure DessinerScrap(const IdxScrap: int64; const QScrap: TScrap; const TagString: string; const TagNum: Int64; const IsLastScrap: boolean);
@@ -4981,7 +5012,8 @@ var
   begin
     MyGroupe := GetGroupeByIDGroupe(QScrap.IDGroupe);
     QAT := IIF(gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
-    MyExportGeoJSON.BeginPolygon(QAT, '');
+    if (DoFillScraps) then MyExportGeoJSON.BeginPolygon(QAT, '')
+                      else MyExportGeoJSON.BeginPolyLine(QAT, '');
     Nb := Length(QScrap.Sommets) - 1;
     for ii := 0 to Nb - 1 do
     begin
@@ -4992,7 +5024,8 @@ var
         MyExportGeoJSON.AddVertex(P2.U, P2.V, BS.PosStation.Z, ii = (Nb - 1));
       end;
     end;
-    MyExportGeoJSON.EndPolygon(IsLastScrap);
+    if (DoFillScraps) then MyExportGeoJSON.EndPolygon(IsLastScrap)
+                      else MyExportGeoJSON.EndPolyLine(IsLastScrap);
   end;
 begin
   result := false;
@@ -5021,11 +5054,95 @@ begin
       MyExportGeoJSON.WriteFooter();
       MyExportGeoJSON.Finaliser();
     end;
+    result := True;
   finally
     FreeAndNil(MyExportGeoJSON);
   end;
 end;
+{$IFDEF DXF_SUPPORT}
+function TDocumentDessin.ExporterScrapsToDXF(const AOwner: TComponent;
+                                             const QFileName: string;
+                                             const DoUseDefaultStyle: boolean;
+                                             const DoFillScraps: boolean;
+                                             const DefaultColor: TColor;
+                                             const DefaultOpacity: byte;
+                                             const WithExportGIS: TWithExportGIS): boolean;
+var
+  NbScraps, i: Integer;
+  Coin1, Coin2, Centroide: TPoint3Df;
+  FMyExportDXF: TDXFExport2;
+  MyLayer: TDxfLayer;
+  MonScrap: TScrap;
 
+  procedure QDessinerScrap(const MyScrap: TScrap);
+  var
+    EWE: String;
+    LstVertex: array of TPoint3Df;
+    v, NbV: Integer;
+    MyVertex: TVertexPolygon;
+    BS: TBaseStation;
+
+    MyDXFPolyline: TDxfPolyline;
+    QC1: TDXFPoint3Df;
+  begin
+    NbV := Length(MyScrap.Sommets);
+    if (NbV < 3) then exit;
+    MyVertex := MyScrap.Sommets[0];
+    GetBasePointByIndex(MyVertex.IDStation, BS);
+    QC1.setFrom(BS.PosStation.X, BS.PosStation.Y, 0.00);
+    MyDXFPolyline.setFrom(MyLayer, QC1, true, NbV);
+    for v := 0 to NbV - 1 do
+    begin
+      MyVertex := MyScrap.Sommets[v];
+      if (GetBasePointByIndex(MyVertex.IDStation, BS)) then
+      begin
+        MyDXFPolyline.setVertex(v, BS.PosStation.X + MyVertex.Offset.X,
+                                   BS.PosStation.Y + MyVertex.Offset.Y,
+                                   0.00);
+      end;
+    end;
+    FMyExportDXF.PolyLine(MyDXFPolyline);
+  end;
+begin
+  result := false;
+  NbScraps := self.GetNbScraps();
+  AfficherMessageErreur(Format('%s.ExporterScrapsToDXF: EPSG:%d; %d scraps to %s', [ClassName, FCodeEPSG, NbScraps, QFileName]));
+  if (NbScraps = 0) then Exit;
+  // calcul du centroide
+  Coin1 := self.GetCoordsMini();
+  Coin2 := self.GetCoordsMaxi();
+  Centroide.setFrom(0.50 * (Coin1.X + Coin2.X),
+                    0.50 * (Coin1.Y + Coin2.Y),
+                    0.50 * (Coin1.Z + Coin2.Z));
+
+  FMyExportDXF := TDXFExport2.Create;
+  try
+
+    if (FMyExportDXF.Initialiser(QFilename, 'Export DXF',
+                                 Coin1.X, Coin1.Y, Coin1.Z,
+                                 Coin2.X, Coin2.Y, Coin2.Z)) then
+    begin
+      FMyExportDXF.AddLayer(DXF_LAYERNAME_SCRAPS, 2);
+      MyLayer := FMyExportDXF.GetLayer(FMyExportDXF.GetNbLayers() - 1);
+
+      FMyExportDXF.BeginDXF();
+        NbScraps := GetNbScraps();
+        for i := 0 to NbScraps - 1 do
+        begin
+          MonScrap := GetScrap(i);
+          QDessinerScrap(MonScrap);
+          if (assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MonScrap.Nom]), 0, NbScraps - 1, i);
+        end;
+      FMyExportDXF.EndDXF();
+      FMyExportDXF.Finaliser();
+    end;
+    result := True;
+    //*)
+  finally
+    FreeAndNil(FMyExportDXF);
+  end;
+end;
+{$ENDIF DXF_SUPPORT}
 //******************************************************************************
 // extraction des noms de groupes contenus dans une vue
 function TDocumentDessin.ExtractNomsGroupes(const LimitesVues: TRect2Df; out LS: TStringList): boolean;

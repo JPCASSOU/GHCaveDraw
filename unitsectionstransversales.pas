@@ -1223,7 +1223,7 @@ begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   QAT := FBaseStation.IDStation;
   {$ELSE}
-  QAT := GetToporobotIDStationAsString(FBaseStation, True);
+  QAT := FBaseStation.getToporobotIDStationAsString(True);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
   QCommentaire(2, Format('Cross-section for station: %s', [QAT]));
   QCommentaire(2, 'Parameters: IDCrossSection, IDGroupe, IDBasePoint, OffsetX, OffsetY');

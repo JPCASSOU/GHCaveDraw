@@ -1,7 +1,7 @@
 object MainWindow: TMainWindow
-  Left = 67
+  Left = 229
   Height = 892
-  Top = 272
+  Top = 101
   Width = 1537
   AllowDropFiles = True
   Caption = 'MainWindow'

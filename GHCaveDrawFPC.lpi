@@ -71,7 +71,7 @@
         <PackageName Value="LCL"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="65">
+    <Units Count="68">
       <Unit0>
         <Filename Value="GHCaveDrawFPC.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -457,6 +457,21 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitExportGeoJSON"/>
       </Unit64>
+      <Unit65>
+        <Filename Value="unitexportdxf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportDXF"/>
+      </Unit65>
+      <Unit66>
+        <Filename Value="unitexportdxf2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportDXF2"/>
+      </Unit66>
+      <Unit67>
+        <Filename Value="unitdxfobjects.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitDXFObjects"/>
+      </Unit67>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

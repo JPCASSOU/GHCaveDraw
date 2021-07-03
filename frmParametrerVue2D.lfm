@@ -14,7 +14,7 @@ object dlgParametrerVue2D: TdlgParametrerVue2D
   Font.Quality = fqDraft
   Font.Style = [fsBold]
   Position = poScreenCenter
-  LCLVersion = '1.8.0.6'
+  LCLVersion = '2.0.0.4'
   object pnlQuadrillage: TPanel
     Left = 4
     Height = 84

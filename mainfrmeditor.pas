@@ -3604,6 +3604,7 @@ end;
 procedure TMainWindow.FormShow(Sender: TObject);
 var
   QParamsVue2D: TParamsVue2D;
+  QGrdSpacing: Extended;
 begin
   InitCaptions;
   {$IFDEF MSWINDOWS}
@@ -3637,16 +3638,13 @@ begin
                                   //  ,tedDISP_PENTES                    // pentes supérieures à une limite donnée
                                   //  ,tedIMAGES                         // images
                                       ];
-  QParamsVue2D.GrdTypeQuadrillage := tqGRID;
   QParamsVue2D.BackGroundColor    := clWhite;
-  QParamsVue2D.GrdMainGridColor   := RGBToColor(255, 128,  64);//clGray;
-  QParamsVue2D.GrdSecGridColor    := RGBToColor(242, 203, 159); // (//clSilver;
-  QParamsVue2D.GrdSpcMainGrid     := 100.00;
-  QParamsVue2D.GrdSpcSecGrid      := QParamsVue2D.GrdSpcMainGrid / 10;
-  QParamsVue2D.GrdDispMainGrid    := True;
-  QParamsVue2D.GrdDispSecGrid     := True;
   QParamsVue2D.GroupeBackColor    := RGBToColor(205, 254, 239);
-  QParamsVue2D.GrdCrossSize       := QParamsVue2D.GrdSpcMainGrid / 20;
+  QGrdSpacing := 100.00;
+  QParamsVue2D.MainGrid.setFrom(tqGRID, RGBToColor(255, 128,  64), QGrdSpacing     , QGrdSpacing / 20, True, True);
+  QParamsVue2D.SecGrid.setFrom (tqGRID, RGBToColor(242, 203, 159), QGrdSpacing / 10,  1.00, True, True);
+
+
   QParamsVue2D.DoDrawScrapsMonochromes     := false;
   QParamsVue2D.ColorScrapMonochrome        := clGray;
   QParamsVue2D.PenteLimiteDisp             := 5.00;

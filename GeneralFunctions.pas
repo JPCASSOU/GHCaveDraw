@@ -123,8 +123,7 @@ function PointIsInRectangle(const PT: TPoint2Df; const R1: TRect2Df): boolean; i
 function IsInBoundingBox(const XX, YY: Double; const BB: TBoundingBox): boolean; inline;
 function CCW(const P0, P1, P2: TPoint2Df): integer;
 function Intersect(const D1, D2: TDroite): boolean;    // function Intersect: intersection de deux droites
-function PointDansPolygone(const QX, QY: double; const LstSommets: TLstSommets): boolean;
-function IsValidBoundingBox(const BB: TBoundingBox): boolean;
+function PointDansPolygone(const QX, QY: double; const LstSommets: TArrayPoints2Df): boolean;
 
 // fonctions de couleurs
 function KMLColor(const R, G, B, A: byte): string; inline;
@@ -141,9 +140,6 @@ function GetColorByScale(const V, QMin, QMax: double; const ColDefault: TColor; 
 // fonctions TOPOROBOT
 {$IFDEF TIDBASEPOINT_AS_TEXT}
 {$ELSE}
-function GetToporobotIDStation(const St: TBaseStation): TToporobotIDStation;
-function GetToporobotIDStationAsString(const St: TBaseStation; const WithIDTerrain: boolean = false): string;
-function GetToporobotIDStationWithIDTerrainPriority(const St: TBaseStation): string;
 function ExtractNumSerieFromTIDBaseStation(const B: TIDBaseStation): integer;
 function SetIDStationFromSerSt(const qSer, qSt: integer): TIDBaseStation;
 {$ENDIF TIDBASEPOINT_AS_TEXT}
@@ -602,7 +598,7 @@ begin
   Result := STR;
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  qTRB := GetToporobotIDStation(Station);
+  qTRB := Station.getToporobotIDStation(); // GetToporobotIDStation(Station);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
   // Longueur, azimut, pente
@@ -656,58 +652,11 @@ end;
 
 {$IFDEF TIDBASEPOINT_AS_TEXT}
 {$ELSE}
-function GetToporobotIDStation(const St: TBaseStation): TToporobotIDStation;
-var
-  S1, S2: Int64;
-begin
-
-  if (St.IDStation > 0) then
-  begin
-    S1 := St.IDStation div DIV_SR_CENTERLINE;
-    S2 := St.IDStation mod DIV_SR_CENTERLINE;
-    Result.aSerie   := S1;
-    Result.aStation := S2 div 10;
-  end
-  else
-  begin // les IDStation des antennes sont au format -SSSSSPPPPPN, eg: -144000220 pour les antennes de la station 144.22
-    S1 := Abs(St.IDStation) div DIV_SR_ANTENNE;
-    S2 := Abs(St.IDStation) mod DIV_SR_ANTENNE;
-    Result.aSerie   := S1;
-    Result.aStation := S2 div 1000;
-
-  end;
-  Result.aIDTerrain := St.IDTerrain;
-end;
-function GetToporobotIDStationAsString(const St: TBaseStation; const WithIDTerrain: boolean = false): string;
-var
-  EWE: TToporobotIDStation;
-begin
-  EWE := GetToporobotIDStation(ST);
-  Result := Format('%d.%d', [EWE.aSerie, EWE.aStation]);
-  if (WithIDTerrain) then Result += Format('[%s]', [EWE.aIDTerrain]);
-end;
-// retourne l'ID de terrain, sinon, le numéro interne série.station
-function GetToporobotIDStationWithIDTerrainPriority(const St: TBaseStation): string;
-var
-  EWE: TToporobotIDStation;
-begin
-  EWE := GetToporobotIDStation(ST);
-  if (Trim(EWE.aIDTerrain) <> '') then
-    Result := EWE.aIDTerrain
-  else
-    Result := Format('%d.%d', [EWE.aSerie, EWE.aStation]);
-end;
-
 function SetIDStationFromSerSt(const qSer, qSt: integer): TIDBaseStation;
 begin
   Result := qSer * DIV_SR_CENTERLINE + qSt  * 10;
 end;
 {$ENDIF TIDBASEPOINT_AS_TEXT}
-
-
-
-
-
 // retourne la longueur, direction et pente pour dx, dy, dz
 procedure GetBearingInc(const dx, dy, dz: double;
                         var Dist, Az, Inc: double;
@@ -780,21 +729,6 @@ begin
   PC := QBasePoint;
   sincos(Angle * PI_180, sa, ca);
   for i:= 0 to n - 1 do Result[i] := QTransform(SetOfPoints[i]);
-
-  // ancienne version
-  (*
-  for i:= 0 to n - 1 do
-  begin
-    // réduction au centre
-    Result[i].X := SetOfPoints[i].X - PC.X;
-    Result[i].Y := SetOfPoints[i].Y - PC.Y;
-    // rotation locale
-    Result[i] := RotatePoint(Angle, Result[i]);
-    // et on remet en repère général
-    Result[i].X := Result[i].X + PC.X;
-    Result[i].Y := Result[i].Y + PC.Y;
-  end;
-  //*)
 end;
 
 
@@ -826,26 +760,6 @@ function GetConstantVector3D(const Value: double): TPoint3Df;
 begin
   Result.setFrom(Value, Value, Value);
 end;
-
-// tracé de textes avec rotation
-(*
-// Version 'académique' de TracerRotatedTexte
-// cf http://www.scalabium.com/faq/dct0002.htm
-procedure TracerRotatedTexte(const ACanvas: TCanvas; const X, Y, Angle: integer; const Texte: string);
-var
-  LogRec: TLogFont;
-  OldFontHandle,
-  NewFontHandle: hFont;
-begin
-  GetObject(ACanvas.Font.Handle, SizeOf(LogRec), Addr(LogRec));
-  LogRec.lfEscapement := Angle*10;
-  NewFontHandle := CreateFontIndirect(LogRec);
-  OldFontHandle := SelectObject(ACanvas.Handle, NewFontHandle);
-  ACanvas.TextOut(X, Y, Texte);
-  NewFontHandle := SelectObject(ACanvas.Handle, OldFontHandle);
-  DeleteObject(NewFontHandle);
-end;
-//*)
 
 
 // routines de couleurs
@@ -991,7 +905,7 @@ begin
 end;
 
 // point dans zone  -- Test unitaire OK
-function PointDansPolygone(const QX, QY: double; const LstSommets: TLstSommets): boolean;
+function PointDansPolygone(const QX, QY: double; const LstSommets: TArrayPoints2Df): boolean;
 var
   i, j, NbPts     : integer;
   CountIntersects : integer;
@@ -1015,16 +929,8 @@ begin
     LP.PT2 := LstSommets[j];
     j := i;
     if(Intersect(LP,LT)) then Inc(CountIntersects);
-
   end;
   Result := (CountIntersects mod 2) > 0;
-
-end;
-function IsValidBoundingBox(const BB: TBoundingBox): boolean;
-begin
-  Result := (Abs(BB.C2.X - BB.C1.X) < GHCD_Types.INFINITE) and
-            (Abs(BB.C2.Y - BB.C1.Y) < GHCD_Types.INFINITE);
-
 end;
 
 function StrToDateTimeDef(const QDate: string; const DateDefault: TDateTime): TDateTime;
@@ -1588,6 +1494,7 @@ begin
     Result := Abs(B) div MULTIPLICATEUR_SERIE; // 100000;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 end;
+//*)
 
 // fonctions issues de TDocumentDessin
 //===========================================================================

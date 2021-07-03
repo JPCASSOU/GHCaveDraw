@@ -8,59 +8,155 @@
 unit GHCD_Types;
 interface
 uses
+  SysUtils,
   Classes,
   Graphics,
   BGRABitmap;
+////////////////////////////////////////////////////////////////////////////////
+// Constantes d'inclusion et de copyright
+const INSTRUCTION_INCLUDE_GCP  = '$INCLUDE_GCP:';
+const MENTION_CC_BY_SA         = 'CC-BY-SA Creative Commons';
 
-const INSTRUCTION_INCLUDE_GCP = '$INCLUDE_GCP:';
+// Constantes d'URL
+const  KML_OPENGIS_WEBSITE     = 'http://www.opengis.net/kml/2.2';
+const  KML_GOOGLE_KML_WEBSITE  = 'http://www.google.com/kml/ext/2.2';
+const  W3C_W3_WEBSITE          = 'http://www.w3.org/2005/Atom';
+const  W3C_XML_SCHEMA_WEBSITE  = 'http://www.w3.org/2001/XMLSchema-instance';
+const  GPX_TOPOGRAPHIX_WEBSITE = 'http://www.topografix.com/GPX/1/0';
+// Constantes EPSG
+const CODE_EPSG_WGS84                  = 4326;
+const CODE_EPSG_LAMBERT_93             = 2154;    NOM_LAMBERT_93 = 'Lambert 93';
+const // anciens codes Lambert
+  CODE_EPSG_LAMBERT_I_NTF_DEPRECATED   =  27561 ; // 'NTF (Paris) / Lambert North France' Obsolete
+  CODE_EPSG_LAMBERT_II_NTF_DEPRECATED  =  27562 ; // 'NTF (Paris) / Lambert Centre France'
+  CODE_EPSG_LAMBERT_III_NTF_DEPRECATED =  27563 ; //  'NTF (Paris) / Lambert South France'
+  CODE_EPSG_LAMBERT_IV_NTF_DEPRECATED  =  27564 ; //  'NTF (Paris) / Lambert Corsica'
+const  // codes actuels
+  CODE_EPSG_LAMBERT_I                  =  27571;
+  CODE_EPSG_LAMBERT_II                 =  27572;
+  CODE_EPSG_LAMBERT_III                =  27573; NOM_LAMBERT_III = 'Lambert T3';
+  CODE_EPSG_LAMBERT_IV                 =  27574;
+  // lambert 9 zones
+const CODE_EPSG_CC_ZONE_0                  =  3940;
+// codes UTM
+const CODE_EPSG_UTM_ZONE_0_NORTH           =  32600;
+const CODE_EPSG_UTM_ZONE_0_SOUTH           =  32700;
+// code Google
+const CODE_EPSG_GOOGLE                     = 379009;
+const
+  DEFAULT_SYSTEME_COORDONNEES_NOM       = NOM_LAMBERT_93;       // évolutif en LT93
+  DEFAULT_SYSTEME_COORDONNEES_CODE_EPSG = CODE_EPSG_LAMBERT_93; // évolutif en LT93
 
-const NB_MAX_OBJ_PAR_CAVITE = 1000000;            // nb max d'objets par table et par cavité
-const MULT_IDX_CAVITE       = 1000000000000;      // facteur de positionnement de l'Idx d'une cavité
+////////////////////////////////////////////////////////////////////////////////
+// Typages renforcés
+type TStringDirectoryFileName = type UTF8String;    // noms de fichiers
+{$IFDEF TIDBASEPOINT_AS_TEXT}
+type TIDBaseStation = string;
+{$ELSE}
+type TIDBaseStation        = type Int64;
+{$ENDIF TIDBASEPOINT_AS_TEXT}
+type TTypeStation          = byte; //(tsENTRANCE, tsFIXPOINT, tsSHOT);
+type TCodeEPSG             = type Integer;
+type TIDDessinateur        = type integer;
+type TIDGroupeEntites      = type Int64;
+type TIDSuperGroupe        = type Int64;
+type TFacteurEchelle       = type double;  // Facteur d'échelle, exprimé sous forme décimale (eg: Ech 1/1000 -> facteur de 0.001
+type TSeuilVisibilite      = TFacteurEchelle;  // Seuil d'échelle au-dessus duquel l'objet est tracé; a la dimension d'un facteur d'échelle
 
-const FMT_DIRECTION_FAILLE  = 'N%.3d°';
+////////////////////////////////////////////////////////////////////////////////
+// Tableaux
+const MAX_SIZE_PARAM_ARRAY   = 128;
+type TGHStringArray      = array[0..MAX_SIZE_PARAM_ARRAY] of string;  // TStringArray est désormais un type de données de la FCL >3.0.2 . Remplacé par TGHStringArray
+type TGHShortStringArray = array[0 .. 7] of string;
+type TArrayIdxObjets     = array of Int64;
+type TArrayOfIdxGroupes  = array of TIDGroupeEntites;
+type TMotif              = array[0..7, 0..7] of byte; // motif 8x8 de remplissage
+type TArrayColors        = array of TColor;  // échelle de couleurs
+////////////////////////////////////////////////////////////////////////////////
+const IDX_STYLE_COURBE_PAROIS = 1;
+const DEFAULT_FONT_NAME      = 'Arial';
+const SCRAP_COLOR            = TColor($D0D0D0); // couleur de scrap par défaut: gris clair
+const SILHOUETTE_STYLE_SCRAP = 'Silhouette0';          // nom de styles de scraps par défault (pour silhouettes
 
-
-const MULTIPLICATEUR_SERIE   = 100000; //
-
-const MULTIPLICATEUR_STATION = 10;
-const DIV_SR_CENTERLINE = MULTIPLICATEUR_SERIE; // pour décomposition en série station d'un TIDBasestation
-const DIV_SR_ANTENNE    = MULTIPLICATEUR_SERIE; // * 100; // pour décomposition en série station d'un TIDBasestation
-
-
-//const MENTIONS_COPYRIGHT = '(c) ARSMA 2003 .. 2016';
-const MENTION_CC_BY_SA   = 'CC-BY-SA Creative Commons';
-
+// constantes de calcul
 const INFINITE = 1E20;
-
-const SCRAP_COLOR = TColor($D0D0D0);
-// seuil de fusion de deux vertex
-const DIST_MERGE_VERTEX = 0.04;
-const QDR_MIN_SPACING = 10.00; // espacement de grille minimal;
-
+const DIST_MERGE_VERTEX    = 0.04;  // seuil de fusion de deux vertex
+const QDR_MIN_SPACING      = 10.00; // espacement de grille minimal;
+// Constantes pour le TIDBaseStation
+const MULTIPLICATEUR_SERIE   = 100000;
+const MULTIPLICATEUR_STATION = 10;
+const DIV_SR_CENTERLINE      = MULTIPLICATEUR_SERIE; // pour décomposition en série station d'un TIDBasestation
+const DIV_SR_ANTENNE         = MULTIPLICATEUR_SERIE; // * 100; // pour décomposition en série station d'un TIDBasestation
+// Pour la BDD SQL (OpenCaveMap)
+const NB_MAX_OBJ_PAR_CAVITE  = 1000000;            // nb max d'objets par table et par cavité
+const MULT_IDX_CAVITE        = 1000000000000;      // facteur de positionnement de l'Idx d'une cavité
+const MAX_ARRAY_ZOOMS        = 15;                 // gestion des zooms
+// Constantes angulaires
 const PI_2            = PI/2;
 const PI_4            = PI/4;
-
 const PI_180          = PI/180;
 const INV_PI_180      = 180/PI;
+// Constantes de formatage
+const FMT_DIRECTION_FAILLE  = 'N%.3d°';  // Direction des failles (ex: N025°)
 
+////////////////////////////////////////////////////////////////////////////////
+// Enumérations
+// mode de sélection des entités
+type TModeSelectionEntites = (mseNONE,
+                              mseSCRAPS,
+                              mseCOURBES,
+                              msePOLYLIGNES,
+                              msePOLYGONES,
+                              mseLIGNES,
+                              mseSYMBOLES,
+                              mseTEXTES,
+                              mseIMAGES
+                             );
+type TTypeObjet = (tobjSCRAP,
+                   tobjCOURBE,
+                   tobjPOLYLIGNE,
+                   tobjPOLYGONE,
+                   tobjLIGNE,
+                   tobjSYMBOLE,
+                   tobjTEXTE,
+                   tobjNONE,
+                   tobjUNKNOWN);
 
-
-const MAX_SIZE_PARAM_ARRAY = 128;
-const DEFAULT_FONT_NAME = 'Arial';
+type TRetourTypeObjet = (rtoNOT_FOUND,
+                         rtoSCRAP,
+                         rtoCOURBE,
+                         rtoPOLYLIGNE,
+                         rtoPOLYGONE,
+                         rtoLIGNE,
+                         rtoSYMBOLE,
+                         rtoTEXTE);
 // constantes d'erreur génériques
-type TErrorCodeGeneric = (errNONE, errBUSY, errOK, errWARNING, errERROR, errFATAL);
-
-// noms de fichiers
-type TStringDirectoryFileName = type UTF8String;
-
-// mode d'export vers logiciels de SIG
-type TWithExportGIS = set of (gisWITH_ENTRANCES, gisWITH_CENTERLINES, gisWITH_POI, gisWITH_METADATA);
+type TErrorCodeGeneric = (errNONE,
+                          errBUSY,
+                          errOK,
+                          errWARNING,
+                          errERROR,
+                          errFATAL);
 // liste des styles d'objets
-type TLesStylesObjets = (sdoCURVES, sdoLINES, sdoPOLYGONS, sdoTEXTES);
-
-
+type TLesStylesObjets = (sdoCURVES,
+                         sdoLINES,
+                         sdoPOLYGONS,
+                         sdoTEXTES);
+// barbules  // TODO: Procédure d'ajout d'un nouveau type d'objet: Préciser ici le nouvel objet
+type TBarbule = (tbNONE,
+                 tbRESSAUT,
+                 tbSURPLOMB,
+                 tbCHENAL_VOUTE,
+                 tbMINI_RESSAUT);
 type TCourbesOrPolylignes = (tcpCOURBE, tcpPOLYLIGNE);
-type TTypeQuadrillage = (tqGRID, tqCROSS);
+type TTypeQuadrillage     = (tqGRID, tqCROSS);
+type TModeEdition         = (medCREATION, medMODIF);     // modes d'édition des dialogues de groupes, objets, etc ..
+////////////////////////////////////////////////////////////////////////////////
+// Ensembles (sets)
+type TWithExportGIS = set of (gisWITH_ENTRANCES,            // mode d'export vers logiciels de SIG
+                              gisWITH_CENTERLINES,
+                              gisWITH_POI,
+                              gisWITH_METADATA);
 type TELementsDrawn = set of (tedECHELLE_NORD            // dessin de l'échelle et du nord
                              ,tedCENTERLINES                    // dessin des centerlines
                              ,tedIDSTATIONS                   // dessiner les stations
@@ -74,13 +170,39 @@ type TELementsDrawn = set of (tedECHELLE_NORD            // dessin de l'échelle
                              ,tedDISP_PENTES        // pentes supérieures à une limite donnée
                              ,tedIMAGES             // images (typiquement des fonds de cartes)
                        );
+// mode de sélection de la nature des objets (parois, ...)
+type TNatureObjetCourbe   = (nocDEFAULT, nocPAROI, nocPAROIS_CACHEE,
+                             nocECOULEMENT, nocLIGNES_PENTE,
+                             nocRESSAUT, nocSURPLOMB,
+                             nocCHENAL_VOUTE, nocMARCHE,
+                             nocPAROI_INCERTAINE,
+                             nocMUR_MACONNE,
+                             nocPAROI_FRACASSEE
+                             );
+type TNatureObjetLigne    = (nolDEFAULT, nolFLECHE, nolSUITE_RESEAU, nolFRACTURE, nolPENTE, nolPENDAGE);
+type TNatureObjetPolygone = (nopDEFAULT, nopLAC,
+                             nopARGILE, nopSABLE, nopEBOULIS, nopGALETS, nopNEIGE,
+                             nopSILHOUETTE, nopGROS_BLOC, nopGOUR, nopSIPHON,
+                             nopARGILES_GALETS, nopCHEMINS,
+                             nopMASQUES,
+                             nopSCRAP
+                             );
+type TNatureObjetSymbole  = (nosPHOTO, nosENTREE,
+                             nosPOINT_TOPO, nosPOINT_FIXE, nosCORRESPONDANCE,
+                             nosFISTULEUSE, nosCONCRETION_PAROI, nosEXCENTRIQUES,
+                             nosSTALACTITES, nosCOLONNES, nosSTALAGMITES,
+                             nosCRISTAUX, nosFRACTURES,
+                             nosCUPULES, nosZEFF, nosARRIVEE_EAU, nosPERTE,
+                             nosDESOB, nosDANGER,
+                             nosGOUFFRE_SURFACE, nosGROTTE_SURFACE, nosPOINT_REMARQUABLE);
+type TNatureObjetTexte    = (notDEBUG,
+                             notTITRES, notSOUS_TITRES, notCOTATION,
+                             notTEXTE1, notTEXTE2, notLIEU_DIT, notCOTATION_EXTERIEURE);
+////////////////////////////////////////////////////////////////////////////////
 
 
-
-// modes d'édition des dialogues de groupes, objets, etc ..
-type TModeEdition = (medCREATION, medMODIF);
-// gestion des zooms
-const MAX_ARRAY_ZOOMS = 15;
+////////////////////////////////////////////////////////////////////////////////
+// records
 type TZoomParameters = record
   ID      : integer;
   Caption : string;
@@ -88,66 +210,33 @@ type TZoomParameters = record
   Y1      : double;
   X2      : double;
   Y2      : double;
+  procedure setFrom(const QIdx: integer; const QX1, QY1, QX2, QY2: double; const QCaption: string = '');
 end;
 
-
-// barbules
-// TODO: Procédure d'ajout d'un nouveau type d'objet: Préciser ici le nouvel objet
-type TBarbule = (tbNONE,
-                 tbRESSAUT,
-                 tbSURPLOMB,
-                 tbCHENAL_VOUTE,
-                 tbMINI_RESSAUT);
-
-// tableaux de strings
-
-// TStringArray est désormais un type de données de la FCL >3.0.2 . Remplacé par TGHStringArray
-type TGHStringArray   = array[0..MAX_SIZE_PARAM_ARRAY] of string;
-type TGHShortStringArray = array[0 .. 7] of string;
-
-{$IFDEF TIDBASEPOINT_AS_TEXT}
-type TIDBaseStation = string;
-{$ELSE}
-type TIDBaseStation = type Int64;
-{$ENDIF TIDBASEPOINT_AS_TEXT}
-type TTypeStation   = byte; //(tsENTRANCE, tsFIXPOINT, tsSHOT);
-type
-
-{ TPoint3Df }
-
- TPoint3Df = record
+type TPoint3Df = record
   X: double;
   Y: double;
   Z: double;
   procedure setFrom(const QX, QY, QZ: double);
   procedure Empty();
 end;
-type
-
-{ TPoint2Df }
-
- TPoint2Df = record
+type TPoint2Df = record
   X: double;
   Y: double;
   procedure setFrom(const QX, QY: double);
   procedure Empty();
 end;
-type TLstSommets = array of TPoint2Df;
+type TSinusoide          = array[0..9] of TPoint2Df;   // sinusoide pour représentation des arrivées d'eau
+type TArrayPoints2Df     = array of TPoint2Df;
+
 type TDroite = record
   PT1: TPoint2Df;
   PT2: TPoint2Df;
+  procedure setFrom(const P1, P2: TPoint2Df); overload;
+  procedure setFrom(const X1, Y1, X2, Y2: double); overload;
 end;
-type TArrayIdxObjets = array of Int64;
-
-// tableau de points 2D
-//type TArrayPt2Df = array of TPoint2Df;
-type TArrayPoints2Df = array of TPoint2Df;
 // boites englobantes
-type
-
-{ TBoundingBox }
-
- TBoundingBox = record
+type TBoundingBox = record
   C1 : TPoint2Df;
   C2 : TPoint2Df;
   procedure Reset();
@@ -155,50 +244,29 @@ type
   procedure setFrom(const X1, Y1, X2, Y2: double); overload;
   procedure updateFromPoint(const PT: TPoint2Df); overload;
   procedure updateFromPoint(const QX, QY: double); overload;
+  function IsValid(): boolean;
 end;
 
 // rectangle 2D
-type
-
-{ TRect2Df }
-
- TRect2Df = record
+type TRect2Df = record
   X1, Y1: double;
   X2, Y2: double;
   procedure setFrom(const QX1, QY1, QX2, QY2: double); overload;
   procedure setFrom(const C1, C2: TPoint2Df); overload;
   procedure setFrom(const C1, C2: TPoint3Df); overload;
-
 end;
  // couple série station au format TOPOROBOT + ID de terrain
 type TToporobotIDStation = record
   aSerie: integer;
   aStation: integer;
   aIDTerrain: string;
+  procedure setFrom(const QaSerie, QaStation: integer; const QaIDTerrain: string = '');
 end;
 
-
-// pour le support du travail collaboratif
-// TODO: Le dessinateur est un attribut d'objet ou de groupe ? A définir
-type TIDDessinateur = type integer;
-type TDessinateur = record
-  IDDessinateur: TIDDessinateur;
-  Nom          : string;
-end;
-
-
-// groupes de points === parties de réseaus,
-// utilisés notamment pour l'extractions de parties de réseaux
-type TIDGroupeEntites     = type Int64;
-type TIDSuperGroupe       = type Int64;
-type TArrayOfIdxGroupes = array of TIDGroupeEntites;
 // super-groupes === réseaux
-
 type TSuperGroupe = record
   NomSuperGroupe: string;
   Displayed     : boolean;
-  //Locked        : boolean;
-  //Decalage      : TPoint3Df;
   ListeGroupes  : TArrayOfIdxGroupes;
 end;
 type TGroupeEntites   = record
@@ -228,32 +296,10 @@ type TBaseStation = record
   PosPG          : TPoint3Df; //
   PosPD          : TPoint3Df;
   Enabled        : boolean; // activé par le MétaFiltre
+  function getToporobotIDStation(): TToporobotIDStation;
+  function getToporobotIDStationAsString(const WithIDTerrain: boolean = false): string;
+  function getToporobotIDStationWithIDTerrainPriority(): string;
 end;
-
-// Infos générales des sections transversales
-type TGPInfosCrossSection = record
-  IDSection      : Int64;
-  IDGroupe       : TIDGroupeEntites;
-  IDBaseStation  : TIDBaseStation;
-  Caption        : string;
-end;
-// styles d'objets
-// styles de remplissage
-type TMotif = array[0..7, 0..7] of byte; // motif 8x8 de remplissage
-type TStyleFill = record
-  IDFillStyle   : INT64;
-  NameSVGStyle  : string;
-  FillColor     : TColor;
-  Motif         : TMotif;
-end;
-// Facteur d'échelle, exprimé sous forme décimale (eg: Ech 1/1000 -> facteur de 0.001
-type TFacteurEchelle  = double;
-// Seuil d'échelle au-dessus duquel l'objet est tracé
-// A la dimension d'un facteur d'échelle
-type TSeuilVisibilite = TFacteurEchelle;
-
-const IDX_STYLE_COURBE_PAROIS = 1;
-
 
 type TStyleCourbe = record // pour lignes, polylignes et courbes
   IDStyle     : integer;
@@ -281,7 +327,7 @@ type TStyleLigne = record // pour  lignes
   LineColor   : TColor;
   LineStyle   : TPenStyle;
 end;
-//type TPolygonStyle = set of (psFILLED, psCONTOURED, psSMOOTH);
+
 type TStylePolygone = record // pour blocs, concrétions massives
   IDStyle     : integer;
   DescStyle   : string;
@@ -299,7 +345,6 @@ type TStyleTexte = record // styles de texte
   DescStyle   : string;
   NameSVGStyle: string;
   SeuilVisibilite: TSeuilVisibilite;
-
   FontName    : string;
   FontPrnHeight: double; // en mm
   FontColor   : TColor;
@@ -316,10 +361,7 @@ type TStyleSymboles = record
 end;
 
 
-// sinusoide pour représentation des arrivées d'eau
-type TSinusoide = array[0..9] of TPoint2Df;
-// échelle de couleurs
-type TArrayColors = array of TColor;
+
 // type de point de courbe
 type TVertexCourbe = record
   IDStation      : TIDBaseStation;
@@ -338,50 +380,19 @@ type TVertexPolygon = record
   IDStation      : TIDBaseStation;
   Offset         : TPoint3Df;
 end;
-type TVertexPolygonArray = array of TVertexPolygon;
+type TArrayVertexPolygon = array of TVertexPolygon;
 //*)
 // type d'arc de courbe
 // GHCaveDraw individualise les arcs de courbes
 type TArcCourbe = record
   IDStationP1      : TIDBaseStation;
-  //IDGroupe         : Int64;
   OffsetP1         : TPoint3Df;
   TangP1           : TPoint3Df; // tangente = dx, dy. C'est un vecteur, pas une position
   IDStationP2      : TIDBaseStation;
   OffsetP2         : TPoint3Df;
   TangP2           : TPoint3Df;
 end;
-type TArcsCourbesArray = array of TArcCourbe;
-
-// mode de sélection de la nature des objets (parois, ...)
-type TNatureObjetCourbe   = (nocDEFAULT, nocPAROI, nocPAROIS_CACHEE,
-                             nocECOULEMENT, nocLIGNES_PENTE,
-                             nocRESSAUT, nocSURPLOMB,
-                             nocCHENAL_VOUTE, nocMARCHE,
-                             nocPAROI_INCERTAINE,
-                             nocMUR_MACONNE,
-                             nocPAROI_FRACASSEE
-                             );
-type TNatureObjetLigne    = (nolDEFAULT, nolFLECHE, nolSUITE_RESEAU, nolFRACTURE, nolPENTE, nolPENDAGE);
-type TNatureObjetPolygone = (nopDEFAULT, nopLAC,
-                             nopARGILE, nopSABLE, nopEBOULIS, nopGALETS, nopNEIGE,
-                             nopSILHOUETTE, nopGROS_BLOC, nopGOUR, nopSIPHON,
-                             nopARGILES_GALETS, nopCHEMINS,
-                             nopMASQUES,
-                             nopSCRAP
-                             );
-type TNatureObjetSymbole  = (nosPHOTO, nosENTREE,
-                             nosPOINT_TOPO, nosPOINT_FIXE, nosCORRESPONDANCE,
-                             nosFISTULEUSE, nosCONCRETION_PAROI, nosEXCENTRIQUES,
-                             nosSTALACTITES, nosCOLONNES, nosSTALAGMITES,
-                             nosCRISTAUX, nosFRACTURES,
-                             nosCUPULES, nosZEFF, nosARRIVEE_EAU, nosPERTE,
-                             nosDESOB, nosDANGER,
-                             nosGOUFFRE_SURFACE, nosGROTTE_SURFACE, nosPOINT_REMARQUABLE);
-type TNatureObjetTexte    = (notDEBUG,
-                             notTITRES, notSOUS_TITRES, notCOTATION,
-                             notTEXTE1, notTEXTE2, notLIEU_DIT, notCOTATION_EXTERIEURE);
-
+type TArrayArcsCourbes = array of TArcCourbe;
 
 // TODO: Voir si on peut chaîner plusieurs courbes
 type
@@ -390,11 +401,10 @@ type
   IDGroupe       : TIDGroupeEntites;
   IDStyleCourbe  : TNatureObjetCourbe;//integer; //TStyleCourbe;
   BoundingBox    : TBoundingBox;
-  Arcs           : TArcsCourbesArray;
+  Arcs           : TArrayArcsCourbes;
   LastModified   : TDateTime;      // date de modification
   Closed         : boolean;
   MarkToDelete   : boolean;
-
 end;
 type TArrayOfTCourbe = array of TCourbe;
 
@@ -406,7 +416,7 @@ type TScrap = record
   Area           : double;
   Perimeter      : double;
   BoundingBox    : TBoundingBox;
-  Sommets        : TVertexPolygonArray;
+  Sommets        : TArrayVertexPolygon;
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
 end;
@@ -416,7 +426,7 @@ type TPolygone = record
   BoundingBox    : TBoundingBox;
   Area           : double;
   Perimeter      : double;
-  Sommets        : TVertexPolygonArray;
+  Sommets        : TArrayVertexPolygon;
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
 end;
@@ -429,28 +439,24 @@ type TPolyLigne = record
   BoundingBox    : TBoundingBox;
   Area           : double;
   Perimeter      : double;
-  Sommets        : TVertexPolygonArray;
+  Sommets        : TArrayVertexPolygon;
   LastModified   : TDateTime;      // date de modification
   Closed         : boolean;
   MarkToDelete   : boolean;
-
 end;
 type TArrayOfTPolyligne = array of TPolyLigne;
 
 type TSymbole = record
-  //ID             : int64;
   IDGroupe       : TIDGroupeEntites;
   TypeObject     : TNatureObjetSymbole; //byte; //TTypePonctualObject;
-
   Couleur        : TColor;
   IDBaseStation  : TIDBaseStation; // station topo de référence
   Offset         : TPoint3Df;      // décalage
   AngleRot       : double;         // angle de rotation
-  ScaleX,
+  ScaleX         : double;
   ScaleY         : double;         // échelle X, Y ; le symbole étant dans un carré unitaire
   TagTexte       : string;         // texte additionnel ou nom de fichier (photo)
-  UnTag          : integer;        // pour utilisation selon le type d'objet
-                                   // ex: Alignement d'une photo
+  UnTag          : integer;        // pour utilisation selon le type d'objet; ex: Alignement d'une photo
   PhotoDisplayed : boolean;        // pour affichage de photos
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
@@ -460,15 +466,14 @@ end;
 type TExtremiteLigne = byte; // flèche,
 
 type TSimpleLigne = record
-  IDGroupe      : TIDGroupeEntites;
-  IDStyleLigne  : TNatureObjetLigne; //integer;
+  IDGroupe       : TIDGroupeEntites;
+  IDStyleLigne   : TNatureObjetLigne; //integer;
   BoundingBox    : TBoundingBox;
-
-  IDBaseStExt1,
+  IDBaseStExt1   : TIDBaseStation;
   IDBaseStExt2   : TIDBaseStation;
-  OffsetExtr1,
+  OffsetExtr1    : TPoint3Df;
   OffsetExtr2    : TPoint3Df;
-  ExtrLin1,
+  ExtrLin1       : TExtremiteLigne;
   ExtrLin2       : TExtremiteLigne; // byte
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
@@ -482,12 +487,9 @@ type TTextObject = record
   Alignment     : byte;
   Text          : string;
   MaxLength     : integer;
-  LastModified   : TDateTime;      // date de modification
-  MarkToDelete   : boolean;
+  LastModified  : TDateTime;      // date de modification
+  MarkToDelete  : boolean;
 end;
-
-
-
 // arcs de Bézier
 type TBezierArc = record
   PT1    : TPoint2Df; // premier point
@@ -495,7 +497,6 @@ type TBezierArc = record
   PT2    : TPoint2Df; // second point
   Tgt2   : TPoint2Df; // tangente
   Pas    : double;    // pas de t en m
-
 end;
 // objets images pour le layer d'aides au dessin
 // ne pas utiliser ce layer pour inclure des photos, qui sont du ressort de TSymbole
@@ -508,61 +509,32 @@ type TImageObject = record
   Opacite         : byte;
   Description     : string;
 end;
-
-
-
 // contexte pour la grille de dessin
-
+type TQuadrillage = record
+  TypeQuadrillage: TTypeQuadrillage;
+  CrossSize      : double;
+  Color          : TColor;
+  Spacing        : double;
+  DoDisplay      : boolean;
+  DoDrawCoords   : boolean;
+  procedure setFrom(const QTypeQuadrillage: TTypeQuadrillage;
+                    const QColor: TColor;
+                    const QSpacing, QCrossSize: double;
+                    const QDoDisplay, QDoDrawCoords: boolean);
+end;
 type TParamsVue2D = record
-  BackGroundColor: TColor;
-  ElementsDrawn     : TELementsDrawn;
-  PenteLimiteDisp      : double;
-  TailleEchelle        : double;
+  BackGroundColor        : TColor;
+  ElementsDrawn          : TELementsDrawn;
+  PenteLimiteDisp        : double;
+  TailleEchelle          : double;
   DoDrawScrapsMonochromes: boolean;        // dessiner les scraps en monochrome transparent?
   ColorScrapMonochrome   : TColor;
-  GrdTypeQuadrillage: TTypeQuadrillage;
-  GrdCrossSize      : double;
-  GrdMainGridColor  : TColor;     // grille principale
-  GrdSecGridColor   : TColor;     // grille secondaire
-  GrdSpcMainGrid    : double;     // espacement grille ppale
-  GrdSpcSecGrid     : double;     // espacement grille sec
-  GrdDispMainGrid   : boolean;     // afficher grille ppale
-  GrdDispSecGrid    : boolean;     // afficher grille sec
-  GrdDoDrawCoords   : boolean;
-  GroupeBackColor   : TColor;      // couleur de fond des
-  RegleDisplayed    : boolean;
-  DoListerPOI    : boolean;
+  MainGrid               : TQuadrillage;   // Quadrillage principal
+  SecGrid                : TQuadrillage;   // Quadrillage secondaire
+  GroupeBackColor        : TColor;      // couleur de fond des
+  RegleDisplayed         : boolean;
+  DoListerPOI            : boolean;
 end;
-  // mode de sélection des entités
-type TModeSelectionEntites = (mseNONE,
-                              mseSCRAPS,
-                              mseCOURBES,
-                              msePOLYLIGNES,
-                              msePOLYGONES,
-                              mseLIGNES,
-                              mseSYMBOLES,
-                              mseTEXTES,
-                              mseIMAGES
-                             );
-type TTypeObjet = (tobjSCRAP,
-                   tobjCOURBE,
-                   tobjPOLYLIGNE,
-                   tobjPOLYGONE,
-                   tobjLIGNE,
-                   tobjSYMBOLE,
-                   tobjTEXTE,
-                   tobjNONE,
-                   tobjUNKNOWN);
-
-type TRetourTypeObjet = (rtoNOT_FOUND,
-                         rtoSCRAP,
-                         rtoCOURBE,
-                         rtoPOLYLIGNE,
-                         rtoPOLYGONE,
-                         rtoLIGNE,
-                         rtoSYMBOLE,
-                         rtoTEXTE);
-
 
 // fonctions de rappel
 type TProcedureWithStringOfObject = procedure(const S: string) of object;
@@ -596,8 +568,6 @@ type TProcTransmitIdxGroupe= procedure(const Idx: TIDGroupeEntites) of object;
 
 type TProcHandleTTreeviewItem = procedure() of object;
 type TProcUseGroupe           = procedure(const Grp: TGroupeEntites) of object;
-
-
 // mode de travail de la zone de dessin
 type TModeTravailCanvas = (mtNONE,
                            //mtDRAW_LIGNE,    // OK
@@ -974,43 +944,23 @@ const errGEN_SCRAP_OR_POLYGONE_FROM_POLYLIGNES_ANY_ERROR = errMERGE_SCRAPS_ANY_E
 //*************************************
 // pour les convertisseurs de coordonnées
 // type de projection (systeme de coordonnées)
-type TCodeEPSG = type Integer;
+
 type TLabelSystemesCoordsEPSG = record
   CodeEPSG: TCodeEPSG;
   Nom     : string;
+  procedure setFrom(const QCodeEPSG: TCodeEPSG; const QNom: string);
 end;
 
  { Point record and analoga }
 type TProjUV = Record
   U: Double;
   V: Double;
+  procedure setFrom(const QU, QV: double);
 End;
 type TProjXY = TProjUV;
 
 
-const
-  CODE_EPSG_WGS84           = 4326;
-  CODE_EPSG_LAMBERT_93      = 2154;    NOM_LAMBERT_93 = 'Lambert 93';
-  // anciens codes Lambert
-  CODE_EPSG_LAMBERT_I_NTF_DEPRECATED   =  27561 ; // 'NTF (Paris) / Lambert North France' Obsolete
-  CODE_EPSG_LAMBERT_II_NTF_DEPRECATED  =  27562 ; // 'NTF (Paris) / Lambert Centre France'
-  CODE_EPSG_LAMBERT_III_NTF_DEPRECATED =  27563 ; //  'NTF (Paris) / Lambert South France'
-  CODE_EPSG_LAMBERT_IV_NTF_DEPRECATED  =  27564 ; //  'NTF (Paris) / Lambert Corsica'
-  // codes actuels
-  CODE_EPSG_LAMBERT_I                  =  27571;
-  CODE_EPSG_LAMBERT_II                 =  27572;
-  CODE_EPSG_LAMBERT_III                =  27573; NOM_LAMBERT_III = 'Lambert T3';
-  CODE_EPSG_LAMBERT_IV                 =  27574;
-  // lambert 9 zones
-  CODE_EPSG_CC_ZONE_0                  =  3940;
-  // codes UTM
-  CODE_EPSG_UTM_ZONE_0_NORTH           =  32600;
-  CODE_EPSG_UTM_ZONE_0_SOUTH           =  32700;
 
-
-  CODE_EPSG_GOOGLE                     = 379009;
-  DEFAULT_SYSTEME_COORDONNEES_NOM       = NOM_LAMBERT_93;       // évolutif en LT93
-  DEFAULT_SYSTEME_COORDONNEES_CODE_EPSG = CODE_EPSG_LAMBERT_93; // évolutif en LT93
 // structure contenant les textures de polygones
 type TTexturesPolygonObject = record
   bmpClay   : TBGRABitmap;
@@ -1092,17 +1042,9 @@ type TCrossSectionTexte = record
 end;
 
 
-const
-  KML_OPENGIS_WEBSITE     = 'http://www.opengis.net/kml/2.2';
-  KML_GOOGLE_KML_WEBSITE  = 'http://www.google.com/kml/ext/2.2';
-  W3C_W3_WEBSITE          = 'http://www.w3.org/2005/Atom';
-  W3C_XML_SCHEMA_WEBSITE  = 'http://www.w3.org/2001/XMLSchema-instance';
-  GPX_TOPOGRAPHIX_WEBSITE = 'http://www.topografix.com/GPX/1/0';
 
 
-// nom de styles de scraps par défault (pour silhouettes
-const
-  SILHOUETTE_STYLE_SCRAP  : string = 'Silhouette0';
+
 
 //******************************************************************************
 // Variables pour les scripts JS dans les exports vers SIG
@@ -1112,6 +1054,107 @@ const
 implementation
 uses
   DGCDummyUnit;
+
+{ TDroite }
+
+procedure TDroite.setFrom(const P1, P2: TPoint2Df);
+begin
+  self.PT1 := P1;
+  self.PT2 := P2;
+end;
+
+procedure TDroite.setFrom(const X1, Y1, X2, Y2: double);
+begin
+  self.Pt1.setFrom(X1, Y1);
+  self.Pt2.setFrom(X2, Y2);
+end;
+
+{ TQuadrillage }
+
+procedure TQuadrillage.setFrom(const QTypeQuadrillage: TTypeQuadrillage; const QColor: TColor; const QSpacing, QCrossSize: double; const QDoDisplay, QDoDrawCoords: boolean);
+begin
+  self.TypeQuadrillage        := QTypeQuadrillage;
+  self.Color                  := QColor;
+  self.Spacing                := QSpacing;
+  self.CrossSize              := QCrossSize;
+  self.DoDisplay              := QDoDisplay;
+  self.DoDrawCoords           := QDoDrawCoords;
+end;
+
+{ TToporobotIDStation }
+
+procedure TToporobotIDStation.setFrom(const QaSerie, QaStation: integer; const QaIDTerrain: string);
+begin
+  self.aSerie    := QaSerie;
+  self.aStation  := QaStation;
+  self.aIDTerrain:= QaIDTerrain;
+end;
+
+{ TBaseStation }
+
+function TBaseStation.getToporobotIDStation(): TToporobotIDStation;
+var
+  S1, S2: Int64;
+begin
+  if (Self.IDStation > 0) then
+  begin
+    S1 := Self.IDStation div DIV_SR_CENTERLINE;
+    S2 := Self.IDStation mod DIV_SR_CENTERLINE;
+    Result.setFrom(S1, S2 div 10, self.IDTerrain);
+  end
+  else
+  begin // les IDStation des antennes sont au format -SSSSSPPPPPN, eg: -144000220 pour les antennes de la station 144.22
+    S1 := Abs(Self.IDStation) div DIV_SR_ANTENNE;
+    S2 := Abs(Self.IDStation) mod DIV_SR_ANTENNE;
+    Result.setFrom(S1, S2 div 1000, self.IDTerrain);
+  end;
+end;
+
+function TBaseStation.getToporobotIDStationAsString(const WithIDTerrain: boolean): string;
+var
+  EWE: TToporobotIDStation;
+begin
+  EWE := self.getToporobotIDStation(); //GetToporobotIDStation(ST);
+  Result := Format('%d.%d', [EWE.aSerie, EWE.aStation]);
+  if (WithIDTerrain) then Result += Format('[%s]', [EWE.aIDTerrain]);
+end;
+
+function TBaseStation.getToporobotIDStationWithIDTerrainPriority(): string;
+var
+  EWE: TToporobotIDStation;
+begin
+  EWE := self.getToporobotIDStation(); //GetToporobotIDStation(ST);
+  if (Trim(EWE.aIDTerrain) <> '') then Result := EWE.aIDTerrain
+                                  else Result := Format('%d.%d', [EWE.aSerie, EWE.aStation]);
+end;
+
+{ TProjUV }
+
+procedure TProjUV.setFrom(const QU, QV: double);
+begin
+  self.U := QU;
+  self.V := QV;
+end;
+
+{ TLabelSystemesCoordsEPSG }
+
+procedure TLabelSystemesCoordsEPSG.setFrom(const QCodeEPSG: TCodeEPSG; const QNom: string);
+begin
+  self.CodeEPSG := QCodeEPSG;
+  self.Nom      := QNom;
+end;
+
+{ TZoomParameters }
+
+procedure TZoomParameters.setFrom(const QIdx: integer; const QX1, QY1, QX2, QY2: double; const QCaption: string);
+begin
+  ID       := QIdx;
+  Caption  := QCaption;
+  X1       := QX1;
+  Y1       := QY1;
+  X2       := QX2;
+  Y2       := QY2;
+end;
 
 { TRect2Df }
 
@@ -1172,6 +1215,12 @@ var
 begin
   PT.setFrom(QX, QY);
   self.updateFromPoint(PT);
+end;
+
+function TBoundingBox.IsValid(): boolean;
+begin
+  Result := (Abs(C2.X - C1.X) < GHCD_Types.INFINITE) and
+            (Abs(C2.Y - C1.Y) < GHCD_Types.INFINITE);
 end;
 
 

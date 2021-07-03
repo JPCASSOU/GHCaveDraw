@@ -219,7 +219,7 @@ begin
             MyPOI.IDStation := MySymbole.IDBaseStation;
             MyPOI.IDTerrain := '';
             {$ELSE}
-            EWE := GetToporobotIDStation(BP);
+            EWE := BP.GetToporobotIDStation();
             MyPOI.Serie     := EWE.aSerie;
             MyPOI.Point     := EWE.aStation;
             MyPOI.IDTerrain := EWE.aIDTerrain;

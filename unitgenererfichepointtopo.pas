@@ -263,7 +263,7 @@ begin
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     AfficherMessage(BP.IDStation);
     {$ELSE}
-    AfficherMessage(GetToporobotIDStationAsString(BP, true));
+    AfficherMessage(BP.GetToporobotIDStationAsString(true));
     {$ENDIF TIDBASEPOINT_AS_TEXT}
   end;
 end;
@@ -430,7 +430,7 @@ begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   WU := BP.IDStation;
   {$ELSE}
-  WU := GetToporobotIDStationAsString(BP, true);
+  WU := BP.GetToporobotIDStationAsString(true);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
   AfficherMessage(format(' -- CreerUneFiche: %s', [WU]));
   // le cadre périmétrique de la fiche

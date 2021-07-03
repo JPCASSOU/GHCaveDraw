@@ -344,8 +344,8 @@ begin
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     self.Caption := Format('Section transversale: %s - Orientation: %.0f', [EWE.IDStation, Ang]);
     {$ELSE}
-    WU  := GetToporobotIDStation(EWE);
-    editBasePointID.Text         := GetToporobotIDStationAsString(BP, false);
+    WU  := EWE.getToporobotIDStation();
+    editBasePointID.Text         := BP.GetToporobotIDStationAsString(false);
     self.Caption := Format('Section transversale: %d.%d (%s) - Orientation: %.0f', [WU.aSerie, WU.aStation, WU.aIDTerrain, Ang]);
     {$ENDIF TIDBASEPOINT_AS_TEXT}
     lbBasePointIDTerrain.Caption := BP.IDTerrain;

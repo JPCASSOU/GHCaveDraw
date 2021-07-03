@@ -99,7 +99,7 @@ var
   begin
     if (not GRP.Visible) then Exit;
     try
-      if (IsValidBoundingBox(GRP.BoundingBox)) then
+      if (GRP.BoundingBox.IsValid()) then
       begin
         TmpBuffer.DefineCrayon(psSolid, 0, clMaroon, 255);
         TmpBuffer.DefineBrosse(bsClear, clWhite, 255);
@@ -232,14 +232,10 @@ begin
           end;
         end; // for NoGroupe ...
         //************************
-        if (tedQUADRILLES in FParamsVue2D.ElementsDrawn) then
-        begin
-          TmpBuffer.DrawQuadrillage();
-        end;
+        if (tedQUADRILLES in FParamsVue2D.ElementsDrawn) then TmpBuffer.DrawQuadrillage();
         if (tedCENTERLINES in FParamsVue2D.ElementsDrawn) then
         begin
-          for ii:= 0 to FDocumentDessin.GetNbBaseStations() - 1 do
-            TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), 12);
+          for ii:= 0 to FDocumentDessin.GetNbBaseStations() - 1 do TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), 12);
         end;
         DessinerCurrentBaseStation();            // dessiner station courante
         DrawLastStation(FLastStationFound);      // dessiner dernière station trouvée (peut être différente de la station courante)
@@ -256,7 +252,6 @@ begin
                               'mseSYMBOLES',
                               'mseTEXTES',
                               'mseIMAGES' ]);
-
         AfficherMessageErreur(Format('Mode: %s - Objet: %d', [EWE, FDrwCurrentIdxObj]));
       end;
     end;
@@ -269,8 +264,6 @@ begin
     // ne pas mettre cette ligne avant la libération du sémaphore
     Application.ProcessMessages;
     t := now() - t;
-    //DecodeTime(t, HHH, MMM, SSS, MMS);
-    //AfficherMessageErreur(Format('%.2d:%.2d:%.2d.%.3d', [ HHH, MMM, SSS, MMS]));
   end;
   try  // on dessine ici les objets temporaires
     DrawTmpObj_FreeHandPoints();   // dessin des points main levée

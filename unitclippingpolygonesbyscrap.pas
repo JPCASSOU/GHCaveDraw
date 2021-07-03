@@ -27,7 +27,7 @@ var
   OP: TClipType;
   G1, G2: TGroupeEntites;
   OpsCSG: TOperationsCSGClipping;
-  PP1, PP2: TVertexPolygonArray;
+  PP1, PP2: TArrayVertexPolygon;
 begin
   Result := errMERGE_SCRAP_AND_POLYGON_ANY_ERROR;
   AfficherMessage('DelimiterUnPolygoneParUnScrap()');

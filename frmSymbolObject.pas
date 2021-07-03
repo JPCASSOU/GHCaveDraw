@@ -165,7 +165,7 @@ begin
         {$IFDEF TIDBASEPOINT_AS_TEXT}
         editIDBaseStation.Text      := EWE.IDStation;
         {$ELSE}
-        editIDBaseStation.Text      := GetToporobotIDStationAsString(EWE);
+        editIDBaseStation.Text      := EWE.GetToporobotIDStationAsString();
 
         {$ENDIF TIDBASEPOINT_AS_TEXT}
         editOffsetX.Value    := QAbsolutePos.X - EWE.PosStation.X;
@@ -191,7 +191,7 @@ begin
           {$IFDEF TIDBASEPOINT_AS_TEXT}
           editIDBaseStation.Text       := EWE.IDStation;
           {$ELSE}
-          editIDBaseStation.Text      := GetToporobotIDStationAsString(EWE);
+          editIDBaseStation.Text      := EWE.GetToporobotIDStationAsString();
           {$ENDIF TIDBASEPOINT_AS_TEXT}
           cmbGroupes.ItemIndex       := FDocumentDessin.GetInternalIdxGroupe(FObjetPonctuel.IDGroupe);
           cmbTypeObjet.ItemIndex     := Ord(FObjetPonctuel.TypeObject);
@@ -314,7 +314,7 @@ begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   editIDBaseStation.Text       := BP.IDStation;
   {$ELSE}
-  editIDBaseStation.Text      := GetToporobotIDStationAsString(BP);
+  editIDBaseStation.Text      := BP.GetToporobotIDStationAsString();
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 end;
 

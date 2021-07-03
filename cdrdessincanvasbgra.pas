@@ -1636,7 +1636,7 @@ var
 begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  EWE := GetToporobotIDStation(FCurrentBasePoint);
+  EWE := FCurrentBasePoint.GetToporobotIDStation();
   editFiltre.Text := Format('SERIE=%d;', [EWE.aSerie]);
   acApplyMetaFiltre.Execute;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
@@ -1648,7 +1648,7 @@ var
 begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  EWE := GetToporobotIDStation(FCurrentBasePoint);
+  EWE := FCurrentBasePoint.GetToporobotIDStation();
   editFiltre.Text := Format('STATION=%d.%d;', [EWE.aSerie, EWE.aStation]);
   acApplyMetaFiltre.Execute;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
@@ -1666,7 +1666,7 @@ var
 begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  EWE := GetToporobotIDStation(FCurrentBasePoint);
+  EWE := FCurrentBasePoint.GetToporobotIDStation();
   acLockCurrentStation.Caption := Format(rsCDR_DRW_ACN_LOCK_CURR_STATION, [EWE.aSerie, EWE.aStation, EWE.aIDTerrain]);
   acLockCurrentStation.Hint    := acLockCurrentStation.Caption;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
@@ -1686,7 +1686,7 @@ var
 begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  EWE := GetToporobotIDStation(FCurrentBasePoint);
+  EWE := FCurrentBasePoint.GetToporobotIDStation();
   editFiltre.Text := editFiltre.Text + Format('SERIE=%d;', [EWE.aSerie]);
   acApplyMetaFiltre.Execute;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
@@ -1700,7 +1700,7 @@ var
 begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  EWE := GetToporobotIDStation(FCurrentBasePoint);
+  EWE := FCurrentBasePoint.GetToporobotIDStation();
   editFiltre.Text := editFiltre.Text + Format('STATION=%d.%d;', [EWE.aSerie, EWE.aStation]);
   acApplyMetaFiltre.Execute;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
@@ -2003,7 +2003,7 @@ begin
   WU := BP.IDStation;
   Cnv.TextOut(PP.X + 2 + CC, PP.Y + 2 + CC, Format(FORMAT_BASEPOINT, [WU]));
   {$ELSE}
-  WU := GetToporobotIDStation(BP);
+  WU := BP.GetToporobotIDStation();
   Cnv.TextOut(PP.X + 2 + CC, PP.Y + 2 + CC, Format('%d.%d', [WU.aSerie, WU.aStation]));
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
@@ -2069,6 +2069,8 @@ end;
 
 
 function TCadreDessinBGRA.PreparerCtxt(const FP: TParamsVue2D): boolean;
+var
+  QGrdSpc: Double;
 begin
   result := false;
   FDoDraw := false;
@@ -2076,10 +2078,9 @@ begin
     ResetViewLimits;
     FParamsVue2D := FP;
     // cadrage du dessin
-    FParamsVue2D.GrdTypeQuadrillage := tqGRID;
-    FParamsVue2D.GrdSpcMainGrid := ProposerEquidistance(FDocumentDessin.GetCoordsMini, FDocumentDessin.GetCoordsMaxi);
-    FParamsVue2D.GrdSpcSecGrid  := FParamsVue2D.GrdSpcMainGrid / 10;
-    FParamsVue2D.GrdCrossSize   := FParamsVue2D.GrdSpcMainGrid / 20;
+    QGrdSpc := ProposerEquidistance(FDocumentDessin.GetCoordsMini, FDocumentDessin.GetCoordsMaxi);
+    FParamsVue2D.MainGrid.setFrom(tqGRID, clGray  , QGrdSpc, QGrdSpc / 10, True, True);
+    FParamsVue2D.SecGrid.setFrom (tqGRID, clSilver, QGrdSpc / 10, QGrdSpc / 40, True, True);
     //FParametresGrilles.GrdSpcSecGrid := FParametresGrilles.GrdSpcMainGrid / 10;
     // affecter dessin à la courbe provisoire
     FCourbePolygoneProvisoire.SetDocDessin(FDocumentDessin);
@@ -2703,7 +2704,7 @@ begin
                                     //L, A, P, FCurrentBasePoint.PosStation.Z
                                    ]);
   {$ELSE}
-  WU := GetToporobotIDStation(FCurrentBasePoint);
+  WU := FCurrentBasePoint.GetToporobotIDStation();
   chkBaseStationLocked.Caption := Format('Lock %d - %s', [FCurrentBasePoint.IDStation, FCurrentBasePoint.IDTerrain]);
   lbIDBaseStation.Caption := Format('%d.%d: %s - %.2f, %.2f, %.2f',
                                    [WU.aSerie, WU.aStation, FCurrentBasePoint.IDTerrain,
@@ -2998,14 +2999,16 @@ end;
 
 procedure TCadreDessinBGRA.SetTypeQuadrillage(const Q: TTypeQuadrillage);
 begin
-  FParamsVue2D.GrdTypeQuadrillage := Q;
+  FParamsVue2D.MainGrid.TypeQuadrillage := Q;
+  FParamsVue2D.SecGrid.TypeQuadrillage := Q;
+
   Vue.Invalidate;
 end;
 
 procedure TCadreDessinBGRA.SetGrdSpcGrid(const QdrSpcMain, QdrSpcSec: double);
 begin
-  FParamsVue2D.GrdSpcMainGrid := QdrSpcMain;
-  FParamsVue2D.GrdSpcSecGrid  := QdrSpcSec;
+  FParamsVue2D.MainGrid.Spacing := QdrSpcMain;
+  FParamsVue2D.SecGrid.Spacing  := QdrSpcSec;
   Vue.Invalidate;
 end;
 
@@ -3480,10 +3483,10 @@ begin
   // menu Filtres
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   {$ELSE}
-  QSerSp := GetToporobotIDStation(FCurrentBasePoint);
+  QSerSp := FCurrentBasePoint.GetToporobotIDStation();
   mnuFILTRES_SERIE.Caption := Format(rsCDR_DRW_MNU_FILTRES_SERIE, [QSerSp.aSerie]);
   mnuFILTRES_COULEURS.Caption := Format(rsCDR_DRW_MNU_FILTRES_COULEUR, [FCurrentBasePoint.Couleur]);
-  WU := GetToporobotIDStation(FCurrentBasePoint);
+  WU := FCurrentBasePoint.GetToporobotIDStation();
   mnuFILTRES_STATION.Caption := Format(rsCDR_DRW_MNU_FILTRES_STATION, [WU.aSerie, WU.aStation, WU.aIDTerrain]);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
@@ -3505,7 +3508,7 @@ begin
         {$IFDEF TIDBASEPOINT_AS_TEXT}
         PopupNotifier1.Title := EWE.IDStation;
         {$ELSE}
-        QAT := GetToporobotIDStation(EWE);
+        QAT := EWE.GetToporobotIDStation();
         PopupNotifier1.Title := Format('%d.%d %s', [QAT.aSerie, QAT.aStation, QAT.aIDTerrain]);
         {$ENDIF TIDBASEPOINT_AS_TEXT}
 

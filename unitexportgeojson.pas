@@ -9,11 +9,7 @@ interface
 uses
   Classes, SysUtils, Graphics;
 type TPolygoneOrPolyline = (tpPOLYGON, tpPOLYLINE);
-type
-
-{ TGeoJSONExport }
-
- TGeoJSONExport = class
+type TGeoJSONExport = class
  strict private
    FP                 : TextFile;
    procedure BeginPolygonPolyline(const P: TPolygoneOrPolyline; const Name: string; const TagString: string);

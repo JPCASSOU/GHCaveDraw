@@ -153,14 +153,19 @@ begin
   chkDispScraps.Checked         := (tedSCRAPS          in FP.ElementsDrawn);
   chkDispImages.Checked         := (tedIMAGES          in FP.ElementsDrawn);
   chkDispPenteSuperieureA.Checked  := (tedDISP_PENTES  in FP.ElementsDrawn);
-  cmbTypeQuadrillage.ItemIndex := Ord(FP.GrdTypeQuadrillage);
-  editMainGrdSpacing.Value     := FP.GrdSpcMainGrid;
-  editSecGrdSpacing.Value      := FP.GrdSpcSecGrid;
-  btnMainGrdColor.ButtonColor  := FP.GrdMainGridColor;
-  btnSecGrdColor.ButtonColor   := FP.GrdSecGridColor;
-  chkDispMainGrid.Checked      := FP.GrdDispMainGrid;
-  chkDispSecGrid.Checked       := FP.GrdDispSecGrid;
-  editTailleCroix.Value        := FP.GrdCrossSize;
+  cmbTypeQuadrillage.ItemIndex := Ord(FP.MainGrid.TypeQuadrillage);
+  editTailleCroix.Value        := FP.MainGrid.CrossSize;
+
+  chkDispMainGrid.Checked      := FP.MainGrid.DoDisplay;
+  editMainGrdSpacing.Value     := FP.MainGrid.Spacing;
+  btnMainGrdColor.ButtonColor  := FP.MainGrid.Color;
+
+
+  chkDispSecGrid.Checked       := FP.SecGrid.DoDisplay;
+  editSecGrdSpacing.Value      := FP.SecGrid.Spacing;
+  btnSecGrdColor.ButtonColor   := FP.SecGrid.Color;
+
+
   btnBackgroundColor.ButtonColor      := FP.BackGroundColor;
   editLimiteDispPente.Value           := FP.PenteLimiteDisp;
   chkDoDrawScrapsMonochromes.Checked  := FP.DoDrawScrapsMonochromes;
@@ -192,15 +197,20 @@ begin
                                         else Result.ElementsDrawn := Result.ElementsDrawn - [tedDISP_PENTES];
 
   Result.BackGroundColor    := btnBackgroundColor.ButtonColor;
-  Result.GrdCrossSize       := editTailleCroix.Value;
-  Result.GrdDispMainGrid    := chkDispMainGrid.Checked;
-  Result.GrdDispSecGrid     := chkDispSecGrid.Checked;
-  Result.GrdMainGridColor   := btnMainGrdColor.ButtonColor;
-  Result.GrdSecGridColor    := btnSecGrdColor.ButtonColor;
-  Result.GrdTypeQuadrillage := TTypeQuadrillage(cmbTypeQuadrillage.ItemIndex);
-  Result.GrdSpcMainGrid     := editMainGrdSpacing.Value;
-  Result.GrdSpcSecGrid      := editSecGrdSpacing.Value;
-  Result.PenteLimiteDisp    := editLimiteDispPente.Value;
+  Result.MainGrid.setFrom(TTypeQuadrillage(cmbTypeQuadrillage.ItemIndex),
+                          btnMainGrdColor.ButtonColor,
+                          editMainGrdSpacing.Value,
+                          editTailleCroix.Value,
+                          chkDispMainGrid.Checked,
+                          True);
+  Result.SecGrid.setFrom(TTypeQuadrillage(cmbTypeQuadrillage.ItemIndex),
+                          btnSecGrdColor.ButtonColor,
+                          editSecGrdSpacing.Value,
+                          editTailleCroix.Value,
+                          chkDispSecGrid.Checked,
+                          True);
+
+  Result.PenteLimiteDisp         := editLimiteDispPente.Value;
   Result.DoDrawScrapsMonochromes := chkDoDrawScrapsMonochromes.Checked;
   Result.TailleEchelle           := editTailleEchelle.Value;
 end;

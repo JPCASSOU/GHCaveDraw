@@ -568,7 +568,7 @@ var
                // d: SERIE = 122:12-
 
                p := StrToIntDef(F.Valeur, -1);
-               MyStationFoo := GetToporobotIDStation(E);
+               MyStationFoo := E.getToporobotIDStation(); //GetToporobotIDStation(E);
                SSSS := abs(MyStationFoo.aSerie);
                if (p > 0) then
                begin

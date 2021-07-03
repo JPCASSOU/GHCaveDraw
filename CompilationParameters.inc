@@ -24,6 +24,10 @@
 // config gestion des strings
 {$codepage UTF8}
 
+// DXF support
+{$DEFINE DXF_SUPPORT}
+{.$UNDEF DXF_SUPPORT}
+
 // Outils OpenCaveMap
 {$DEFINE OPENCAVEMAP}
 {.$DEFINE OPENCAVEMAP}

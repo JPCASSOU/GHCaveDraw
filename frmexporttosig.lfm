@@ -1,24 +1,25 @@
 object dlgExportSIG: TdlgExportSIG
-  Left = 454
-  Height = 322
-  Top = 263
-  Width = 637
+  Left = 422
+  Height = 395
+  Top = 302
+  Width = 741
   BorderStyle = bsDialog
   Caption = 'Export vers SIG'
-  ClientHeight = 322
-  ClientWidth = 637
+  ClientHeight = 395
+  ClientWidth = 741
   Font.CharSet = ARABIC_CHARSET
   Font.Height = -13
   Font.Name = 'Arial'
   Font.Pitch = fpVariable
   Font.Quality = fqDraft
   Font.Style = [fsBold]
+  OnCreate = FormCreate
   Position = poScreenCenter
   LCLVersion = '2.0.0.4'
   object BitBtn1: TBitBtn
-    Left = 512
+    Left = 616
     Height = 30
-    Top = 288
+    Top = 361
     Width = 119
     Anchors = [akRight, akBottom]
     DefaultCaption = True
@@ -38,7 +39,7 @@ object dlgExportSIG: TdlgExportSIG
     Left = 128
     Height = 24
     Top = 4
-    Width = 503
+    Width = 607
     FileName = 'scraps.kml'
     DialogKind = dkSave
     DialogOptions = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
@@ -55,7 +56,7 @@ object dlgExportSIG: TdlgExportSIG
   object btnDoExport: TButton
     Left = 4
     Height = 30
-    Top = 288
+    Top = 361
     Width = 252
     Anchors = [akLeft, akBottom]
     Caption = 'btnDoExport'
@@ -65,18 +66,18 @@ object dlgExportSIG: TdlgExportSIG
   object pnlProgression: TPanel
     Left = 4
     Height = 49
-    Top = 237
-    Width = 627
+    Top = 310
+    Width = 731
     Anchors = [akLeft, akRight, akBottom]
     BevelInner = bvLowered
     ClientHeight = 49
-    ClientWidth = 627
+    ClientWidth = 731
     TabOrder = 3
     object lbEtape: TLabel
       Left = 4
       Height = 16
       Top = 4
-      Width = 616
+      Width = 720
       Anchors = [akTop, akLeft, akRight]
       Caption = 'lbEtape'
       ParentColor = False
@@ -85,13 +86,13 @@ object dlgExportSIG: TdlgExportSIG
       Left = 4
       Height = 20
       Top = 24
-      Width = 616
+      Width = 720
       Anchors = [akTop, akLeft, akRight, akBottom]
       TabOrder = 0
     end
   end
   object Label6: TLabel
-    Left = 321
+    Left = 425
     Height = 16
     Top = 32
     Width = 204
@@ -100,7 +101,7 @@ object dlgExportSIG: TdlgExportSIG
     ParentColor = False
   end
   object btnChooseSystemeEPSG: TButton
-    Left = 321
+    Left = 425
     Height = 25
     Top = 51
     Width = 310
@@ -113,11 +114,11 @@ object dlgExportSIG: TdlgExportSIG
     Left = 4
     Height = 96
     Top = 32
-    Width = 312
+    Width = 416
     Anchors = [akTop, akLeft, akRight]
     BevelOuter = bvLowered
     ClientHeight = 96
-    ClientWidth = 312
+    ClientWidth = 416
     TabOrder = 5
     object btnColorSilhouette: TColorButton
       Left = 116
@@ -156,7 +157,7 @@ object dlgExportSIG: TdlgExportSIG
       Left = 137
       Height = 22
       Top = 66
-      Width = 147
+      Width = 251
       Max = 255
       Position = 64
       ShowSelRange = False
@@ -165,7 +166,7 @@ object dlgExportSIG: TdlgExportSIG
       TabOrder = 1
     end
     object StaticText2: TStaticText
-      Left = 286
+      Left = 390
       Height = 22
       Top = 66
       Width = 20
@@ -185,21 +186,31 @@ object dlgExportSIG: TdlgExportSIG
       State = cbChecked
       TabOrder = 3
     end
+    object chkScrapsFilled: TCheckBox
+      Left = 204
+      Height = 20
+      Top = 4
+      Width = 114
+      Caption = 'Scraps remplis'
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+    end
   end
   object Panel2: TPanel
-    Left = 320
-    Height = 152
+    Left = 424
+    Height = 192
     Top = 80
     Width = 311
     Anchors = [akTop, akRight]
     BevelOuter = bvLowered
-    ClientHeight = 152
+    ClientHeight = 192
     ClientWidth = 311
     TabOrder = 6
     object editMapWidth: TCurrencyEdit
       Left = 132
       Height = 24
-      Top = 124
+      Top = 164
       Width = 61
       Alignment = taRightJustify
       DecimalPlaces = 0
@@ -213,7 +224,7 @@ object dlgExportSIG: TdlgExportSIG
     object Label5: TLabel
       Left = 4
       Height = 14
-      Top = 128
+      Top = 168
       Width = 121
       Anchors = [akLeft, akBottom]
       AutoSize = False
@@ -223,7 +234,7 @@ object dlgExportSIG: TdlgExportSIG
     object Label4: TLabel
       Left = 196
       Height = 14
-      Top = 128
+      Top = 168
       Width = 17
       Alignment = taCenter
       Anchors = [akLeft, akBottom]
@@ -234,7 +245,7 @@ object dlgExportSIG: TdlgExportSIG
     object editMapHeight: TCurrencyEdit
       Left = 216
       Height = 24
-      Top = 124
+      Top = 164
       Width = 61
       Alignment = taRightJustify
       DecimalPlaces = 0
@@ -248,7 +259,7 @@ object dlgExportSIG: TdlgExportSIG
     object Label7: TLabel
       Left = 280
       Height = 16
-      Top = 128
+      Top = 168
       Width = 16
       Anchors = [akLeft, akBottom]
       Caption = 'px'
@@ -256,7 +267,7 @@ object dlgExportSIG: TdlgExportSIG
     end
     object chkgbxFormatsOutput: TCheckGroup
       Left = 4
-      Height = 112
+      Height = 144
       Top = 4
       Width = 301
       Anchors = [akTop, akLeft, akRight]
@@ -270,16 +281,17 @@ object dlgExportSIG: TdlgExportSIG
       ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 1
-      ClientHeight = 91
+      ClientHeight = 123
       ClientWidth = 297
       Items.Strings = (
         'Carte interactive Leaflet'
         'KML - Google Earth'
         'GeoJSON'
+        'AutoCAD DXF'
       )
       TabOrder = 2
       Data = {
-        03000000020202
+        0400000002020202
       }
     end
   end

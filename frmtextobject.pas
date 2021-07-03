@@ -167,7 +167,7 @@ begin
         {$IFDEF TIDBASEPOINT_AS_TEXT}
         editIDBaseStation.Text      := EWE.IDStation;
         {$ELSE}
-        editIDBaseStation.Text      := GetToporobotIDStationAsString(EWE);
+        editIDBaseStation.Text      := EWE.GetToporobotIDStationAsString();
         {$ENDIF TIDBASEPOINT_AS_TEXT}
 
 
@@ -183,7 +183,7 @@ begin
           {$IFDEF TIDBASEPOINT_AS_TEXT}
           editIDBaseStation.Text       := EWE.IDStation;
           {$ELSE}
-          editIDBaseStation.Text      := GetToporobotIDStationAsString(EWE);
+          editIDBaseStation.Text      := EWE.GetToporobotIDStationAsString();
           {$ENDIF TIDBASEPOINT_AS_TEXT}
           cmbGroupes.ItemIndex := FDocumentDessin.GetInternalIdxGroupe(FObjetTexte.IDGroupe);
 
@@ -228,7 +228,7 @@ begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   editIDBaseStation.Text       := BP.IDStation;
   {$ELSE}
-  editIDBaseStation.Text       := GetToporobotIDStationAsString(BP);
+  editIDBaseStation.Text       := BP.GetToporobotIDStationAsString();
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 end;
 

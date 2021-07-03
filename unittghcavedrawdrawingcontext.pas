@@ -638,8 +638,8 @@ procedure TGHCaveDrawDrawingContext.DessinerBaseStation(const BP: TBaseStation; 
         TraceTexte(BP.PosStation.X + 0.25, BP.PosStation.Y + 0.25,BP.IDStation);
         {$ELSE}
         if (BP.IDStation < 0) then Exit; // zap des visées en antenne
-        EWE := GetToporobotIDStation(BP);
-        if (EWE.aStation >= 0) then TraceTexte(BP.PosStation.X + 0.25, BP.PosStation.Y + 0.25, GetToporobotIDStationWithIDTerrainPriority(BP));
+        EWE := BP.GetToporobotIDStation();
+        if (EWE.aStation >= 0) then TraceTexte(BP.PosStation.X + 0.25, BP.PosStation.Y + 0.25, BP.getToporobotIDStationWithIDTerrainPriority());
         {$ENDIF TIDBASEPOINT_AS_TEXT}
 
       end;
@@ -2249,17 +2249,13 @@ begin
   self.CanvasBGRA.Font.Color  := clBlack;
   self.CanvasBGRA.Font.Height := 14;
   // vue courante
-  case FParamsVue2D.GrdTypeQuadrillage of
-    tqGRID   :
-    begin
-      DrawQuadrillageGrille(FParamsVue2D.GrdSpcSecGrid, FParamsVue2D.GrdSecGridColor, false);
-      DrawQuadrillageGrille(FParamsVue2D.GrdSpcMainGrid, FParamsVue2D.GrdMainGridColor, true);
-    end;
-    tqCROSS  :
-    begin
-      //DrawQuadrillageGrille(FParamsVue2D.GrdCrossSize, FParamsVue2D.GrdMainGridColor);
-      DrawQuadrillageCroix(FParamsVue2D.GrdSpcMainGrid, FParamsVue2D.GrdCrossSize , FParamsVue2D.GrdMainGridColor, false);
-    end;
+  case FParamsVue2D.MainGrid.TypeQuadrillage of
+    tqGRID : DrawQuadrillageGrille(FParamsVue2D.SecGrid.Spacing, FParamsVue2D.SecGrid.Color, false);
+    tqCROSS: DrawQuadrillageCroix (FParamsVue2D.SecGrid.Spacing, FParamsVue2D.SecGrid.CrossSize, FParamsVue2D.SecGrid.Color, false);
+  end;
+  case FParamsVue2D.MainGrid.TypeQuadrillage of
+    tqGRID : DrawQuadrillageGrille(FParamsVue2D.MainGrid.Spacing, FParamsVue2D.MainGrid.Color, false);
+    tqCROSS: DrawQuadrillageCroix (FParamsVue2D.MainGrid.Spacing, FParamsVue2D.MainGrid.CrossSize, FParamsVue2D.MainGrid.Color, false);
   end;
 end;
 

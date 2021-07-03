@@ -4,12 +4,11 @@
     <PathDelim Value="\"/>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="129">
+    <Units Count="136">
       <Unit0>
         <Filename Value="GHCaveDrawFPC.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <CursorPos X="131" Y="22"/>
+        <CursorPos Y="31"/>
         <UsageCount Value="238"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -22,8 +21,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainFrmEditor"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="10"/>
-        <CursorPos X="15" Y="39"/>
+        <TopLine Value="3614"/>
+        <CursorPos X="33" Y="3644"/>
         <UsageCount Value="238"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -36,20 +35,20 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="cdrdessincanvasBGRA"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="2043"/>
-        <CursorPos X="38" Y="2049"/>
+        <EditorIndex Value="27"/>
+        <TopLine Value="3005"/>
+        <CursorPos X="37" Y="3058"/>
         <UsageCount Value="238"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
         <Filename Value="CompilationParameters.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="2" Y="20"/>
+        <EditorIndex Value="18"/>
+        <CursorPos X="89" Y="8"/>
         <UsageCount Value="238"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -66,9 +65,9 @@
       <Unit5>
         <Filename Value="GeneralFunctions.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="9"/>
-        <CursorPos X="47" Y="6"/>
+        <EditorIndex Value="22"/>
+        <TopLine Value="907"/>
+        <CursorPos X="83" Y="908"/>
         <UsageCount Value="238"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -76,9 +75,7 @@
       <Unit6>
         <Filename Value="GHCD_Types.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="30"/>
-        <TopLine Value="109"/>
-        <CursorPos X="6" Y="135"/>
+        <EditorIndex Value="24"/>
         <UsageCount Value="238"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -86,19 +83,18 @@
       <Unit7>
         <Filename Value="UnitGraphismesProvisoires.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1239"/>
         <CursorPos X="37" Y="1262"/>
         <UsageCount Value="238"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="UnitDocDessin.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="18"/>
-        <TopLine Value="117"/>
-        <CursorPos X="15" Y="141"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="4822"/>
+        <CursorPos X="36" Y="4848"/>
         <UsageCount Value="237"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -122,19 +118,17 @@
       <Unit11>
         <Filename Value="UnitMessages_fr.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="7" Y="7"/>
         <UsageCount Value="237"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="calldialogsghcavedraw.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CallDialogsGHCaveDraw"/>
-        <EditorIndex Value="14"/>
-        <TopLine Value="501"/>
-        <CursorPos X="55" Y="516"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="12" Y="9"/>
         <UsageCount Value="237"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -158,10 +152,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmTextObject"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="267"/>
-        <CursorPos X="41" Y="225"/>
+        <EditorIndex Value="13"/>
+        <TopLine Value="205"/>
+        <CursorPos X="62" Y="219"/>
         <UsageCount Value="211"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -171,19 +166,22 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmEditStylesObjet"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="13" Y="13"/>
+        <EditorIndex Value="25"/>
+        <TopLine Value="294"/>
+        <CursorPos X="123" Y="330"/>
         <UsageCount Value="208"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
         <Filename Value="unitcenterlinesbasepoints.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitCenterlinesBasePoints"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="869"/>
-        <CursorPos X="91" Y="888"/>
+        <EditorIndex Value="23"/>
+        <TopLine Value="547"/>
+        <CursorPos X="162" Y="576"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -200,11 +198,10 @@
         <Filename Value="unitexporttoodg.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitExportToODG"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="71"/>
         <CursorPos X="55" Y="97"/>
         <UsageCount Value="207"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -220,21 +217,19 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmEditScraps"/>
-        <EditorIndex Value="29"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="54"/>
         <CursorPos X="22" Y="75"/>
         <UsageCount Value="232"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
         <Filename Value="geometrypolygonesutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GeometryPolygonesUtils"/>
-        <EditorIndex Value="12"/>
-        <TopLine Value="195"/>
-        <CursorPos X="63" Y="219"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="608"/>
+        <CursorPos X="79" Y="650"/>
         <UsageCount Value="204"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -243,9 +238,9 @@
         <Filename Value="unitfindobjects.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitFindObjects"/>
-        <EditorIndex Value="13"/>
-        <TopLine Value="264"/>
-        <CursorPos X="69" Y="201"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="446"/>
+        <CursorPos X="93" Y="450"/>
         <UsageCount Value="245"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -289,21 +284,18 @@
       <Unit26>
         <Filename Value="CadreDessinBGRARedessinEcran.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="17"/>
-        <TopLine Value="30"/>
-        <CursorPos X="36" Y="38"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="104" Y="248"/>
         <UsageCount Value="238"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
         <Filename Value="DocDessinLoadFromFile.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="27"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="512"/>
         <CursorPos X="38" Y="528"/>
         <UsageCount Value="224"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit27>
       <Unit28>
@@ -318,11 +310,10 @@
       <Unit29>
         <Filename Value="DocDessinExportToSVG.inc"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="26"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="388"/>
         <CursorPos X="56" Y="389"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
@@ -337,9 +328,9 @@
         <Filename Value="unittghcavedrawdrawingcontext.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitTGHCaveDrawDrawingContext"/>
-        <EditorIndex Value="19"/>
-        <TopLine Value="568"/>
-        <CursorPos X="14" Y="592"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="2211"/>
+        <CursorPos X="116" Y="2257"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -348,11 +339,10 @@
         <Filename Value="unitatlashtml.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitAtlasHTML"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="398"/>
         <CursorPos X="19" Y="424"/>
         <UsageCount Value="234"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
@@ -362,11 +352,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmTImageObject"/>
-        <EditorIndex Value="21"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="416"/>
         <CursorPos X="63" Y="444"/>
         <UsageCount Value="213"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
@@ -384,20 +373,18 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmParametrageAtlas"/>
-        <EditorIndex Value="4"/>
-        <CursorPos X="9" Y="8"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="12" Y="8"/>
         <UsageCount Value="202"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
       <Unit36>
         <Filename Value="unitsectionstransversales.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitSectionsTransversales"/>
-        <EditorIndex Value="22"/>
-        <TopLine Value="1440"/>
-        <CursorPos X="20" Y="1373"/>
+        <EditorIndex Value="15"/>
+        <TopLine Value="1200"/>
+        <CursorPos X="91" Y="1212"/>
         <UsageCount Value="235"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -429,10 +416,10 @@
         <Filename Value="unitsimplificationcourbe.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitSimplificationCourbe"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="36"/>
         <CursorPos X="75" Y="70"/>
         <UsageCount Value="214"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -452,8 +439,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitOpenCaveMap"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="225"/>
-        <CursorPos Y="225"/>
+        <TopLine Value="152"/>
+        <CursorPos Y="174"/>
         <UsageCount Value="201"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
@@ -464,10 +451,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="dlgEditeurSectionTransversale"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="315"/>
-        <CursorPos X="81" Y="348"/>
+        <EditorIndex Value="16"/>
+        <TopLine Value="320"/>
+        <CursorPos X="70" Y="348"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
@@ -477,22 +465,20 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="cdrSectionTransversale"/>
-        <EditorIndex Value="24"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1658"/>
         <CursorPos X="13" Y="1689"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
       <Unit44>
         <Filename Value="unitcrosssectiondrwctxt.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitCrossSectionDrwCtxt"/>
-        <EditorIndex Value="23"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="306"/>
         <CursorPos X="21" Y="314"/>
         <UsageCount Value="201"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
       <Unit45>
@@ -534,9 +520,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmExportToSIG"/>
-        <EditorIndex Value="16"/>
-        <TopLine Value="83"/>
-        <CursorPos X="13" Y="110"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="109"/>
+        <CursorPos X="11" Y="129"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -564,9 +550,9 @@
         <Filename Value="unitgenererfichepointtopo.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitGenererFichePointTopo"/>
-        <EditorIndex Value="20"/>
-        <TopLine Value="423"/>
-        <CursorPos X="17" Y="448"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="407"/>
+        <CursorPos X="42" Y="433"/>
         <UsageCount Value="204"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -575,9 +561,11 @@
         <Filename Value="unitclippingpolygonesbyscrap.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unitClippingPolygonesByScrap"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="4"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="3"/>
+        <CursorPos X="32" Y="30"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit52>
       <Unit53>
@@ -597,11 +585,11 @@
         <ComponentName Value="dlgParametrerVue2D"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="157"/>
-        <CursorPos X="94" Y="193"/>
+        <EditorIndex Value="11"/>
+        <CursorPos X="16" Y="13"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
       <Unit55>
@@ -623,10 +611,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmListePOI"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="180"/>
-        <CursorPos X="7" Y="240"/>
+        <EditorIndex Value="17"/>
+        <TopLine Value="196"/>
+        <CursorPos X="45" Y="222"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
@@ -646,12 +635,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="CadreEditeurTexte"/>
-        <EditorIndex Value="34"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="41" Y="58"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
@@ -659,8 +646,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitLeafletExport"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="594"/>
-        <CursorPos X="118" Y="614"/>
+        <TopLine Value="67"/>
+        <CursorPos X="15" Y="90"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
@@ -694,12 +681,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmDisplaySuperGroupes"/>
-        <EditorIndex Value="31"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="82" Y="26"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit62>
       <Unit63>
@@ -709,31 +694,63 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="CadreListboxGroupes"/>
-        <EditorIndex Value="32"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="19" Y="45"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
         <Filename Value="unitexportgeojson.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitExportGeoJSON"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="43"/>
-        <CursorPos X="48" Y="43"/>
+        <EditorIndex Value="19"/>
+        <CursorPos X="32"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit64>
       <Unit65>
-        <Filename Value="InterfaceExportSVG.pas"/>
+        <Filename Value="unitexportdxf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportDXF"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="33" Y="6"/>
-        <UsageCount Value="20"/>
+        <TopLine Value="53"/>
+        <CursorPos X="86" Y="56"/>
+        <UsageCount Value="104"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
+        <Filename Value="unitexportdxf2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitExportDXF2"/>
+        <EditorIndex Value="20"/>
+        <TopLine Value="179"/>
+        <CursorPos Y="219"/>
+        <UsageCount Value="94"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit66>
+      <Unit67>
+        <Filename Value="unitdxfobjects.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitDXFObjects"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="21"/>
+        <TopLine Value="763"/>
+        <CursorPos X="31" Y="800"/>
+        <UsageCount Value="58"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit67>
+      <Unit68>
+        <Filename Value="InterfaceExportSVG.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="33" Y="6"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit68>
+      <Unit69>
         <Filename Value="frmexportpdf.pas"/>
         <ComponentName Value="dlgExportPDF"/>
         <HasResources Value="True"/>
@@ -742,10 +759,10 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="116" Y="18"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit66>
-      <Unit67>
+      </Unit69>
+      <Unit70>
         <Filename Value="frmbgraprintingcenter.pas"/>
         <ComponentName Value="dlgPrintingCenter"/>
         <HasResources Value="True"/>
@@ -753,74 +770,77 @@
         <UnitName Value="frmBGRAPrintingCenter"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="5"/>
-        <UsageCount Value="58"/>
+        <UsageCount Value="50"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit67>
-      <Unit68>
+      </Unit70>
+      <Unit71>
         <Filename Value="frmSymbolObject.pas"/>
         <ComponentName Value="dlgSymbolObject"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="88"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="291"/>
+        <CursorPos X="67" Y="317"/>
+        <UsageCount Value="99"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit68>
-      <Unit69>
+      </Unit71>
+      <Unit72>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="2617"/>
-        <CursorPos X="152" Y="2627"/>
-        <UsageCount Value="22"/>
-      </Unit69>
-      <Unit70>
+        <TopLine Value="39"/>
+        <CursorPos X="3" Y="66"/>
+        <UsageCount Value="14"/>
+      </Unit72>
+      <Unit73>
         <Filename Value="C:\lazarus\lcl\lcltype.pp"/>
         <UnitName Value="LCLType"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1126"/>
         <CursorPos X="5" Y="1143"/>
-        <UsageCount Value="51"/>
-      </Unit70>
-      <Unit71>
+        <UsageCount Value="43"/>
+      </Unit73>
+      <Unit74>
         <Filename Value="dlghelpsystem.pas"/>
         <ComponentName Value="frmHelpSystem"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="dlgHelpSystem"/>
-        <EditorIndex Value="33"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="287"/>
         <CursorPos X="59" Y="303"/>
-        <UsageCount Value="101"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit71>
-      <Unit72>
+      </Unit74>
+      <Unit75>
         <Filename Value="FastGEO.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="390"/>
         <CursorPos X="10" Y="407"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="38"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit72>
-      <Unit73>
+      </Unit75>
+      <Unit76>
         <Filename Value="unitlistessimpleswithgeneriques.pas"/>
         <UnitName Value="UnitListesSimplesWithGeneriques"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="80"/>
-        <CursorPos X="67" Y="25"/>
-        <UsageCount Value="88"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="59"/>
+        <CursorPos X="87" Y="94"/>
+        <UsageCount Value="101"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit73>
-      <Unit74>
+      </Unit76>
+      <Unit77>
         <Filename Value="ConversionsCoords\convertisseurjpc.pas"/>
         <UnitName Value="ConvertisseurJPC"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1058"/>
         <CursorPos X="129" Y="1069"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="69"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit74>
-      <Unit75>
+      </Unit77>
+      <Unit78>
         <Filename Value="frmPrintingCenter.pas"/>
         <ComponentName Value="dlgPrintingCenter"/>
         <HasResources Value="True"/>
@@ -828,263 +848,241 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1755"/>
         <CursorPos X="51" Y="1780"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="26"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit75>
-      <Unit76>
+      </Unit78>
+      <Unit79>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgrabitmap.pas"/>
         <UnitName Value="BGRABitmap"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="34"/>
-        <UsageCount Value="28"/>
-      </Unit76>
-      <Unit77>
+        <UsageCount Value="20"/>
+      </Unit79>
+      <Unit80>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgrapixel.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="446"/>
         <CursorPos X="3" Y="436"/>
-        <UsageCount Value="34"/>
-      </Unit77>
-      <Unit78>
+        <UsageCount Value="26"/>
+      </Unit80>
+      <Unit81>
         <Filename Value="oodrawwriter.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1598"/>
         <CursorPos X="21" Y="1617"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="16"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit78>
-      <Unit79>
+      </Unit81>
+      <Unit82>
         <Filename Value="viewermainfrm.pas"/>
         <UnitName Value="ViewerMainFrm"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="102" Y="4"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="35"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit79>
-      <Unit80>
-        <Filename Value="C:\lazarus\fpc\3.0.0\source\rtl\objpas\objpas.pp"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="29"/>
-        <CursorPos X="8" Y="48"/>
-        <UsageCount Value="1"/>
-      </Unit80>
-      <Unit81>
+      </Unit82>
+      <Unit83>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="362"/>
         <CursorPos X="30" Y="374"/>
-        <UsageCount Value="39"/>
-      </Unit81>
-      <Unit82>
+        <UsageCount Value="31"/>
+      </Unit83>
+      <Unit84>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgracanvas.pas"/>
         <UnitName Value="BGRACanvas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="186"/>
         <CursorPos X="48" Y="201"/>
-        <UsageCount Value="46"/>
-      </Unit82>
-      <Unit83>
+        <UsageCount Value="38"/>
+      </Unit84>
+      <Unit85>
         <Filename Value="qunitcrosssection.pas"/>
         <UnitName Value="QUnitCrossSection"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="111"/>
         <CursorPos X="29" Y="131"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit83>
-      <Unit84>
+      </Unit85>
+      <Unit86>
         <Filename Value="OCMcompilationparameters.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="113" Y="6"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit84>
-      <Unit85>
+      </Unit86>
+      <Unit87>
         <Filename Value="C:\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="723"/>
         <CursorPos X="17" Y="746"/>
-        <UsageCount Value="8"/>
-      </Unit85>
-      <Unit86>
+        <UsageCount Value="10"/>
+      </Unit87>
+      <Unit88>
         <Filename Value="C:\lazarus\lcl\include\hintwindow.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="23"/>
         <CursorPos X="3" Y="25"/>
-        <UsageCount Value="8"/>
-      </Unit86>
-      <Unit87>
+        <UsageCount Value="10"/>
+      </Unit88>
+      <Unit89>
         <Filename Value="clipper.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="106"/>
         <CursorPos X="3" Y="120"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="22"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit87>
-      <Unit88>
+      </Unit89>
+      <Unit90>
         <Filename Value="C:\lazarus\lcl\stdctrls.pp"/>
         <UnitName Value="StdCtrls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="240"/>
         <CursorPos X="32" Y="256"/>
-        <UsageCount Value="61"/>
-      </Unit88>
-      <Unit89>
+        <UsageCount Value="53"/>
+      </Unit90>
+      <Unit91>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="235"/>
-        <CursorPos X="15" Y="259"/>
-        <UsageCount Value="32"/>
-      </Unit89>
-      <Unit90>
+        <TopLine Value="665"/>
+        <CursorPos X="15" Y="690"/>
+        <UsageCount Value="48"/>
+      </Unit91>
+      <Unit92>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\types.pp"/>
         <UnitName Value="Types"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="58"/>
         <CursorPos X="25" Y="75"/>
-        <UsageCount Value="46"/>
-      </Unit90>
-      <Unit91>
+        <UsageCount Value="38"/>
+      </Unit92>
+      <Unit93>
         <Filename Value="centreimpressionext.pas"/>
         <ComponentName Value="frmPrintingCenterExt"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="CentreImpressionExt"/>
-        <EditorIndex Value="25"/>
-        <TopLine Value="596"/>
-        <CursorPos X="16" Y="573"/>
-        <UsageCount Value="64"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="586"/>
+        <CursorPos X="63" Y="602"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit91>
-      <Unit92>
+      </Unit93>
+      <Unit94>
         <Filename Value="SelectionLangues.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="66"/>
-        <UsageCount Value="36"/>
+        <UsageCount Value="28"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit92>
-      <Unit93>
+      </Unit94>
+      <Unit95>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgrasvgshapes.pas"/>
         <UnitName Value="BGRASVGShapes"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="381"/>
         <CursorPos X="17" Y="400"/>
-        <UsageCount Value="32"/>
-      </Unit93>
-      <Unit94>
-        <Filename Value="C:\lazarus\components\bgrabitmap\bgrapath.pas"/>
-        <UnitName Value="BGRAPath"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="101"/>
-        <CursorPos X="3" Y="120"/>
-        <UsageCount Value="5"/>
-      </Unit94>
-      <Unit95>
+        <UsageCount Value="24"/>
+      </Unit95>
+      <Unit96>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgrasvg.pas"/>
         <UnitName Value="BGRASVG"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="20" Y="25"/>
-        <UsageCount Value="32"/>
-      </Unit95>
-      <Unit96>
+        <UsageCount Value="24"/>
+      </Unit96>
+      <Unit97>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgrasvgtype.pas"/>
         <UnitName Value="BGRASVGType"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="173"/>
         <CursorPos X="17" Y="190"/>
-        <UsageCount Value="32"/>
-      </Unit96>
-      <Unit97>
+        <UsageCount Value="24"/>
+      </Unit97>
+      <Unit98>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgraunits.pas"/>
         <UnitName Value="BGRAUnits"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="30"/>
         <CursorPos X="14" Y="49"/>
-        <UsageCount Value="32"/>
-      </Unit97>
-      <Unit98>
+        <UsageCount Value="24"/>
+      </Unit98>
+      <Unit99>
         <Filename Value="C:\lazarus\components\bgrabitmap\geometrytypes.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="15"/>
-        <UsageCount Value="32"/>
-      </Unit98>
-      <Unit99>
+        <UsageCount Value="24"/>
+      </Unit99>
+      <Unit100>
         <Filename Value="C:\lazarus\components\bgrabitmap\basiccolorspace.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="252"/>
         <CursorPos X="24" Y="255"/>
-        <UsageCount Value="32"/>
-      </Unit99>
-      <Unit100>
+        <UsageCount Value="24"/>
+      </Unit100>
+      <Unit101>
         <Filename Value="..\0_GHTopoFPC_20180609\cadreghtopocontext2d.pas"/>
         <UnitName Value="CadreGHTopoContext2D"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3641"/>
         <CursorPos X="22" Y="3647"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="22"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit100>
-      <Unit101>
+      </Unit101>
+      <Unit102>
         <Filename Value="..\0_GHTopoFPC_20180609\viewermainfrm.pas"/>
         <UnitName Value="ViewerMainFrm"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="903"/>
         <CursorPos X="66" Y="933"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="15"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit101>
-      <Unit102>
+      </Unit102>
+      <Unit103>
         <Filename Value="C:\lazarus\lcl\include\customedit.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="236"/>
         <CursorPos X="3" Y="245"/>
-        <UsageCount Value="14"/>
-      </Unit102>
-      <Unit103>
+        <UsageCount Value="6"/>
+      </Unit103>
+      <Unit104>
         <Filename Value="C:\lazarus\lcl\include\customcheckbox.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="87"/>
         <CursorPos Y="105"/>
-        <UsageCount Value="13"/>
-      </Unit103>
-      <Unit104>
+        <UsageCount Value="5"/>
+      </Unit104>
+      <Unit105>
         <Filename Value="ConversionsCoords\fichier_ini.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="53"/>
         <CursorPos X="36" Y="72"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit104>
-      <Unit105>
+      </Unit105>
+      <Unit106>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgradefaultbitmap.pas"/>
         <UnitName Value="BGRADefaultBitmap"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="225"/>
         <CursorPos X="17" Y="249"/>
-        <UsageCount Value="37"/>
-      </Unit105>
-      <Unit106>
+        <UsageCount Value="29"/>
+      </Unit106>
+      <Unit107>
         <Filename Value="C:\lazarus\components\bgrabitmap\bgragradients.pas"/>
         <UnitName Value="BGRAGradients"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="156"/>
         <CursorPos X="95" Y="175"/>
-        <UsageCount Value="61"/>
-      </Unit106>
-      <Unit107>
-        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\typshrdh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="32"/>
-        <CursorPos X="3" Y="38"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="53"/>
       </Unit107>
       <Unit108>
         <Filename Value="Common.pas"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit108>
       <Unit109>
@@ -1092,136 +1090,120 @@
         <UnitName Value="CadreVue3DExt"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="4"/>
-        <UsageCount Value="90"/>
+        <UsageCount Value="82"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit109>
       <Unit110>
-        <Filename Value="C:\lazarus\lcl\imglist.pp"/>
-        <UnitName Value="ImgList"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="338"/>
-        <CursorPos X="66" Y="271"/>
-        <UsageCount Value="7"/>
-      </Unit110>
-      <Unit111>
-        <Filename Value="C:\lazarus\lcl\include\imglist.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1763"/>
-        <CursorPos X="3" Y="1773"/>
-        <UsageCount Value="7"/>
-      </Unit111>
-      <Unit112>
         <Filename Value="calculmatriciel3x3.pas"/>
         <UnitName Value="CalculMatriciel3x3"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="334"/>
         <CursorPos X="84" Y="494"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit112>
-      <Unit113>
+      </Unit110>
+      <Unit111>
         <Filename Value="MetaFiltre.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="520"/>
         <CursorPos X="72" Y="605"/>
-        <UsageCount Value="89"/>
+        <UsageCount Value="81"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit113>
-      <Unit114>
+      </Unit111>
+      <Unit112>
         <Filename Value="unitexportgis.pas"/>
         <UnitName Value="unitExportGIS"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="93" Y="19"/>
-        <UsageCount Value="44"/>
+        <UsageCount Value="36"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit114>
-      <Unit115>
+      </Unit112>
+      <Unit113>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="62"/>
-        <CursorPos X="10" Y="85"/>
-        <UsageCount Value="8"/>
-      </Unit115>
-      <Unit116>
+        <TopLine Value="53"/>
+        <CursorPos X="10" Y="79"/>
+        <UsageCount Value="4"/>
+      </Unit113>
+      <Unit114>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstr.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="474"/>
         <CursorPos X="52" Y="476"/>
-        <UsageCount Value="8"/>
-      </Unit116>
-      <Unit117>
+        <UsageCount Value="10"/>
+      </Unit114>
+      <Unit115>
         <Filename Value="cdrdessincanvasbgra.lfm"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="298"/>
         <CursorPos X="66" Y="341"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="43"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit117>
-      <Unit118>
+      </Unit115>
+      <Unit116>
         <Filename Value="unitmessages_he.pas"/>
         <UnitName Value="UnitMessages_he"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="954"/>
         <CursorPos X="56" Y="977"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="26"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit118>
-      <Unit119>
+      </Unit116>
+      <Unit117>
         <Filename Value="..\0_GHTopoFPC\unitCroquisTerrain.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="537"/>
         <CursorPos X="26" Y="562"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit119>
-      <Unit120>
+      </Unit117>
+      <Unit118>
         <Filename Value="UnitFusionTopos.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="5"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit120>
-      <Unit121>
+      </Unit118>
+      <Unit119>
         <Filename Value="UnitHelpSystem.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="4"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit121>
-      <Unit122>
+      </Unit119>
+      <Unit120>
         <Filename Value="unithelpsystemxml.pas"/>
         <UnitName Value="UnitHelpSystemXML"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="139"/>
         <CursorPos X="10" Y="163"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit122>
-      <Unit123>
+      </Unit120>
+      <Unit121>
         <Filename Value="unitutilscomposants.pas"/>
         <UnitName Value="unitUtilsComposants"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30" Y="2"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit123>
-      <Unit124>
+      </Unit121>
+      <Unit122>
         <Filename Value="frmMaintenanceDocument.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="5" Y="4"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="23"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit124>
-      <Unit125>
+      </Unit122>
+      <Unit123>
         <Filename Value="C:\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
-        <EditorIndex Value="28"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="257"/>
         <CursorPos X="13" Y="275"/>
-        <UsageCount Value="15"/>
-        <Loaded Value="True"/>
-      </Unit125>
-      <Unit126>
+        <UsageCount Value="8"/>
+      </Unit123>
+      <Unit124>
         <Filename Value="cadrepascalscript.pas"/>
         <ComponentName Value="CdrPascalScript"/>
         <HasResources Value="True"/>
@@ -1229,141 +1211,209 @@
         <UnitName Value="CadrePascalScript"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="86" Y="17"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit124>
+      <Unit125>
+        <Filename Value="C:\lazarus\components\rxfpc\dateutil.pas"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="4"/>
+      </Unit125>
+      <Unit126>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\rtl-objpas\src\inc\dateutil.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="10" Y="121"/>
+        <UsageCount Value="4"/>
       </Unit126>
       <Unit127>
-        <Filename Value="C:\lazarus\components\rxfpc\dateutil.pas"/>
-        <EditorIndex Value="6"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <Filename Value="ProjApi447.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="79"/>
+        <CursorPos X="2" Y="103"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit127>
       <Unit128>
-        <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\rtl-objpas\src\inc\dateutil.inc"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="96"/>
-        <CursorPos X="10" Y="121"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <Filename Value="StructuresDonnees.pas"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit128>
+      <Unit129>
+        <Filename Value="backup\GHCD_Types.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="975"/>
+        <CursorPos X="6" Y="990"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit129>
+      <Unit130>
+        <Filename Value="backup\cdrdessincanvasbgra.pas"/>
+        <UnitName Value="cdrdessincanvasBGRA"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2055"/>
+        <CursorPos X="18" Y="2082"/>
+        <UsageCount Value="35"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit130>
+      <Unit131>
+        <Filename Value="postscriptcanvasunit.pas"/>
+        <UnitName Value="PostScriptCanvasUnit"/>
+        <EditorIndex Value="26"/>
+        <CursorPos X="143" Y="22"/>
+        <UsageCount Value="54"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit131>
+      <Unit132>
+        <Filename Value="..\0_GHTopoFPC\fpdxfwritebridge_toreimplement.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1577"/>
+        <CursorPos X="26" Y="1575"/>
+        <UsageCount Value="30"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit132>
+      <Unit133>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\classes\stringl.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1001"/>
+        <CursorPos X="3" Y="1006"/>
+        <UsageCount Value="27"/>
+      </Unit133>
+      <Unit134>
+        <Filename Value="C:\lazarus\components\tfpdxfbridge\tfpdxfwritebridge_pack.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="67" Y="6"/>
+        <UsageCount Value="3"/>
+      </Unit134>
+      <Unit135>
+        <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="45"/>
+        <CursorPos X="8" Y="71"/>
+        <UsageCount Value="9"/>
+      </Unit135>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="166" Column="27" TopLine="141"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="780" Column="121" TopLine="734"/>
       </Position1>
       <Position2>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="1126" Column="7" TopLine="1114"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="21" Column="51"/>
       </Position2>
       <Position3>
-        <Filename Value="UnitDocDessin.pas"/>
-        <Caret Line="1398" Column="24" TopLine="1369"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="614" Column="42" TopLine="562"/>
       </Position3>
       <Position4>
-        <Filename Value="cdrdessincanvasbgra.pas"/>
-        <Caret Line="2040" Column="20" TopLine="2012"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="796" Column="83" TopLine="743"/>
       </Position4>
       <Position5>
-        <Filename Value="cdrdessincanvasbgra.pas"/>
-        <Caret Line="2032" Column="12" TopLine="2012"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="21" Column="51"/>
       </Position5>
       <Position6>
-        <Filename Value="cdrdessincanvasbgra.pas"/>
-        <Caret Line="2037" Column="13" TopLine="2012"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="578" Column="132" TopLine="532"/>
       </Position6>
       <Position7>
-        <Filename Value="GeneralFunctions.pas"/>
-        <Caret Line="60" Column="3" TopLine="35"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="605" Column="132" TopLine="559"/>
       </Position7>
       <Position8>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="175" Column="25" TopLine="140"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="694" Column="132" TopLine="648"/>
       </Position8>
       <Position9>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="1136" Column="55" TopLine="1113"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="706" Column="134" TopLine="660"/>
       </Position9>
       <Position10>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="154" Column="44" TopLine="154"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="729" Column="129" TopLine="683"/>
       </Position10>
       <Position11>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="1144" Column="56" TopLine="1131"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="780" Column="121" TopLine="734"/>
       </Position11>
       <Position12>
-        <Filename Value="UnitDocDessin.pas"/>
-        <Caret Line="5042" Column="40" TopLine="5019"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="285" Column="63" TopLine="244"/>
       </Position12>
       <Position13>
-        <Filename Value="unittghcavedrawdrawingcontext.pas"/>
-        <Caret Line="592" Column="14" TopLine="568"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="335" Column="30" TopLine="315"/>
       </Position13>
       <Position14>
-        <Filename Value="unitgenererfichepointtopo.pas"/>
-        <Caret Line="373" Column="17" TopLine="345"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="281" Column="16" TopLine="258"/>
       </Position14>
       <Position15>
-        <Filename Value="unitgenererfichepointtopo.pas"/>
-        <Caret Line="448" Column="17" TopLine="423"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="107" Column="73" TopLine="79"/>
       </Position15>
       <Position16>
-        <Filename Value="frmtimageobject.pas"/>
-        <Caret Line="444" Column="63" TopLine="416"/>
+        <Filename Value="unitexportdxf2.pas"/>
+        <Caret Line="33" Column="16"/>
       </Position16>
       <Position17>
-        <Filename Value="cdrdessincanvasbgra.pas"/>
-        <Caret Line="2049" Column="38" TopLine="2043"/>
+        <Filename Value="unitexportdxf2.pas"/>
+        <Caret Line="223" Column="49" TopLine="215"/>
       </Position17>
       <Position18>
-        <Filename Value="unitatlashtml.pas"/>
-        <Caret Line="250" Column="54" TopLine="224"/>
+        <Filename Value="unitexportdxf2.pas"/>
       </Position18>
       <Position19>
-        <Filename Value="unitatlashtml.pas"/>
-        <Caret Line="229" Column="33" TopLine="205"/>
+        <Filename Value="unitexportdxf2.pas"/>
+        <Caret Line="206" TopLine="160"/>
       </Position19>
       <Position20>
-        <Filename Value="unitatlashtml.pas"/>
-        <Caret Line="231" Column="13" TopLine="205"/>
+        <Filename Value="unitexportdxf2.pas"/>
+        <Caret Line="291" Column="57" TopLine="245"/>
       </Position20>
       <Position21>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="170" Column="42" TopLine="140"/>
+        <Filename Value="unitexportdxf2.pas"/>
+        <Caret Line="381" Column="53" TopLine="335"/>
       </Position21>
       <Position22>
-        <Filename Value="GHCD_Types.pas"/>
-        <Caret Line="1137" Column="20" TopLine="1113"/>
+        <Filename Value="unitexportdxf2.pas"/>
+        <Caret Line="219" TopLine="179"/>
       </Position22>
       <Position23>
-        <Filename Value="unitatlashtml.pas"/>
-        <Caret Line="424" Column="19" TopLine="398"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="331" Column="34" TopLine="311"/>
       </Position23>
       <Position24>
-        <Filename Value="mainfrmeditor.pas"/>
-        <Caret Line="1482" Column="76" TopLine="1499"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="324" Column="12" TopLine="297"/>
       </Position24>
       <Position25>
-        <Filename Value="mainfrmeditor.pas"/>
-        <Caret Line="2712" Column="153" TopLine="2693"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="293" Column="56" TopLine="293"/>
       </Position25>
       <Position26>
-        <Filename Value="mainfrmeditor.pas"/>
-        <Caret Line="39" Column="15" TopLine="10"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="326" Column="3" TopLine="293"/>
       </Position26>
       <Position27>
-        <Filename Value="GeneralFunctions.pas"/>
-        <Caret Line="60" Column="21" TopLine="37"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="816" Column="36" TopLine="763"/>
       </Position27>
       <Position28>
-        <Filename Value="GeneralFunctions.pas"/>
-        <Caret Line="1025" Column="47" TopLine="1007"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="800" Column="5" TopLine="763"/>
       </Position28>
       <Position29>
-        <Filename Value="GeneralFunctions.pas"/>
-        <Caret Line="1023" Column="5" TopLine="1008"/>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="272" Column="12" TopLine="245"/>
       </Position29>
+      <Position30>
+        <Filename Value="unitdxfobjects.pas"/>
+        <Caret Line="800" Column="6" TopLine="763"/>
+      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

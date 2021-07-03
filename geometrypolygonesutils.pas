@@ -27,18 +27,18 @@ uses
   Classes, SysUtils;
 type TOperationsCSGClipping = class
   private
-    FPath0: TVertexPolygonArray;
-    FPath1: TVertexPolygonArray;
+    FPath0: TArrayVertexPolygon;
+    FPath1: TArrayVertexPolygon;
 
     FMyDocDessin: TDocumentDessin;
-    FVertexPolygonArrayResult : TVertexPolygonArray;
-    function  IntersectTVertexPolygonArray(const Poly1, Poly2: TVertexPolygonArray): boolean;
-    function  MakeTGeoPolygon2D(const PolyVertex: TVertexPolygonArray): TGeoPolygon2D;
-    function  MakeTPathFromPoly(const P: TVertexPolygonArray): TPath;
+    FVertexPolygonArrayResult : TArrayVertexPolygon;
+    function  IntersectTVertexPolygonArray(const Poly1, Poly2: TArrayVertexPolygon): boolean;
+    function  MakeTGeoPolygon2D(const PolyVertex: TArrayVertexPolygon): TGeoPolygon2D;
+    function  MakeTPathFromPoly(const P: TArrayVertexPolygon): TPath;
   public
-    procedure Initialise(const FD: TDocumentDessin; const P0, P1: TVertexPolygonArray);
+    procedure Initialise(const FD: TDocumentDessin; const P0, P1: TArrayVertexPolygon);
     procedure Finalise();
-    function  GetVertexPolygonArrayResult: TVertexPolygonArray;
+    function  GetVertexPolygonArrayResult: TArrayVertexPolygon;
     function  IntersectionVertexPolygonArray(): boolean; inline;
     function  GetNearBasePointIdx(const qX, qY: double): TIDBaseStation;    // recherche le point le plus proche de (X, Y)
     function  ExecuteCSG(const ClipType: TClipType): boolean;               // opérations booléennes
@@ -78,7 +78,7 @@ function CasserUnePolyligne(const C: TPolyLigne; const Idx: integer; out RC1, RC
 function GenererUnPolygoneDepuisIntersectedCourbes(const FD: TDocumentDessin;
                                         const ArrCourbes: TArrayOfTCourbe;
                                         const IdxGrp: TIDGroupeEntites;
-                                        out   MergedObj: TVertexPolygonArray): integer;
+                                        out   MergedObj: TArrayVertexPolygon): integer;
 
 
 
@@ -110,7 +110,7 @@ end;
 
 
 
-function MergePolyScrap(const FD: TDocumentDessin; const PP1, PP2: TVertexPolygonArray; const OpBool: byte; out Merged: TVertexPolygonArray): integer;
+function MergePolyScrap(const FD: TDocumentDessin; const PP1, PP2: TArrayVertexPolygon; const OpBool: byte; out Merged: TArrayVertexPolygon): integer;
 var
   OpsCSG: TOperationsCSGClipping;
   OP : TClipType;
@@ -165,7 +165,7 @@ begin
 end;
 function MergePolygones(const FD: TDocumentDessin; const Obj1, Obj2: TPolygone; const OpBool: byte; out MergedObj: TPolygone): integer;
 var
-  PP1, PP2: TVertexPolygonArray;
+  PP1, PP2: TArrayVertexPolygon;
   OpsCSG: TOperationsCSGClipping;
   PPP: TPoint2Df;
   G1: TGroupeEntites;
@@ -186,11 +186,9 @@ end;
 
 function MergePolylignes(const FD: TDocumentDessin; const Obj1, Obj2: TPolyLigne; const OpBool: byte; out MergedObj: TPolyLigne): integer;
 var
-  PP1, PP2: TVertexPolygonArray;
+  PP1, PP2: TArrayVertexPolygon;
   OpsCSG: TOperationsCSGClipping;
-  //WU: TIDBaseStation;
-  //PPP: TPoint2Df;
-   G1: TGroupeEntites;
+  G1: TGroupeEntites;
   G2: TGroupeEntites;
   OP: TClipType;
 begin
@@ -509,7 +507,7 @@ end;
 function GenererUnPolygoneDepuisIntersectedCourbes(const FD: TDocumentDessin;
                                                    const ArrCourbes: TArrayOfTCourbe;
                                                    const IdxGrp    : TIDGroupeEntites;
-                                                   out   MergedObj : TVertexPolygonArray): integer;
+                                                   out   MergedObj : TArrayVertexPolygon): integer;
 begin
   Result := errGEN_SCRAP_OR_POLYGONE_FROM_COURBES_ANY_ERROR;
   //CP := TCourbePolygoneProvisoire.Create;
@@ -522,7 +520,7 @@ end;
 //*****************************************************************************************
 { TOperationsCSGClipping }
 //******************************************************************************
-function TOperationsCSGClipping.MakeTGeoPolygon2D(const PolyVertex: TVertexPolygonArray): TGeoPolygon2D;
+function TOperationsCSGClipping.MakeTGeoPolygon2D(const PolyVertex: TArrayVertexPolygon): TGeoPolygon2D;
 var
   i, n: Integer;
   P: TVertexPolygon;
@@ -541,7 +539,7 @@ begin
   end;
 end;
 //******************************************************************************
-procedure TOperationsCSGClipping.Initialise(const FD: TDocumentDessin; const P0, P1: TVertexPolygonArray);
+procedure TOperationsCSGClipping.Initialise(const FD: TDocumentDessin; const P0, P1: TArrayVertexPolygon);
 begin
   AfficherMessage(Format('%s.Initialise', [ClassName]));
   FMyDocDessin := FD;
@@ -553,12 +551,12 @@ begin
   pass;
 end;
 
-function TOperationsCSGClipping.GetVertexPolygonArrayResult: TVertexPolygonArray;
+function TOperationsCSGClipping.GetVertexPolygonArrayResult: TArrayVertexPolygon;
 begin
   Result := FVertexPolygonArrayResult;
 end;
 
-function TOperationsCSGClipping.IntersectTVertexPolygonArray(const Poly1, Poly2: TVertexPolygonArray): boolean;
+function TOperationsCSGClipping.IntersectTVertexPolygonArray(const Poly1, Poly2: TArrayVertexPolygon): boolean;
 var
   I            : Integer;
   J            : Integer;
@@ -604,7 +602,7 @@ var
   Dist: Extended;
   ResultIDBasePoint: TIDBaseStation;
   i, n: Integer;
-  procedure EWE(const P: TVertexPolygonArray);
+  procedure EWE(const P: TArrayVertexPolygon);
   var
     i, n   : Integer;
     BP     : TBaseStation;
@@ -649,7 +647,7 @@ begin
   Result := IntersectTVertexPolygonArray(FPath0, FPath1);
 end;
 
-function TOperationsCSGClipping.MakeTPathFromPoly(const P: TVertexPolygonArray): TPath;
+function TOperationsCSGClipping.MakeTPathFromPoly(const P: TArrayVertexPolygon): TPath;
 var
   i, n: Integer;
   BP: TBaseStation;

@@ -19,7 +19,7 @@ type
 
  TFindingObjects = class(TList)
   strict private
-    procedure ScanVertexArray(const QIdxShape: int64; const QGroupe: TGroupeEntites; const VARR: TVertexPolygonArray; const X, Y: double; var DistCourante: double);
+    procedure ScanVertexArray(const QIdxShape: int64; const QGroupe: TGroupeEntites; const VARR: TArrayVertexPolygon; const X, Y: double; var DistCourante: double);
     function  GroupeIsEditable(const GP: TGroupeEntites): boolean;
     //function  GetSecuredGroupeByIDGroupe(const IdxGp: TIDGroupeEntites);
   private
@@ -44,7 +44,7 @@ type
     function  GetIdxElementFound(const Idx: Integer): Int64;
     procedure Finalise();
     function  FindObjectsInWindow(const ModeSelection: TModeSelectionEntites;
-                                  const PS: TVertexPolygonArray): integer;
+                                  const PS: TArrayVertexPolygon): integer;
 end;
 implementation
 uses
@@ -56,7 +56,7 @@ const
 // pour les scraps, polylignes et polygones
 procedure TFindingObjects.ScanVertexArray(const QIdxShape: int64;
                                           const QGroupe: TGroupeEntites;
-                                          const VARR: TVertexPolygonArray;
+                                          const VARR: TArrayVertexPolygon;
                                           const X, Y: double;
                                           var   DistCourante: double);
 var
@@ -466,7 +466,7 @@ end;
 // retourne la liste des éléments capturés par un polygone de sélection
 
 function TFindingObjects.FindObjectsInWindow(const ModeSelection: TModeSelectionEntites;
-                                             const PS: TVertexPolygonArray): integer;
+                                             const PS: TArrayVertexPolygon): integer;
 
   function NbScrapsFound(): integer;
   var

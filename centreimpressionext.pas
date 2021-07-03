@@ -600,8 +600,8 @@ begin
       // dessin des pages
       DrawPages();
       // dessin des éléments
-      DrawQuadrilles(FParamsVue2D.GrdSpcSecGrid, FParamsVue2D.GrdSecGridColor);
-      DrawQuadrilles(FParamsVue2D.GrdSpcMainGrid, FParamsVue2D.GrdMainGridColor);
+      DrawQuadrilles(FParamsVue2D.SecGrid.Spacing , FParamsVue2D.SecGrid.Color);
+      DrawQuadrilles(FParamsVue2D.MainGrid.Spacing, FParamsVue2D.MainGrid.Color);
 
       DrawPolygonals();
     end;
