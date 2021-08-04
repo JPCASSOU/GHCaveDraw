@@ -202,6 +202,26 @@ type TNatureObjetTexte    = (notDEBUG,
 
 ////////////////////////////////////////////////////////////////////////////////
 // records
+
+type
+
+{ TArrayOfIdxGroupes }
+
+ TArrayOfIdxGroupes  = record
+  private
+    M: array of TIDGroupeEntites;
+    procedure AddElement(const IDG: TIDGroupeEntites);
+  public
+    procedure Empty();
+    procedure SetCapacity(const N: integer);
+    function  AddElementAndSort(const Idx: TIDGroupeEntites): boolean;
+    procedure SetElement(const Idx: integer; const IDG: TIDGroupeEntites);
+    function  GetElement(const Idx: integer): TIDGroupeEntites;
+    function  GetNbElements(): integer;
+    function  fromString(const S: string): boolean;
+    function  toString(): string;
+end;
+
 type TZoomParameters = record
   ID      : integer;
   Caption : string;
