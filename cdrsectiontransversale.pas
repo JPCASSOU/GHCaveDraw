@@ -19,15 +19,12 @@ uses
     , BGRABitmap
     , BGRABitmapTypes
     , BGRACanvas
-    , BGRAPhongTypes
     , BGRAGradients
     {$IFDEF MSWINDOWS}
     , BGRAWinBitmap
     {$ENDIF}
-  , UnitTGHCaveDrawDrawingContext
   , FileUtil, curredit //, BGRAVirtualScreen
   , Forms, Controls, ExtCtrls, StdCtrls, ActnList, Buttons, Menus, Dialogs;
-
 
 type TCrossSectionModeTravail = (mtNONE,
                            mtDRAW_COURBE,   // OK
@@ -393,7 +390,6 @@ begin
   S666(acNewPolygone             , rsBTN_DRW_HINT_NEW_POLYGON);
   S666(acNewTexte                , rsBTN_DRW_HINT_NEW_TEXTE);
   //*)
-  AfficherMessage('A004');
   // actions pour types d'objets
   // -- courbes
   (*
@@ -506,17 +502,6 @@ begin
     FCrossSectionPolyProvisoire.ClearVertex();
   finally
     FreeAndNil(FCrossSectionPolyProvisoire);//FCrossSectionPolyProvisoire.Free;
-    (*
-    FTexturesPolygones.bmpClay.free;
-    FTexturesPolygones.bmpSand.free;
-    FTexturesPolygones.bmpEboulis.free;
-    FTexturesPolygones.bmpGalets.Free;
-    FTexturesPolygones.bmpSnow.free;
-    FTexturesPolygones.bmpClayGalets.free;
-    // libère textures
-    FTexturesPolygones.bmpTextureFlotte.Free;
-    FTexturesPolygones.bmpTextureEboulis.Free;
-    //*)
   end;
 end;
 
@@ -567,11 +552,9 @@ begin
     begin
       AC := MyCourbe.Arcs[j];
       QBmp.TraceVers(AC.CoordsP1.X, AC.CoordsP1.Y, false);
-      PC1.X := AC.CoordsP1.X + AC.TangP1.X;
-      PC1.Y := AC.CoordsP1.Y + AC.TangP1.Y;
+      PC1.setFrom(AC.CoordsP1.X + AC.TangP1.X, AC.CoordsP1.Y + AC.TangP1.Y);
       QBmp.TraceVers(PC1.X, PC1.Y, true);
-      PC2.X := AC.CoordsP2.X + AC.TangP2.X;
-      PC2.Y := AC.CoordsP2.Y + AC.TangP2.Y;
+      PC2.setFrom(AC.CoordsP2.X + AC.TangP2.X, AC.CoordsP2.Y + AC.TangP2.Y);
       QBmp.TraceVers(PC2.X, PC2.Y, true);
       QBmp.TraceVers(AC.CoordsP2.X, AC.CoordsP2.Y, true);
       QBmp.TraceCercle(AC.CoordsP1.X, AC.CoordsP1.Y, QR);
@@ -627,12 +610,9 @@ var
     QBmp.DefineBrosse(bsSolid, FScrapEnglobantColor, 255);      // clAqua est provisoire
     QBmp.DefineCrayon(psClear, 0, clWhite, 255);
       DrawPolygone(QBmp, MyScrapEnglobant, false, false);
-
-
     QBmp.RestoreCrayon();
     QBmp.RestoreBrosse();
   end;
-
 begin
   AfficherMessage(format('%s.DrawSection()', [ClassName]));
   if (not Assigned(FMyCrossSection)) then
@@ -640,9 +620,7 @@ begin
     AfficherMessage('-- Classe FMyCrossSection non créée');
     Exit;
   end;
-  // le scrap englobant, tracé avant tout le reste
-  TracerScrapEnglobant();
-
+  TracerScrapEnglobant(); // le scrap englobant, tracé avant tout le reste
   // les polygones
   n := FMyCrossSection.getNbPolygones();
   AfficherMessage(Format('--- %d polygones', [n]));
@@ -664,7 +642,6 @@ begin
   if (n > 0) then
   begin
     QBmp.DefineCrayon(psSolid, 0, clRed, 255);
-
     for i := 0 to n - 1 do
     begin
       SL := FMyCrossSection.getSimpleLigne(i);
@@ -795,9 +772,6 @@ begin
   AffecterActionAtButton(btnDrwObjMode8  , acNewNone);
   AffecterActionAtButton(btnDrwObjMode9  , acNewNone);
   AffecterActionAtButton(btnDrwObjMode10 , acNewNone);
-  //AffecterActionAtButton(btnDrwObjMode11 , acNewNone);
-  //AffecterActionAtButton(btnDrwObjMode12 , acNewNone);
-
   case MT of
     mtNONE: ; // ne rien faire
     mtDRAW_COURBE:
@@ -805,7 +779,6 @@ begin
         AffecterActionAtButton(btnDrwObjMode1, acCourbeParois);
         AffecterActionAtButton(btnDrwObjMode2, acCourbeParoiIncertaine);
         AffecterActionAtButton(btnDrwObjMode3, acCourbeArete);
-
       end;
     mtDRAW_LINE:
       begin
@@ -824,10 +797,7 @@ begin
         AffecterActionAtButton(btnDrwObjMode7, acPolygoneNeve);
         AffecterActionAtButton(btnDrwObjMode8, acPolygoneEau);
         AffecterActionAtButton(btnDrwObjMode9, acPolygoneMasque);
-
-
       end;
-
     mtDRAW_TEXTE:
       begin
         AffecterActionAtButton(btnDrwObjMode1, acTexteOrdinaire);
@@ -1024,7 +994,6 @@ function TCadreSectionTransversale.GetCoordsMonde(const PP: TPoint): TPoint2Df;
 begin
   Result.X:=  FInvRappScrReal * PP.X + FRXMini;
   Result.Y:= -FInvRappScrReal * PP.Y + FRYMaxi;
-
 end;
 
 function TCadreSectionTransversale.GetCoordsPlan(const QX, QY: double): TPoint;
@@ -1054,12 +1023,12 @@ begin
   // si zone trop étroite, abandonner
   if ((Abs(d1) < Epsilon) or (Abs(d2) < Epsilon)) then Exit;
 
-  FRXMini:=qX1;
-  FRXMaxi:=qX2;
-  FRYMini:=qY1;
-  FRYMaxi:=qY2;
+  FRXMini := qX1;
+  FRXMaxi := qX2;
+  FRYMini := qY1;
+  FRYMaxi := qY2;
   // Redéfinition de la hauteur maxi
-  FRYMaxi:=GetRYMaxi;
+  FRYMaxi := GetRYMaxi();
   // redessine
   FDoDraw := True;
   Vue.Invalidate;
@@ -1093,10 +1062,8 @@ procedure TCadreSectionTransversale.VueMouseMove(Sender: TObject; Shift: TShiftS
 begin
   try
     //if (not FDoDraw) then Exit;
-
     FMyPos := GetCoordsMonde(MakeTPoint(X, Y));
     lbMousePos.Caption := Format('X = %.2f m, Y = %.2f m',[FMyPos.X, FMyPos.Y]);
-
     case FModeTravail of
       mtLIGNE_SECOND_POINT:
       begin
@@ -1202,7 +1169,6 @@ end;
 procedure TCadreSectionTransversale.DisplayAttributsSimpleLigne(const QIdx: integer; const QVisible: boolean);
 begin
   if (not QVisible) then Exit;
-
 end;
 procedure TCadreSectionTransversale.DisplayAttributsTexte(const QIdx: integer; const QVisible: boolean);
 var
@@ -1300,7 +1266,7 @@ end;
 
 procedure TCadreSectionTransversale.MenuItem1Click(Sender: TObject);
 begin
-
+  pass;
 end;
 
 procedure TCadreSectionTransversale.sclAngleOrientationChange(Sender: TObject);
@@ -1418,10 +1384,7 @@ var
         FHerissonViseesRadiantes.CalcProjPZVisee(EWE.Longueur, EWE.Azimut, EWE.Pente, PP, PZ);
         TmpBuffer.TraceVers(0.00, 0.00, false);
         TmpBuffer.TraceVers(PP, PZ, True);
-        if (EWE.AsSection) then
-        begin
-          TmpBuffer.TraceCercle(PP, PZ, 4);
-        end;
+        if (EWE.AsSection) then TmpBuffer.TraceCercle(PP, PZ, 4);
       end;
     end;
     TmpBuffer.RestoreCrayon();
@@ -1433,7 +1396,14 @@ var
     TmpBuffer.RestoreBrosse();
     TmpBuffer.RestoreCrayon();
   end;
-
+  procedure DrawReticule();
+  begin
+    TmpBuffer.DefineCrayon(psSolid, 0, FAxisColor, 192);
+    TmpBuffer.TraceVers(FRXMini, 0.00, false);
+    TmpBuffer.TraceVers(FRXMaxi, 0.00, true);
+    TmpBuffer.TraceVers(0.00, FRYMini, false);
+    TmpBuffer.TraceVers(0.00, FRYMaxi, true);
+  end;
 begin
   if (not FDoDraw) then Exit;
   // lbMessages.Caption := IIF(FRedessinInProcess, 'REDESS', 'DONE');
@@ -1442,73 +1412,53 @@ begin
   FRedessinInProcess := True;
   //if (not FDoDraw) then Exit;
   AfficherMessage(Format('%s.Redessin()', [ClassName]));
+  AfficherMessageErreur(Format('%s.Redessin()', [ClassName]));
   try
-
     TmpBuffer := TCrossSectionDrawingContext.Create(Vue.Width, Vue.Height, BGRA(Red(FBackGroundColor), Green(FBackGroundColor), Blue(FBackGroundColor), 255));
     try
       TmpBuffer.SetCrossSection(FMyCrossSection);
       TmpBuffer.SetTexturesPolygones(FTexturesPolygones, FTexturesAreOK);
       TmpBuffer.SetBounds(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
-
-      // début conventionnel
-      TmpBuffer.BeginDrawing();
-      //************************
-
-
-      // dessin de la section
-      DrawSectionTransversale(TmpBuffer);
-      // le dessin du réticule
-      TmpBuffer.DefineCrayon(psSolid, 0, FAxisColor, 192);
-      TmpBuffer.TraceVers(FRXMini, 0.00, false);
-      TmpBuffer.TraceVers(FRXMaxi, 0.00, true);
-      TmpBuffer.TraceVers(0.00, FRYMini, false);
-      TmpBuffer.TraceVers(0.00, FRYMaxi, true);
-      DrawViseesRayonnantes();
-      // fin conventionnelle
-      TmpBuffer.EndDrawing();
+      TmpBuffer.BeginDrawing();     // début conventionnel
+        DrawSectionTransversale(TmpBuffer); // dessin de la section
+        DrawReticule();                     // le dessin du réticule
+        DrawViseesRayonnantes();            // visées rayonnantes
+      TmpBuffer.EndDrawing();       // fin conventionnelle
     except
-
+      pass;
     end;
     TmpBuffer.Draw(Vue.Canvas, 0, 0, True);
   finally
-    FreeAndNil(TmpBuffer);//TmpBuffer.Free;
+    FreeAndNil(TmpBuffer);
     FRedessinInProcess := False; // libération du sémaphore
-    //lbMessages.Caption := IIF(FRedessinInProcess, 'REDESS', 'DONE');
-    // ne pas mettre cette ligne avant la libération du sémaphore
-    Application.ProcessMessages;
-  end;
-  // on dessine ici les objets temporaires
-  try
-//    DrawTmpObj_FreeHandPoints;   // dessin des points main levée
-//    DrawTmpObj_CourbeProvisoire;
-  except
+    Application.ProcessMessages; // ne pas mettre cette ligne avant la libération du sémaphore
   end;
 end;
 
 procedure TCadreSectionTransversale.SetModeTravail(const MT: TCrossSectionModeTravail; const QType: byte);
   procedure QSetPen(const QPM: TPenMode; const QPS: TPenStyle; const QPW: integer; const QPC: TColor);
-    begin
-      Vue.Canvas.Pen.Mode := QPM;
-      Vue.Canvas.Pen.Style:= QPS;
-      Vue.Canvas.Pen.Color:= QPC;
-      Vue.Canvas.Pen.Width:= QPW;
-    end;
-    procedure Rearmer();
-    begin
-      FUnObjetEstSelectionne     := False;
-      FVertexModified            := False;
-      FAttenduSecondPoint        := False;
-      FDoAddVertexCourbePolygone := False;
-      FDoMovePoint               := false;
-      FMovingPoint               := false;
-      QSetPen(pmCopy, psSolid, 0, clGray);
+  begin
+    Vue.Canvas.Pen.Mode := QPM;
+    Vue.Canvas.Pen.Style:= QPS;
+    Vue.Canvas.Pen.Color:= QPC;
+    Vue.Canvas.Pen.Width:= QPW;
+  end;
+  procedure Rearmer();
+  begin
+    FUnObjetEstSelectionne     := False;
+    FVertexModified            := False;
+    FAttenduSecondPoint        := False;
+    FDoAddVertexCourbePolygone := False;
+    FDoMovePoint               := false;
+    FMovingPoint               := false;
+    QSetPen(pmCopy, psSolid, 0, clGray);
 
-      // reset éléments sélectionnés
-      FCurrentCurveIdx           := -1;
-      FCurrentPolygonIdx         := -1;
-      FCurrentSimpleLigneIdx     := -1;
-      FCurrentTexteIdx           := -1;
-    end;
+    // reset éléments sélectionnés
+    FCurrentCurveIdx           := -1;
+    FCurrentPolygonIdx         := -1;
+    FCurrentSimpleLigneIdx     := -1;
+    FCurrentTexteIdx           := -1;
+  end;
 var
   EWE: String;
   WU: Integer;
@@ -1518,8 +1468,7 @@ begin
     mtNONE:
       begin
         FCrossSectionModeSelection := mseNONE;
-        Rearmer;
-
+        Rearmer();
         lbMessages.Caption         := '';
         PreparerSubButtons(mtNONE);
         FCurrentNatureCourbe   := nocDEFAULT;
@@ -1561,7 +1510,6 @@ begin
         FCurrentNatureTexte := TNatureObjetTexte(QType);
         EWE := 'Texte';  WU  := Ord(FCurrentNatureTexte);
       end;
-
   end;
   lbNatureObjets.caption := Format('%s: %d', [EWE, WU]);
   AfficherModeTravail(MT);
@@ -1611,7 +1559,6 @@ begin
   if (WU AND FDoAddVertexCourbePolygone) then
   begin
     V := FCrossSectionPolyProvisoire.GetVertex(0);
-
     Cnv.Pen.Color   := clGray;
     Cnv.Brush.Color := clBlue;
     Cnv.Brush.Style := bsSolid;
@@ -1649,34 +1596,26 @@ begin
         if (FDoAddVertexCourbePolygone) then acValidateCourbePolygone.Execute;
       end;
     mtDRAW_TEXTE:
-      ;
+      pass;
     mtSELECT_COURBE:
-      begin
-        //QRechercheEtTraceCourbe(q);
-      end;
+      pass;
     mtSELECT_LIGNE:
-      begin
-        //QRechercheEtTraceLigne(q);
-      end;
+      pass;
     mtSELECT_POLYGONE:
-      begin
-        //QRechercheEtTracePolygone(q);
-      end;
+      pass;
     mtSELECT_TEXTE:
-      begin
-      end;
+      pass;
   end;
 end;
 
 procedure TCadreSectionTransversale.VueMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure QSetPenMode(const QM: TPenMode; const QC: TColor);
     begin
-      Vue.Canvas.Pen.Mode:= QM;
+      Vue.Canvas.Pen.Mode := QM;
       Vue.Canvas.Pen.Color:= QC;
     end;
 var
   WU: String;
-
   MyPolygone: TCrossSectionPolygone;
   FCurrVtxCurveProv, FCurrVtxPolyProv: TCrossSectionVertexCourbe;
   QCourbe: TCrossSectionCourbe;
@@ -1684,10 +1623,7 @@ begin
   // réassignation du pop-up par défaut
   self.PopupMenu := PopUpGeneral;
   case FModeTravail of
-    mtNONE:
-      begin
-        pass;
-      end;
+    mtNONE: pass;
     // ligne par pointage de deux points
     mtLIGNE_PREMIER_POINT:
        begin
@@ -1703,7 +1639,6 @@ begin
          SetModeTravail(mtLIGNE_PREMIER_POINT, Ord(FCurrentNatureLigne));     //SetModeTravail(mtNONE);
          Vue.Invalidate; // RedessinEcran(false);
        end;
-
     mtPICK_POS_TEXTE:
        begin
          FZC1 := FMyPos;
@@ -1715,7 +1650,6 @@ begin
          SetModeTravail(mtNONE, Ord(FCurrentNatureTexte));     //SetModeTravail(mtNONE);
          Vue.Invalidate; // RedessinEcran(false);
        end;
-
     // courbes
     mtSELECT_COURBE: //mtCHOIX_COURBE:
       begin
@@ -1781,7 +1715,6 @@ begin
         begin
           FMyCrossSection.putPolygone(FCurrentPolygonIdx, MyPolygone);
         end;
-
         Vue.Invalidate; // redessin écran
         SetModeTravail(mtNONE, 0);            // indispensable pour réarmer le contexte
       end;
@@ -1812,21 +1745,16 @@ begin
          if (Not FDoAddVertexCourbePolygone) then
          begin
            FZC1 := FMyPos;
-           FCrossSectionPolyProvisoire.ClearVertex;
-           // premier vertex
-
-           FCrossSectionPolyProvisoire.AddVertexByXY(FZC1.X, FZC1.Y);
-           // on passe en mode ajout de points
-           FDoAddVertexCourbePolygone := True;
+           FCrossSectionPolyProvisoire.ClearVertex();
+           FCrossSectionPolyProvisoire.AddVertexByXY(FZC1.X, FZC1.Y);   // premier vertex
+           FDoAddVertexCourbePolygone := True;                          // on passe en mode ajout de points
          end
          else  // C'est le premier point
          begin
-           // réassignation du pop-up
-           self.PopupMenu := popupCourbePoly;
+           self.PopupMenu := popupCourbePoly;    // réassignation du pop-up
            FZC1 := FMyPos;
            FCrossSectionPolyProvisoire.AddVertexByXY(FZC1.X, FZC1.Y);
-           // dessin de la courbe
-           DessinerCourbeProvisoire(Vue.Canvas);
+           DessinerCourbeProvisoire(Vue.Canvas);  // dessin de la courbe
          end;
       end;
   end;

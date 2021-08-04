@@ -8,7 +8,8 @@
 
 
 function TDocumentDessin.LoadFromFile(const FichierGCD: TStringDirectoryFileName): boolean;
-type TStatusFindInclude = (tincNO_INCLUDE, tincOK_TO_READ, tincFILE_NOT_FOUND, tincANY_ERROR);
+type
+  TStatusFindInclude = (tincNO_INCLUDE, tincOK_TO_READ, tincFILE_NOT_FOUND, tincANY_ERROR);
 var
   //DoCreateFirstSuperGroupe: Boolean;
   MySuperGroupe: TSuperGroupe;
@@ -116,7 +117,6 @@ var
                   MyLine := LireLigne();
                   if MyLine ='' then Continue;
                   if (Pos('#', MyLine)>0) then Continue; // commentaires
-
                   if (MyLine = ENDBASEPOINTMARKER) then   // si le marqueur de fin de section 'Basepoints' est trouvé,
                   begin
                     TrierBasePointsParIDBaseStation();            // Trier la table des basepoints
@@ -199,8 +199,6 @@ var
             MyLine := LireLigne();
             if (MyLine = '') then Continue;
             if (Pos('#', MyLine) > 0) then Continue; // commentaires
-
-            //LirePolyLigne(MyLine);
             if (MyLine = ENDGROUPESSECTION) then begin
              AfficherMessage('--> '''+ ENDGROUPESSECTION +''' section found');
              Break;
@@ -229,12 +227,12 @@ var
                // scrap	1	14	255	126	120	128	0.00	Scrap1
                MyScrap.IDGroupe     := StrToIntDef(Argv[2], 0);
                MyScrap.Couleur      := RGBToColor(StrToIntDef(Argv[3], 255),
-                                           StrToIntDef(Argv[4], 0),
-                                           StrToIntDef(Argv[5], 0));
+                                                  StrToIntDef(Argv[4], 0),
+                                                  StrToIntDef(Argv[5], 0));
                MyScrap.Opacite  := StrToIntDef(Argv[6], 128);
                MyScrap.Nom      := Trim(Argv[7]);
                MyScrap.LastModified := Now();
-               SetLength(MyScrap.Sommets, 0);
+               MyScrap.Empty(); //            SetLength(MyScrap.Sommets, 0);
                // liste provisoire pour les arcs
                LS.Clear;
                while (True) do
@@ -246,9 +244,8 @@ var
                  LS.Add(MyLine);
                end;
                NbAc := LS.Count;
-               SetLength(MyScrap.Sommets, NbAc);
-               for i := 0 to High(MyScrap.Sommets) do MyScrap.Sommets[i] := ExtractVertexPolyFromStr(LS.Strings[i]);
-               // OK ? On ajoute
+               MyScrap.setCapacity(NbAc);
+               for i := 0 to MyScrap.getNbVertex() - 1 do MyScrap.putVertex(i, ExtractVertexPolyFromStr(LS.Strings[i]));
                AddScrap(MyScrap, false);
              except;
                AfficherMessageErreur(Format('[%d] ** Error reading scrap', [NumLigne]));
@@ -261,7 +258,6 @@ var
             end;
           end;
         end; // if Line = POLYGONSECTION;
-
         // lecture courbes
         LS.Clear;
         if (MyLine = CURVESSECTION) then
@@ -294,9 +290,8 @@ var
                  LS.Add(MyLine);
                end;
                NbAc := LS.Count;
-               SetLength(CV.Arcs, NbAc);
-               for i:=0 to High(CV.Arcs) do CV.Arcs[i] := ExtractArcPolyFromStr(LS.Strings[i]);
-               // OK ? On ajoute
+               CV.setCapacity(NbAc);
+               for i := 0 to NbAc - 1 do CV.setArc(i, ExtractArcPolyFromStr(LS.Strings[i]));
                //CV := CalcBoundingBoxCourbe(CV);
                CV.MarkToDelete  := false;
                AddCourbe(CV, false);
@@ -304,10 +299,9 @@ var
                AfficherMessageErreur(Format('[%d] ** Error reading curve', [NumLigne]));
              end;
             end;
-            //LirePolyLigne(MyLine);
             if (MyLine = ENDCURVESSECTION) then begin
-             AfficherMessage('--> '''+ ENDCURVESSECTION +''' section found');
-             Break;
+              AfficherMessage('--> '''+ ENDCURVESSECTION +''' section found');
+              Break;
             end;
           end;
         end; // if Line = CURVESSECTION;
@@ -335,21 +329,20 @@ var
                 while (True) do
                 begin
                   MyLine := LireLigne();
-                  if MyLine ='' then Continue;
+                  if (MyLine = '') then Continue;
                   if (Pos('#', MyLine) > 0) then Continue; // commentaires
                   if (Pos(ENDENTITYPOLYLINE, MyLine) > 0) then Break;
                   LS.Add(MyLine);
                 end;
                 NbAc := LS.Count;
-                SetLength(PLL.Sommets, NbAc);
-                for i:=0 to High(PLL.Sommets) do PLL.Sommets[i] := ExtractVertexPolyFromStr(LS.Strings[i]);
+                PLL.setCapacity(NbAc);
+                for i := 0 to PLL.getNbVertex() - 1 do PLL.putVertex(i, ExtractVertexPolyFromStr(LS.Strings[i]));
                 PLL.MarkToDelete  := false;
                 AddPolyLigne(PLL, false);
               except;
                 AfficherMessageErreur(Format('[%d] ** Error reading polyline %d', [NumLigne, GetNbPolylignes()]));
               end;
             end;
-            //LirePolyLigne(Line);
             if (MyLine = ENDPOLYLINESSECTION) then
             begin
               AfficherMessage('--> '''+ ENDPOLYLINESSECTION +''' section found');
@@ -374,7 +367,7 @@ var
                PLG.IDGroupe         := StrToIntDef(Argv[2], 0);
                PLG.IDStylePolygone  := TNatureObjetPolygone(StrToIntDef(Argv[3], 0));
                PLG.LastModified     := StrToDateTimeDef(Argv[4], Now());
-               SetLength(PLG.Sommets, 0);
+               PLG.Empty();
                // liste provisoire pour les arcs
                LS.Clear;
                while (True) do
@@ -386,9 +379,8 @@ var
                  LS.Add(MyLine);
                end;
                NbAc := LS.Count;
-               SetLength(PLG.Sommets, NbAc);
-               for i:=0 to High(PLG.Sommets) do PLG.Sommets[i] := ExtractVertexPolyFromStr(LS.Strings[i]);
-               // OK ? On ajoute
+               PLG.setCapacity(NbAc);
+               for i := 0 to PLG.getNbVertex() - 1 do PLG.putVertex(i, ExtractVertexPolyFromStr(LS.Strings[i]));
                PLG.MarkToDelete := false;
                AddPolygone(PLG, false);
              except;
@@ -482,7 +474,6 @@ var
       // calcul du nombre d'objets pour les groupes
       //CalcNbObjetsGroupes();
       AfficherMessage(FDocumentName + ' ouvert avec succes');
-
       Result := 0;
       LS.Clear;
     finally
@@ -504,56 +495,38 @@ begin
   try
     QFichierCorrect := LireUnFichier(FichierGCD);
     case QFichierCorrect of
-      -1:
-      begin
-        AfficherMessageErreur('--> Echec en lecture du fichier principal');
-      end;
-      -2:
-      begin
-        AfficherMessageErreur('--> Un des fichiers appelés par $INCLUDE est introuvable');
-      end;
-      -3:
-      begin
-        AfficherMessageErreur('--> Echec en lecture de fichiers à inclure');
-      end;
+      -1: AfficherMessageErreur('--> Echec en lecture du fichier principal');
+      -2: AfficherMessageErreur('--> Un des fichiers appelés par $INCLUDE est introuvable');
+      -3: AfficherMessageErreur('--> Echec en lecture de fichiers à inclure');
       0: // Lecture OK
       begin
         if (self.GetNbSuperGroupes() = 0) then
-          begin
-            //MySuperGroupe.ID := 0;
-            MySuperGroupe.NomSuperGroupe := 'SuperGroupe0';
-            //MySuperGroupe.Decalage   := MakeTPoint3Df(0.0, 0.0, 0.0);
-            MySuperGroupe.Displayed  := True;
-            //MySuperGroupe.Locked     := False;
-            AddSuperGroupe(MySuperGroupe);
-          end;
-          if (self.GetNbGroupes() = 0) then
-          begin
-            MyGroupe.IDGroupeEntites := 0;
-            MyGroupe.NomGroupe       := 'Groupe0';
-            MyGroupe.CouleurGroupe   := clBlue;
-            MyGroupe.Decalage.Empty();
-            MyGroupe.DateLastModif   := Now();
-            MyGroupe.Filtres         := '';
-            //MyGroupe.IDSuperGroupe   := 0;
-            //MyGroupe.Locked          := false;
-            MyGroupe.Visible         := true;
-            AddGroupe(MyGroupe, false);
-          end;
+        begin
+          MySuperGroupe.NomSuperGroupe := 'SuperGroupe0';
+          MySuperGroupe.Displayed  := True;
+          AddSuperGroupe(MySuperGroupe);
+        end;
+        if (self.GetNbGroupes() = 0) then
+        begin
+          MyGroupe.IDGroupeEntites := 0;
+          MyGroupe.NomGroupe       := 'Groupe0';
+          MyGroupe.CouleurGroupe   := clBlue;
+          MyGroupe.Decalage.Empty();
+          MyGroupe.DateLastModif   := Now();
+          MyGroupe.Filtres         := '';
+          MyGroupe.Visible         := true;
+          AddGroupe(MyGroupe, false);
+        end;
       end;
-      else
-      begin
-        AfficherMessageErreur(Format('Erreur ouverture du fichier: %d', [QFichierCorrect]));
-      end;
+    else
+      AfficherMessageErreur(Format('Erreur ouverture du fichier: %d', [QFichierCorrect]));
     end;
     Result := (QFichierCorrect = 0);
     AfficherMessageErreur(Format('Code retour: %d', [QFichierCorrect]));
   except
-
+    pass;
   end;
 end;
-
-
 
 function  TDocumentDessin.LoadEncryptedFile(const QFilename: TStringDirectoryFileName; const Password: string): boolean;
 begin

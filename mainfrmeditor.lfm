@@ -1,12 +1,12 @@
 object MainWindow: TMainWindow
-  Left = 229
+  Left = 74
   Height = 892
-  Top = 101
-  Width = 1537
+  Top = 295
+  Width = 1538
   AllowDropFiles = True
   Caption = 'MainWindow'
   ClientHeight = 872
-  ClientWidth = 1537
+  ClientWidth = 1538
   Font.CharSet = ANSI_CHARSET
   Font.Color = clBlack
   Font.Height = -13
@@ -416,6 +416,7 @@ object MainWindow: TMainWindow
       Height = 28
       Top = 2
       Width = 28
+      OnClick = btnDrwObjMode56Click
       ShowCaption = False
       ShowHint = True
       ParentShowHint = False
@@ -463,17 +464,17 @@ object MainWindow: TMainWindow
     Left = 2
     Height = 838
     Top = 32
-    Width = 1534
+    Width = 1535
     Anchors = [akTop, akLeft, akRight, akBottom]
     BevelOuter = bvLowered
     ClientHeight = 838
-    ClientWidth = 1534
+    ClientWidth = 1535
     TabOrder = 5
     object PairSplitter1: TPairSplitter
       Left = 1
       Height = 836
       Top = 1
-      Width = 1532
+      Width = 1533
       Align = alClient
       Position = 1118
       object PairSplitterSide1: TPairSplitterSide
@@ -522,7 +523,7 @@ object MainWindow: TMainWindow
               Top = 814
             end
             inherited pnlTypeObjet: TPanel
-              Left = 747
+              Left = 742
               inherited btnDeleteObject: TSpeedButton
                 Flat = True
               end
@@ -547,7 +548,7 @@ object MainWindow: TMainWindow
               inherited btnEditObject: TSpeedButton
                 Flat = True
               end
-              inherited btnEditObjectSpecial: TSpeedButton
+              inherited btnEditObjectSpecial1: TSpeedButton
                 Flat = True
               end
               inherited btnFermerCourbePolyligne: TSpeedButton
@@ -560,6 +561,9 @@ object MainWindow: TMainWindow
                 Flat = True
               end
               inherited btnDispCodeGHCaveDraw: TSpeedButton
+                Flat = True
+              end
+              inherited btnEditObjectSpecial2: TSpeedButton
                 Flat = True
               end
             end
@@ -593,14 +597,14 @@ object MainWindow: TMainWindow
         Left = 1123
         Height = 836
         Top = 0
-        Width = 409
-        ClientWidth = 409
+        Width = 410
+        ClientWidth = 410
         ClientHeight = 836
         object ScrollBox1: TScrollBox
           Left = 0
           Height = 735
           Top = 100
-          Width = 409
+          Width = 410
           HorzScrollBar.Increment = 38
           HorzScrollBar.Page = 388
           HorzScrollBar.Smooth = True
@@ -611,7 +615,7 @@ object MainWindow: TMainWindow
           VertScrollBar.Tracking = True
           Anchors = [akTop, akLeft, akRight, akBottom]
           ClientHeight = 731
-          ClientWidth = 388
+          ClientWidth = 389
           TabOrder = 0
           object StaticText2: TStaticText
             Left = 0
@@ -1048,11 +1052,11 @@ object MainWindow: TMainWindow
           Left = 0
           Height = 96
           Top = 0
-          Width = 405
+          Width = 406
           Anchors = [akTop, akLeft, akRight]
           BevelOuter = bvLowered
           ClientHeight = 96
-          ClientWidth = 405
+          ClientWidth = 406
           TabOrder = 2
           object SpeedButton1: TSpeedButton
             Left = 2
@@ -1414,6 +1418,7 @@ object MainWindow: TMainWindow
             Height = 28
             Top = 4
             Width = 28
+            OnClick = btnDrwTypeObjet9Click
             ShowCaption = False
             ShowHint = True
             ParentShowHint = False
@@ -1436,11 +1441,11 @@ object MainWindow: TMainWindow
     Left = 1126
     Height = 29
     Top = 0
-    Width = 406
+    Width = 407
     Anchors = [akTop, akLeft, akRight]
     BevelOuter = bvLowered
     ClientHeight = 29
-    ClientWidth = 406
+    ClientWidth = 407
     TabOrder = 6
     object lbSupergroupe: TLabel
       Left = 4
@@ -1454,14 +1459,14 @@ object MainWindow: TMainWindow
       Left = 92
       Height = 24
       Top = 4
-      Width = 284
+      Width = 285
       Anchors = [akTop, akLeft, akRight]
       BorderStyle = sbsSingle
       Caption = 'lbSuperGroupeName'
       TabOrder = 0
     end
     object SpeedButton3: TSpeedButton
-      Left = 377
+      Left = 378
       Height = 28
       Top = 2
       Width = 28
@@ -1473,8 +1478,8 @@ object MainWindow: TMainWindow
   end
   object actlstMenus: TActionList
     Images = imglstActionsMenus
-    left = 1264
-    top = 240
+    left = 1076
+    top = 8
     object acZoomAll: TAction
       Category = 'Affichage'
       Caption = 'acZoomAll'
@@ -1975,8 +1980,8 @@ object MainWindow: TMainWindow
   end
   object MainMenu1: TMainMenu
     Images = imglstActionsMenus
-    left = 1196
-    top = 244
+    left = 1028
+    top = 12
     object mnuFichier: TMenuItem
       Caption = '&Fichier'
       object MenuItem51: TMenuItem

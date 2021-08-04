@@ -1115,10 +1115,7 @@ var
   begin
     LS.Add(StringOfChar(' ', Indent) + '#' + QS);
   end;
-  function NbRealToStr(const V: double): string;
-  begin
-    Result := Format('%.3f', [V]);
-  end;
+
   procedure QBeginSection(const Indent: integer; const QS: string; const Args: array of string);
   var
     EWE: String;
@@ -1150,14 +1147,16 @@ var
     begin
       AC := C.Arcs[j];
       WU := StringOfChar(' ', Indent + 2) + CROSS_SECTION_ARC_COURBE + #9;
-      WU := WU + Format('%.3f' + #9 + '%.3f' + #9 +
-                        '%.3f' + #9 + '%.3f' + #9 +
-                        '%.3f' + #9 + '%.3f' + #9 +
-                        '%.3f' + #9 + '%.3f',
-                   [AC.CoordsP1.X, AC.CoordsP1.Y,
-                    AC.TangP1.X, AC.TangP1.Y,
-                    AC.TangP2.X, AC.TangP2.Y,
-                    AC.CoordsP2.X, AC.CoordsP2.Y
+      WU := WU + Format('%s' + #9 + '%s' + #9 +
+                        '%s' + #9 + '%s' + #9 +
+                        '%s' + #9 + '%s' + #9 +
+                        '%s' + #9 + '%s',
+                   [FormatterNombreWithDotDecimal(AC.CoordsP1.X),
+                    FormatterNombreWithDotDecimal(AC.CoordsP1.Y),
+                    FormatterNombreWithDotDecimal(AC.TangP1.X), FormatterNombreWithDotDecimal(AC.TangP1.Y),
+                    FormatterNombreWithDotDecimal(AC.TangP2.X), FormatterNombreWithDotDecimal(AC.TangP2.Y),
+                    FormatterNombreWithDotDecimal(AC.CoordsP2.X),
+                    FormatterNombreWithDotDecimal(AC.CoordsP2.Y)
                    ]);
       LS.Add(WU);
     end;
@@ -1177,8 +1176,7 @@ var
     begin
       VX := C.Vertexes[j];
       WU := StringOfChar(' ', Indent + 2) + CROSS_SECTION_POLY_VERTEX + #9;
-      WU := WU + Format('%.3f' + #9 + '%.3f',
-                   [VX.X, VX.Y]);
+      WU := WU + Format('%s' + #9 + '%s', [FormatterNombreWithDotDecimal(VX.X), FormatterNombreWithDotDecimal(VX.Y)]);
       LS.Add(WU);
     end;
     QEndSection(Indent, END_CROSS_SECTION_A_POLYGONE);
@@ -1195,7 +1193,7 @@ var
     begin
       VX := FScrapEnglobant.Vertexes[j];
       WU := StringOfChar(' ', Indent + 2) + CROSS_SECTION_VERTEX_SCRAP_ENGLOBANT + #9;
-      WU := WU + Format('%.3f' + #9 + '%.3f', [VX.X, VX.Y]);
+      WU := WU + Format('%s' + #9 + '%s', [FormatterNombreWithDotDecimal(VX.X), FormatterNombreWithDotDecimal(VX.Y)]);
       LS.Add(WU);
     end;
   end;
@@ -1204,8 +1202,10 @@ var
     WU: String;
   begin
     WU := StringOfChar(' ', Indent) + CROSS_SECTION_SIMPLETEXT + #9;
-    WU := WU + Format('%d' + #9 + '%d' + #9 + '%.3f' + #9 + '%.3f' + #9 +'%s',
-                     [T.IDStyleTexte, T.Alignment, T.PosX, T.PosY, T.Text]);
+    WU := WU + Format('%d' + #9 + '%d' + #9 + '%s' + #9 + '%s' + #9 +'%s',
+                     [T.IDStyleTexte, T.Alignment,
+                      FormatterNombreWithDotDecimal(T.PosX),
+                      FormatterNombreWithDotDecimal(T.PosY), T.Text]);
     LS.Add(WU);
 
   end;
@@ -1214,11 +1214,16 @@ var
     WU: String;
   begin
     WU := StringOfChar(' ', Indent) + CROSS_SECTION_SIMPLELINE + #9;
-    WU := WU + Format('%d' + #9 + '%.3f' + #9 + '%.3f' + #9 + '%.3f' + #9 + '%.3f',
-                     [L.IDStyleLigne, L.Extr1.X, L.Extr1.Y, L.Extr2.X, L.Extr2.Y]);
+    WU := WU + Format('%d' + #9 + '%s' + #9 + '%s' + #9 + '%s' + #9 + '%s',
+                     [L.IDStyleLigne,
+                      FormatterNombreWithDotDecimal(L.Extr1.X),
+                      FormatterNombreWithDotDecimal(L.Extr1.Y),
+                      FormatterNombreWithDotDecimal(L.Extr2.X),
+                      FormatterNombreWithDotDecimal(L.Extr2.Y)]);
     LS.Add(WU);
   end;
 begin
+  result := false;
   LS.Clear;
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   QAT := FBaseStation.IDStation;
@@ -1232,7 +1237,9 @@ begin
   {$ELSE}
   QAT := Inttostr(FBaseStation.IDStation);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-  QBeginSection(2, CROSS_SECTION, [IntToStr(1), IntToStr(FIDGroupe), QAT, NbRealToStr(FDecalageXY.X), NbRealToStr(FDecalageXY.Y)]);
+  QBeginSection(2, CROSS_SECTION, [IntToStr(1), IntToStr(FIDGroupe), QAT,
+                                   FormatterNombreWithDotDecimal(FDecalageXY.X),
+                                   FormatterNombreWithDotDecimal(FDecalageXY.Y)]);
     // scrap englobant
     n := Length(FScrapEnglobant.Vertexes);
     if (n > 0) then
@@ -1271,6 +1278,7 @@ begin
       QEndSection(4, END_CROSS_SECTION_TEXTES);
     end;
   QEndSection(2, END_CROSS_SECTION);
+  result := true;
 end;
 //******************************************************************************
 procedure TCrossSection.AddStylePolygone(const LS: TStylePolygone);

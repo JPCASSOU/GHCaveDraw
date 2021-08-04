@@ -110,12 +110,15 @@ begin
                                      255 - trkBarTransparence.Position,
                                      WithExportGIS);
   if (chkgbxFormatsOutput.Checked[2]) then
+    ShowMessage('Export GeoJSON: Bugs en cours de fixation');
+    (*
     FMyDocDessin.ExporterScrapsToGeoJSON(ChangeFileExt(editFileName.FileName, '.json'),
                                             chkDoUseDefaultStyle.Checked,
                                             chkScrapsFilled.Checked,
                                             btnColorSilhouette.ButtonColor,
                                             255 - trkBarTransparence.Position,
                                             WithExportGIS);
+    //*)
   {$IFDEF DXF_SUPPORT}
   if (chkgbxFormatsOutput.Checked[3]) then
     FMyDocDessin.ExporterScrapsToDXF(self,

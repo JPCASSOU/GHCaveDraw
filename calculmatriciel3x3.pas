@@ -425,7 +425,7 @@ var
   i: Integer;
 begin
   result := makeVecteurNul;
-  for i := 0 to High(V) do
+  for i := 0 to High(V) do // ne pas toucher
   begin
     Result.X += V[i].X;
     Result.Y += V[i].Y;

@@ -129,11 +129,11 @@ var
   begin
     lsbGroupesOfSuperGroupe.Clear;
     lbNbGroupesAssocies.Caption := format(FMT_NB_GROUPES_ASSOCIES, [lsbGroupesOfSuperGroupe.Count]);
-    n := length(MySG.ListeGroupes);
+    n := MySG.ListeGroupes.GetNbElements();//length(MySG.ListeGroupes);
     if (n = 0) then exit;
     for i := 0 to n - 1 do
     begin
-      QIdxGrp := MySG.ListeGroupes[i];
+      QIdxGrp := MySG.ListeGroupes.GetElement(i); // [i];
       if (QIdxGrp >= 0) then
       begin
         MyGrp := FDocDessin.GetGroupeByIDGroupe(QIdxGrp);
@@ -145,9 +145,8 @@ var
 begin
   grbxCurrentSuperGroupe.Caption := format('Supergroupe #%d', [FCurrentIdxSuperGroupe]);
   MySG := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
-
   editNomSupergroupe.Text := MySG.NomSuperGroupe;
-  StaticText1.Caption := ArrayOfIdxGroupesToStr(MySG.ListeGroupes);
+  StaticText1.Caption :=  MySG.ListeGroupes.toString(); //ArrayOfIdxGroupesToStr(MySG.ListeGroupes);
   QDispListeGroupes();
 end;
 
@@ -170,7 +169,7 @@ function TdlgDisplaySuperGroupes.GetSuperGroupeFromForm(): TSuperGroupe;
   end;
 begin
   Result.NomSuperGroupe := Trim(editNomSupergroupe.Text);
-  Result.ListeGroupes   := StrToArrayOfIdxGroupes(QExtractGroupes());
+  Result.ListeGroupes.fromString(QExtractGroupes()); //  := StrToArrayOfIdxGroupes(QExtractGroupes());
 end;
 
 procedure TdlgDisplaySuperGroupes.ListerLesSuperGroupes(const IdxGr: integer);
@@ -213,7 +212,7 @@ begin
   begin
     MySG.NomSuperGroupe := Trim(EWE);
     if (MySG.NomSuperGroupe = '') then exit;
-    SetLength(MySG.ListeGroupes, 0);
+    //SetLength(MySG.ListeGroupes, 0);
     MySG.Displayed      := true;
     FDocDessin.AddSuperGroupe(MySG);
     n := FDocDessin.GetNbSuperGroupes() - 1;
@@ -240,13 +239,14 @@ begin
   EWE := '';
   if (not InputQuery('Groupes depuis texte', 'Liste (sép: ;)', EWE)) then exit;
 
-  LS := StrToArrayOfIdxGroupes(EWE);
-  Nb := length(LS);
+  LS.fromString(EWE);// := StrToArrayOfIdxGroupes(EWE);
+  Nb := LS.GetNbElements(); //length(LS);
+
   if (0 = Nb) then exit;
   MySG := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
   for i := 0 to Nb - 1 do
   begin
-    if (FDocDessin.ExtractGroupeFromIdxGroupe(LS[i], MyGRP)) then AddToArrayOfIdxGroupes(MySG.ListeGroupes, MyGRP.IDGroupeEntites);
+    if (FDocDessin.ExtractGroupeFromIdxGroupe(LS.GetElement(i), MyGRP)) then MySG.ListeGroupes.AddElementAndSort(MyGRP.IDGroupeEntites);//AddToArrayOfIdxGroupes(MySG.ListeGroupes, MyGRP.IDGroupeEntites);
   end;
   FDocDessin.PutSuperGroupe(FCurrentIdxSuperGroupe, MySG);
   SetSuperGroupeInForm();
@@ -274,10 +274,11 @@ var
   end;
 begin
   MySG := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
-  NbGroupesOfSG := length(MySG.ListeGroupes);
+
+  NbGroupesOfSG := MySG.ListeGroupes.GetNbElements();
   if (NbGroupesOfSG = 0) then exit;
   FDocDessin.MarquerVisibiliteOfAllGroupes(false);
-  for g := 0 to NbGroupesOfSG - 1 do MiouMiou(MySG.ListeGroupes[g]);
+  for g := 0 to NbGroupesOfSG - 1 do MiouMiou(MySG.ListeGroupes.GetElement(g));
   CdrListBoxGroupes1.ListerLesGroupes(0);
 end;
 
@@ -313,7 +314,8 @@ begin
     if (CdrListBoxGroupes1.IsSelectedItem(i)) then
     begin
       MyGrp := FDocDessin.GetGroupe(i);
-      AddToArrayOfIdxGroupes(MySG.ListeGroupes, MyGrp.IDGroupeEntites);
+      MySG.ListeGroupes.AddElementAndSort(MyGrp.IDGroupeEntites);
+      //AddToArrayOfIdxGroupes(MySG.ListeGroupes, MyGrp.IDGroupeEntites);
     end;
   end;
   // sauvegarde des modifs

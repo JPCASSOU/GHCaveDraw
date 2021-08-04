@@ -1,7 +1,6 @@
 unit UnitExportGeoJSON;
 // OK
 // Plateforme de tests à utiliser: https://geojson.io/#map=16/44.7013/-0.3812
-
 {$mode delphi}
 
 interface
@@ -22,7 +21,6 @@ type TGeoJSONExport = class
 
    FFillColor         : TColor;
    FFillOpacity       : byte;
-
 
    FCentroideLat      : double;
    FCentroideLon      : Double;

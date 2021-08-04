@@ -256,12 +256,12 @@ begin
   PointDepart  := CoordsGCSToSVG(XC + R * cos(AD), YC + R * sin(AD));
   PointArrivee := CoordsGCSToSVG(XC + R * cos(AA), YC + R * sin(AA));
   WU := 'M';
-  if (DoPie) then WU += Format(' %.3f, %.3f ', [XC, YC]);
-  WU += Format('%.3f, %.3f A %.3f, %.3f %d %d %d %.3f, %.3f',
-               [PointDepart.X, PointDepart.Y,
-                R, R,
+  if (DoPie) then WU += Format(' %s, %s ', [QFormatterNombreReel(XC), QFormatterNombreReel(YC)]);
+  WU += Format('%s, %s A %s, %s %d %d %d %s, %s',
+               [QFormatterNombreReel(PointDepart.X), QFormatterNombreReel(PointDepart.Y),
+                QFormatterNombreReel(R), QFormatterNombreReel(R),
                 0, largeArcFlag, 0,
-                PointArrivee.X, PointArrivee.Y]);
+                QFormatterNombreReel(PointArrivee.X), QFormatterNombreReel(PointArrivee.Y)]);
   if (DoPie) then WU += 'Z';
   QCmd := Format('  <path class="%s" d="%s" />', [CSSClass, WU ]);
   WriteLine(QCmd);

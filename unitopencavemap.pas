@@ -757,7 +757,7 @@ begin
             MyVertex.IDStation := StrToInt64Def(FSecSqlQuery.Fields[2].AsString, 0) mod MULT_IDX_CAVITE;
             MyVertex.Offset.X  := ConvertirEnNombreReel(FSecSqlQuery.Fields[3].AsString, 0.00);
             MyVertex.Offset.Y  := ConvertirEnNombreReel(FSecSqlQuery.Fields[4].AsString, 0.00);
-            MyScrap.Sommets[NbV] := MyVertex;
+            MyScrap.putVertex(NbV, MyVertex); //Sommets[NbV] := MyVertex;
             FSecSqlQuery.Next;
             Inc(NbV);
             //AfficherMessage(inttostr(nbV));
@@ -985,7 +985,7 @@ begin
             //                             [QIdPolygone, QIdxVertex,
             //                              MyVertex.IDStation, MyVertex.Offset.X, MyVertex.Offset.Y
             //                             ]));
-            MyPolygone.Sommets[NbV] := MyVertex;
+            MyPolygone.putVertex(NbV, MyVertex);  //MyPolygone.Sommets[NbV] := MyVertex;
             FSecSqlQuery.Next;
             Inc(NbV);
           end;
@@ -1087,7 +1087,7 @@ begin
                                          [QIdPolyligne, QIdxVertex,
                                           MyVertex.IDStation, MyVertex.Offset.X, MyVertex.Offset.Y
                                          ]));
-            MyPolyligne.Sommets[NbV] := MyVertex;
+            MyPolyligne.putVertex(NbV, MyVertex);            //MyPolyligne.Sommets[NbV] := MyVertex;
             FSecSqlQuery.Next;
             Inc(NbV);
           end;
@@ -1430,17 +1430,21 @@ var
                    'Pos_PD_Lon, Pos_PD_Lat, Pos_PD_Alt, ' +
                    'IDTerrain) ' +
                    'VALUES (%d, %d, %d, ' +
-                           '%.6f, %.6f, %.3f, ' +
-                           '%.6f, %.6f, %.3f, ' +
-                           '%.6f, %.6f, %.3f, ' +
-                           '%.6f, %.6f, %.3f, ' +
+                           '%s, %s, %s, ' +
+                           '%s, %s, %s, ' +
+                           '%s, %s, %s, ' +
+                           '%s, %s, %s, ' +
                            '"%s");',
                [TABLE_BASEPOINTS,
                 QQ, NumCavite, 0,
                 BP_PosExtr0_Lon, BP_PosExtr0_Lat, BP.PosExtr0.Z,
                 BP_PosStation_Lon, BP_PosStation_Lat, BP.PosStation.Z,
-                BP_PosPG_Lon, BP_PosPG_Lat, BP.PosPG.Z,
-                BP_PosPD_Lon, BP_PosPD_Lat, BP.PosPD.Z,
+                FormatterNombreWithDotDecimal(BP_PosPG_Lon, 6),
+                FormatterNombreWithDotDecimal(BP_PosPG_Lat, 6),
+                FormatterNombreWithDotDecimal(BP.PosPG.Z  , 3),
+                FormatterNombreWithDotDecimal(BP_PosPD_Lon, 6),
+                FormatterNombreWithDotDecimal(BP_PosPD_Lat, 6),
+                FormatterNombreWithDotDecimal(BP.PosPD.Z  , 3),
                 mysqli_real_escape_string(BP.IDTerrain)
                 ]);
       SendSQLCommand(WU);
@@ -1481,12 +1485,14 @@ var
   begin
     try
       WU := Format('REPLACE INTO %s (IDGroupe, IDSuperGroupe, CouleurGroupe, DecalageX, DecalageY, ZOrder, NomGroupe, Filtres) ' +
-                       'VALUES (%d, %d, %d, %.6f, %.6f, %.3f, "%s", "%s");',
+                       'VALUES (%d, %d, %d, %s, %s, %s, "%s", "%s");',
                [TABLE_GROUPES,
                 CalcIdxGroupeForCavite(NumCavite, BP.IDGroupeEntites),
                 0, //BP.IDSuperGroupe,
                 BP.CouleurGroupe,
-                BP.Decalage.X, BP.Decalage.Y, BP.ZOrder,
+                FormatterNombreWithDotDecimal(BP.Decalage.X, 6),
+                FormatterNombreWithDotDecimal(BP.Decalage.Y, 6),
+                FormatterNombreWithDotDecimal(BP.ZOrder    , 3),
                 mysqli_real_escape_string(BP.NomGroupe),
                 mysqli_real_escape_string(BP.Filtres)]);
       AfficherMessage(WU);
@@ -1541,7 +1547,7 @@ var
       begin
         n := High(BP.Sommets);
         AfficherMessage(Format('Export des %d sommets du scrap %d', [n, QIdx]));
-        for a := 0 to n do ExportVertexToSQL(NumCavite, TABLE_VERTEX_SCRAPS, BP.Sommets[a], QIdxScrap, a);
+        for a := 0 to n do ExportVertexToSQL(NumCavite, TABLE_VERTEX_SCRAPS, BP.getVertex(a), QIdxScrap, a);
       end;
 
     //except
@@ -1668,7 +1674,7 @@ var
         n := High(P.Sommets);
         AfficherMessage(Format('Export des %d points du polygone %d', [n, QIdx]));
 
-        for a := 0 to n do ExportVertexToSQL(NumCavite, TABLE_VERTEX_POLYGONES, P.Sommets[a], QIdxPolygone, a);
+        for a := 0 to n do ExportVertexToSQL(NumCavite, TABLE_VERTEX_POLYGONES, P.getVertex(a), QIdxPolygone, a);
       end;
     //except
     //end;
@@ -1720,7 +1726,7 @@ var
       if (SendSQLCommand(WU)) then
       begin
         n := High(P.Sommets);
-        for a := 0 to n do ExportVertexToSQL(NumCavite, TABLE_VERTEX_POLYLIGNES, P.Sommets[a], QIdxPolyligne, a);
+        for a := 0 to n do ExportVertexToSQL(NumCavite, TABLE_VERTEX_POLYLIGNES, P.getVertex(a), QIdxPolyligne, a);
       end;
     //except
     //end;
@@ -1813,14 +1819,17 @@ var
     try
       QIdxSymbole := CalcIdxObjetForCavite(NumCavite, QIdx);
       WU := Format('INSERT INTO %s (IDSymbole, IDGroupe, TypeSymbole, IDBasePoint, Offset_X, Offset_Y, AngleRot, Scale_X, Scale_Y, UnTag, TagTexte) ' +
-                   'VALUES (%d, %d, %d, %d, %.6f, %.6f, %.3f, %.3f, %.3f, %d, "%s");',
+                   'VALUES (%d, %d, %d, %d, %s, %s, %s, %s, %s, %d, "%s");',
                [TABLE_SYMBOLES,
                 QIdxSymbole,
                 CalcIdxGroupeForCavite(NumCavite , BP.IDGroupe),
                 BP.TypeObject,
                 CalcIdxBasepointForCavite(NumCavite, BP.IDBaseStation),
-                BP.Offset.X, BP.Offset.Y,
-                BP.AngleRot, BP.ScaleX, BP.ScaleY,
+                FormatterNombreWithDotDecimal(BP.Offset.X,   6),
+                FormatterNombreWithDotDecimal(BP.Offset.Y,   6),
+                FormatterNombreWithDotDecimal(BP.AngleRot,   3),
+                FormatterNombreWithDotDecimal(BP.ScaleX  ,   3),
+                FormatterNombreWithDotDecimal(BP.ScaleY  ,   3),
                 BP.UnTag,
                 mysqli_real_escape_string(BP.TagTexte)
                ]);

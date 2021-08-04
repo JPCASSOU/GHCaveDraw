@@ -283,8 +283,11 @@ begin
 end;
 
 procedure TCrossSectionDrawingContext.TraceVers(const XX, YY: Double; const Drawn: boolean);
+var
+  PT: TPoint2Df;
 begin
-  self.TraceVers(XX, YY, Drawn);
+  PT.setFrom(XX, YY);
+  self.TraceVers(PT, Drawn);
 end;
 procedure TCrossSectionDrawingContext.TraceCercle(const XX, YY: Double; const R: integer);
 var
@@ -422,19 +425,18 @@ var
   WU: Boolean;
   QStylePolygone: TStylePolygone;
 begin
-  AfficherMessage('Trace polygone 001');
-    if (DoUseStyles) then DefinePolygonStyle(MyPolygone.IDStylePolygone, QStylePolygone);
-    NB := High(MyPolygone.Vertexes);
-    if (Nb < 1) then Exit;
-    SetLength(PTSV, NB+1);
-    for i:=0 to NB do
-    begin
-      V := MyPolygone.Vertexes[i];
-      PTSV[i] := QGetCoordsPlan(V);
-    end;
-    self.CanvasBGRA.Polygon(PTSV);
-    self.CanvasBGRA.Polyline(PTSV);
-    SetLength(PTSV, 0);
+  if (DoUseStyles) then DefinePolygonStyle(MyPolygone.IDStylePolygone, QStylePolygone);
+  NB := High(MyPolygone.Vertexes);
+  if (Nb < 1) then Exit;
+  SetLength(PTSV, NB+1);
+  for i:=0 to NB do
+  begin
+    V := MyPolygone.Vertexes[i];
+    PTSV[i] := QGetCoordsPlan(V);
+  end;
+  self.CanvasBGRA.Polygon(PTSV);
+  self.CanvasBGRA.Polyline(PTSV);
+  SetLength(PTSV, 0);
 end;
 
 
@@ -527,7 +529,7 @@ end;
 
 procedure TCrossSectionDrawingContext.EndDrawing();
 begin
-  ;
+  pass;
 end;
 //******************************************************************************
 

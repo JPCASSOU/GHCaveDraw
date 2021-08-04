@@ -69,7 +69,6 @@ const MAX_SIZE_PARAM_ARRAY   = 128;
 type TGHStringArray      = array[0..MAX_SIZE_PARAM_ARRAY] of string;  // TStringArray est désormais un type de données de la FCL >3.0.2 . Remplacé par TGHStringArray
 type TGHShortStringArray = array[0 .. 7] of string;
 type TArrayIdxObjets     = array of Int64;
-type TArrayOfIdxGroupes  = array of TIDGroupeEntites;
 type TMotif              = array[0..7, 0..7] of byte; // motif 8x8 de remplissage
 type TArrayColors        = array of TColor;  // échelle de couleurs
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,12 +212,18 @@ type TZoomParameters = record
   procedure setFrom(const QIdx: integer; const QX1, QY1, QX2, QY2: double; const QCaption: string = '');
 end;
 
-type TPoint3Df = record
+type
+
+{ TPoint3Df }
+
+ TPoint3Df = record
   X: double;
   Y: double;
   Z: double;
-  procedure setFrom(const QX, QY, QZ: double);
+  procedure setFrom(const QX, QY, QZ: double); overload;
+  procedure setFrom(const QX, QY, QZ: string); overload;
   procedure Empty();
+  function DebugString(const QCaption: string = ''): string;
 end;
 type TPoint2Df = record
   X: double;
@@ -321,7 +326,6 @@ type TStyleLigne = record // pour  lignes
   DescStyle   : string;
   NameSVGStyle: string;
   SeuilVisibilite: TSeuilVisibilite;
-
   LineWidth   : integer;
   PrintLineWidth: double;
   LineColor   : TColor;
@@ -360,14 +364,17 @@ type TStyleSymboles = record
   Color       : TColor;
 end;
 
-
-
 // type de point de courbe
-type TVertexCourbe = record
+type
+
+{ TVertexCourbe }
+
+ TVertexCourbe = record
   IDStation      : TIDBaseStation;
   Offset         : TPoint3Df;
   TangGauche     : TPoint3Df;
   TangDroite     : TPoint3Df;
+  function DebugString(): string;
 end;
 type TCrossSectionVertexCourbe = record
   Position       : TPoint2Df;
@@ -380,6 +387,7 @@ type TVertexPolygon = record
   IDStation      : TIDBaseStation;
   Offset         : TPoint3Df;
 end;
+// Ne pas transformer en quasi-classe: débogage pénible ++++
 type TArrayVertexPolygon = array of TVertexPolygon;
 //*)
 // type d'arc de courbe
@@ -393,22 +401,47 @@ type TArcCourbe = record
   TangP2           : TPoint3Df;
 end;
 type TArrayArcsCourbes = array of TArcCourbe;
+// arcs de Bézier (différents des TArcCourbe)
+type TBezierArc = record
+  PT1    : TPoint2Df; // premier point
+  Tgt1   : TPoint2Df; // tangente
+  PT2    : TPoint2Df; // second point
+  Tgt2   : TPoint2Df; // tangente
+  Pas    : double;    // pas de t en m
+end;
+
 
 // TODO: Voir si on peut chaîner plusieurs courbes
 type
   pTCourbe = ^TCourbe;
+
+  { TCourbe }
+
   TCourbe = record
+  private
+
+  public
+  Arcs           : TArrayArcsCourbes;
   IDGroupe       : TIDGroupeEntites;
   IDStyleCourbe  : TNatureObjetCourbe;//integer; //TStyleCourbe;
   BoundingBox    : TBoundingBox;
-  Arcs           : TArrayArcsCourbes;
+
   LastModified   : TDateTime;      // date de modification
   Closed         : boolean;
   MarkToDelete   : boolean;
+  procedure Empty();
+  procedure setCapacity(const n: integer);
+  function  getNbArcs(): integer;
+  function  getArc(const Idx: integer): TArcCourbe;
+  procedure setArc(const Idx: integer; const A: TArcCourbe);
 end;
 type TArrayOfTCourbe = array of TCourbe;
 
-type TScrap = record
+type
+
+{ TScrap }
+
+ TScrap = record
   IDGroupe       : TIDGroupeEntites;
   Nom            : string;
   Couleur        : TColor;
@@ -416,19 +449,36 @@ type TScrap = record
   Area           : double;
   Perimeter      : double;
   BoundingBox    : TBoundingBox;
-  Sommets        : TArrayVertexPolygon;
+
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
+  VertexOrderedCounterClockWise: boolean;
+  Sommets        : TArrayVertexPolygon;
+  procedure Empty();
+  procedure setCapacity(const n: integer);
+  function  getNbVertex(): integer;
+  function  getVertex(const idx: integer): TVertexPolygon;
+  procedure putVertex(const idx: integer; const V: TVertexPolygon);
+  function  ReverseVertex(): boolean;
 end;
 type TPolygone = record
+
   IDGroupe       : TIDGroupeEntites;
   IDStylePolygone: TNatureObjetPolygone; //integer;
   BoundingBox    : TBoundingBox;
   Area           : double;
   Perimeter      : double;
-  Sommets        : TArrayVertexPolygon;
+
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
+  Sommets        : TArrayVertexPolygon;
+  VertexOrderedCounterClockWise: boolean;
+  procedure Empty();
+  procedure setCapacity(const n: integer);
+  function  getNbVertex(): integer;
+  function  getVertex(const idx: integer): TVertexPolygon;
+  procedure putVertex(const idx: integer; const V: TVertexPolygon);
+  function  ReverseVertex(): boolean;
 end;
 type TArrayOfTPolygone = array of TPolygone;
 // Nouveauté 2015: Polyligne (notamment pour les plans de carrières souterraines)
@@ -439,10 +489,18 @@ type TPolyLigne = record
   BoundingBox    : TBoundingBox;
   Area           : double;
   Perimeter      : double;
-  Sommets        : TArrayVertexPolygon;
+
   LastModified   : TDateTime;      // date de modification
   Closed         : boolean;
   MarkToDelete   : boolean;
+  VertexOrderedCounterClockWise: boolean;
+  Sommets        : TArrayVertexPolygon;
+  procedure Empty();
+  procedure setCapacity(const n: integer);
+  function  getNbVertex(): integer;
+  function  getVertex(const idx: integer): TVertexPolygon;
+  procedure putVertex(const idx: integer; const V: TVertexPolygon);
+  function  ReverseVertex(): boolean;
 end;
 type TArrayOfTPolyligne = array of TPolyLigne;
 
@@ -490,14 +548,7 @@ type TTextObject = record
   LastModified  : TDateTime;      // date de modification
   MarkToDelete  : boolean;
 end;
-// arcs de Bézier
-type TBezierArc = record
-  PT1    : TPoint2Df; // premier point
-  Tgt1   : TPoint2Df; // tangente
-  PT2    : TPoint2Df; // second point
-  Tgt2   : TPoint2Df; // tangente
-  Pas    : double;    // pas de t en m
-end;
+
 // objets images pour le layer d'aides au dessin
 // ne pas utiliser ce layer pour inclure des photos, qui sont du ressort de TSymbole
 type TImageObject = record
@@ -662,7 +713,7 @@ const
   {$ELSE}
   FORMAT_BASEPOINT = '%d';
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-  FMT_COORDS   = '%.2f' + #9 +'%.2f' + #9 + '%.2f';
+  FMT_COORDS   = '%s' + #9 +'%s' + #9 + '%s';
   FMT_BASE_STS = '   ' + FORMAT_BASEPOINT + #9 + '%s' + #9 +      // BP.IDStation   BP.Caption
                     '%d'+ #9 + '%d' + #9 +      // BP.TypeStation BP.Couleur
                     FMT_COORDS + #9 +           // BP.PosExtr0.X   BP.PosExtr0.Y  BP.PosExtr0.Z
@@ -725,8 +776,8 @@ const
   IMAGESSECTION      = 'images';
     IMAGE      = 'bitmap';
       FMT_IMAGE  = #9 + '%d' +
-                   #9 + '%.2f' + #9 + '%.2f' + //
-                   #9 + '%.2f' + #9 + '%.2f' + // PositionCoinsImage: TRect2Df
+                   #9 + '%s' + #9 + '%s' + //
+                   #9 + '%s' + #9 + '%s' + // PositionCoinsImage: TRect2Df
                    #9 + '%d' +                               // Opacite         : byte;
                    #9 + '%s' +                               // SrcFilename     : string;
                    #9 + '%s'                                 // Description     : string;
@@ -1053,7 +1104,248 @@ end;
 
 implementation
 uses
-  DGCDummyUnit;
+  DGCDummyUnit,
+  GeneralFunctions;
+
+{ TVertexCourbe }
+
+function TVertexCourbe.DebugString(): string;
+begin
+  Result := format('VertexCourbe ID = %d', [self.IDStation]);
+end;
+
+{ TCourbe }
+
+procedure TCourbe.Empty();
+begin
+  setlength(self.Arcs, 0);
+end;
+
+procedure TCourbe.setCapacity(const n: integer);
+begin
+  Setlength(self.Arcs, n);
+end;
+
+function TCourbe.getNbArcs(): integer;
+begin
+  result := Length(self.Arcs);
+end;
+
+function TCourbe.getArc(const Idx: integer): TArcCourbe;
+begin
+  Result := self.Arcs[Idx];
+end;
+
+procedure TCourbe.setArc(const Idx: integer; const A: TArcCourbe);
+begin
+  self.Arcs[Idx] := A;
+end;
+
+{ TScrap }
+
+procedure TScrap.Empty();
+begin
+  SetLength(self.Sommets, 0);
+end;
+
+procedure TScrap.setCapacity(const n: integer);
+begin
+  SetLength(self.Sommets, n);
+end;
+
+function TScrap.getNbVertex(): integer;
+begin
+  Result := length(self.Sommets);
+end;
+
+function TScrap.getVertex(const idx: integer): TVertexPolygon;
+begin
+  Result := self.Sommets[Idx];
+end;
+
+procedure TScrap.putVertex(const idx: integer; const V: TVertexPolygon);
+begin
+  self.Sommets[idx] := V;
+end;
+
+function TScrap.ReverseVertex(): boolean;
+begin
+  result := ReverseVertexesOfPoly(self.Sommets);
+end;
+
+
+{ TPolygone }
+
+procedure TPolygone.Empty();
+begin
+  SetLength(self.Sommets, 0);
+end;
+
+procedure TPolygone.setCapacity(const n: integer);
+begin
+  SetLength(self.Sommets, n);
+end;
+
+function TPolygone.getNbVertex(): integer;
+begin
+  Result := length(self.Sommets);
+end;
+
+function TPolygone.getVertex(const idx: integer): TVertexPolygon;
+begin
+    Result := self.Sommets[Idx];
+end;
+
+procedure TPolygone.putVertex(const idx: integer; const V: TVertexPolygon);
+begin
+  self.Sommets[idx] := V;
+end;
+
+function TPolygone.ReverseVertex(): boolean;
+begin
+  result := ReverseVertexesOfPoly(self.Sommets);
+end;
+
+{ TPolyLigne }
+
+procedure TPolyLigne.Empty();
+begin
+  SetLength(self.Sommets, 0);
+end;
+
+procedure TPolyLigne.setCapacity(const n: integer);
+begin
+  SetLength(self.Sommets, n);
+end;
+
+function TPolyLigne.getNbVertex(): integer;
+begin
+  Result := length(self.Sommets);
+end;
+
+function TPolyLigne.getVertex(const idx: integer): TVertexPolygon;
+begin
+  Result := self.Sommets[Idx];
+end;
+
+procedure TPolyLigne.putVertex(const idx: integer; const V: TVertexPolygon);
+begin
+  self.Sommets[idx] := V;
+end;
+
+function TPolyLigne.ReverseVertex(): boolean;
+begin
+  result := ReverseVertexesOfPoly(self.Sommets);
+end;
+
+
+
+{ TArrayOfIdxGroupes }
+
+procedure TArrayOfIdxGroupes.Empty();
+begin
+  SetLength(self.M, 0);
+end;
+
+procedure TArrayOfIdxGroupes.SetCapacity(const N: integer);
+begin
+  SetLength(self.M, N);
+end;
+
+procedure TArrayOfIdxGroupes.AddElement(const IDG: TIDGroupeEntites);
+var
+  n: Integer;
+begin
+  n := length(self.M);
+  SetLength(self.M, n+1);
+  self.M[n] := IDG;
+end;
+
+procedure TArrayOfIdxGroupes.SetElement(const Idx: integer; const IDG: TIDGroupeEntites);
+begin
+  self.M[Idx] := IDG;
+end;
+
+function TArrayOfIdxGroupes.GetElement(const Idx: integer): TIDGroupeEntites;
+begin
+  Result := self.M[Idx];
+end;
+
+function TArrayOfIdxGroupes.GetNbElements(): integer;
+begin
+  result := length(self.M);
+end;
+
+function TArrayOfIdxGroupes.fromString(const S: string): boolean;
+var
+  EWE: TStringArray;
+  i: Integer;
+  QIdx: Int64;
+begin
+  EWE := SplitEx(Trim(S), [';'], true);
+  self.Empty();
+  for i := 0 to High(EWE) do
+  begin
+    QIdx := StrToInt64Def(EWE[i], -1);
+    if (QIdx >= 0) then self.AddElement(QIdx);
+  end;
+end;
+
+function TArrayOfIdxGroupes.toString(): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 0 to High(self.M) do Result += Format('%d;',[self.M[i]]);
+end;
+function TArrayOfIdxGroupes.AddElementAndSort(const Idx: TIDGroupeEntites): boolean;
+var
+  i, n: Integer;
+  procedure QExchange(const n1, n2: integer);
+  var
+    tmp: TIDGroupeEntites;
+  begin
+    tmp := self.M[n1];
+    self.M[n1] := self.M[n2];
+    self.M[n2] := tmp;
+  end;
+  procedure QSort(const lidx, ridx: integer);
+  var
+    k, e, mid: integer;
+    Q1, Q2: TIDGroupeEntites;
+  begin
+    if (lidx >= ridx) then Exit;
+    mid := (lidx + ridx) div 2;
+    QExchange(lidx, ridx);
+    e:=lidx;
+    for k:=lidx+1 to ridx do
+    begin
+      Q1 := self.M[k];
+      Q2 := self.M[lidx];
+      if (Q1 < Q2)  then
+      begin
+        Inc(e);
+        QExchange(e, k);
+      end;
+    end;
+    QExchange(lidx, e);
+    QSort(lidx, e-1);
+    QSort(e+1, ridx);
+  end;
+begin
+  Result := false;
+  if (Idx < 0) then exit;
+  // vérifier si le groupe existe déjà
+  n := Length(self.M);
+  for i := 0 to n-1 do if (Idx = self.M[i]) then exit;
+  try
+    self.AddElement(Idx);
+    QSort(0, High(self.M));
+    Result := True;
+  except
+
+  end;
+end;
 
 { TDroite }
 
@@ -1246,11 +1538,24 @@ begin
   self.Z := QZ;
 end;
 
+procedure TPoint3Df.setFrom(const QX, QY, QZ: string);
+begin
+  self.X := ConvertirEnNombreReel(QX, 0.00);
+  self.Y := ConvertirEnNombreReel(QY, 0.00);
+  self.Z := ConvertirEnNombreReel(QZ, 0.00);
+
+end;
+
 procedure TPoint3Df.Empty();
 begin
   self.X := 0.00;
   self.Y := 0.00;
   self.Z := 0.00;
+end;
+
+function TPoint3Df.DebugString(const QCaption: string = ''): string;
+begin
+  Result := Format('%s: %.3f, %.3f, %.3f', [QCaption, self.X, self.Y, self.Z]);
 end;
 
 end.

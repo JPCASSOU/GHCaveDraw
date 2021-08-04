@@ -21,9 +21,7 @@ type TPointOfInterest = record
   Serie         : integer;
   Point         : integer;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-  X             : double;
-  Y             : double;
-  Z             : double;
+  Position      : TPoint3Df;
   IDTerrain     : string;
   Description   : string;
 end;
@@ -108,13 +106,13 @@ var
    lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, MyPOI.IDTerrain);
    HS := hcColonnes.Sections.Items[2];  // X
    DessineFiletColonne(HS.Left - Q4);
-   lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%.2n', [MyPOI.X]));  //FormatterNombreOOo(MyPOI.X, 0, false));
+   lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%.2n', [MyPOI.Position.X]));  //FormatterNombreOOo(MyPOI.X, 0, false));
    HS := hcColonnes.Sections.Items[3];  // Y
    DessineFiletColonne(HS.Left - Q4);
-   lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%.2n', [MyPOI.Y]));  //FormatterNombreOOo(MyPOI.Y, 0, false));
+   lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%.2n', [MyPOI.Position.Y]));  //FormatterNombreOOo(MyPOI.Y, 0, false));
    HS := hcColonnes.Sections.Items[4];  // Z
    DessineFiletColonne(HS.Left - Q4);
-   lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%.2n', [MyPOI.Z]));  //FormatterNombreOOo(MyPOI.Z, 0, false));
+   lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%.2n', [MyPOI.Position.Z]));  //FormatterNombreOOo(MyPOI.Z, 0, false));
    HS := hcColonnes.Sections.Items[5];  // Descro
    DessineFiletColonne(HS.Left - Q4);
    lsbPOI.Canvas.TextOut(HS.Left + 4, ARect.Top,  MyPOI.Description);
@@ -158,9 +156,9 @@ begin
      EWE   += Format('%d.%d', [MyPOI.Serie, MyPOI.Point]) + TAB +
      {$endif TIDBASEPOINT_AS_TEXT}
                MyPOI.IDTerrain + TAB +
-               FormatterNombreOOo(MyPOI.X, 3, false) + TAB +
-               FormatterNombreOOo(MyPOI.Y, 3, false) + TAB +
-               FormatterNombreOOo(MyPOI.Z, 3, false) + TAB +
+               FormatterNombreOOo(MyPOI.Position.X, 3, false) + TAB +
+               FormatterNombreOOo(MyPOI.Position.Y, 3, false) + TAB +
+               FormatterNombreOOo(MyPOI.Position.Z, 3, false) + TAB +
                MyPOI.Description +
                #13#10;
     end;
@@ -225,9 +223,7 @@ begin
             MyPOI.IDTerrain := EWE.aIDTerrain;
             {$ENDIF TIDBASEPOINT_AS_TEXT}
             MyPOI.Description := MySymbole.TagTexte;
-            MyPOI.X := BP.PosStation.X;
-            MyPOI.Y := BP.PosStation.Y;
-            MyPOI.Z := BP.PosStation.Z;
+            MyPOI.Position := BP.PosStation;
             FListedesPOI.AddElement(MyPOI);
           end;
         end;

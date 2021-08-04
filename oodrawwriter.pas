@@ -1280,7 +1280,7 @@ var
    BBCy2 := -BIGMAX;
    for A := 0 to High(Sommets) do
    begin
-     MonPoint := Sommets[A];
+     MonPoint := Sommets[A]; // Ne pas toucher
      Miou(MonPoint.X, MonPoint.y);
    end;
    // Etape 2: Paramétrage des viexbox
@@ -1291,7 +1291,7 @@ var
    // Etape 3: Translation
    for A := 0 to High(Sommets) do
    begin
-     MonPoint := Sommets[A];
+     MonPoint := Sommets[A]; // Ne pas toucher
      MonPoint.X    := MonPoint.X - ViewBoxX;
      MonPoint.Y    := MonPoint.Y - ViewBoxY;
      Sommets[A] := MonPoint;
@@ -1315,7 +1315,7 @@ begin
    if (QFilled) then coords := 'M 0 0 ZM '
                 else coords := 'M 0 0 M ';
   //coords:='M 0 0 M';
-  for i := 0 to High(Sommets) do
+  for i := 0 to High(Sommets) do // Ne pas toucher
   begin
     EWE := Sommets[i];
     coords += Format(FMT_2V_CMM, [EWE.X, EWE.Y]);

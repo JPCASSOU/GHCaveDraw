@@ -1,5 +1,5 @@
 unit UnitAnnotations;
-
+{$ERROR Inutilisé}
 interface
 
 uses
@@ -242,6 +242,7 @@ begin
         AN.X               := ConvertirEnNombreReel(LA[FA_COL_BASEPT_X],0.00);
         AN.Y               := ConvertirEnNombreReel(LA[FA_COL_BASEPT_Y],0.00);
         AN.Z               := ConvertirEnNombreReel(LA[FA_COL_BASEPT_Z],0.00);
+
         AN.dx              := ConvertirEnNombreReel(LA[FA_COL_BASEPT_OF_X],0.00);
         AN.dy              := ConvertirEnNombreReel(LA[FA_COL_BASEPT_OF_Y],0.00);
         AN.dz              := ConvertirEnNombreReel(LA[FA_COL_BASEPT_OF_Z],0.00);

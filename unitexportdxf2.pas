@@ -247,6 +247,12 @@ function TDXFExport2.BeginDXF(): boolean;
 var
   PositionPoint0: TDXFPoint3Df;
   //'$DIMASZ' '$DIMTSZ' '$DIMGAP'  '$DIMEXO'  '$DIMDLI' '$DIMDLE' '$DIMEXE' '$DIMTXT'
+  procedure WrtAcadVer();
+  begin
+    WriteDXFIdxKeyStringValue(FpFilename,   9, '$ACADVER');
+    WriteDXFIdxKeyStringValue(FpFilename,   1, ACAD_VERSION);
+  end;
+
   procedure WrtDimFloat(const DVAR: string; const DV: double);
   begin
     WriteDXFIdxKeyStringValue(FpFilename,   9, DVAR);
@@ -283,10 +289,11 @@ begin
   AssignFile(FpFilename, FFileName);
   try
     ReWrite(FpFilename);
-    WriteDXFIdxKeyStringValue(FpFilename,   0, 'SECTION');
-    WriteDXFIdxKeyStringValue(FpFilename,   2, 'HEADER');
     WriteDXFIdxKeyStringValue(FpFilename, 999, 'Generator: GHCaveDraw');
     WriteDXFIdxKeyStringValue(FpFilename, 999, FDocTitle);
+    WriteDXFIdxKeyStringValue(FpFilename,   0, 'SECTION');
+    WriteDXFIdxKeyStringValue(FpFilename,   2, 'HEADER');
+    WrtAcadVer();
     WrtDimFloat('$DIMASZ', 0.1800);
     WrtDimFloat('$DIMTSZ', 0.0 );  {DIMTSZ Specifies the size of oblique strokes drawn instead of arrowheads for linear,  radius, and diameter dimensioning  0 = No ticks}
     WrtDimFloat('$DIMGAP', 0.625); {0.6250 = metric} {imperial= 0.0900}
@@ -314,8 +321,8 @@ begin
     PositionPoint0.toDXF(FpFilename);
     WrtLimVar('$EXTMIN', FCoinBasGauche.X, FCoinBasGauche.Y);
     WrtLimVar('$EXTMAX', FCoinHautDroit.X, FCoinHautDroit.Y);
-    WrtLimVar('$LINMIN', FCoinBasGauche.X, FCoinBasGauche.Y);
-    WrtLimVar('$LINMAX', FCoinHautDroit.X, FCoinHautDroit.Y);
+    //WrtLimVar('$LINMIN', FCoinBasGauche.X, FCoinBasGauche.Y);
+    //WrtLimVar('$LINMAX', FCoinHautDroit.X, FCoinHautDroit.Y);
     WriteDXFIdxKeyStringValue(FpFilename,   0, 'ENDSEC');
     /// Les tables
     GenererTables();

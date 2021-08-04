@@ -33,6 +33,7 @@ uses
 // à utiliser pour une meilleure lecture de certains algos
 procedure pass; inline;
 // affichages de contrôle
+procedure ClearConsoleErreur();
 procedure AfficherMessage(const Msg: string);
 procedure AfficherMessageErreur(const Msg: string);
 procedure AfficherMessageErreurBasepointNotFound(const BS: TIDBaseStation);
@@ -103,8 +104,9 @@ function  ArcTan2InDegrees(const x, y: double): double;                         
 function  ProposerEquidistance(const C1, C2: TPoint3Df): Double;                                      // Suggestion d'une équidistance en fonction de l'etendue totale du réseau
 
 // formatage de nombres
-function ensureConvertLongOrLatToXML(const Value: extended): string;                                  // formatage des nombres pour KML et OSM
-function ensureConvertAltitudeToXML(const Value: extended): string;
+// formatage des nombres pour les formats d'échanges imposant le point décimal
+function FormatterNombreWithDotDecimal(const Value: double; const NbDecs: integer = 3; const IgnoreNulls: boolean = false): string;
+
 // convertir en nombre des valeurs de type 123 456 789.10 ou 1245-45785
 function ConvertirEnNombreReel(const S: string; const Default: double): double;
 // échappement des caractères spéciaux pour MySQL et XML
@@ -205,9 +207,9 @@ function GetLlanfairPG(): string;
 // formattage de nombres
 function FormatterNombreOOo(const Value: extended; const NbDecs: integer; const IgnoreNulls: boolean): string;
 // extraction de la liste des groupes d'une chaine
-function StrToArrayOfIdxGroupes(const S: string): TArrayOfIdxGroupes;
-function ArrayOfIdxGroupesToStr(const A: TArrayOfIdxGroupes): string;
-function AddToArrayOfIdxGroupes(var A: TArrayOfIdxGroupes; const Idx: TIDGroupeEntites): boolean;
+//function StrToArrayOfIdxGroupes(const S: string): TArrayOfIdxGroupes;
+//function ArrayOfIdxGroupesToStr(const A: TArrayOfIdxGroupes): string;
+//function AddToArrayOfIdxGroupes(var A: TArrayOfIdxGroupes; const Idx: TIDGroupeEntites): boolean;
 
 function CompareIDStations(const I1, I2: TIDBaseStation): boolean;
 // Station valide (= n'est pas une visée radiante)
@@ -215,6 +217,9 @@ function IsValidBaseStation(const BS: TBaseStation): boolean;
 
 // distance sur grand cercle entre deux points (Lon, Lat)
 function HaversineDist(const Lat1, Lon1, Lat2, Lon2:double):double;
+
+// Strip des vertex d'un polygone, polyligne ou scrap
+function ReverseVertexesOfPoly(var P: TArrayVertexPolygon): boolean;
 //******************************************************************************
 //******************************************************************************
 implementation
@@ -225,6 +230,26 @@ uses
 uses
   frmJournal;
 {$ENDIF}
+procedure pass();
+begin
+  ;;
+end;
+
+procedure ClearConsoleErreur();
+begin
+  {$IFDEF MSWINDOWS}
+    {$IFDEF OPENCAVEMAP_ADMIN}
+    pass;
+    {$ELSE}
+    dlgProcessing.memoMsgsErreur.Clear;
+    {$ENDIF} // {$IFDEF MSWINDOWS}
+  {$ENDIF}
+  {$IFDEF LINUX}
+     pass;
+  {$ENDIF}
+
+end;
+
 procedure AfficherMessage(const Msg: string);
 begin
   {$IFDEF MSWINDOWS}
@@ -791,7 +816,6 @@ var drmin,dgmin,dbmin,
     res    : integer;
 begin
     Result:=0;
-
     dRmin := 99999999;
     dGmin := 99999999;
     dBmin := 99999999;
@@ -816,14 +840,14 @@ begin
     end;
 end;
 
-function Acad2RGB(const n : integer) : tColor; // palette par défaut d'Autocad
+function Acad2RGB(const n : integer) : TColor; // palette par défaut d'Autocad
 var r,g,b,
     c,d,u : integer;
     C1 : Tcolor;  // RGB(r, g ,b)
-    const StandCol : array[0..9] of tcolor =
+    const StandCol : array[0..9] of TColor =
         (clBlack ,clRed,$0001E1F3{clYellow},$0000C800{clLime},$00FDE302{clAqua},
          clBlue,clFuchsia,clBlack,clGray,clLtGray);
-    const FullPalete : array[0..23] of tcolor =
+    const FullPalete : array[0..23] of TColor =
         ($0000FF,$0040FF,$0080FF,$00C0FF,
          $00FFFF,$00FFC0,$00FF80,$00FF40,
          $00FF00,$40FF00,$80FF00,$C0FF00,
@@ -1093,18 +1117,19 @@ function KMLColor(const R, G, B, A: byte): string; inline;
 begin
   Result := Format('<color>%.2X%.2X%.2X%.2X</color>',[A, B, G, R]);
 end;
-// formatage des nombres pour KML et OSM
-function ensureConvertLongOrLatToXML(const Value: extended): string;
+// formatage des nombres pour les formats d'échanges imposant le point décimal
+function FormatterNombreWithDotDecimal(const Value: double; const NbDecs: integer = 3; const IgnoreNulls: boolean = false): string;
+var
+  EWE: String;
 begin
-  Result := Format('%.10f', [Value]);
-  Result := StringReplace(Result, DefaultFormatSettings.DecimalSeparator, '.', [rfReplaceAll, rfIgnoreCase]);
+  EWE := Format('%%.%df', [NbDecs]);
+  Result := Format(EWE, [Value]);
+  Result := StringReplace(Result, DefaultFormatSettings.DecimalSeparator, '.', [rfReplaceAll]);
 end;
 // formatage des nombres pour KML et OSM
-function ensureConvertAltitudeToXML(const Value: extended): string;
-begin
-  Result := Format('%.2f', [Value]);
-  Result := StringReplace(Result, DefaultFormatSettings.DecimalSeparator, '.', [rfReplaceAll, rfIgnoreCase]);
-end;
+
+
+
 // convertir en nombre des valeurs de type 123 456 789.10 ou 1245-45785
 function ConvertirEnNombreReel(const S: string; const Default: double): double;
 var
@@ -1138,54 +1163,7 @@ begin
   end;
 end;
 
-// convertir en nombre des valeurs de type 123 456 789.10 ou 1245-45785
-(*
-function ConvertirEnNombreReel(const S: string; const Default: Extended): Extended;
-var
-  st: String;
-  m1: double;
-  tt: string;
-  i : integer;
-  c : char;
-begin
-  try
-    m1 := 1.00;
-    // on nettoie la chaîne
-    st := Trim(s);
-    // on vire les guillemets
-    st := StringReplace(st, '"', ' ', [rfIgnoreCase, rfReplaceAll]);
-    st := Trim(S);
-    // on vire l'apostrophe de début
-    if (st[1] = '''') then system.Delete(st, 1, 1);
-    // sauvegarde du signe
-    if (st[1] = '-') then
-    begin
-      m1 := -1;
-      System.Delete(st, 1, 1);
-    end;
-    // on vire le '+'
-    if (st[1] = '+') then System.Delete(st, 1, 1);
-    // balayage avec nettoyage et remplacement du point décimal
-    tt := '';
-    for i := 1 to Length(st) do
-    begin
-      c := st[i];
-      if (c in ['0' .. '9', '.', ',']) then
-      begin
-        //if (c = DefaultFormatSettings.ThousandSeparator) then c := ''; // on vire le séparateur de milliers
-        if (c = ',') then c := DefaultFormatSettings.DecimalSeparator;
-        if (c = '.') then c := DefaultFormatSettings.DecimalSeparator;
-        tt := tt + c;
-      end;
-    end;
-    //AfficherMessage(tt);
-    // on ne retient que les chiffres
-    result := StrToFloat(tt) * m1;
-  except
-    Result := Default;
-  end;
-end;
-//*)
+
 // choix des styles d'objets (SVG, ODG)
 function GetDescStylePolygone(const SP: TNatureObjetPolygone): string; inline;
 begin
@@ -1391,10 +1369,6 @@ begin
   result := GetGHCaveDrawDirectory() + 'Icones' + PathDelim;
 end;
 
-procedure pass();
-begin
-  ;
-end;
 
 function GetGHCaveDrawVersionAndDateBuild(): string;
 var
@@ -1505,22 +1479,36 @@ begin
                        [BP.IDStation,
                         BP.IDTerrain,
                         BP.TypeStation, BP.Couleur,
-                        BP.PosExtr0.X,  BP.PosExtr0.Y, BP.PosExtr0.Z,
-                        BP.PosStation.X, BP.PosStation.Y, BP.PosStation.Z,
-                        BP.PosPG.X, BP.PosPG.Y, BP.PosPG.Z,
-                        BP.PosPD.X, BP.PosPD.Y, BP.PosPD.Z,
+                          FormatterNombreWithDotDecimal(BP.PosExtr0.X    , 2),
+                          FormatterNombreWithDotDecimal(BP.PosExtr0.Y    , 2),
+                          FormatterNombreWithDotDecimal(BP.PosExtr0.Z    , 2),
+                          FormatterNombreWithDotDecimal(BP.PosStation.X  , 2),
+                          FormatterNombreWithDotDecimal(BP.PosStation.Y  , 2),
+                          FormatterNombreWithDotDecimal(BP.PosStation.Z  , 2),
+                          FormatterNombreWithDotDecimal(BP.PosPG.X       , 2),
+                          FormatterNombreWithDotDecimal(BP.PosPG.Y       , 2),
+                          FormatterNombreWithDotDecimal(BP.PosPG.Z       , 2),
+                          FormatterNombreWithDotDecimal(BP.PosPD.X       , 2),
+                          FormatterNombreWithDotDecimal(BP.PosPD.Y       , 2),
+                          FormatterNombreWithDotDecimal(BP.PosPD.Z       , 2),
                         BP.IDTerrain
                        ]));
 end;
 function GenererLigneSimpleLigne(const QIdx: integer; const L: TSimpleLigne): string;
 begin
   Result := Format('    line '+ #9 + '%d' + #9 + '%d' + #9 + '%d' + //ID, Groupe, Style
-                                #9 + FORMAT_BASEPOINT + #9 + '%.2f' + #9 + '%.2f' + #9 + '%.2f' +
-                                #9 + FORMAT_BASEPOINT + #9 + '%.2f' + #9 + '%.2f' + #9 + '%.2f' +
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' +
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' +
                                 #9 + '%s',
                        [QIdx, L.IDGroupe, L.IDStyleLigne,
-                        L.IDBaseStExt1, L.OffsetExtr1.X, L.OffsetExtr1.Y, L.OffsetExtr1.Z,
-                        L.IDBaseStExt2, L.OffsetExtr2.X, L.OffsetExtr2.Y, L.OffsetExtr2.Z,
+                        L.IDBaseStExt1,
+                          FormatterNombreWithDotDecimal(L.OffsetExtr1.X, 2),
+                          FormatterNombreWithDotDecimal(L.OffsetExtr1.Y, 2),
+                          FormatterNombreWithDotDecimal(L.OffsetExtr1.Z, 2),
+                        L.IDBaseStExt2,
+                          FormatterNombreWithDotDecimal(L.OffsetExtr2.X, 2),
+                          FormatterNombreWithDotDecimal(L.OffsetExtr2.Y, 2),
+                          FormatterNombreWithDotDecimal(L.OffsetExtr2.Z, 2),
                         DateTimeToStr(Now)
                        ]);
 end;
@@ -1528,13 +1516,18 @@ end;
 function GenererLigneSymbole(const QIdx: integer; const Obj: TSymbole): string;
 begin
   Result := Format('    ponctualobject '+ #9 + '%d' + #9 + '%d' + #9 + '%d' +  #9 + '%d' + //IDXGroupe, TypeObject, Couleur,
-                                #9 + FORMAT_BASEPOINT + #9 + '%.2f' + #9 + '%.2f' + #9 + '%.2f' + // IDBase, Offset
-                                #9 + '%.2f' + #9 + '%.2f' + #9 + '%.2f' +
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' + // IDBase, Offset
+                                #9 + '%s' + #9 + '%s' + #9 + '%s' +
                                 #9 +'%s' + // texte
                                 #9 + '%d' + #9 + '%d' + #9 + '%s',
                        [QIdx, Obj.IDGroupe, Obj.TypeObject, Obj.Couleur,
-                        Obj.IDBaseStation, Obj.Offset.X, Obj.Offset.Y, Obj.Offset.Z,
-                        Obj.AngleRot, Obj.ScaleX, Obj.ScaleY,
+                        Obj.IDBaseStation,
+                          FormatterNombreWithDotDecimal(Obj.Offset.X, 2),
+                          FormatterNombreWithDotDecimal(Obj.Offset.Y, 2),
+                          FormatterNombreWithDotDecimal(Obj.Offset.Z, 2),
+                        FormatterNombreWithDotDecimal(Obj.AngleRot , 2),
+                        FormatterNombreWithDotDecimal(Obj.ScaleX   , 2),
+                        FormatterNombreWithDotDecimal(Obj.ScaleY   , 2),
                         Obj.TagTexte,
                         Obj.UnTag, IIF(Obj.PhotoDisplayed, 1, 0),
                         DateTimeToStr(Now)
@@ -1543,10 +1536,13 @@ end;
 function GenererLigneTexte(const QIdx: integer; const Obj: TTextObject): string;
 begin
   Result := Format('    text '+ #9 + '%d' + #9 + '%d' + #9 + '%d' + //ID, Groupe, Style
-                                #9 + FORMAT_BASEPOINT + #9 + '%.2f' + #9 + '%.2f' + #9 + '%.2f' +
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' +
                                 #9 + '%d' + #9 + '%d'+ #9 + '%s' + #9 + '%s',
                        [QIdx, Obj.IDGroupe, Obj.IDStyleTexte,
-                        Obj.IDBaseSt, Obj.Offset.X, Obj.Offset.Y, Obj.Offset.Z,
+                        Obj.IDBaseSt,
+                          FormatterNombreWithDotDecimal(Obj.Offset.X, 2),
+                          FormatterNombreWithDotDecimal(Obj.Offset.Y, 2),
+                          FormatterNombreWithDotDecimal(Obj.Offset.Z, 2),
                         Obj.Alignment, Obj.MaxLength, Obj.Text,
                         DateTimeToStr(Now)
                        ])
@@ -1557,11 +1553,19 @@ function GenererLigneArcCourbe(const QIdx: integer; const A: TArcCourbe): string
 begin
   Result := Format(ENTITYARCBEZIER,
                         [A.IDStationP1,
-                         A.OffsetP1.X, A.OffsetP1.Y, A.OffsetP1.Z,
-                         A.TangP1.X, A.TangP1.Y, -1.00,
+                          FormatterNombreWithDotDecimal(A.OffsetP1.X, 2),
+                          FormatterNombreWithDotDecimal(A.OffsetP1.Y, 2),
+                          FormatterNombreWithDotDecimal(A.OffsetP1.Z, 2),
+                         FormatterNombreWithDotDecimal(A.TangP1.X, 2),
+                         FormatterNombreWithDotDecimal(A.TangP1.Y, 2),
+                         FormatterNombreWithDotDecimal(-1.00, 2),
                          A.IDStationP2,
-                         A.OffsetP2.X, A.OffsetP2.Y, A.OffsetP2.Z,
-                         A.TangP2.X, A.TangP2.Y, -2.00
+                          FormatterNombreWithDotDecimal(A.OffsetP2.X, 2),
+                          FormatterNombreWithDotDecimal(A.OffsetP2.Y, 2),
+                          FormatterNombreWithDotDecimal(A.OffsetP2.Z, 2),
+                         FormatterNombreWithDotDecimal(A.TangP2.X, 2),
+                         FormatterNombreWithDotDecimal(A.TangP2.Y, 2),
+                         FormatterNombreWithDotDecimal(-2.00, 2)
                         ]);
 end;
 
@@ -1577,9 +1581,9 @@ begin
                          GRP.IDGroupeEntites,
                          GRP.NomGroupe,
                          GRP.CouleurGroupe,
-                         GRP.Decalage.X,
-                         GRP.Decalage.Y,
-                         GRP.Decalage.Z,
+                         FormatterNombreWithDotDecimal(GRP.Decalage.X, 2),
+                         FormatterNombreWithDotDecimal(GRP.Decalage.Y, 2),
+                         FormatterNombreWithDotDecimal(GRP.Decalage.Z, 2),
                          0,
                          DateTimeToStr(GRP.DateLastModif),
                          IIF(GRP.DecalageActif, 1, 0),
@@ -1591,7 +1595,9 @@ function GenererLigneVertexPolygon(const QIdx: integer; const V: TVertexPolygon)
 begin
   Result := Format(ENTITYVERTEXPOLYGON,
                         [V.IDStation,
-                         V.Offset.X, V.Offset.Y, V.Offset.Z
+                         FormatterNombreWithDotDecimal(V.Offset.X, 2),
+                         FormatterNombreWithDotDecimal(V.Offset.Y, 2),
+                         FormatterNombreWithDotDecimal(V.Offset.Z, 2)
                         ]);
 end;
 function GenererLigneEnteteScrap(const QIdx: integer; const S: TScrap): string;
@@ -1728,81 +1734,6 @@ begin
   Result := StringReplace(Result, DefaultFormatSettings.DecimalSeparator, ',', [rfReplaceAll, rfIgnoreCase]);
   if (IgnoreNulls and SameValue(Value, 0)) then Result := '';
 end;
-function StrToArrayOfIdxGroupes(const S: string): TArrayOfIdxGroupes;
-var
-  EWE: TStringArray;
-  i: Integer;
-  QIdx: LongInt;
-begin
-  EWE := SplitEx(Trim(S), [';'], true);
-  Setlength(Result, 0);
-  for i := 0 to High(EWE) do
-  begin
-    QIdx := StrToIntDef(EWE[i], -1);
-    if (QIdx >= 0) then
-    begin
-      Setlength(Result, Length(Result) + 1);
-      Result[High(Result)] := QIdx;
-    end;
-  end;
-end;
-function ArrayOfIdxGroupesToStr(const A: TArrayOfIdxGroupes): string;
-var
-  i: Integer;
-begin
-  Result := '';
-  for i := 0 to High(A) do Result += Format('%d;',[A[i]]);
-end;
-
-function AddToArrayOfIdxGroupes(var A: TArrayOfIdxGroupes; const Idx: TIDGroupeEntites): boolean;
-var
-  i, n: Integer;
-  procedure QExchange(const n1, n2: integer);
-  var
-    tmp: TIDGroupeEntites;
-  begin
-    tmp := A[n1];
-    A[n1] := A[n2];
-    A[n2] := tmp;
-  end;
-  procedure QSort(const lidx, ridx: integer);
-  var
-    k, e, mid: integer;
-    Q1, Q2: TIDGroupeEntites;
-  begin
-    if (lidx >= ridx) then Exit;
-    mid := (lidx + ridx) div 2;
-    QExchange(lidx, ridx);
-    e:=lidx;
-    for k:=lidx+1 to ridx do
-    begin
-      Q1 := A[k];
-      Q2 := A[lidx];
-      if (Q1 < Q2)  then
-      begin
-        Inc(e);
-        QExchange(e, k);
-      end;
-    end;
-    QExchange(lidx, e);
-    QSort(lidx, e-1);
-    QSort(e+1, ridx);
-  end;
-begin
-  Result := false;
-  if (Idx < 0) then exit;
-  // vérifier si le groupe existe déjà
-  n := Length(A);
-  for i := 0 to n-1 do if (Idx = A[i]) then exit;
-  try
-    SetLength(A, n + 1);
-    A[High(A)] := Idx;
-    QSort(0, High(A));
-    Result := True;
-  except
-
-  end;
-end;
 
 function CompareIDStations(const I1, I2: TIDBaseStation): boolean;
 begin
@@ -1835,6 +1766,27 @@ begin
   dx     := cos(QLat1) * cos(QLon1) - cos(QLon2);
   dy     := sin(QLat1) * cos(QLon1);
   Result := arcsin(sqrt(sqr(dx) + sqr(dy) + sqr(dz)) / 2) * diameter;
+end;
+
+// Strip des vertex d'un polygone, polyligne ou scrap
+function ReverseVertexesOfPoly(var P: TArrayVertexPolygon): boolean;
+var
+  n   , i: integer;
+  tmp : TArrayVertexPolygon;
+begin
+  result := false;
+  n := length(P);
+  if (n = 0) then exit(false);
+  if (n = 1) then exit(true); // un seul élément = on sort
+  SetLength(tmp, n);
+  try
+    n := High(P);
+    for i := 0 to n do tmp[n - i] := P[i];
+    for i := 0 to n do P[i] := tmp[i];
+    result := True;
+  finally
+    SetLength(tmp, 0);
+  end;
 end;
 
 

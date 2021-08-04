@@ -117,10 +117,10 @@ var
     ST := GetStyleCourbe(Ord(C.IDStyleCourbe));
     AfficherMessageErreur(Format('ExporterCourbe: %d',[C.IDGroupe]));
     MySVGCanvas.BeginListeBezierArcs();
-      NbArcs := Length(C.Arcs);
+      NbArcs := C.getNbArcs(); //Length(C.Arcs);
       for i := 0 to NbArcs - 1 do
       begin
-        A := C.Arcs[i];
+        A := C.getArc(i); //C.Arcs[i];
          if (GetBasePointByIndex(A.IDStationP1, BS1) AND
              GetBasePointByIndex(A.IDStationP2, BS2)) then
          begin
@@ -163,7 +163,7 @@ var
     MOTIF_SABLE   = 'pat_sand';
     MOTIF_GALETS  = 'pat_galets';
     MOTIF_EBOULIS = 'pat_eboulis';
-    FORMAT_STYLE = '    .%s {stroke:%s; stroke-width:%.2f; fill:%s}';
+    FORMAT_STYLE = '    .%s {stroke:%s; stroke-width:%s; fill:%s}';
   var
     i   : integer;
     Qc  : TColor;
@@ -211,8 +211,8 @@ var
                                             clSilver, 255, bsSolid,
                                             DEFAULT_FONT_NAME, 2.50, clBlack, 255, [], 'Regle gradu');
     // style des marqueurs de stations
-    MySVGCanvas.WriteVerbatimLine(Format(FORMAT_STYLE, [SVG_NAME_MARQUE_STATION_FILL       , RGB2HTMLColor(clBlack)  , 0.01, RGB2HTMLColor(clYellow)]));
-    MySVGCanvas.WriteVerbatimLine(Format(FORMAT_STYLE, [SVG_NAME_MARQUE_STATION_CENTREFILL , RGB2HTMLColor(clBlack)  , 0.02, RGB2HTMLColor(clRed)]));
+    MySVGCanvas.WriteVerbatimLine(Format(FORMAT_STYLE, [SVG_NAME_MARQUE_STATION_FILL       , RGB2HTMLColor(clBlack)  , FormatterNombreWithDotDecimal(0.01, 2), RGB2HTMLColor(clYellow)]));
+    MySVGCanvas.WriteVerbatimLine(Format(FORMAT_STYLE, [SVG_NAME_MARQUE_STATION_CENTREFILL , RGB2HTMLColor(clBlack)  , FormatterNombreWithDotDecimal(0.02, 2), RGB2HTMLColor(clRed)]));
     // polygonales
     //MySVGCanvas.WriteVerbatimLine('     /* Styles de lignes de la polygonale*/');
     MySVGCanvas.WriteStyleLinePolygoneTexte(SVG_NAME_POLYGONALE_CENTERLINE,

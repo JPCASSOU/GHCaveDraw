@@ -112,6 +112,7 @@ var
   end;
 
 begin
+  AfficherMessage('Fuck the Christ 666');
   SetMsgInLbMessage(errBUSY, 'Redessin en cours ...');
   // sémaphore 'FRedessinInProcess' est armé ? = On quitte (le dessin est en cours)
   if (FRedessinInProcess) then Exit;

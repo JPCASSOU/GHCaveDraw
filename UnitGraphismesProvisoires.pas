@@ -19,8 +19,27 @@ uses
   , GeneralFunctions
   , UnitDocDessin
   ;
+type
+
+{ TSquarredSegment }
+
+ TSquarredSegment = record
+  Extr0   : TPoint3Df;
+  Extr1   : TPoint3Df;
+  Longueur: double;
+  Ratio   : double;  // longueur du segment / longueur polyligne
+  Cap     : double;
+  procedure CalcCap();
+  procedure CalcLongueur();
+  procedure CalcRatioOfLongueur(const L: double);
+
+end;
 // structure provisoire de stockage des courbes et polygones
-type TCourbePolygoneProvisoire = class(TListeSimple<TVertexCourbe>)
+type
+
+{ TCourbePolygoneProvisoire }
+
+ TCourbePolygoneProvisoire = class(TListeSimple<TVertexCourbe>)
      procedure ClearVertex(); inline;
      procedure AddVertex(const V : TVertexCourbe); inline;
      procedure InsertVertex(const Idx: integer; const V: TVertexCourbe); inline;
@@ -76,6 +95,7 @@ type TCourbePolygoneProvisoire = class(TListeSimple<TVertexCourbe>)
      //function FissionnerCourbe(const IdxPt: integer; out S1, S2: TCourbe): boolean;
      //function FissionnerPolyligne(const IdxPt: integer; out S1, S2: TPolyLigne): boolean;
      function FusionnerTArrayPoints2Df(const S1: TArrayVertexCourbe): boolean;
+     function SquarrerPoly(): boolean;
    private
      FDocDessin   : TDocumentDessin; // pour les points de base
      FMyScrap     : TScrap;
@@ -139,6 +159,7 @@ function PurgerPolyligne(const FD: TDocumentDessin; var P: TPolyLigne): boolean;
 
 
 implementation
+uses DGCDummyUnit;
 //------------------------------------------------------------------------------
 function PurgerPolygone(const FD: TDocumentDessin; var P: TPolygone): boolean;
 var
@@ -201,6 +222,26 @@ begin
   finally
     FreeAndNil(CP);//     CP.Free;
   end;
+end;
+
+{ TSquarredSegment }
+
+procedure TSquarredSegment.CalcCap();
+begin
+  self.Cap := Arctan2(self.Extr1.Y - self.Extr0.Y,
+                      self.Extr1.X - self.Extr0.X);
+end;
+
+procedure TSquarredSegment.CalcLongueur();
+begin
+  self.Longueur := Hypot3D(self.Extr1.X - self.Extr0.X,
+                           self.Extr1.Y - self.Extr0.Y,
+                           self.Extr1.Z - self.Extr0.Z);
+end;
+
+procedure TSquarredSegment.CalcRatioOfLongueur(const L: double);
+begin
+  self.Ratio := self.Longueur / L;
 end;
 
 { TCrossSectionPolyProvisoire }
@@ -409,21 +450,20 @@ begin
   if (not DoAppend) then self.ClearVertex();
   n := High(CV.Arcs);
   if (n < 0) then Exit;
-
   //AfficherMessage(Format('Arc %d: %f %f - %f %f',[0, CV.Arcs[0].TangP1.X, CV.Arcs[0].TangP1.Y, CV.Arcs[0].TangP2.X, CV.Arcs[0].TangP2.Y ]));
   // premier sommet
-  V1.Position.X := CV.Arcs[0].CoordsP1.X;
-  V1.Position.Y := CV.Arcs[0].CoordsP1.Y;
-  V1.TangGauche.X:= -CV.Arcs[0].TangP1.X;
-  V1.TangGauche.Y:= -CV.Arcs[0].TangP1.Y;
-  V1.TangDroite  := CV.Arcs[0].TangP1;
+  V1.Position.X   :=  CV.Arcs[0].CoordsP1.X;
+  V1.Position.Y   :=  CV.Arcs[0].CoordsP1.Y;
+  V1.TangGauche.X := -CV.Arcs[0].TangP1.X;
+  V1.TangGauche.Y := -CV.Arcs[0].TangP1.Y;
+  V1.TangDroite   :=  CV.Arcs[0].TangP1;
   self.AddVertex(V1);
   for i := 1 to n do
   begin
-    V1.Position.X := CV.Arcs[i-1].CoordsP2.X;
-    V1.Position.Y := CV.Arcs[i-1].CoordsP2.Y;
-    V1.TangGauche:= CV.Arcs[i-1].TangP2;
-    V1.TangDroite:= CV.Arcs[i].TangP1;
+    V1.Position.X :=  CV.Arcs[i-1].CoordsP2.X;
+    V1.Position.Y :=  CV.Arcs[i-1].CoordsP2.Y;
+    V1.TangGauche :=  CV.Arcs[i-1].TangP2;
+    V1.TangDroite :=  CV.Arcs[i].TangP1;
     AddVertex(V1);
   end;
   // dernier vertex
@@ -432,23 +472,6 @@ begin
   V1.TangGauche := CV.Arcs[n].TangP2; //
   V1.TangDroite.Empty();
   AddVertex(V1);
-  // contrôle
-  (*
-  AfficherMessageErreur('Points de la courbe');
-  n := GetNbVertex();
-
-
-  for i:=0 to n-1 do
-  begin
-    V1 := GetVertex(i);
-    AfficherMessageErreur(Format('%d: %f %f - G=(%f %f), D=(%f %f)',
-                       [i,
-                        V1.Position.X, V1.Position.Y,
-                        V1.TangGauche.X, V1.TangGauche.Y,
-                        V1.TangDroite.X, V1.TangDroite.Y
-                       ]));
-  end;
-  //*)
 end;
 
 procedure TCrossSectionPolyProvisoire.LoadPolygone(const PV: TCrossSectionPolygone);
@@ -470,14 +493,6 @@ begin
     V1.TangDroite   := V1.TangGauche;
     AddVertex(V1);
   end;
-  // contrôle
-  (*
-  for i:=0 to n-1 do
-  begin
-    V1 := GetVertex(i);
-    AfficherMessageErreur(Format('%d: %f %f', [i, V1.Position.X, V1.Position.Y]));
-  end;
-  //*)
 end;
 
 procedure TCrossSectionPolyProvisoire.PurgerVertex(const Seuil: double);
@@ -488,12 +503,11 @@ var
 begin
   AfficherMessageErreur(Format('%s.PurgerVertex: seuil = %.3f, %d vertex', [ClassName, Seuil, GetNbVertex()]));
 
-  for i := GetNbVertex() - 1 downto 1 do // //while (i < GetNbVertex()) do
+  for i := self.GetNbVertex() - 1 downto 1 do // //while (i < GetNbVertex()) do
   begin
     V0 := GetVertex(i-1);
     V1 := GetVertex(i);
-    Delta := Hypot(V1.Position.X - V0.Position.X,
-                   V1.Position.Y - V0.Position.Y);
+    Delta := Hypot(V1.Position.X - V0.Position.X, V1.Position.Y - V0.Position.Y);
     if (Delta < Seuil) then DeleteVertex(i);
   end;
 end;
@@ -584,7 +598,7 @@ var
 begin
   Result := false;
   PurgerVertex(DIST_MERGE_VERTEX);
-  FNbPts := GetNbVertex;
+  FNbPts := self.GetNbVertex();
   if (FNbPts <= 1) then begin
     AfficherMessage('--> ** Le polygone ne comporte pas de segment. Reinitialisee **');
     self.ClearVertex;
@@ -592,14 +606,13 @@ begin
   end;
   P.IDGroupe := FIDGroupe;
   P.IDStylePolygone := FIDStylePolygoneEditing;
-  SetLength(P.Sommets, 0);
-  SetLength(P.Sommets, FNbPts);
-  for i:=0 to High(P.Sommets) do
+  P.setCapacity(FNbPts);
+  for i := 0 to P.getNbVertex() - 1 do
   begin
     VC := GetVertex(i);
     VP.IDStation := VC.IDStation;
     VP.Offset    := VC.Offset;
-    P.Sommets[i] := VP;
+    P.putVertex(i, VP);
   end;
   Result := true;
 end;
@@ -607,63 +620,50 @@ procedure TCourbePolygoneProvisoire.LoadCourbe(const CV: TCourbe; const DoAppend
 var
   i, n: integer;
   V1: TVertexCourbe;
+  CA: TArcCourbe;
 begin
   //AfficherMessage(Format('%s.LoadCourbe', [ClassName]));
   FIDGroupe               := CV.IDGroupe;
   FIDStyleCourbeEditing   := CV.IDStyleCourbe;
   FIDStylePolygoneEditing := nopDEFAULT;
   if (not DoAppend) then self.ClearVertex();
-  if (High(CV.Arcs) < 0) then Exit;
-  n := High(CV.Arcs);
-  if (n = 0) then Exit;
+  n := CV.getNbArcs();
+  if (n < 2) then Exit;
   //AfficherMessage(Format('Arc %d: %f %f - %f %f',[0, CV.Arcs[0].TangP1.X, CV.Arcs[0].TangP1.Y, CV.Arcs[0].TangP2.X, CV.Arcs[0].TangP2.Y ]));
   // premier sommet
-  V1.IDStation   :=  CV.Arcs[0].IDStationP1;
-  V1.Offset      :=  CV.Arcs[0].OffsetP1;
-  V1.TangGauche.X:= -CV.Arcs[0].TangP1.X;
-  V1.TangGauche.Y:= -CV.Arcs[0].TangP1.Y;
-  V1.TangGauche.Z:= -CV.Arcs[0].TangP1.Z;
+  CA := CV.getArc(0);
+  V1.IDStation   :=  CA.IDStationP1; //CV.Arcs[0].IDStationP1;
+  V1.Offset      :=  CA.OffsetP1; //CV.Arcs[0].OffsetP1;
+  V1.TangGauche.setFrom(-CA.TangP1.X,
+                        -CA.TangP1.Y,
+                        -CA.TangP1.Z);
 
-  V1.TangDroite  := CV.Arcs[0].TangP1;
+  V1.TangDroite  := CA.TangP1;
   self.AddVertex(V1);
-  for i := 1 to n do
+  for i := 1 to n - 1 do
   begin
-    V1.IDStation := CV.Arcs[i-1].IDStationP2;
-    V1.Offset    := CV.Arcs[i-1].OffsetP2;
-    V1.TangGauche:= CV.Arcs[i-1].TangP2;
-    V1.TangDroite:= CV.Arcs[i].TangP1;
+    CA := CV.getArc(i-1);
+    V1.IDStation := CA.IDStationP2;
+    V1.Offset    := CA.OffsetP2;
+    V1.TangGauche:= CA.TangP2;
+    CA := CV.getArc(i-1);
+    V1.TangDroite:= CA.TangP1;
     AddVertex(V1);
   end;
   // dernier vertex
-  V1.IDStation := CV.Arcs[n].IDStationP2;
-  V1.Offset    := CV.Arcs[n].OffsetP2;
-  V1.TangGauche:= CV.Arcs[n].TangP2; //
-  V1.TangDroite:= GetConstantVector3D(0.00); //
+  CA := CV.getArc(n - 1);
+  V1.IDStation := CA.IDStationP2;
+  V1.Offset    := CA.OffsetP2;
+  V1.TangGauche:= CA.TangP2; //
+  V1.TangDroite:= GetConstantVector3D(0.00);
   AddVertex(V1);
-  // contrôle
-  (*
-  AfficherMessage('Points de la courbe');
-  FNbPts := GetNbVertex();
-
-  for i:=0 to FNbPts-1 do
-  begin
-    V1 := GetVertex(i);
-    AfficherMessage(Format('%d: ID %d (%f %f) - G=(%f %f), D=(%f %f)',
-                       [i, V1.IDStation,
-                        V1.Offset.X, V1.Offset.Y,
-                        V1.TangGauche.X, V1.TangGauche.Y,
-                        V1.TangDroite.X, V1.TangDroite.Y
-                       ]));
-  end;
-  FMyCourbe := CV;
-  //*)
 end;
 
 procedure TCourbePolygoneProvisoire.LoadPolyligne(const PV: TPolyLigne; const DoAppend: boolean);
 var
   i, n: integer;
   V1: TVertexCourbe;
-  FNbPts: Integer;
+  VX: TVertexPolygon;
 begin
   FIDGroupe := PV.IDGroupe;
   FIDStyleCourbeEditing   := PV.IDStylePolyLine;
@@ -673,59 +673,35 @@ begin
     self.ClearVertex;
     FMyPolyligne := PV;
   end;
-  n := High(PV.Sommets);
+  n := PV.getNbVertex(); //High(PV.Sommets);
   if (n = 0) then Exit;
-  for i:= 0 to n  do
+  for i := 0 to n - 1 do
   begin
-    V1.IDStation := PV.Sommets[i].IDStation;
-    V1.Offset    := PV.Sommets[i].Offset;
+    VX := PV.getVertex(i);
+    V1.IDStation := VX.IDStation;
+    V1.Offset    := VX.Offset;
     AddVertex(V1);
   end;
-  // contrôle
-  (*
-  FNbPts := GetNbVertex();
-  for i:=0 to FNbPts-1 do
-  begin
-    V1 := GetVertex(i);
-    AfficherMessage(Format('%d: ID %d (%f %f)',
-                       [i, V1.IDStation,
-                        V1.Offset.X, V1.Offset.Y
-                       ]));
-  end;
-  //*)
 end;
 
 procedure TCourbePolygoneProvisoire.LoadScrap(const PV: TScrap);
 var
   i, n: integer;
   V1: TVertexCourbe;
-  FNbPts: Integer;
+  VX: TVertexPolygon;
 begin
   FIDGroupe := PV.IDGroupe;
   FIDStyleCourbeEditing   := nocDEFAULT;
   FIDStylePolygoneEditing := nopDEFAULT;
   FMyScrap := PV;
-  //AfficherMessage(Format('%s.LoadScrap()', [ClassName]));
-  n := High(PV.Sommets);
-  for i:= 0 to n  do
+  n := PV.getNbVertex();
+  for i:= 0 to n - 1  do
   begin
-    V1.IDStation := PV.Sommets[i].IDStation;
-    V1.Offset    := PV.Sommets[i].Offset;
+    VX := PV.getVertex(i);
+    V1.IDStation := VX.IDStation;
+    V1.Offset    := VX.Offset;
     AddVertex(V1);
   end;
-  // contrôle
-  (*
-  FNbPts := GetNbVertex();
-  for i:=0 to FNbPts-1 do V1 := GetVertex(i);
-
-  begin
-
-    AfficherMessage(Format('%d: ID %d (%f %f)',
-                       [i, V1.IDStation,
-                        V1.Offset.X, V1.Offset.Y
-                       ]));
-  end;
-  //*)
 end;
 (*
 function TCourbePolygoneProvisoire.LoadCrossSectionCourbe(const CV: TCrossSectionCourbe; const DoAppend: boolean): boolean;
@@ -789,7 +765,7 @@ begin
   // supprimer les vertex trop proches l'un de l'autre
   n := GetNbVertex();
   if (0 = n) then exit;
-  for i := n - 1 downto 1 do // //while (i < GetNbVertex()) do
+  for i := n - 1 downto 1 do
   begin
     V0 := GetVertex(i-1);
     V1 := GetVertex(i);
@@ -836,8 +812,8 @@ var
   i, j, Nb: Integer;
   PtI, PtJ: TPoint2Df;
 begin
-  result := false;
-  Aire      := 0.0;
+  result    := false;
+  Aire      := 0.00;
   Perimetre := 0.00;
   Nb := GetNbVertex();
   if (Nb < 3) then Exit;
@@ -860,16 +836,18 @@ var
   i, n: integer;
   V1: TVertexCourbe;
   FNbPts: Integer;
+  VX: TVertexPolygon;
 begin
   FIDGroupe := PV.IDGroupe;
   FIDStyleCourbeEditing   := nocDEFAULT;
   FIDStylePolygoneEditing := PV.IDStylePolygone;
   FMyPolygone := PV;
-  n := High(PV.Sommets);
-  for i:= 0 to n  do
+  n := PV.getNbVertex();
+  for i := 0 to n - 1 do
   begin
-    V1.IDStation := PV.Sommets[i].IDStation;
-    V1.Offset    := PV.Sommets[i].Offset;
+    VX := PV.getVertex(i);
+    V1.IDStation := VX.IDStation;
+    V1.Offset    := VX.Offset;
     AddVertex(V1);
   end;
 end;
@@ -894,17 +872,16 @@ begin
   Result := false;
   AngleTg1 := 0.00; AngleTg2 := 0.00;
   PurgerVertex(DIST_MERGE_VERTEX);
-  QNbPts := GetNbVertex();
-  //AfficherMessage(Format('%s.GenerateCourbe: (%d points) (%d stations)',[ClassName, QNbPts, FDocDessin.GetNbBaseStations]));
+  QNbPts := self.GetNbVertex();
   if (QNbPts <= 1) then
   begin
     AfficherMessage('--> ** La courbe ne comporte pas de segment. Reinitialisee **');
     self.ClearVertex();
     Exit;
   end;
-  SetLength(CResult.Arcs, 1);
+  CResult.setCapacity(1);//SetLength(CResult.Arcs, 1);
   Delta.Empty();
-  SetLength(CResult.Arcs, QNbPts-1);
+  CResult.setCapacity(QNbPts - 1); // SetLength(CResult.Arcs, QNbPts-1);
   // TODO: C'est dans ce secteur qu'il faut gérer le mode ByDefault
   for i := 1 to QNbPts-1 do
   begin
@@ -913,7 +890,6 @@ begin
     // arc de courbe
     AB.IDStationP1 := V1.IDStation;
     AB.OffsetP1    := V1.Offset;
-
     AB.IDStationP2 := V2.IDStation;
     AB.OffsetP2    := V2.Offset;
 
@@ -931,21 +907,22 @@ begin
 
       AB.TangP2.X := -AB.TangP1.X;
       AB.TangP2.Y := -AB.TangP1.Y;
-      CResult.Arcs[i-1] := AB;
-      // angle
-      AngleTg1 := AngleTg2;
+
+      AngleTg1 := AngleTg2;  // angle
     end else begin
       AB.TangP1 := V1.TangDroite;
       AB.TangP2 := V2.TangGauche;
-      CResult.Arcs[i-1] := AB;
+
     end;
+    CResult.setArc(i-1, AB);//Arcs[i-1] := AB;
   end;
   // calcul des tangentes (construction par défaut)
   if (ByDefault) then
   begin
-    for i := 1 to High(CResult.Arcs)  do begin
-      A0 := CResult.Arcs[i-1];
-      A1 := CResult.Arcs[i];
+    for i := 1 to CResult.getNbArcs() - 1 do
+    begin
+      A0 := CResult.getArc(i-1);
+      A1 := CResult.getArc(i);
 
       R1 := Hypot(A0.TangP2.X, A0.TangP2.Y);
       AngleTg2 := GetAngleBissecteur(-A0.TangP2.X, -A0.TangP2.Y,
@@ -987,22 +964,20 @@ begin
   begin
     AfficherMessage('--> ** La polyligne ne comporte pas de segment. Reinitialisee **');
     self.ClearVertex();
-    Exit(false);;
+    Exit(false);
   end;
   P.IDGroupe        := FIDGroupe;
   P.IDStylePolyLine := FIDStyleCourbeEditing;
   P.Closed          := false;
-  SetLength(P.Sommets, 0);
-  SetLength(P.Sommets, GetNbVertex());
-  n := High(P.Sommets);
+  P.setCapacity(FNbPts);
+  n := P.getNbVertex() - 1;
   for i:= 0 to n do
   begin
     VC := GetVertex(i);
     VP.IDStation := VC.IDStation;
     VP.Offset    := VC.Offset;
-    P.Sommets[i] := VP;
+    P.putVertex(i, VP);
   end;
-
   // si les deux points d'extrémité de la polyligne sont proches, on suppose l'objet fermé
   // valable si l'objet comporte plus de 2 sommets
   if (FNbPts > 2) then
@@ -1036,7 +1011,7 @@ begin
   Result := false;
   // purger vertex
   PurgerVertex(DIST_MERGE_VERTEX);
-  FNbPts := GetNbVertex();
+  FNbPts := self.GetNbVertex();
   if (FNbPts <= 1) then
   begin
     AfficherMessage('--> ** Le scrap ne comporte pas de segment. Reinitialisee **');
@@ -1044,14 +1019,13 @@ begin
     Exit(false);
   end;
   P := FMyScrap;
-  SetLength(P.Sommets, 0);
-  SetLength(P.Sommets, FNbPts);
-  for i:=0 to High(P.Sommets) do
+  P.setCapacity(FNbPts);
+  for i := 0 to P.getNbVertex() - 1 do
   begin
     VC := GetVertex(i);
     VP.IDStation := VC.IDStation;
     VP.Offset    := VC.Offset;
-    P.Sommets[i] := VP;
+    P.putVertex(i, VP);
   end;
   P := FDocDessin.CalcBoundingBoxScrap(P);
   Result := True;
@@ -1075,7 +1049,6 @@ begin
     V := GetVertex(i);
     if (FDocDessin.GetBasePointByIndex(V.IDStation, BS)) then
     begin
-      // passage en coordonnées absolues
       X1 := BS.PosStation.X + V.Offset.X;
       Y1 := BS.PosStation.Y + V.Offset.Y;
       R := Sqr(X - X1) + Sqr(Y - Y1);
@@ -1102,7 +1075,6 @@ var
 
   R, R666: double;
   i: integer;
-  IDX: integer;  // index du vertex
   FNbPts: Integer;
   procedure SetIdx(const XX, YY: double; const ii, Q: integer);
   begin
@@ -1154,12 +1126,8 @@ begin
     V2.IDStation := V1.IDStation;
     V2.Offset    := V1.Offset;
     // DONE: inverser les signes des tangentes ?
-    V2.TangDroite.X := V1.TangGauche.X;
-    V2.TangDroite.Y := V1.TangGauche.Y;
-    V2.TangDroite.Z := V1.TangGauche.Z;
-    V2.TangGauche.X := V1.TangDroite.X;
-    V2.TangGauche.Y := V1.TangDroite.Y;
-    V2.TangGauche.Z := V1.TangDroite.Z;
+    V2.TangDroite := V1.TangGauche;
+    V2.TangGauche := V1.TangDroite;
     VR[j] := V2;
   end;
   self.ClearVertex();
@@ -1285,5 +1253,132 @@ begin
   except
   end;
 end;
+
+function TCourbePolygoneProvisoire.SquarrerPoly(): boolean;
+var
+  Nb, i: Integer;
+  ArrSqared: array of TSquarredSegment;
+  V0, V1: TVertexCourbe;
+  P0, P1: TBaseStation;
+  Q0, Q1: Boolean;
+  LongueurTotale: double;
+begin
+  result := false;
+  Nb := GetNbVertex();
+  if (Nb < 3) then exit;
+  ClearConsoleErreur();
+  AfficherMessage(Format('%s.SquarrerPoly(): %d', [ClassName, Nb]));
+  AfficherMessageErreur(Format('%s.SquarrerPoly(): %d', [ClassName, Nb]));
+  SetLength(ArrSqared, Nb);
+  V0 := GetVertex(0);
+  V1 := GetVertex(1);
+  Q0 := FDocDessin.GetBasePointByIndex(V0.IDStation, P0);
+  Q1 := FDocDessin.GetBasePointByIndex(V0.IDStation, P1);
+  // Etape 0: Point de départ PD et point d'Arrivée PA
+  // Etape 1: On calcule la longueur de chaque segment
+  // Etape 2: Calcul du rapport longueur segment / longueur polyligne
+  // Etape 3: Calcul des caps:
+  // -- Segment du point 0 au point 1: Direction = Origine des angles (cap ou zéro trigo)
+  // -- Segments suivants: i  : Produit vectoriel W = Vi x Vi+1
+  //                       ii : Sinus de l'angle tq | U x V | = |U|.|V|.sin(Alpha)
+  //                       iii: Valeur limite: tolérance fixée: Tol = un certain pourcentage de sin(Alpha)
+  //                       iv : Si Sin(Alpha) < -Tol, alors on tourne à gauche
+  //                            Si Sin(Alpha) > +Tol, alors on tourne à droite
+  //                            sinon, on va tout droit
+  // Etape 4: On obtient une sorte d'escalier de P0 jusqu'à P'A
+  // Etape 5: Homothétie et rotation pour amener P'A sur PA
+  // Le segment 0 n'est pas utilisé
+
+  ArrSqared[0].Cap := 0;
+  ArrSqared[0].Extr0.setFrom(P0.PosStation.X + V0.Offset.X,
+                             P0.PosStation.Y + V0.Offset.Y,
+                             P0.PosStation.Z + V0.Offset.Z);
+  ArrSqared[0].Extr1.setFrom(P1.PosStation.X + V0.Offset.X,
+                             P1.PosStation.Y + V0.Offset.Y,
+                             P1.PosStation.Z + V0.Offset.Z);
+  ArrSqared[0].CalcCap();
+
+  ArrSqared[0].Longueur  := 0.001;
+  ArrSqared[0].Ratio     := 0.00000001;
+
+
+  LongueurTotale := 0.00;
+
+  for i := 1 to Nb - 1 do
+  begin
+    V0 := GetVertex(i - 1);
+    V1 := GetVertex(i);
+    Q0 := FDocDessin.GetBasePointByIndex(V0.IDStation, P0);     // basepoint fin courbe courante
+    Q1 := FDocDessin.GetBasePointByIndex(V1.IDStation, P1);     // basepoint fin courbe courante
+    ArrSqared[i].Extr0 := ArrSqared[i-1].Extr1;
+    ArrSqared[i].Extr1.setFrom(P1.PosStation.X + V1.Offset.X,
+                               P1.PosStation.Y + V1.Offset.Y,
+                               P1.PosStation.Z + V1.Offset.Z);
+
+    ArrSqared[i].CalcLongueur();
+    ArrSqared[i].CalcCap();
+    LongueurTotale += ArrSqared[i].Longueur;
+  end;
+  AfficherMessageErreur(Format('Calculs sur les %d segments', [Nb]));
+  // autres calculs
+  for i := 1 to Nb - 1 do
+  begin
+    ArrSqared[i].CalcRatioOfLongueur(LongueurTotale);
+  end;
+
+  // controles
+  AfficherMessageErreur(Format('Liste des %d segments', [Nb]));
+  for i := 0 to Nb - 1 do
+  begin
+    AfficherMessageErreur(Format('Segment %d: %s %s, L = %.3f (%.3f%% de %.3f) - Cap: %.3f deg', [i,
+                                                       ArrSqared[i].Extr0.DebugString('Extr0'),
+                                                       ArrSqared[i].Extr1.DebugString('Extr1'),
+                                                       ArrSqared[i].Longueur,
+                                                       ArrSqared[i].Ratio,
+                                                       LongueurTotale,
+                                                       radtodeg(ArrSqared[i].Cap)]));
+
+    //VV1 :=
+    //W := ProduitVectoriel();
+
+
+
+
+  end;
+
+  SetLength(ArrSqared, 0);
+  result := false; // Mettre à True après mise au point
+
+
+end;
+
 end.
+
+/**
+     * This method tests if secondNode is clockwise to first node.
+     *
+     * The line through the two points commonNode and firstNode divides the
+     * plane into two parts. The test returns true, if secondNode lies in
+     * the part that is to the right when traveling in the direction from
+     * commonNode to firstNode.
+     *
+     * @param commonNode starting point for both vectors
+     * @param firstNode first vector end node
+     * @param secondNode second vector end node
+     * @return true if first vector is clockwise before second vector.
+     */
+    public static boolean angleIsClockwise(EastNorth commonNode, EastNorth firstNode, EastNorth secondNode) {
+
+        CheckParameterUtil.ensureThat(commonNode.isValid(), () -> commonNode + " invalid");
+        CheckParameterUtil.ensureThat(firstNode.isValid(), () -> firstNode + " invalid");
+        CheckParameterUtil.ensureThat(secondNode.isValid(), () -> secondNode + " invalid");
+
+        double dy1 = firstNode.getY() - commonNode.getY();
+        double dy2 = secondNode.getY() - commonNode.getY();
+        double dx1 = firstNode.getX() - commonNode.getX();
+        double dx2 = secondNode.getX() - commonNode.getX();
+
+        return dy1 * dx2 - dx1 * dy2 > 0;
+    }
+
 

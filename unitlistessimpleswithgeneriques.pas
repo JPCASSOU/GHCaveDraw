@@ -1,7 +1,7 @@
 unit UnitListesSimplesWithGeneriques;
 // 04/06/2015: Version basée sur les génériques
 
-{$INCLUDE CompilationParameters.inc}
+//{$INCLUDE CompilationParameters.inc}
 
 interface
 

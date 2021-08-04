@@ -134,20 +134,21 @@ end;
 // tracé des polygones
 procedure TExportOdgUtils.TracerPolygone(const P: TPolygone);
 var
-  i: Integer;
+  i, Nb: Integer;
   PolySommets: array of TODGPoint2Df;
   PST: TVertexPolygon;
   PP, ST: TODGPoint2Df;
   EWE: String;
 begin
   AfficherMessage('TracerPolygone');
-  SetLength(PolySommets, 1 + High(P.Sommets));
-  for i := 0 to High(P.Sommets) do
+  Nb := P.getNbVertex();
+  SetLength(PolySommets, Nb);
+  for i := 0 to Nb - 1 do
   begin
-    PST := P.Sommets[i];
+    PST := P.getVertex(i);
     PP  := QGetCoordsGCS(PST.IDStation, P.IDGroupe, PST.Offset);
     ConversionCoordonnees(PP.X, PP.Y, ST.X, ST.Y);
-    PolySommets[i] := ST;
+    PolySommets[i] := ST; // Ne pas toucher
   end;
   EWE := SelectSVGStylePolygone(P.IDStylePolygone);
   FODGContexte.DessinPolygoneSVG(EWE, PolySommets, True, True);
@@ -155,7 +156,7 @@ end;
 
 procedure TExportOdgUtils.TracerPolyline(const P: TPolyLigne);
 var
-  i: Integer;
+  i, Nb: Integer;
   PolySommets: array of TODGPoint2Df;
   PST: TVertexPolygon;
   PP, ST: TODGPoint2Df;
@@ -163,13 +164,14 @@ var
 
 begin
   AfficherMessage('TracerPolyline');
-  SetLength(PolySommets, 1 + High(P.Sommets));
-  for i := 0 to High(P.Sommets) do
+  Nb := P.getNbVertex();
+  SetLength(PolySommets, Nb);
+  for i := 0 to Nb - 1 do
   begin
-    PST := P.Sommets[i];
+    PST := P.getVertex(i);
     PP  := QGetCoordsGCS(PST.IDStation, P.IDGroupe, PST.Offset);
     ConversionCoordonnees(PP.X, PP.Y, ST.X, ST.Y);
-    PolySommets[i] := ST;
+    PolySommets[i] := ST; // Ne pas toucher
   end;
   // NOTA: Une polyligne est fonctionnellement une courbe
   EWE := SelectSVGStyleCourbe(P.IDStylePolyLine);
@@ -240,11 +242,11 @@ var
     ConversionCoordonnees(MonArc.P2.X, MonArc.P2.Y, Result.P2.X, Result.P2.Y);
   end;
 begin
-  n := 1+ high(C.Arcs);
+  n := C.getNbArcs();// 1+ high(C.Arcs);
   SetLength(QBezierArcs, n);
   for i := 0 to High(QBezierArcs) do
   begin
-    AC := c.Arcs[i];
+    AC := c.getArc(i);//Arcs[i];
     QA := QGetBezierArc(AC);
     QBezierArcs[i] := QA;
   end;
@@ -254,19 +256,20 @@ end;
 
 procedure TExportOdgUtils.TracerScrap(const S: TScrap);
 var
-  i: Integer;
+  i, Nb: Integer;
   PolySommets: array of TODGPoint2Df;
   PST: TVertexPolygon;
   PP, ST: TODGPoint2Df;
   EWE: String;
 begin
-  SetLength(PolySommets, 1 + High(S.Sommets));
-  for i := 0 to High(S.Sommets) do
+  Nb := S.getNbVertex();
+  SetLength(PolySommets, Nb);
+  for i := 0 to Nb - 1 do
   begin
-    PST := S.Sommets[i];
+    PST := S.getVertex(i);
     PP  := QGetCoordsGCS(PST.IDStation, S.IDGroupe, PST.Offset);
     ConversionCoordonnees(PP.X, PP.Y, ST.X, ST.Y);
-    PolySommets[i] := ST;
+    PolySommets[i] := ST; // Ne pas toucher
   end;
   FODGContexte.DessinPolygoneSVG(STYLE_SCRAP, PolySommets, True, True);
 end;

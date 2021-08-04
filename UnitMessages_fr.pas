@@ -430,6 +430,10 @@ resourcestring
   rsCDR_DRW_ACN_LOCK_CURR_STATION  = 'Verrouiller la station %d.%d (%s)';
   rsCDR_DRW_ACN_DISP_GHCD_CODE_OBJ = 'Afficher le code GHCaveDraw de l''objet';
   rsCDR_DRW_ACN_ADD_TEXT_W_INFO_ST = 'Ajouter un texte avec infos de la station';
+  rsCDR_DRW_ACN_SQUARE_POLYLINE    = 'Equarrir polyligne';
+  rsCDR_DRW_ACN_SQUARE_POLYGON     = 'Equarrir polygone';
+
+
 
   // resourcesstrings de l'éditeur de styles
   rsDLG_STYLES_TITRE                 = 'Feuilles de styles';

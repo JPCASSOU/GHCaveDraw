@@ -262,12 +262,7 @@ function TCrossSection.Serialiser(out LS: TStringList): boolean;
   begin
     LS.Add(StringOfChar(' ', Indent) + '#' + QS);
   end;
-  function NbRealToStr(const V: double): string;
-  begin
-    Result := Format('%.3f', [V]);
-  end;
-
-  procedure QBeginSection(const Indent: integer; const QS: string; const Args: array of string);
+    procedure QBeginSection(const Indent: integer; const QS: string; const Args: array of string);
   var
     EWE: String;
     n, i: Integer;
@@ -290,8 +285,10 @@ function TCrossSection.Serialiser(out LS: TStringList): boolean;
     WU: String;
   begin
     WU := StringOfChar(' ', Indent) + #9 + 'CSTexte' + #9;
-    WU := WU + Format('%d' + #9 + '%.3f' + #9 + '%.3f' + #9 +'%s',
-                     [T.IDStyle, T.PosXY.X, T.PosXY.Y, T.Text]);
+    WU := WU + Format('%d' + #9 + '%s' + #9 + '%s' + #9 +'%s',
+                     [T.IDStyle,
+                      FormatterNombreWithDotDecimal(T.PosXY.X),
+                      FormatterNombreWithDotDecimal(T.PosXY.Y), T.Text]);
     LS.Add(WU);
 
   end;
@@ -300,8 +297,12 @@ function TCrossSection.Serialiser(out LS: TStringList): boolean;
     WU: String;
   begin
     WU := StringOfChar(' ', Indent) + #9 + 'CSSimpleLigne' + #9;
-    WU := WU + Format('%d' + #9 + '%.3f' + #9 + '%.3f' + #9 + '%.3f' + #9 + '%.3f',
-                     [L.IDStyle, L.Extr1.X, L.Extr1.Y, L.Extr2.X, L.Extr2.Y]);
+    WU := WU + Format('%d' + #9 + '%s' + #9 + '%s' + #9 + '%s' + #9 + '%s',
+                     [L.IDStyle,
+                      FormatterNombreWithDotDecimal(L.Extr1.X),
+                      FormatterNombreWithDotDecimal(L.Extr1.Y),
+                      FormatterNombreWithDotDecimal(L.Extr2.X),
+                      FormatterNombreWithDotDecimal(L.Extr2.Y)]);
     LS.Add(WU);
 
   end;

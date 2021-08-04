@@ -286,9 +286,9 @@ procedure TGHCaveDrawDrawingContext.DrawTriangle(const P1, P2, P3: TPoint2Df;
 var
   Sommets: array[0..2] of TPoint;
 begin
-  Sommets[0] := QGetCoordsPlan(P1);
-  Sommets[1] := QGetCoordsPlan(P2);
-  Sommets[2] := QGetCoordsPlan(P3);
+  Sommets[0] := QGetCoordsPlan(P1); // Ne pas toucher
+  Sommets[1] := QGetCoordsPlan(P2); // Ne pas toucher
+  Sommets[2] := QGetCoordsPlan(P3); // Ne pas toucher
   self.DefineBrosseEtCrayon(bsSolid, FillColor, FillOpacity, psSolid, WL, Linecolor, LineOpacity);
     self.CanvasBGRA.Brush.Texture:= nil;
     self.CanvasBGRA.Polygon(Sommets);
@@ -443,7 +443,7 @@ begin
     //Cnv.Brush.Style := bs;
     for i:=0 to NB do
     begin
-      V := MyScrap.Sommets[i];
+      V := MyScrap.getVertex(i);
       FDocumentDessin.GetCoordsGCS(V.IDStation, MyScrap.IDGroupe, V.Offset, PM, errCode);
       if (ErrCode = -1) then Exit;
       PTSV[i] := QGetCoordsPlan(PM);
@@ -807,12 +807,12 @@ var
   end;
 begin
   try
-    NB := High(MyCourbe.Arcs) + 1;
+    Nb := MyCourbe.getNbArcs(); //NB := High(MyCourbe.Arcs) + 1;
     if (Nb < 1) then Exit;
     if (DoUseTStyleCourbe) then DefineCurveStyle(MyCourbe.IDStyleCourbe, QStyleCourbe);
-    for i:=0 to NB - 1 do
+    for i:= 0 to NB - 1 do
     begin
-      AC := MyCourbe.Arcs[i];
+      AC := MyCourbe.getArc(i);  //Arcs[i];
       //SL := FDocumentDessin.GetStyleCourbe(Ord(MyCourbe.IDStyleCourbe));
       GetBezierArc(AC, AB, QErrCode);
       if (QErrCode = 0) then DrawBezierArc(AB, QStyleCourbe.Barbules, DoDrawPtsCtrls)
@@ -991,7 +991,7 @@ begin
     DefinePolygonStyle(MyPolygon.IDStylePolygone, QStylePolygone);
     for i:=0 to NB do
     begin
-      V := MyPolygon.Sommets[i];
+      V := MyPolygon.getVertex(i);
       FDocumentDessin.GetCoordsGCS(V.IDStation, MyPolygon.IDGroupe, V.Offset, PM, errCode);
       if (ErrCode = -1) then Exit;
       PTSV[i] := QGetCoordsPlan(PM);
@@ -1082,7 +1082,7 @@ begin
     SetLength(PTSV, NB+1);
     for i:=0 to NB do
     begin
-      V := MyPolyLine.Sommets[i];
+      V := MyPolyLine.getVertex(i);
       FDocumentDessin.GetCoordsGCS(V.IDStation, MyPolyLine.IDGroupe, V.Offset, PM, errCode);
       if (ErrCode = -1) then Exit;
       PTSV[i] := QGetCoordsPlan(PM);
@@ -1118,8 +1118,8 @@ begin
     begin
       for i := 1 to NB do
       begin
-        V0 := MyPolyLine.Sommets[i-1];
-        V1 := MyPolyLine.Sommets[i];
+        V0 := MyPolyLine.getVertex(i-1);
+        V1 := MyPolyLine.getVertex(i);
         FDocumentDessin.GetCoordsGCS(V0.IDStation, MyPolyLine.IDGroupe, V0.Offset, P0, errCode);
         FDocumentDessin.GetCoordsGCS(V1.IDStation, MyPolyLine.IDGroupe, V1.Offset, P1, errCode);
         DeltaY := P1.Y - P0.Y;

@@ -352,22 +352,10 @@ begin
   BP.TypeStation   := StrToIntDef(AP[2], 0);
   BP.Couleur       := StrToIntDef(AP[3], 0);
 
-  BP.PosExtr0.X    := ConvertirEnNombreReel(AP[4], 0.00);
-  BP.PosExtr0.Y    := ConvertirEnNombreReel(AP[5], 0.00);
-  BP.PosExtr0.Z    := ConvertirEnNombreReel(AP[6], 0.00);
-
-  BP.PosStation.X  := ConvertirEnNombreReel(AP[7], 0.00);
-  BP.PosStation.Y  := ConvertirEnNombreReel(AP[8], 0.00);
-  BP.PosStation.Z  := ConvertirEnNombreReel(AP[9], 0.00);
-
-  BP.PosPG.X       := ConvertirEnNombreReel(AP[10], 0.00);
-  BP.PosPG.Y       := ConvertirEnNombreReel(AP[11], 0.00);
-  BP.PosPG.Z       := ConvertirEnNombreReel(AP[12], 0.00);
-
-  BP.PosPD.X       := ConvertirEnNombreReel(AP[13], 0.00);
-  BP.PosPD.Y       := ConvertirEnNombreReel(AP[14], 0.00);
-  BP.PosPD.Z       := ConvertirEnNombreReel(AP[15], 0.00);
-
+  BP.PosExtr0.setFrom(AP[4], AP[5], AP[6]);
+  BP.PosStation.setFrom(AP[7], AP[8], AP[9]);
+  BP.PosPG.setFrom(AP[10], AP[11], AP[12]);
+  BP.PosPD.setFrom(AP[13], AP[14], AP[15]);
   Result := BP;
 end;
 // trier la table par index

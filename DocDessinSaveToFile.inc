@@ -113,8 +113,10 @@ begin
           QImg := GetImage(i);
           WrtLn(Format('  ' + IMAGE + FMT_IMAGE,
                        [i,
-                        QImg.PositionCoinsImage.X1, QImg.PositionCoinsImage.Y1,
-                        QImg.PositionCoinsImage.X2, QImg.PositionCoinsImage.Y2,
+                        FormatterNombreWithDotDecimal(QImg.PositionCoinsImage.X1, 2),
+                        FormatterNombreWithDotDecimal(QImg.PositionCoinsImage.Y1, 2),
+                        FormatterNombreWithDotDecimal(QImg.PositionCoinsImage.X2, 2),
+                        FormatterNombreWithDotDecimal(QImg.PositionCoinsImage.Y2, 2),
                         QImg.Opacite,
                         QImg.SrcFilename,
                         QImg.Description
@@ -137,8 +139,10 @@ begin
                         SGRP.NomSuperGroupe,
                         IIF(SGRP.Displayed, 1, 0),
                         0, //IIF(SGRP.Locked, 1, 0),
-                        0.00, 0.00, 0.00, //SGRP.Decalage.X, SGRP.Decalage.Y, SGRP.Decalage.Z,
-                        ArrayOfIdxGroupesToStr(SGRP.ListeGroupes)
+                        FormatterNombreWithDotDecimal(0.00, 2),
+                        FormatterNombreWithDotDecimal(0.00, 2),
+                        FormatterNombreWithDotDecimal(0.00, 2),//SGRP.Decalage.X, SGRP.Decalage.Y, SGRP.Decalage.Z,
+                        SGRP.ListeGroupes.toString()//ArrayOfIdxGroupesToStr(SGRP.ListeGroupes)
                        ]));
       end;
       WrtLn(ENDSUPERGROUPESSECTION);
@@ -185,9 +189,9 @@ begin
           WrtLn('  # Scrap Parameters: IDScrap, IDGroupe, ColorR, ColorG, ColorB, Transparency (0..255), Name ');
           WrtLn('  # Vertex  Parameters: IDStation, Offset XYZ Components');
           WrtLn(GenererLigneEnteteScrap(i, S));
-          for j := 0 to High(S.Sommets) do
+          for j := 0 to S.getNbVertex() - 1 do//High(S.Sommets) do
           begin
-            V := S.Sommets[j];
+            V := S.getVertex(j);
             WrtLn(GenererLigneVertexPolygon(j, V));
           end;
           WrtLn(GenererLigneEndScrap());
@@ -219,9 +223,9 @@ begin
           WrtLn('  # Parameters for each arc: IDStationP1, Offset_from_P1, "-1.0", Tangent_at_P1, IDStationP1, Offset_from_P2, Tangent_at_P2, "-2.0"');
           //DateTimeToStr(C.LastModified)
           WrtLn(GenererLigneEnteteCourbe(i, C));
-          for j := 0 to High(C.Arcs) do
+          for j := 0 to C.getNbArcs() - 1 do
           begin
-            A := C.Arcs[j];
+            A := C.getArc(j);//C.Arcs[j];
             WrtLn(GenererLigneArcCourbe(j, A));
           end;
           WrtLn(GenererLigneEndCourbe());
@@ -270,9 +274,9 @@ begin
           WrtLn('  # Vertex  Parameters: IDStation, Offset XYZ Components');
           WrtLn(GenererLigneEntetePolyligne(i, PL));
 
-          for j := 0 to High(PL.Sommets) do
+          for j := 0 to PL.getNbVertex() - 1 do//High(PL.Sommets) do
           begin
-            V := PL.Sommets[j];
+            V := PL.getVertex(j);
             WrtLn(GenererLigneVertexPolygon(j, V));
           end;
           WrtLn(GenererLigneEndPolyligne());
@@ -300,9 +304,9 @@ begin
           WrtLn('  # Last modification: ' + DateTimeToStr(Now()) );
           WrtLn('  # Polygon Parameters: IDPolygon, IDGroupe, Style Polygon');
           WrtLn('  # Vertex  Parameters: IDStation, Offset XYZ Components');
-          for j := 0 to High(PG.Sommets) do
+          for j := 0 to PG.getNbVertex() - 1 do //High(PG.Sommets) do
           begin
-            V := PG.Sommets[j];
+            V := PG.getVertex(j);
             WrtLn(GenererLigneVertexPolygon(j, V));
           end;
           WrtLn(GenererLigneEndPolygone());

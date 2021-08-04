@@ -6,10 +6,9 @@ object CadreDessinBGRA: TCadreDessinBGRA
   Align = alClient
   ClientHeight = 724
   ClientWidth = 1230
-  LCLVersion = '2.0.0.4'
   TabOrder = 0
-  DesignLeft = 314
-  DesignTop = 198
+  DesignLeft = 374
+  DesignTop = 397
   object lbModeTravail: TStaticText
     Left = 0
     Height = 21
@@ -81,19 +80,19 @@ object CadreDessinBGRA: TCadreDessinBGRA
     TabOrder = 4
   end
   object pnlTypeObjet: TPanel
-    Left = 861
+    Left = 856
     Height = 120
     Top = 0
-    Width = 368
+    Width = 373
     Anchors = [akTop, akRight]
     BevelInner = bvRaised
     BevelOuter = bvLowered
     ClientHeight = 120
-    ClientWidth = 368
+    ClientWidth = 373
     TabOrder = 5
     OnClick = pnlTypeObjetClick
     object btnDeleteObject: TSpeedButton
-      Left = 342
+      Left = 347
       Height = 20
       Top = 4
       Width = 20
@@ -116,7 +115,7 @@ object CadreDessinBGRA: TCadreDessinBGRA
       Left = 4
       Height = 17
       Top = 28
-      Width = 247
+      Width = 252
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
       Caption = '----'
@@ -127,7 +126,7 @@ object CadreDessinBGRA: TCadreDessinBGRA
       Left = 4
       Height = 23
       Top = 52
-      Width = 311
+      Width = 316
       Anchors = [akTop, akLeft, akRight]
       ItemHeight = 15
       Style = csDropDownList
@@ -137,14 +136,14 @@ object CadreDessinBGRA: TCadreDessinBGRA
       Left = 4
       Height = 23
       Top = 76
-      Width = 311
+      Width = 316
       Anchors = [akTop, akLeft, akRight]
       ItemHeight = 15
       Style = csDropDownList
       TabOrder = 2
     end
     object btnAffecterGroupeByCombo: TSpeedButton
-      Left = 320
+      Left = 325
       Height = 20
       Top = 52
       Width = 20
@@ -156,7 +155,7 @@ object CadreDessinBGRA: TCadreDessinBGRA
       ParentShowHint = False
     end
     object btnAffecterNatureByCombo: TSpeedButton
-      Left = 320
+      Left = 325
       Height = 20
       Top = 76
       Width = 20
@@ -168,7 +167,7 @@ object CadreDessinBGRA: TCadreDessinBGRA
       ParentShowHint = False
     end
     object btnEditObject: TSpeedButton
-      Left = 141
+      Left = 116
       Height = 20
       Top = 4
       Width = 20
@@ -178,8 +177,8 @@ object CadreDessinBGRA: TCadreDessinBGRA
       ShowHint = True
       ParentShowHint = False
     end
-    object btnEditObjectSpecial: TSpeedButton
-      Left = 117
+    object btnEditObjectSpecial1: TSpeedButton
+      Left = 140
       Height = 20
       Top = 4
       Width = 20
@@ -201,7 +200,7 @@ object CadreDessinBGRA: TCadreDessinBGRA
       ParentShowHint = False
     end
     object btnAffecterAuGroupeCourant: TSpeedButton
-      Left = 342
+      Left = 347
       Height = 20
       Top = 52
       Width = 20
@@ -213,7 +212,7 @@ object CadreDessinBGRA: TCadreDessinBGRA
       ParentShowHint = False
     end
     object btnAffecterNatureByCombo1: TSpeedButton
-      Left = 342
+      Left = 347
       Height = 20
       Top = 76
       Width = 20
@@ -225,10 +224,11 @@ object CadreDessinBGRA: TCadreDessinBGRA
       ParentShowHint = False
     end
     object Button1: TButton
-      Left = 180
+      Left = 188
       Height = 20
       Top = 4
-      Width = 156
+      Width = 157
+      Anchors = [akTop, akLeft, akRight]
       Caption = 'Réattribuer points de base'
       OnClick = Button1Click
       TabOrder = 3
@@ -248,11 +248,22 @@ object CadreDessinBGRA: TCadreDessinBGRA
       Left = 4
       Height = 13
       Top = 102
-      Width = 361
+      Width = 366
       Anchors = [akLeft, akRight, akBottom]
       AutoSize = False
       Caption = 'lbInfosEntite'
       ParentColor = False
+    end
+    object btnEditObjectSpecial2: TSpeedButton
+      Left = 164
+      Height = 20
+      Top = 4
+      Width = 20
+      Action = acEmptyAction
+      Flat = True
+      ShowCaption = False
+      ShowHint = True
+      ParentShowHint = False
     end
   end
   object pnlFiltres: TPanel
@@ -739,12 +750,24 @@ object CadreDessinBGRA: TCadreDessinBGRA
       Caption = 'Afficher / Masquer les images'
       OnExecute = acMasquerImagesExecute
     end
+    object acSquarePolyline: TAction
+      Category = 'EditObjets'
+      Caption = 'acSquarePolyline'
+      ImageIndex = 25
+      OnExecute = acSquarePolylineExecute
+    end
+    object acSquarePolygon: TAction
+      Category = 'EditObjets'
+      Caption = 'acSquarePolygon'
+      ImageIndex = 25
+      OnExecute = acSquarePolygonExecute
+    end
   end
   object CdrDrwImageList: TImageList
     left = 568
     top = 48
     Bitmap = {
-      4C69190000001000000010000000C0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
+      4C691A0000001000000010000000C0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
       C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
       C0FFC0C0C0FFC0C0C0FFC0C0C0FF000000FF000000FF000000FF000000FF0000
       00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FFC0C0
@@ -1544,7 +1567,39 @@ object CadreDessinBGRA: TCadreDessinBGRA
       C0FFC0C0C0FF000080FF000080FF000080FF000080FFC0C0C0FFC0C0C0FFC0C0
       C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
       C0FFC0C0C0FFC0C0C0FF000080FF000080FFC0C0C0FFC0C0C0FFC0C0C0FFC0C0
-      C0FFC0C0C0FFC0C0C0FFC0C0C0FF
+      C0FFC0C0C0FFC0C0C0FFC0C0C0FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FFFF00000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FFFF00DC49FF00DC49FF0000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FFFF000000000000000000DC
+      49FF000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FFFF00000000000000000000
+      000000DC49FF00DC49FF00000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FFFF00000000000000000000
+      0000000000000000000000DC49FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF00DC49FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000FFFF00DC49FF000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000FFFF0000000000000000000000000000000000DC49FF00DC
+      49FF00DC49FF00DC49FF00000000000000000000000000000000000000000000
+      0000000000000000FFFF000000000000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF0000FFFF000000000000000000000000000000000000
+      0000000000000000FFFF00000000000000000000000000000000000000000000
+      000000000000000000000000FFFF000000000000000000000000000000000000
+      0000000000000000FFFF00000000000000000000000000000000000000000000
+      000000000000000000000000FFFF000000000000000000000000000000000000
+      0000000000000000FFFF00000000000000000000000000000000000000000000
+      000000000000000000000000FFFF000000000000000000000000000000000000
+      000000DC49FF0000FFFF00000000000000000000000000000000000000000000
+      000000000000000000000000FFFF00DC49FF0000000000000000000000000000
+      000000DC49FF0000FFFF00000000000000000000000000000000000000000000
+      000000000000000000000000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000
+      FFFF0000FFFF0000FFFF00000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000
     }
   end
   object PopUpGeneral: TPopupMenu

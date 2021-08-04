@@ -173,17 +173,8 @@ function TfrmHelpSystem.CreateCustomTexture(AWidth, AHeight: integer;
                                         VerticalPeriod,
                                         Exponent,
                                         ResampleFilter);
-
-
-   S1 := BGRA(sclLightColorB.Position,
-              sclLightColorG.Position,
-              sclLightColorR.Position,
-              sclLightColorA.Position);
-   S2 := BGRA(sclColorB.Position,
-              sclColorG.Position,
-              sclColorR.Position,
-              sclColorA.Position);
-
+   S1 := BGRA(sclLightColorB.Position, sclLightColorG.Position, sclLightColorR.Position, sclLightColorA.Position);
+   S2 := BGRA(sclColorB.Position, sclColorG.Position, sclColorR.Position, sclColorA.Position);
    p := result.Data;
    for i := 0 to result.NbPixels-1 do
    begin
@@ -250,27 +241,16 @@ begin
        phong.LightDestFactor           := 0;
        phong.LightSourceIntensity      := 150;
        phong.LightPositionZ            := 80;
-       phong.LightColor                := BGRA(sclLightColorB.Position,
-                                               sclLightColorG.Position,
-                                               sclLightColorR.Position,
-                                               sclLightColorA.Position);
+       phong.LightColor                := BGRA(sclLightColorB.Position, sclLightColorG.Position, sclLightColorR.Position, sclLightColorA.Position);
        phong.NegativeDiffusionFactor   := 0.3;
        phong.SpecularIndex             := 20;
        phong.AmbientFactor             := 0.4;
        phong.Draw(result,temp,20,-blurSize,-blurSize,
-                           BGRA(sclColorB.Position,
-                                sclColorG.Position,
-                                sclColorR.Position,
-                                sclColorA.Position));
-
-
-
-
+                           BGRA(sclColorB.Position, sclColorG.Position, sclColorR.Position, sclColorA.Position));
      finally
        FreeAndNil(phong);
        FreeAndNil(temp);
      end;
-
    end; //  if (cmbPerlinFunc.ItemIndex in [0, 1]) then
 end;
 
@@ -292,43 +272,16 @@ end;
 
 
 procedure TfrmHelpSystem.Button6Click(Sender: TObject);
+const
+  OBJ_PHONG = 'phong';
+var
+  EWE: String;
   procedure MiouMiou(const Miou: string);
   begin
     CdrTextEditor1.AddLine(Miou);
   end;
-var
-  EWE: String;
-begin
-  {
-    function CreateTextureSand(): TBGRABitmap;
-    const
-      blurSize     = 5;
-      tile_overlap = 4;
-    var
-      QTileOverlap : LongInt;
-      i: integer
-      S1, S2: TBGRAPixel;
-      colorOscillation: integer;
-      p: PBGRAPixel;
-    begin
-      QTileOverlap := 4;
-      result := CreateCustomTexture(128, 128, 4, 1.33, 1.42, 0.60000, rfCosine);
-      // GetPart crée également l'objet Temp
-      // JESUS = HITLER -- FUCK THE CHRIST
-      // Marble or wooden like texture
-      result := CreateCyclicPerlinNoiseMap(128, 128, 4, 1.33, 1.42, 0.60000, rfCosine);
-      S1 := BGRA(105, 233, 240, 255);
-      S2 := BGRA(28, 139, 166, 255);
-      p := result.Data;
-      for i := 0 to result.NbPixels-1 do
-      begin
-        colorOscillation := round(((sin(p^.red*Pi/32)+1)/2)*256);
-        p^ := Interp256(S1, S2, colorOscillation);
-        inc(p);
-      end;
-    end;
-  //}
 
+begin
   CdrTextEditor1.ClearText();
   MiouMiou(Format('function CreateTexture%s(): TBGRABitmap;', [trim(editNatureTexture.Text)]));
   MiouMiou('const');
@@ -340,7 +293,7 @@ begin
   begin
     MiouMiou('  WU      : TRect;');
     MiouMiou('  temp    : TBGRABitmap;');
-    MiouMiou('  phong   : TPhongShading;');
+    MiouMiou(format('  %s   : TPhongShading;', [OBJ_PHONG]));
   end;
   if (2 = cmbPerlinFunc.ItemIndex) then
   begin
@@ -360,68 +313,56 @@ begin
 
     MiouMiou('  // GetPart crée également l''objet Temp   ');
     case (cmbPerlinFunc.ItemIndex) of
-      0, 1:
+      0, 1: // CreateCyclicPerlinNoiseMap, CreatePerlinNoiseMap
       begin
-        MiouMiou(Format('(*001*)  result := %s(%d, %d, %d, %.2f, %.2f, %.5f, %s);',
+        MiouMiou(Format('   result := %s(%d, %d, %d, %s, %s, %s, %s);',
                     [EWE,
                      editSizeTextureX.AsInteger,
                      editSizeTextureX.AsInteger,
                      editTileOverlap.AsInteger,
-                     sclHorizontalPeriod.Position / 100.0,
-                     sclVerticalPeriod.Position / 100.0,
-                     sclExponent.Position / 100.0,
+                     FormatterNombreWithDotDecimal(sclHorizontalPeriod.Position / 100.0, 2),
+                     FormatterNombreWithDotDecimal(sclVerticalPeriod.Position / 100.0, 2),
+                     FormatterNombreWithDotDecimal(sclExponent.Position / 100.0, 5),
                      cmbResampleFilter.Items[cmbResampleFilter.ItemIndex]
                      ]));
         MiouMiou('  // Bumped procedural texture');
-        MiouMiou('  WU := MakeTRect(-tile_overlap,-tile_overlap,tx+tile_overlap,ty+tile_overlap);');
-        MiouMiou('  temp:= result.GetPart(WU) as TBGRABitmap;');
+        MiouMiou('  WU    := MakeTRect(-tile_overlap,-tile_overlap,tx+tile_overlap,ty+tile_overlap);');
+        MiouMiou('  temp  := result.GetPart(WU) as TBGRABitmap;');
 
 
         MiouMiou('  BGRAReplace(temp,temp.FilterBlurRadial(blurSize,rbFast));');
         MiouMiou('  try');
-        MiouMiou('    phong := TPhongShading.Create;');
-        MiouMiou(Format('    phong.LightSourceDistanceFactor := %d;', [0]));
-        MiouMiou(Format('    phong.LightDestFactor           := %d;', [0]));
-        MiouMiou(Format('    phong.LightSourceIntensity      := %d;', [150]));
-        MiouMiou(Format('    phong.LightPositionZ            := %d;', [80]));
-        MiouMiou(Format('    phong.LightColor := BGRA(%d, %d, %d, %d);', [sclLightColorB.Position, sclLightColorG.Position, sclLightColorR.Position, sclLightColorA.Position]));
+        MiouMiou(Format('    %s := TPhongShading.Create;', [OBJ_PHONG]));
+        MiouMiou(Format('    %s.LightSourceDistanceFactor := %d;', [OBJ_PHONG, 0]));
+        MiouMiou(Format('    %s.LightDestFactor           := %d;', [OBJ_PHONG, 0]));
+        MiouMiou(Format('    %s.LightSourceIntensity      := %d;', [OBJ_PHONG, 150]));
+        MiouMiou(Format('    %s.LightPositionZ            := %d;', [OBJ_PHONG, 80]));
+        MiouMiou(Format('    %s.LightColor := BGRA(%d, %d, %d, %d);', [OBJ_PHONG, sclLightColorB.Position, sclLightColorG.Position, sclLightColorR.Position, sclLightColorA.Position]));
         MiouMiou('');
-        MiouMiou(Format('    phong.NegativeDiffusionFactor   := %.2f; ', [0.3]));
-        MiouMiou(Format('    phong.SpecularIndex             := %d;'  , [20]));
-        MiouMiou(Format('    phong.AmbientFactor            := %.3f;', [0.4]));
-        MiouMiou(Format('    phong.Draw(Result, Temp, %d, -blurSize,-blurSize, BGRA(%d, %d, %d, %d));', [20, sclColorB.Position, sclColorG.Position, sclColorR.Position,  sclColorA.Position]));
+        MiouMiou(Format('    %s.NegativeDiffusionFactor   := %s; ', [OBJ_PHONG, FormatterNombreWithDotDecimal(0.3, 2)]));
+        MiouMiou(Format('    %s.SpecularIndex             := %d;'  , [20]));
+        MiouMiou(Format('    %s.AmbientFactor            := %s;', [OBJ_PHONG, FormatterNombreWithDotDecimal(0.4, 2)]));
+        MiouMiou(Format('    %s.Draw(Result, Temp, %d, -blurSize,-blurSize, BGRA(%d, %d, %d, %d));', [20, sclColorB.Position, sclColorG.Position, sclColorR.Position,  sclColorA.Position]));
         MiouMiou('  finally');
-        MiouMiou('    FreeAndNil(phong);');
+        MiouMiou(Format('    FreeAndNil(%s);', [OBJ_PHONG]));
         MiouMiou('    FreeAndNil(temp);');
         MiouMiou('  end;');
-
       end;
-      2:
+      2: // CreateCustomTexture
       begin
         MiouMiou('  // Marble or wooden like texture');
-
-        MiouMiou(Format('  result := %s(%d, %d, %d, %.2f, %.2f, %.5f, %s);',
+        MiouMiou(Format('  result := %s(%d, %d, %d, %s, %s, %s, %s);',
                     [EWE,
                      editSizeTextureX.AsInteger,
                      editSizeTextureX.AsInteger,
                      editTileOverlap.AsInteger,
-                     sclHorizontalPeriod.Position / 100.0,
-                     sclVerticalPeriod.Position / 100.0,
-                     sclExponent.Position / 100.0,
+                     FormatterNombreWithDotDecimal(sclHorizontalPeriod.Position / 100.0 , 2),
+                     FormatterNombreWithDotDecimal(sclVerticalPeriod.Position / 100.0   , 2),
+                     FormatterNombreWithDotDecimal(sclExponent.Position / 100.0         , 5),
                      cmbResampleFilter.Items[cmbResampleFilter.ItemIndex]
                      ]));
-                     //*)
-       MiouMiou(Format('  S1 := BGRA(%d, %d, %d, %d);', [sclLightColorB.Position,
-                                                         sclLightColorG.Position,
-                                                         sclLightColorR.Position,
-                                                         sclLightColorA.Position
-                                                        ]));
-       MiouMiou(Format('  S2 := BGRA(%d, %d, %d, %d);', [
-                                                         sclColorB.Position,
-                                                         sclColorG.Position,
-                                                         sclColorR.Position,
-                                                         sclColorA.Position
-                                                        ]));
+       MiouMiou(Format('  S1 := BGRA(%d, %d, %d, %d);', [sclLightColorB.Position, sclLightColorG.Position, sclLightColorR.Position, sclLightColorA.Position]));
+       MiouMiou(Format('  S2 := BGRA(%d, %d, %d, %d);', [sclColorB.Position, sclColorG.Position, sclColorR.Position, sclColorA.Position]));
        MiouMiou('  p := result.Data;');
        MiouMiou('  for i := 0 to result.NbPixels-1 do');
        MiouMiou('  begin');
@@ -432,70 +373,12 @@ begin
       end;
     end;
   MiouMiou('end;');
-
-
-
-
   try
     FMaTextureDeTest.SaveToFile(GetGHCaveDrawDirectory() + 'MaTexture.png');
 
   except
     ShowMessage('Echec création du PNG de la texture');
   end;
-
-
-
-(*
-
-  function TfrmHelpSystem.CreateAnyTexture(tx, ty: integer; const DoEcho: boolean): TBGRABitmap;
-const
-  blurSize     = 5;
-  tile_overlap = 4;
-var
-  WU: TRect;
-
-  ;
-begin
-   result := CreateCyclicPerlinNoiseMap(tx, ty,
-                                        ,
-                                        ,
-                                        ,
-                                        TResampleFilter(cmbResampleFilter.ItemIndex)
-                                        );
-
-   // GetPart crée également l'objet Temp
-   WU := MakeTRect(-tile_overlap,-tile_overlap,tx+tile_overlap,ty+tile_overlap);
-   temp:= result.GetPart(WU) as TBGRABitmap;
-   BGRAReplace(temp,temp.FilterBlurRadial(blurSize,rbFast));
-   try
-     phong := TPhongShading.Create;
-     phong.LightSourceDistanceFactor := 0;
-     phong.LightDestFactor           := 0;
-     phong.LightSourceIntensity      := 150;
-     phong.LightPositionZ            := 80;
-     phong.LightColor                := BGRA(sclLightColorB.Position,
-                                             sclLightColorG.Position,
-                                             sclLightColorR.Position,
-                                             sclLightColorA.Position);
-     phong.NegativeDiffusionFactor   := 0.3;
-     phong.SpecularIndex             := 20;
-     phong.AmbientFactor             := 0.4;
-     phong.Draw(result,temp,20,-blurSize,-blurSize,
-                         BGRA(sclColorB.Position,
-                              sclColorG.Position,
-                              sclColorR.Position,
-                              sclColorA.Position));
-
-
-
-
-   finally
-     FreeAndNil(phong);
-     FreeAndNil(temp);
-   end;
-end;
-
-  //*)
 end;
 
 procedure TfrmHelpSystem.Button7Click(Sender: TObject);

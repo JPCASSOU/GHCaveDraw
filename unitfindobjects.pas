@@ -182,9 +182,9 @@ var
       end;
     end;
   begin
-    for a := 0 to High(QC.Arcs) do
+    for a := 0 to QC.getNbArcs() - 1 do //High(QC.Arcs) do
     begin
-      Arc := QC.Arcs[a];
+      Arc := QC.getArc(a); //Arcs[a];
       //PC1 := MakeTPoint2Df(B.PT1.X + B.Tgt1.X, B.PT1.Y + B.Tgt1.Y);
       //PC2 := MakeTPoint2Df(B.PT2.X + B.Tgt2.X, B.PT2.Y + B.Tgt2.Y);
       FDocDessin.GetCoordsGCS(Arc.IDStationP1, QGroupe.IDGroupeEntites, ARC.OffsetP1, P1, errCode);

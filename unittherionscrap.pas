@@ -11,11 +11,13 @@ interface
 uses
   SysUtils
   , Classes
+  , GHCD_Types
+  , GeneralFunctions
   , UnitDocDessin
   , UnitCenterlinesBasePoints
   , UnitListesSimplesWithGeneriques
-  , GeneralFunctions
-  , GHCD_Types
+
+
   {$IFDEF LANGUAGE_FRENCH}
     , UnitMessages_fr
   {$ENDIF}
@@ -208,9 +210,9 @@ begin
 
   //235.0 -899.5
   //253.5 -902.5
-  for i := 0 to High(QPolyLigne.Sommets) do
+  for i := 0 to QPolyLigne.getNbVertex() - 1 do
   begin
-    EWE := QPolyLigne.Sommets[i];
+    EWE := QPolyLigne.getVertex(i);
     if (FMyDocDessin.GetBasePointByIndex(EWE.IDStation, BP)) then
     begin
       PP  := ConvertGCSCoordsToLocalScrapCoords(BP, EWE.Offset.X, EWE.Offset.Y);
@@ -232,9 +234,9 @@ begin
   //line rock-border -close on -place bottom
   //235.0 -899.5
   //253.5 -902.5
-  for i := 0 to High(QPolygone.Sommets) do
+  for i := 0 to QPolygone.getNbVertex() - 1 do
   begin
-    EWE := QPolygone.Sommets[i];
+    EWE := QPolygone.getVertex(i);
     if (FMyDocDessin.GetBasePointByIndex(EWE.IDStation, BP)) then
     begin
       PP  := ConvertGCSCoordsToLocalScrapCoords(BP, EWE.Offset.X, EWE.Offset.Y);
@@ -256,16 +258,16 @@ begin
   //line rock-border -close on -place bottom
   //235.0 -899.5
   //253.5 -902.5
-  AC := QCourbe.Arcs[0];
+  AC := QCourbe.getArc(0);//Arcs[0];
   if (FMyDocDessin.GetBasePointByIndex(AC.IDStationP1, BP)) then
   begin
     PP1  := ConvertGCSCoordsToLocalScrapCoords(BP, AC.OffsetP1.X, AC.OffsetP1.Y);
     AddLineBuffer(Format('          %.3f %.3f', [PP1.X, PP1.Y]));
   end;
   AddLineBuffer('        smooth on');
-  for i := 0 to High(QCourbe.Arcs) do
+  for i := 0 to QCourbe.getNbArcs() - 1 do //High(QCourbe.Arcs) do
   begin
-    AC := QCourbe.Arcs[i];
+    AC := QCourbe.getArc(i); //Arcs[i];
     if (FMyDocDessin.GetBasePointByIndex(AC.IDStationP2, BP)) then
     begin
       PP1  := ConvertGCSCoordsToLocalScrapCoords(BP, AC.OffsetP1.X, AC.OffsetP1.Y);

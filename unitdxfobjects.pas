@@ -9,6 +9,7 @@ uses
   Classes, SysUtils;
 //////////////////////////////////////////////////////////////////////////////////////////
 // constantes
+const ACAD_VERSION                   = 'AC1006';
 const ACAD_LINESTYLE_CONTINUOUS      = 'CONTINUOUS';
 const ACAD_TEXT_STYLENAME_GENERIC    = 'GENERIC';
 const ACAD_LAYER_LineType_HIDDEN     = 'HIDDEN';
@@ -19,6 +20,7 @@ const ACAD_LAYER_LineType_DIVIDE     = 'DIVIDE';
 const ACAD_LAYER_LineType_BORDER     = 'BORDER';
 
 const ACAD_DATABASE_VAR_AcDbEntity   = 'AcDbEntity';
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // énumérations
 type TDxfCommonCode = (
@@ -729,7 +731,7 @@ begin
       WriteDXFIdxKeyStringValue (fp, Ord(TDxfLayerCode.LINE_TYPE)    , DxfLayer.LineType);
       WriteDXFIdxKeyFloatValue  (fp, Ord(TDxfCommonCode.THICKNESS)   , Thickness, 2);
       WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbVertex'); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbVertex');
-      WriteDXF_ACAD_DATABASE_VAR(fp, QType2D3DVertex);  //WriteDXFIdxKeyStringValue (fp, 100, QType2D3DVertex);
+      //WriteDXF_ACAD_DATABASE_VAR(fp, QType2D3DVertex);  //WriteDXFIdxKeyStringValue (fp, 100, QType2D3DVertex);
       VX.toDXF(fp);
     end;
     WriteDXFIdxKeyStringValue(fp, 0, 'SEQEND');

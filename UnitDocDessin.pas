@@ -352,7 +352,7 @@ type
     // détruire TOUS les objets d'un groupe
     function DeleteAllObjectsOfGroupe(const Grp: TGroupeEntites): integer;
     // calcul de l'aire d'un polygone ou d'un scrap
-    procedure CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out Area, Perimeter: double);
+    procedure CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out VertexOrderedCounterClockWise: boolean; out Area, Perimeter: double);
 
   strict private
     // convertisseur de coordonnées
@@ -846,7 +846,8 @@ begin
   Result.NomSuperGroupe := Trim(EWE[2]);
   Result.Displayed := (StrToIntDef(EWE[3], 1) = 1);
   //Result.Locked    := (StrToIntDef(EWE[4], 0) = 0);
-   Result.ListeGroupes := StrToArrayOfIdxGroupes(EWE[8]);
+
+  Result.ListeGroupes.fromString(EWE[8]);// := StrToArrayOfIdxGroupes(EWE[8]);
 end;
 function TDocumentDessin.ExtractGroupeFromStr(const S: string): TGroupeEntites;
 var
@@ -861,9 +862,7 @@ begin
   Result.IDGroupeEntites := StrToIntDef(EWE[1], 0);
   Result.NomGroupe     := Trim(EWE[2]);
   Result.CouleurGroupe := TColor(StrToIntDef(EWE[3], 0));
-  Result.Decalage.setFrom(ConvertirEnNombreReel(EWE[4], 0.00),
-                          ConvertirEnNombreReel(EWE[5], 0.00),
-                          ConvertirEnNombreReel(EWE[6], 0.00));
+  Result.Decalage.setFrom(EWE[4], EWE[5], EWE[6]);
 
   //Result.IDSuperGroupe := 0; // StrToIntDef(EWE[7], 0);
   Result.Visible       := True;
@@ -907,12 +906,8 @@ begin
   Result.IDStationP1 := StrToInt64Def(EWE[1], -1);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.OffsetP1.setFrom(ConvertirEnNombreReel(EWE[2], 0.00),
-                          ConvertirEnNombreReel(EWE[3], 0.00),
-                          ConvertirEnNombreReel(EWE[4], 0.00));
-  Result.TangP1.setFrom(  ConvertirEnNombreReel(EWE[5], 0.00),
-                          ConvertirEnNombreReel(EWE[6], 0.00),
-                          0.00);
+  Result.OffsetP1.setFrom(EWE[2], EWE[3], EWE[4]);
+  Result.TangP1.setFrom(EWE[5], EWE[6], '0.00');
   // argument 7 zappé
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   Result.IDStationP2 := Trim(EWE[8]);
@@ -920,12 +915,8 @@ begin
   Result.IDStationP2 := StrToInt64Def(EWE[8], -1);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.OffsetP2.setFrom(ConvertirEnNombreReel(EWE[9], 0.00),
-                          ConvertirEnNombreReel(EWE[10], 0.00),
-                          ConvertirEnNombreReel(EWE[11], 0.00));
-  Result.TangP2.setFrom(  ConvertirEnNombreReel(EWE[12], 0.00),
-                          ConvertirEnNombreReel(EWE[13], 0.00),
-                          0.00);
+  Result.OffsetP2.setFrom(EWE[9], EWE[10], EWE[11]);
+  Result.TangP2.setFrom(EWE[12], EWE[13], '0.00');
 end;
 function TDocumentDessin.ExtractVertexPolyFromStr(const S: string): TVertexPolygon;
 var
@@ -938,9 +929,7 @@ begin
   Result.IDStation := StrToInt64Def(EWE[1], -1);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.Offset.setFrom(ConvertirEnNombreReel(EWE[2], 0.00),
-                        ConvertirEnNombreReel(EWE[3], 0.00),
-                        ConvertirEnNombreReel(EWE[4], 0.00));
+  Result.Offset.setFrom(EWE[2], EWE[3], EWE[4]);
 end;
 function TDocumentDessin.ExtractSimpleLineFromStr(const NoLigneFichier: integer; const S: string): TSimpleLigne;
 var
@@ -955,18 +944,14 @@ begin
   {$ELSE}
   Result.IDBaseStExt1  := StrToIntDef(EWE[4], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-  Result.OffsetExtr1.setFrom(ConvertirEnNombreReel(EWE[5], 0.00),
-                             ConvertirEnNombreReel(EWE[6], 0.00),
-                             ConvertirEnNombreReel(EWE[7], 0.00));
+  Result.OffsetExtr1.setFrom(EWE[5], EWE[6], EWE[7]);
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   Result.IDBaseStExt2 := EWE[8];
   {$ELSE}
   Result.IDBaseStExt2  := StrToIntDef(EWE[8], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.OffsetExtr2.setFrom(ConvertirEnNombreReel(EWE[9], 0.00),
-                             ConvertirEnNombreReel(EWE[10], 0.00),
-                             ConvertirEnNombreReel(EWE[11], 0.00));
+  Result.OffsetExtr2.setFrom(EWE[9], EWE[10], EWE[11]);
   Result.MarkToDelete  := false;
   Result.LastModified  := StrToDateTimeDef(EWE[12], Now());
   WU := Ord(Result.IDStyleLigne);
@@ -987,9 +972,7 @@ begin
   Result.IDBaseStation := StrToInt64Def(EWE[5], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.Offset.setFrom(ConvertirEnNombreReel(EWE[6], 0.00),
-                        ConvertirEnNombreReel(EWE[7], 0.00),
-                        ConvertirEnNombreReel(EWE[8], 0.00));
+  Result.Offset.setFrom(EWE[6], EWE[7], EWE[8]);
   Result.AngleRot      := ConvertirEnNombreReel(EWE[9], 0.00);
   Result.ScaleX        := ConvertirEnNombreReel(EWE[10], 1.00);
   Result.ScaleY        := ConvertirEnNombreReel(EWE[11], 1.00);
@@ -1015,9 +998,7 @@ begin
   Result.IDBaseSt      := StrToInt64Def(EWE[4], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
-  Result.Offset.setFrom(ConvertirEnNombreReel(EWE[5], 0.00),
-                        ConvertirEnNombreReel(EWE[6], 0.00),
-                        ConvertirEnNombreReel(EWE[7], 0.00));
+  Result.Offset.setFrom(EWE[5], EWE[6], EWE[7]);
   Result.Alignment     := StrToIntDef(EWE[8], 0);
   Result.MaxLength     := StrToIntDef(EWE[9], -1);
   Result.Text          := Trim(EWE[10]);
@@ -1180,7 +1161,7 @@ begin
   if (not ScrapEstValide(P)) then Exit;
   pP := P;
   pP := CalcBoundingBoxScrap(pP);
-  CalcAreaPerimetrePolyOrScrap(P.IDGroupe, P.Sommets, pP.Area, pP.Perimeter);
+  CalcAreaPerimetrePolyOrScrap(P.IDGroupe, P.Sommets, pP.VertexOrderedCounterClockWise, pP.Area, pP.Perimeter);
   pP.MarkToDelete := false;
   FListeScraps.AddElement(pP);
   if (DoRecalcBBX) then CalcGrpBoundingBoxAndUptdateGdpByIDX(pP.IDGroupe);
@@ -1196,7 +1177,7 @@ var
  PP: TScrap;
 begin
  PP := P;
- CalcAreaPerimetrePolyOrScrap(pP.IDGroupe, pP.Sommets, PP.Area, pP.Perimeter);
+ CalcAreaPerimetrePolyOrScrap(pP.IDGroupe, pP.Sommets, PP.VertexOrderedCounterClockWise, PP.Area, pP.Perimeter);
  FListeScraps.PutElement(Idx, PP);
  CalcGrpBoundingBoxAndUptdateGdpByIDX(PP.IDGroupe);
 end;
@@ -1415,9 +1396,9 @@ begin
   Result := P;
 
   Result.BoundingBox.Reset();
-  for i := 0 to High(P.Sommets) do
+  for i := 0 to P.getNbVertex() - 1 do //High(P.Sommets) do
   begin
-    V  := P.Sommets[i];
+    V  := P.getVertex(i);
     GetCoordsGCSWithoutGroupe(V.IDStation, V.Offset, PT, ErrCode);
     if (ErrCode = -1) then Exit;
     result.BoundingBox.updateFromPoint(PT);
@@ -1780,7 +1761,7 @@ begin
   Result := C;
   Result.BoundingBox.C1.setFrom( INFINITE,  INFINITE);
   Result.BoundingBox.C2.setFrom(-INFINITE, -INFINITE);
-  for i := 0 to High(C.Arcs) do SetBoundingBox(C.Arcs[i]);
+  for i := 0 to C.getNbArcs() - 1 do SetBoundingBox(C.Arcs[i]);
 end;
 // convertir en tableau de points 2D une courbe de bézier au format GHCD
 function TDocumentDessin.ConvertirGHCD2StdPolygon(const P: TArrayVertexPolygon; out arrPt2Df: TArrayPoints2Df): boolean;
@@ -1885,7 +1866,7 @@ begin
   if (Length(P.Sommets) = 0) then Exit;
   pP := P;
   pP := CalcBoundingBoxPolyligne(pP);
-  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, pP.Area, pP.Perimeter);
+  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, PP.VertexOrderedCounterClockWise, pP.Area, pP.Perimeter);
   pP.MarkToDelete := false;
 
   FListePolyLignes.AddElement(pP);
@@ -1910,7 +1891,7 @@ var
   PP: TPolyLigne;
 begin
   PP := P;
-  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, pP.Area, pP.Perimeter);
+  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, PP.VertexOrderedCounterClockWise, pP.Area, pP.Perimeter);
   FListePolyLignes.PutElement(Idx, PP);
   CalcGrpBoundingBoxAndUptdateGdpByIDX(PP.IDGroupe);
 end;
@@ -1927,9 +1908,9 @@ begin
   errCode := 0;
   Result := P;
   Result.BoundingBox.Reset();
-  for i := 0 to High(P.Sommets) do
+  for i := 0 to P.getNbVertex() - 1 do //High(P.Sommets) do
   begin
-    V  := P.Sommets[i];
+    V  := P.getVertex(i);
     GetCoordsGCSWithoutGroupe(V.IDStation, V.Offset, PT, ErrCode);
     if (ErrCode = -1) then Exit;
     if (PT.X < Result.BoundingBox.C1.X) then Result.BoundingBox.C1.X := PT.X;
@@ -1962,11 +1943,12 @@ procedure TDocumentDessin.AddPolygone(const P: TPolygone; const DoRecalcBBX: boo
 var
   i: integer;
   pP: TPolygone;
+  QVertexOrderedCounterClockWise: boolean;
 begin
   if (Length(P.Sommets) = 0) then Exit;
   pP := P;
   pP := CalcBoundingBoxPolygone(pP);
-  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, pP.Area, pP.Perimeter);
+  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, QVertexOrderedCounterClockWise, pP.Area, pP.Perimeter);
   pP.MarkToDelete := false;
   FListePolygones.AddElement(pP);
   if (DoRecalcBBX) then CalcGrpBoundingBoxAndUptdateGdpByIDX(pP.IDGroupe);
@@ -1980,7 +1962,7 @@ var
   PP: TPolygone;
 begin
   PP := P;
-  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, pP.Area, pP.Perimeter);
+  CalcAreaPerimetrePolyOrScrap(PP.IDGroupe, PP.Sommets, PP.VertexOrderedCounterClockWise, pP.Area, pP.Perimeter);
   FListePolygones.PutElement(Idx, PP);
   CalcGrpBoundingBoxAndUptdateGdpByIDX(PP.IDGroupe);
 end;
@@ -1995,9 +1977,9 @@ begin
   Result := P;
   Result.BoundingBox.Reset();
   //SetBoundingBox(C.Arcs[0], True); // extrémité 1 de la courbe
-  for i := 0 to High(P.Sommets) do
+  for i := 0 to P.getNbVertex() - 1 do //High(P.Sommets) do
   begin
-    V  := P.Sommets[i];
+    V  := P.getVertex(i);
     GetCoordsGCS(V.IDStation, P.IDGroupe, V.Offset, PT, ErrCode);
     if (ErrCode = -1) then Exit;
     if (PT.X < Result.BoundingBox.C1.X) then Result.BoundingBox.C1.X := PT.X;
@@ -2101,7 +2083,8 @@ begin
 end;
 // calcul de l'aire et du périmètre d'un polygone, scrap ou polyligne
 // utilisé essentiellement pour la topo des carrières souterraines ou des grandes salles
-procedure TDocumentDessin.CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out Area, Perimeter: double);
+// AreaAlgebraic: boolean: Si spécifié, retourne l'aire algébrique
+procedure TDocumentDessin.CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out VertexOrderedCounterClockWise: boolean; out Area, Perimeter: double);
 var
   Nb, i, j, ErrCode: Integer;
   V0, V1: TVertexPolygon;
@@ -2124,7 +2107,9 @@ begin
     Perimeter := Perimeter + Hypot(PC1.X - PC0.X, PC1.Y - PC0.Y);
     j := i;
   end;
-  Area := Abs(Area * 0.5);
+  Area := Area * 0.5;
+  VertexOrderedCounterClockWise := (Area > 0);
+  Area := abs(Area)
   //AfficherMessageErreur(Format('CalcAreaPolyOrScrap: Area: %f - Perimeter: %f', [Area, Perimeter]));
 end;
 
@@ -2606,12 +2591,11 @@ begin
   begin
     try
       Result := 0;
-      Nb := 1 + High(EWE.Sommets);
+      Nb := EWE.getNbVertex();
       for i := 0 to Nb - 1 do
       begin
-        V := EWE.Sommets[i];
-        // récupère l'ancienne basepoint
-        if (GetBasePointByIndex(V.IDStation, BS)) then
+        V := EWE.getVertex(i);
+        if (GetBasePointByIndex(V.IDStation, BS)) then // récupère l'ancienne basepoint
         begin
           OldIdxBasePt := BS.IDStation;
           // calcul des coordonnées absolues du sommet
@@ -2624,7 +2608,7 @@ begin
             if (BS.IDStation <> OldIdxBasePt) then Result += 1;
             V.IDStation := BS.IDStation;                                                         // nouvelle ID
             V.Offset.setFrom(PM.X - BS.PosStation.X, PM.Y - BS.PosStation.Y, 0.00);     // calcul du décalage
-            EWE.Sommets[i] := V;                                                                               // et mise à jour
+            EWE.putVertex(i, V);
           end;
         end;
 
@@ -2653,10 +2637,10 @@ begin
   if (QIdxGrp = EWE.IDGroupe) then
   begin
     try
-      Nb := 1 + High(EWE.Sommets);
+      Nb := EWE.getNbVertex();
       for i := 0 to Nb - 1 do
       begin
-        V := EWE.Sommets[i];
+        V := EWE.getVertex(i);
         // récupère l'ancienne basepoint
         if (GetBasePointByIndex(V.IDStation, BS)) then
         begin
@@ -2674,8 +2658,7 @@ begin
             V.Offset.setFrom(PM.X - BS.PosStation.X,       // calcul du décalage
                              PM.Y - BS.PosStation.Y,
                              0.00);
-            EWE.Sommets[i] := V;                                    // et mise à jour
-
+            EWE.putVertex(i, V);                                    // et mise à jour
           end;
         end;
       end;
@@ -2704,10 +2687,10 @@ begin
   if (QIdxGrp = EWE.IDGroupe) then
   begin
     try
-      Nb := 1 + High(EWE.Sommets);
+      Nb := EWE.getNbVertex();
       for i := 0 to Nb - 1 do
       begin
-        V := EWE.Sommets[i];
+        V := EWE.getVertex(i);
         // récupère l'ancienne basepoint
         if (GetBasePointByIndex(V.IDStation, BS)) then
         begin
@@ -2728,7 +2711,7 @@ begin
                              PM.Y - BS.PosStation.Y,
                              0.00);
             // et mise à jour
-            EWE.Sommets[i] := V;
+            EWE.putVertex(i, V);
           end;
         end;
       end;
@@ -2882,10 +2865,10 @@ begin
   if (QIdxGrp = EWE.IDGroupe) then  // si l'objet n'est pas dans le même groupe, on zappe
   begin
     try
-      Nb := 1 + High(EWE.Arcs);
+      Nb := EWE.getNbArcs(); //1 + High(EWE.Arcs);
       for i := 0 to Nb - 1 do
       begin
-        QArc := EWE.Arcs[i];
+        QArc := EWE.getArc(i); //Arcs[i];
         // on récupère les anciens basepoints
         if (GetBasePointByIndex(QArc.IDStationP1, BS1) AND
             GetBasePointByIndex(QArc.IDStationP2, BS2)) then
@@ -2908,7 +2891,7 @@ begin
             QArc.OffsetP2.setFrom(PM2.X - BS2.PosStation.X,
                                   PM2.Y - BS2.PosStation.Y,
                                   0.00);
-            EWE.Arcs[i] := QArc;                                      // et mise à jour
+            EWE.setArc(i, QArc); //Arcs[i] := QArc;                                      // et mise à jour
           end;
           PutCourbe(QIdx, EWE);        // et on actualise avec l'objet modifié
         end;
@@ -3809,7 +3792,7 @@ begin
   for s := 0 to QNb - 1 do // les basepoints sont OK ?
   begin
    try
-     QVertex := QP.Sommets[s];
+     QVertex := QP.getVertex(s);
      // si un des basepoints est introuvable ==> sortie (évaluation parresseuse)
      if (Not GetBasePointByIndex(QVertex.IDStation, BS1)) then Exit;
    except
@@ -3821,8 +3804,8 @@ begin
   begin
     QQ := s + 1;
     if (QQ > (QNb - 1)) then QQ := 0;
-    V0 := QP.Sommets[s];
-    V1 := QP.Sommets[qq];
+    V0 := QP.getVertex(s);
+    V1 := QP.getVertex(qq);
     if (GetBasePointByIndex(V0.IDStation, BS0) AND
         GetBasePointByIndex(V1.IDStation, BS1)) then
     begin
@@ -3851,12 +3834,12 @@ var
  Q1, Q2, QT: Boolean;
 begin
  Result := false;
- QNb := Length(myCourbe.Arcs);
+ QNb := myCourbe.getNbArcs();
  if (QNb = 0) then Exit; // nombre d'arcs nul => sortie
  for a := 0 to QNb - 1 do
  begin
    try
-     QArc := myCourbe.Arcs[a];
+     QArc := myCourbe.getArc(a);//Arcs[a];
      // si les basepoints sont introuvables ==> sortie
      Q1   := GetBasePointByIndex(QArc.IDStationP1, BS1);
      Q2   := GetBasePointByIndex(QArc.IDStationP2, BS2);
@@ -3962,7 +3945,7 @@ begin
  for s := 0 to QNb - 1 do
  begin
    try
-     QVertex := QP.Sommets[s];
+     QVertex := QP.getVertex(s);
      // si un des basepoints est introuvable ==> sortie (évaluation parresseuse)
      if (not GetBasePointByIndex(QVertex.IDStation, BS1)) then Exit;
    except
@@ -3984,7 +3967,7 @@ begin
  for s := 0 to QNb - 1 do
  begin
    try
-     QVertex := QP.Sommets[s];
+     QVertex := QP.getVertex(s);
      // si un des basepoints est introuvable ==> sortie (évaluation parresseuse)
      if (not GetBasePointByIndex(QVertex.IDStation, BS1)) then exit;
    except
@@ -4054,8 +4037,9 @@ begin
   Result := False;
   try
     AfficherMessage('Fermeture polyligne');
-    N := High(P.Sommets);
-    P.Sommets[N] := P.Sommets[0];
+    N := P.getNbVertex() - 1; //High(P.Sommets);
+    //P.Sommets[N] := P.Sommets[0];
+    P.putVertex(N, P.getVertex(0));
     P.Closed := True;
     P := CalcBoundingBoxPolyligne(P);
     Result := True;
@@ -4085,20 +4069,23 @@ begin
     PCFusionnee.IDGroupe        := PC1.IDGroupe;
     PCFusionnee.IDStylePolyLine := PC1.IDStylePolyLine;
     PCFusionnee.LastModified    := Now();
+    // Ne pas toucher à ceci
     Nb1 := 1 + High(PC1.Sommets);
     Nb2 := 0 + High(PC2.Sommets);
     // TODO: Contrôler la taille du tableau résultat
     SetLength(PCFusionnee.Sommets, Nb1 + Nb2);
     NbS := 0;
-    for i := 0 to High(PC1.Sommets) do
+    for i := 0 to PC1.getNbVertex() - 1 do //High(PC1.Sommets) do
     begin
-      PCFusionnee.Sommets[NbS] := PC1.Sommets[i];
+      //PCFusionnee.Sommets[NbS] := PC1.Sommets[i];
+      PCFusionnee.putVertex(NbS, PC1.getVertex(i));
       NbS += 1;
     end;
     // ne pas copier le premier sommet de P2, qui est aussi le dernier sommet de P1
-    for i := 1 to High(PC2.Sommets) do
+    for i := 1 to PC2.getNbVertex() - 1 do //High(PC2.Sommets) do
     begin
-      PCFusionnee.Sommets[NbS] := PC2.Sommets[i];
+      //PCFusionnee.Sommets[NbS] := PC2.Sommets[i];
+      PCFusionnee.putVertex(NbS, PC2.getVertex(i));
       NbS += 1;
     end;
     PCFusionnee := CalcBoundingBoxPolyligne(PCFusionnee);
@@ -4149,7 +4136,7 @@ var
     Result := -1;
     for s := 0 to Nb - 1 do
     begin
-      V := PC.Sommets[s];
+      V := PC.getVertex(s);
       if (GetBasePointByIndex(V.IDStation, BP)) then
       begin
         if (PointCoupure = BP.IDStation) then
@@ -4162,7 +4149,7 @@ var
   end;
 begin
   Result := false;
-  Nb := 1 + High(PC.Sommets);
+  Nb := PC.getNbVertex();
   NoPtCoupure := FindIdxSommetCoupure;
   if (NoPtCoupure <= 0) then Exit; // un des points de base de vertex introuvable ou PointCoupure pointe sur le premier sommet: -->[ ]
   if (NoPtCoupure > (Nb-1)) then Exit; // PointCoupure pointe sur le dernier sommet: -->[ ]
@@ -4601,8 +4588,9 @@ const
   FOLDER_POI       = 'POIs';
 var
   MyKMLExport: TKMLExport;
-  NbScraps, ss: Integer;
+  NbScraps, ss, NbPoly: Integer;
   MonScrap: TScrap;
+  MaPoly: TPolyLigne;
   procedure ExportCenterlines();
   begin
     MyKMLExport.BeginFolder(4, 'MyCenterlines');
@@ -4623,7 +4611,7 @@ var
                       else MyKMLExport.BeginPolyline(EWE, WU);
     for v := 0 to High(AScrap.Sommets) do
     begin
-      VX := AScrap.Sommets[v];
+      VX := AScrap.getVertex(v);
       if (GetBasePointByIndex(VX.IDStation, BS)) then
       begin
         PP.setFrom(BS.PosStation.X + VX.Offset.X, BS.PosStation.Y + VX.Offset.Y);
@@ -4634,6 +4622,36 @@ var
     end;
     if (DoFillScraps) then MyKMLExport.EndPolygon()
                       else MyKMLExport.EndPolyline();
+  end;
+  procedure QDessinerPilier(const IdxPoly: integer; const MyPilier: TPolyligne);
+  var
+    EWE, WU: String;
+    v: Integer;
+    VX: TVertexPolygon;
+    BS: TBaseStation;
+    PP: TPoint2Df;
+    P1, P2: TProjUV;
+  begin
+    if (MyPilier.Closed) then
+    begin
+      EWE := IIF (gisWITH_METADATA in WithExportGIS, Format('Polyline%d', [IdxPoly]), 'Metadata unavailable');
+      WU  := IIF(DoUseDefaultStyle, SCRAP_BY_DEFAULT, EWE);
+      if (DoFillScraps) then MyKMLExport.BeginPolygon(EWE, WU)
+                        else MyKMLExport.BeginPolyline(EWE, WU);
+      for v := 0 to High(MyPilier.Sommets) do
+      begin
+        VX := MyPilier.getVertex(v);
+        if (GetBasePointByIndex(VX.IDStation, BS)) then
+        begin
+          PP.setFrom(BS.PosStation.X + VX.Offset.X, BS.PosStation.Y + VX.Offset.Y);
+          P1.setFrom(PP.X, PP.Y);
+          P2 := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, P1);
+          MyKMLExport.AddVertex(P2.U, P2.V, BS.PosStation.Z);
+        end;
+      end;
+      if (DoFillScraps) then MyKMLExport.EndPolygon()
+                        else MyKMLExport.EndPolyline();
+    end;
   end;
   procedure WriteAEntrance(const ASymbole: TSymbole);
   var
@@ -4646,7 +4664,6 @@ var
            (nosGROTTE_SURFACE  = ASymbole.TypeObject) OR
            (nosGOUFFRE_SURFACE = ASymbole.TypeObject);
     if (not EWE) then exit;
-
     if (GetBasePointByIndex(ASymbole.IDBaseStation, BP)) then
     begin
       if (Trim(ASymbole.TagTexte) = '') then
@@ -4661,9 +4678,8 @@ var
       P2 := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, P1);
       MyKMLExport.AddPoint(P2.U, P2.V, BP.PosStation.Z, WU, Format('<BR><BR>X = %.0f - Y = %.0f - Z = %.0f', [BP.PosStation.X, BP.PosStation.Y, BP.PosStation.Z]));
     end;
-
   end;
-   procedure WriteAPOI(const ASymbole: TSymbole);
+  procedure WriteAPOI(const ASymbole: TSymbole);
   var
     EWE: Boolean;
     P1, P2: TProjUV;
@@ -4671,7 +4687,6 @@ var
     WU: String;
   begin
     if (ASymbole.TypeObject <> nosPOINT_REMARQUABLE ) then exit;
-
     if (GetBasePointByIndex(ASymbole.IDBaseStation, BP)) then
     begin
       if (Trim(ASymbole.TagTexte) = '') then
@@ -4709,6 +4724,7 @@ begin
   Result := false;
   AfficherMessageErreur(Format('%s.ExporterScrapsToKML: EPSG:%d; %s ', [ClassName, FCodeEPSG, QFileName]));
   NbScraps := self.GetNbScraps();
+  NbPoly   := self.GetNbPolylignes();
   if (0 = NbScraps) then Exit;
   MyKMLExport := TKMLExport.Create;
   try
@@ -4731,10 +4747,15 @@ begin
       begin
         MonScrap := GetScrap(ss);
         WriteAScrap(ss, MonScrap);
-        if (assigned(FProcAfficherProgression)) then
-        FProcAfficherProgression(Format('Scrap %d / %d: %s', [ss, NbScraps, MonScrap.Nom]), 0, NbScraps - 1, ss);
+        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [ss, NbScraps, MonScrap.Nom]), 0, NbScraps - 1, ss);
       end;
-
+      // Polylignes
+      for ss := 0 to NbPoly - 1 do
+      begin
+        MaPoly := GetPolyligne(ss);
+        QDessinerPilier(ss, MaPoly);
+        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [ss, NbPoly]), 0, NbPoly - 1, ss);
+      end;
       MyKMLExport.EndFolder(4, FOLDER_Scraps);
       // les entrées (seulement si avec métadonnées activées)
       if (gisWITH_METADATA in WithExportGIS) then
@@ -4819,10 +4840,10 @@ var
     if (DoFillScraps) then MyLeafletExport.BeginPolygon(QAT, '')
                       else MyLeafletExport.BeginPolyLine(QAT, '');
 
-    Nb := Length(QScrap.Sommets) - 1;
+    Nb := Length(QScrap.Sommets); // - 1;
     for ii := 0 to Nb - 1 do
     begin
-      V := QScrap.Sommets[ii];
+      V := QScrap.getVertex(ii);
       if (GetBasePointByIndex(V.IDStation, BS)) then
       begin
         P2 := MiouMiou(BS.PosStation.X + V.Offset.X, BS.PosStation.Y + V.Offset.Y);
@@ -4912,7 +4933,7 @@ begin
         begin
           MyScrap := GetScrap(i);
           DessinerScrap(i, MyScrap, '', 0);
-          if (assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
+          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
         end;
         // Entrées, POIs, Points topo: exportés ssi métadonnées activées
         if (gisWITH_METADATA in WithExportGIS) then
@@ -4927,7 +4948,8 @@ begin
               for i := 0 to NbSymboles - 1 do
               begin
                 MySymbole := GetSymbole(i);
-                if (nosGROTTE_SURFACE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
+                if (nosGROTTE_SURFACE  = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
+                if (nosGOUFFRE_SURFACE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
               end;
             //MyLeafletExport.EndConditionalSection(VarCond);
           end;
@@ -4991,7 +5013,7 @@ function TDocumentDessin.ExporterScrapsToGeoJSON(const QFileName: string;
                                                  const WithExportGIS: TWithExportGIS): boolean;
 var
   MyExportGeoJSON: TGeoJSONExport;
-  NbScraps, i: Integer;
+  NbScraps, i, NbPolylines: Integer;
   Coin1, Coin2, Centroide: TPoint3Df;
   QCentroideLonLat: TProjUV;
   MyScrap: TScrap;
@@ -5017,7 +5039,7 @@ var
     Nb := Length(QScrap.Sommets) - 1;
     for ii := 0 to Nb - 1 do
     begin
-      V := QScrap.Sommets[ii];
+      V := QScrap.getVertex(ii);
       if (GetBasePointByIndex(V.IDStation, BS)) then
       begin
         P2 := MiouMiou(BS.PosStation.X + V.Offset.X, BS.PosStation.Y + V.Offset.Y);
@@ -5026,6 +5048,33 @@ var
     end;
     if (DoFillScraps) then MyExportGeoJSON.EndPolygon(IsLastScrap)
                       else MyExportGeoJSON.EndPolyLine(IsLastScrap);
+  end;
+  procedure QDessinerPilier(const IdxScrap: int64; const QPoly: TPolyLigne; const TagString: string; const TagNum: Int64; const IsLastScrap: boolean);
+  var
+    ii, Nb: Integer;
+    V: TVertexPolygon;
+    BS: TBaseStation;
+    P2: TProjUV;
+    MyGroupe: TGroupeEntites;
+    QAT: String;
+  begin
+    if (QPoly.Closed) then
+    begin
+      MyGroupe := GetGroupeByIDGroupe(QPoly.IDGroupe);
+      QAT := IIF(gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
+      if (DoFillScraps) then MyExportGeoJSON.BeginPolygon(QAT, '') else MyExportGeoJSON.BeginPolyLine(QAT, '');
+      Nb := Length(QPoly.Sommets) - 1;
+      for ii := 0 to Nb - 1 do
+      begin
+        V := QPoly.getVertex(ii);
+        if (GetBasePointByIndex(V.IDStation, BS)) then
+        begin
+          P2 := MiouMiou(BS.PosStation.X + V.Offset.X, BS.PosStation.Y + V.Offset.Y);
+          MyExportGeoJSON.AddVertex(P2.U, P2.V, BS.PosStation.Z, ii = (Nb - 1));
+        end;
+      end;
+      if (DoFillScraps) then MyExportGeoJSON.EndPolygon(IsLastScrap) else MyExportGeoJSON.EndPolyLine(IsLastScrap);
+    end;
   end;
 begin
   result := false;
@@ -5044,13 +5093,25 @@ begin
     if (MyExportGeoJSON.Initialiser(QFilename, 'Export GeoJSON', QCentroideLonLat.U, QCentroideLonLat.V, DefaultColor, DefaultOpacity)) then
     begin
       MyExportGeoJSON.WriteHeader();
-        NbScraps := GetNbScraps();
+        // scraps
+        NbScraps    := GetNbScraps();
+        NbPolylines := GetNbPolylignes();
         for i := 0 to NbScraps - 1 do
         begin
           MyScrap := GetScrap(i);
           DessinerScrap(i, MyScrap, '', 0, (i = (NbScraps - 1)));
-          if (assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
+          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
         end;
+        // Polylignes
+        (*
+        for i := 0 to NbPolylines - 1 do
+        begin
+          MaPoly := GetPolyligne(i);
+          QDessinerPilier(i, MaPoly, '', 0, (i = (NbPolylines - 1)));
+          if (assigned(FProcAfficherProgression)) then
+          FProcAfficherProgression(Format('Polyline %d / %d', [i, NbPolylines]), 0, NbPolylines - 1, i);
+        end;
+        //*)
       MyExportGeoJSON.WriteFooter();
       MyExportGeoJSON.Finaliser();
     end;
@@ -5068,12 +5129,13 @@ function TDocumentDessin.ExporterScrapsToDXF(const AOwner: TComponent;
                                              const DefaultOpacity: byte;
                                              const WithExportGIS: TWithExportGIS): boolean;
 var
-  NbScraps, i: Integer;
+  Nb, i: Integer;
   Coin1, Coin2, Centroide: TPoint3Df;
   FMyExportDXF: TDXFExport2;
   MyLayer: TDxfLayer;
   MonScrap: TScrap;
-
+  MaPolyligne: TPolyLigne;
+  r: Boolean;
   procedure QDessinerScrap(const MyScrap: TScrap);
   var
     EWE: String;
@@ -5087,13 +5149,13 @@ var
   begin
     NbV := Length(MyScrap.Sommets);
     if (NbV < 3) then exit;
-    MyVertex := MyScrap.Sommets[0];
+    MyVertex := MyScrap.getVertex(0);
     GetBasePointByIndex(MyVertex.IDStation, BS);
     QC1.setFrom(BS.PosStation.X, BS.PosStation.Y, 0.00);
     MyDXFPolyline.setFrom(MyLayer, QC1, true, NbV);
     for v := 0 to NbV - 1 do
     begin
-      MyVertex := MyScrap.Sommets[v];
+      MyVertex := MyScrap.getVertex(v);
       if (GetBasePointByIndex(MyVertex.IDStation, BS)) then
       begin
         MyDXFPolyline.setVertex(v, BS.PosStation.X + MyVertex.Offset.X,
@@ -5103,21 +5165,51 @@ var
     end;
     FMyExportDXF.PolyLine(MyDXFPolyline);
   end;
+  procedure QDessinerPilier(const MyPilier: TPolyligne);
+  var
+    EWE: String;
+    LstVertex: array of TPoint3Df;
+    v, NbV: Integer;
+    MyVertex: TVertexPolygon;
+    BS: TBaseStation;
+
+    MyDXFPolyline: TDxfPolyline;
+    QC1: TDXFPoint3Df;
+  begin
+    if (MyPilier.Closed) then
+    begin
+      NbV := Length(MyPilier.Sommets);
+      if (NbV < 3) then exit;
+      MyVertex := MyPilier.getVertex(0);
+      GetBasePointByIndex(MyVertex.IDStation, BS);
+      QC1.setFrom(BS.PosStation.X, BS.PosStation.Y, 0.00);
+      MyDXFPolyline.setFrom(MyLayer, QC1, true, NbV);
+      for v := 0 to NbV - 1 do
+      begin
+        MyVertex := MyPilier.getVertex(v);
+        if (GetBasePointByIndex(MyVertex.IDStation, BS)) then
+        begin
+          MyDXFPolyline.setVertex(v, BS.PosStation.X + MyVertex.Offset.X,
+                                     BS.PosStation.Y + MyVertex.Offset.Y,
+                                     0.00);
+        end;
+      end;
+      FMyExportDXF.PolyLine(MyDXFPolyline);
+    end;
+  end;
 begin
   result := false;
-  NbScraps := self.GetNbScraps();
-  AfficherMessageErreur(Format('%s.ExporterScrapsToDXF: EPSG:%d; %d scraps to %s', [ClassName, FCodeEPSG, NbScraps, QFileName]));
-  if (NbScraps = 0) then Exit;
+  Nb := self.GetNbScraps();
+  AfficherMessageErreur(Format('%s.ExporterScrapsToDXF: EPSG:%d; %d scraps to %s', [ClassName, FCodeEPSG, Nb, QFileName]));
+  if (Nb = 0) then Exit;
   // calcul du centroide
   Coin1 := self.GetCoordsMini();
   Coin2 := self.GetCoordsMaxi();
   Centroide.setFrom(0.50 * (Coin1.X + Coin2.X),
                     0.50 * (Coin1.Y + Coin2.Y),
                     0.50 * (Coin1.Z + Coin2.Z));
-
   FMyExportDXF := TDXFExport2.Create;
   try
-
     if (FMyExportDXF.Initialiser(QFilename, 'Export DXF',
                                  Coin1.X, Coin1.Y, Coin1.Z,
                                  Coin2.X, Coin2.Y, Coin2.Z)) then
@@ -5126,12 +5218,20 @@ begin
       MyLayer := FMyExportDXF.GetLayer(FMyExportDXF.GetNbLayers() - 1);
 
       FMyExportDXF.BeginDXF();
-        NbScraps := GetNbScraps();
-        for i := 0 to NbScraps - 1 do
+        Nb := GetNbScraps();
+        for i := 0 to Nb - 1 do
         begin
-          MonScrap := GetScrap(i);
+          MonScrap := self.GetScrap(i);
           QDessinerScrap(MonScrap);
-          if (assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MonScrap.Nom]), 0, NbScraps - 1, i);
+          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, Nb, MonScrap.Nom]), 0, Nb - 1, i);
+        end;
+
+        Nb := GetNbPolylignes();
+        for i := 0 to Nb - 1 do
+        begin
+          MaPolyligne := self.GetPolyligne(i);
+          QDessinerPilier(MaPolyligne);
+          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [i, Nb]), 0, Nb - 1, i);
         end;
       FMyExportDXF.EndDXF();
       FMyExportDXF.Finaliser();
@@ -5174,6 +5274,7 @@ var
   QScrap: TScrap;
   QArea, QPerimeter: double;
   MyPolyligne: TPolyLigne;
+  QVertexOrderedCounterClockWise: boolean;
 begin
   Result := 0.00;
   //AfficherMessage(Format('%s.CalcSuperficieVides(%d - %s)', [ClassName, MyGroupe.IDGroupeEntites, MyGroupe.NomGroupe]));
@@ -5185,7 +5286,7 @@ begin
     QScrap := GetScrap(i);
     if (QScrap.IDGroupe = MyGroupe.IDGroupeEntites) then
     begin
-      CalcAreaPerimetrePolyOrScrap(QScrap.IDGroupe, QScrap.Sommets, QArea, QPerimeter);
+      CalcAreaPerimetrePolyOrScrap(QScrap.IDGroupe, QScrap.Sommets, QVertexOrderedCounterClockWise, QArea, QPerimeter);
       Result := Result + QArea;
     end;
   end;
@@ -5197,7 +5298,7 @@ begin
     MyPolyligne := GetPolyligne(i);
     if ((MyPolyligne.IDGroupe = MyGroupe.IDGroupeEntites) and (MyPolyligne.Closed)) then
     begin
-      CalcAreaPerimetrePolyOrScrap(MyPolyligne.IDGroupe, MyPolyligne.Sommets, QArea, QPerimeter);
+      CalcAreaPerimetrePolyOrScrap(MyPolyligne.IDGroupe, MyPolyligne.Sommets, QVertexOrderedCounterClockWise, QArea, QPerimeter);
       Result := Result - QArea;
     end;
   end;

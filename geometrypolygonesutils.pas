@@ -333,7 +333,7 @@ begin
 
       QNbV := 1 + high(PP.Sommets);
       if (QNbV = 0) then Continue;
-      for a := 0 to QNbV - 1 do QListeVertex.AddElement(PP.Sommets[a]);
+      for a := 0 to QNbV - 1 do QListeVertex.AddElement(PP.getVertex(a));
     end;
     Nb := QListeVertex.GetNbElements();
     if (Nb = 0) then Exit;
@@ -341,12 +341,12 @@ begin
     for i := 0 to Nb - 1 do
     begin
       MyVertex := QListeVertex.GetElement(i);
-      MergedObj.Sommets[i] := MyVertex;
+      MergedObj.putVertex(i, MyVertex);
     end;
     // controle
     for i := 0 to Nb - 1 do
     begin
-      MyVertex := MergedObj.Sommets[i];
+      MyVertex := MergedObj.getVertex(i);
       AfficherMessage(Format('%d: %d', [i, MyVertex.IDStation]));
     end;
     // retourner le résultat: OK si Nb > 0

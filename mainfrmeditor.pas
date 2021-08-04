@@ -620,6 +620,8 @@ type
     procedure acZoomPlusExecute(Sender: TObject);
     procedure acZoomWindowExecute(Sender: TObject);
     procedure btnActionsCourbeClick(Sender: TObject);
+    procedure btnDrwObjMode56Click(Sender: TObject);
+    procedure btnDrwTypeObjet9Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
     procedure CadreDessinBGRA1Click(Sender: TObject);
@@ -813,6 +815,8 @@ begin
   acEditerSection.Visible        := R90;
   //*)
 end;
+
+
 
 procedure TMainWindow.PurgerBoutonsDrw;
 begin
@@ -1080,6 +1084,7 @@ var
     Result.Enabled        := QEnabled;
   end;
 begin
+  AfficherMessage('Generation ébauche');
   LS := TStringList.Create;
   try
     LS.Clear;
@@ -1115,6 +1120,7 @@ begin
   finally
     FreeAndNil(LS);//LS.Free;
   end;
+  AfficherMessage('Generation ébauche OK');
 end;
 
 function TMainWindow.RemplacerCanevasTopo(const FichierGCD: string): boolean;
@@ -1855,6 +1861,27 @@ procedure TMainWindow.btnActionsCourbeClick(Sender: TObject);
 begin
   pnlPopUpActionsCourbes.Visible := not pnlPopUpActionsCourbes.Visible;
 end;
+
+procedure TMainWindow.btnDrwObjMode56Click(Sender: TObject);
+var
+  n: Integer;
+  PD: TDocumentDessin;
+  QPoly: TPolyLigne;
+begin
+  PD := CadreDessinBGRA1.GetDocDessin();
+  n := CadreDessinBGRA1.GetCurrPolylineIdx();
+  ShowMessageFmt('Polyligne %d', [n]);
+  QPoly := PD.GetPolyligne(n);
+  if (QPoly.ReverseVertex()) then PD.PutPolyligne(n, QPoly);
+  CadreDessinBGRA1.RefreshVue();
+
+end;
+
+procedure TMainWindow.btnDrwTypeObjet9Click(Sender: TObject);
+begin
+
+end;
+
 
 
 

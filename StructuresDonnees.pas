@@ -132,13 +132,14 @@ const
   COULEUR_VISEE_ANTENNE        = clGray;      // couleur des visées en antenne
 
 // export GHCaveDraw
+(*
 const
   FMT_BASEPOINTS = '    %d'+TAB+ '%s'+ // ID de la visée
         TAB+'%d'+TAB+'%d' + // attributs
-        TAB+'%.2f'+TAB+'%.2f'+TAB+'%.2f' +  // point de départ
-        TAB+'%.2f'+TAB+'%.2f'+TAB+'%.2f' +  // point d'arrivée
-        TAB+'%.2f'+TAB+'%.2f'+TAB+'%.2f' +  // point droit  (avec Z du sol)
-        TAB+'%.2f'+TAB+'%.2f'+TAB+'%.2f';   // point gauche (avec Z du plafond)
+        TAB+'%s'+TAB+'%s'+TAB+'%s' +  // point de départ
+        TAB+'%s'+TAB+'%s'+TAB+'%s' +  // point d'arrivée
+        TAB+'%s'+TAB+'%s'+TAB+'%s' +  // point droit  (avec Z du sol)
+        TAB+'%s'+TAB+'%s'+TAB+'%s';   // point gauche (avec Z du plafond)           //*)
 //----------------------------------
 // format standard TOPOROBOT Série + Point
 const FMTSERST      = '%d.%d';

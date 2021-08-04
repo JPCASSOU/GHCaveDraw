@@ -1,6 +1,5 @@
 unit cdrdessincanvasBGRA;
 {$INCLUDE CompilationParameters.inc}
-
 // DONE: Installer le nouveau package BGRABitmap 8.7
 
 (* Contexte de dessin pour GHCaveDraw
@@ -268,14 +267,18 @@ type
     acTexteSousTitre: TAction;
     acTexteTitre: TAction;
     acMasquerImages: TAction;
+    acSquarePolyline: TAction;
+    acSquarePolygon: TAction;
     Action2: TAction;
     acTransformerCourbeEnPolyligne: TAction;
     acVue: TAction;
     btnAffecterAuGroupeCourant: TSpeedButton;
     btnAffecterNatureByCombo1: TSpeedButton;
     btnDispCodeGHCaveDraw: TSpeedButton;
+    btnEditObjectSpecial1: TSpeedButton;
+    btnEditObjectSpecial2: TSpeedButton;
     btnRecupereFiltreDepuisGroupe: TButton;
-    btnEditObjectSpecial: TSpeedButton;
+
     btnFermerCourbePolyligne: TSpeedButton;
     btnPanelDebug: TButton;
     btnMetaFiltre: TButton;
@@ -377,6 +380,8 @@ type
     procedure acSetCurrentGroupeFromThisSimpleLineExecute(Sender: TObject);
     procedure acSetCurrentGroupeFromThisSymboleExecute(Sender: TObject);
     procedure acSetCurrentGroupeFromThisTextObjectExecute(Sender: TObject);
+    procedure acSquarePolygonExecute(Sender: TObject);
+    procedure acSquarePolylineExecute(Sender: TObject);
     procedure acSymboleAffecterCurrGrpExecute(Sender: TObject);
     procedure acLineAffecterCurrGrpExecute(Sender: TObject);
     procedure acTexteAffecterCurrGrpExecute(Sender: TObject);
@@ -388,7 +393,6 @@ type
     procedure acLigneAffecterGroupeExecute(Sender: TObject);
     procedure acSymboleAffecterGroupeExecute(Sender: TObject);
     procedure acTexteAffecterGroupeExecute(Sender: TObject);
-
 
     procedure acDeleteScrapExecute(Sender: TObject);
 
@@ -829,7 +833,6 @@ const SEUIL_VISIBILITE_SYMBOLES           = 500.00;
 const SEUIL_VISIBILITE_TEXTES             = 500.00;
 
 const TAB = #9;
-const FMT_LIST_ZONES = '%d' + TAB + '%s' + TAB + '%.2f' + TAB +  '%.2f' + TAB + '%.2f' + TAB + '%.2f';
 
 {$R *.lfm}
 
@@ -1051,6 +1054,49 @@ begin
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 
+
+procedure TCadreDessinBGRA.acSquarePolylineExecute(Sender: TObject);
+var
+  EWE: TPolyLigne;
+  QCourbeProvisoire: TCourbePolygoneProvisoire;
+begin
+  EWE := FDocumentDessin.GetPolyligne(FCurrentPolylineIdx);
+  QCourbeProvisoire := TCourbePolygoneProvisoire.Create;
+  try
+    AfficherMessageErreur('001');
+    QCourbeProvisoire.SetDocDessin(FDocumentDessin);
+    AfficherMessageErreur('002');
+    QCourbeProvisoire.LoadPolyligne(EWE, false);
+    AfficherMessageErreur('003');
+    QCourbeProvisoire.SquarrerPoly();
+    AfficherMessageErreur('004');
+    //QCourbeProvisoire.StripVertex;
+    //if (QCourbeProvisoire.GeneratePolyLine(EWE)) then FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, EWE);
+    Vue.Invalidate; // RedessinEcran(false);
+  finally
+    FreeAndNil(QCourbeProvisoire);//QCourbeProvisoire.Free;
+  end;
+end;
+
+
+procedure TCadreDessinBGRA.acSquarePolygonExecute(Sender: TObject);
+var
+  EWE: TPolygone;
+  QCourbeProvisoire: TCourbePolygoneProvisoire;
+begin
+  EWE := FDocumentDessin.GetPolygone(FCurrentPolygonIdx);
+  ShowMessageFmt('Squarrer polygone %d', [FCurrentPolygonIdx]);
+  QCourbeProvisoire := TCourbePolygoneProvisoire.Create;
+  try
+    QCourbeProvisoire.SetDocDessin(FDocumentDessin);
+    QCourbeProvisoire.LoadPolygone(EWE);
+    //QCourbeProvisoire.StripVertex;
+    //if (QCourbeProvisoire.GeneratePolyLine(EWE)) then FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, EWE);
+    Vue.Invalidate; // RedessinEcran(false);
+  finally
+    FreeAndNil(QCourbeProvisoire);//QCourbeProvisoire.Free;
+  end;
+end;
 //******************************************************************************
 procedure TCadreDessinBGRA.acCourbeAffecterGroupeExecute(Sender: TObject);
 var
@@ -1511,7 +1557,7 @@ begin
           LS.Add(GenererLigneEnteteScrap(QIdxObj, MyScrap));
           for j := 0 to High(MyScrap.Sommets) do
           begin
-            V := MyScrap.Sommets[j];
+            V := MyScrap.getVertex(j);
             LS.Add(GenererLigneVertexPolygon(j, V));
           end;
           LS.Add(GenererLigneEndScrap());
@@ -1520,9 +1566,9 @@ begin
          begin
            MyCourbe      := FDocumentDessin.GetCourbe(QIdxObj);
            LS.Add(GenererLigneEnteteCourbe(QIdxObj, MyCourbe));
-           for j := 0 to High(MyCourbe.Arcs) do
+           for j := 0 to MyCourbe.getNbArcs() - 1 do // High(MyCourbe.Arcs) do
            begin
-             A := MyCourbe.Arcs[j];
+             A := MyCourbe.getArc(j); //MyCourbe.Arcs[j];
              LS.Add(GenererLigneArcCourbe(j, A));
            end;
            LS.Add(GenererLigneEndCourbe());
@@ -1533,7 +1579,7 @@ begin
            LS.Add(GenererLigneEntetePolyligne(QIdxObj, MyPolyligne));
            for j := 0 to High(MyPolyligne.Sommets) do
            begin
-             V := MyPolyligne.Sommets[j];
+             V := MyPolyligne.getVertex(j);
              LS.Add(GenererLigneVertexPolygon(j, V));
            end;
            LS.Add(GenererLigneEndPolyligne());
@@ -1544,7 +1590,7 @@ begin
            LS.Add(GenererLigneEntetePolygone(QIdxObj, MyPolygone));
            for j := 0 to High(MyPolygone.Sommets) do
            begin
-             V := MyPolygone.Sommets[j];
+             V := MyPolygone.getVertex(j);
              LS.Add(GenererLigneVertexPolygon(j, V));
            end;
            LS.Add(GenererLigneEndPolygone());
@@ -1788,6 +1834,9 @@ begin
   S666(acReverseCourbe, rsCDR_DRW_ACN_REVERSE_COURBE);
   S666(acDispCodeGHCaveDrawObjet, rsCDR_DRW_ACN_DISP_GHCD_CODE_OBJ);
   S666(acPrintInfosStation, rsCDR_DRW_ACN_ADD_TEXT_W_INFO_ST);
+  S666(acSquarePolyline, rsCDR_DRW_ACN_SQUARE_POLYLINE);
+  S666(acSquarePolygon , rsCDR_DRW_ACN_SQUARE_POLYGON);
+
 
   // pop up général
   mnuFiltres.Caption := rsCDR_DRW_MNU_FILTRES;
@@ -1840,7 +1889,7 @@ begin
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     EWE.IDStation := '';
     {$ELSE}
-    EWE.IDStation := -1;
+    EWE.IDStation := -1;                                               //
     {$ENDIF TIDBASEPOINT_AS_TEXT}
 
     EWE.IDTerrain   := '---';
@@ -2357,13 +2406,14 @@ var
   QTextObject: TTextObject;
 begin
   // on vide les boutons du panneau d'édition rapide
-  AffecterActionABouton(btnEditObject, acEmptyAction);
-  AffecterActionABouton(btnDeleteObject, acEmptyAction);
-  AffecterActionABouton(btnAffecterGroupeByCombo, acEmptyAction);
-  AffecterActionABouton(btnAffecterAuGroupeCourant, acEmptyAction);
-  AffecterActionABouton(btnAffecterNatureByCombo, acEmptyAction);
-  AffecterActionABouton(btnEditObjectSpecial, acEmptyAction);
-  AffecterActionABouton(btnDispCodeGHCaveDraw, acEmptyAction);
+  AffecterActionABouton(btnEditObject              , acEmptyAction);
+  AffecterActionABouton(btnDeleteObject            , acEmptyAction);
+  AffecterActionABouton(btnAffecterGroupeByCombo   , acEmptyAction);
+  AffecterActionABouton(btnAffecterAuGroupeCourant , acEmptyAction);
+  AffecterActionABouton(btnAffecterNatureByCombo   , acEmptyAction);
+  AffecterActionABouton(btnEditObjectSpecial1      , acEmptyAction);
+  AffecterActionABouton(btnEditObjectSpecial2      , acEmptyAction);
+  AffecterActionABouton(btnDispCodeGHCaveDraw      , acEmptyAction);
   mnuAffecterGroupeFromObject.Action := acEmptyAction;
   FModeTravailCanvas    := MT;
   lbModeTravail.Caption      := Format('%s (' + FORMAT_BASEPOINT + ')',[GetResourceString(rsMSG_READY), FCurrentBasePoint.IDStation]) ;
@@ -2570,11 +2620,11 @@ begin
     mtSCRAP_EDIT_SOMMET,
     mtSCRAP_MOVE_SOMMET:
       begin
-        AffecterActionABouton(btnEditObject, acEditScrap);
-        AffecterActionABouton(btnDeleteObject, acDeleteScrap);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acScrapAffecterGroupe);
-        AffecterActionABouton(btnAffecterGroupeByCombo, acScrapAffecterCurrGrp);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnEditObject              , acEditScrap);
+        AffecterActionABouton(btnDeleteObject            , acDeleteScrap);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acScrapAffecterGroupe);
+        AffecterActionABouton(btnAffecterGroupeByCombo   , acScrapAffecterCurrGrp);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
         QScrap := FDocumentDessin.GetScrap(FCurrentScrapIdx);
         acSetCurrentGroupeFromThisScrap.Caption := Format('Définir groupe courant depuis le scrap #%d - Groupe #%d', [FCurrentScrapIdx, QScrap.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisScrap;
@@ -2583,12 +2633,12 @@ begin
     mtCOURBE_EDIT_SOMMET,
     mtCOURBE_MOVE_SOMMET:
       begin
-        AffecterActionABouton(btnDeleteObject, acDeleteCourbe);
-        AffecterActionABouton(btnAffecterGroupeByCombo, acCourbeAffecterGroupe);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acCourbeAffecterCurrGrp);
-        AffecterActionABouton(btnAffecterNatureByCombo, acCourbeAffecterStyle);
-        AffecterActionABouton(btnEditObjectSpecial    , acReverseCourbe);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnDeleteObject            , acDeleteCourbe);
+        AffecterActionABouton(btnAffecterGroupeByCombo   , acCourbeAffecterGroupe);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acCourbeAffecterCurrGrp);
+        AffecterActionABouton(btnAffecterNatureByCombo   , acCourbeAffecterStyle);
+        AffecterActionABouton(btnEditObjectSpecial1      , acReverseCourbe);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
         QCourbe := FDocumentDessin.GetCourbe(FCurrentCurveIdx);
         acSetCurrentGroupeFromThisCourbe.Caption := Format('Définir groupe courant depuis la courbe #%d - Groupe #%d', [FCurrentCurveIdx, QCourbe.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisCourbe;
@@ -2597,13 +2647,15 @@ begin
     mtPOLYLIN_EDIT_SOMMET,
     mtPOLYLIN_MOVE_SOMMET:
       begin
-        AffecterActionABouton(btnDeleteObject, acDeletePolyline); // Bug fixé
-        AffecterActionABouton(btnAffecterGroupeByCombo, acPolyLineAffecterGroupe);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acPolylignAffecterCurrGrp);
-        AffecterActionABouton(btnAffecterNatureByCombo, acPolylineAffecterStyle);
-        AffecterActionABouton(btnEditObjectSpecial    , acReversePolyline);
-        AffecterActionABouton(btnFermerCourbePolyligne, acClosePolylign);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnDeleteObject            , acDeletePolyline); // Bug fixé
+        AffecterActionABouton(btnAffecterGroupeByCombo   , acPolyLineAffecterGroupe);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acPolylignAffecterCurrGrp);
+        AffecterActionABouton(btnAffecterNatureByCombo   , acPolylineAffecterStyle);
+        AffecterActionABouton(btnFermerCourbePolyligne   , acClosePolylign);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnEditObjectSpecial1      , acReversePolyline);
+        AffecterActionABouton(btnEditObjectSpecial2      , acSquarePolyline);
+
         QPolyligne := FDocumentDessin.GetPolyligne(FCurrentPolylineIdx);
         acSetCurrentGroupeFromThisPolyline.Caption := Format('Définir groupe courant depuis la polyligne #%d - Groupe #%d', [FCurrentPolylineIdx, QPolyligne.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisPolyline;
@@ -2613,42 +2665,42 @@ begin
     mtPOLYGON_EDIT_SOMMET,
     mtPOLYGON_MOVE_SOMMET:
       begin
-        AffecterActionABouton(btnDeleteObject, acDeletePolygone);
-        AffecterActionABouton(btnAffecterGroupeByCombo, acPolygoneAffecterGroupe);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acPolygonAffecterCurrGrp);
-        AffecterActionABouton(btnAffecterNatureByCombo, acPolygoneAffecterStyle);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnDeleteObject            , acDeletePolygone);
+        AffecterActionABouton(btnAffecterGroupeByCombo   , acPolygoneAffecterGroupe);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acPolygonAffecterCurrGrp);
+        AffecterActionABouton(btnAffecterNatureByCombo   , acPolygoneAffecterStyle);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
         QPolygone := FDocumentDessin.GetPolygone(FCurrentPolygonIdx);
         acSetCurrentGroupeFromThisPolygone.Caption := Format('Définir groupe courant depuis le polygone #%d - Groupe #%d', [FCurrentPolygonIdx, QPolygone.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisPolygone;
       end;
     mtSELECT_LIGNE:
       begin
-        AffecterActionABouton(btnDeleteObject, acDeleteLigne);
-        AffecterActionABouton(btnAffecterGroupeByCombo, acLigneAffecterGroupe);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acLineAffecterCurrGrp);
-        AffecterActionABouton(btnAffecterNatureByCombo, acLigneAffecterStyle);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnDeleteObject            , acDeleteLigne);
+        AffecterActionABouton(btnAffecterGroupeByCombo   , acLigneAffecterGroupe);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acLineAffecterCurrGrp);
+        AffecterActionABouton(btnAffecterNatureByCombo   , acLigneAffecterStyle);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
         QSimpleLigne := FDocumentDessin.GetSimpleLigne(FCurrentSimpleLineIdx);
         acSetCurrentGroupeFromThisSimpleLine.Caption := Format('Définir groupe courant depuis la ligne #%d - Groupe #%d', [FCurrentSimpleLineIdx, QSimpleLigne.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisSimpleLine;
       end;
     mtSELECT_SYMBOLE:
       begin
-        AffecterActionABouton(btnDeleteObject, acDeleteSymbole);
-        AffecterActionABouton(btnAffecterGroupeByCombo, acSymboleAffecterGroupe);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acSymboleAffecterCurrGrp);
-        AffecterActionABouton(btnAffecterNatureByCombo, acSymboleAffecterStyle);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnDeleteObject            , acDeleteSymbole);
+        AffecterActionABouton(btnAffecterGroupeByCombo   , acSymboleAffecterGroupe);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acSymboleAffecterCurrGrp);
+        AffecterActionABouton(btnAffecterNatureByCombo   , acSymboleAffecterStyle);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
         QSymbole := FDocumentDessin.GetSymbole(FCurrentSymboleIdx);
         acSetCurrentGroupeFromThisSymbole.Caption := Format('Définir groupe courant depuis le symbole #%d - Groupe #%d', [FCurrentSymboleIdx, QSymbole.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisSymbole;
       end;
     mtSELECT_TEXTE:
       begin
-        AffecterActionABouton(btnDeleteObject, acDeleteTexte);
-        AffecterActionABouton(btnAffecterAuGroupeCourant, acTexteAffecterCurrGrp);
-        AffecterActionABouton(btnDispCodeGHCaveDraw, acDispCodeGHCaveDrawObjet);
+        AffecterActionABouton(btnDeleteObject            , acDeleteTexte);
+        AffecterActionABouton(btnAffecterAuGroupeCourant , acTexteAffecterCurrGrp);
+        AffecterActionABouton(btnDispCodeGHCaveDraw      , acDispCodeGHCaveDrawObjet);
         QTextObject := FDocumentDessin.GetTexte(FCurrentTextIdx);
         acSetCurrentGroupeFromThisTextObject.Caption := Format('Définir groupe courant depuis le symbole #%d - Groupe #%d', [FCurrentTextIdx, QTextObject.IDGroupe]);
         mnuAffecterGroupeFromObject.Action := acSetCurrentGroupeFromThisTextObject;
@@ -3083,7 +3135,7 @@ begin
   qY2 := Math.Max(Y1, Y2);
   d1  := qX2-qX1;
   d2:=qY2-qY1;
-
+  AfficherMessage('Fuck the Christ 002');
   if ((Abs(d1) < Epsilon) or (Abs(d2) < Epsilon)) then Exit;   // si zone trop étroite, abandonner
 
 
@@ -3098,7 +3150,9 @@ begin
   // Redéfinition de la hauteur maxi
   FRYMaxi:=GetRYMaxi;
   // redessine
+  AfficherMessage('Fuck the Christ 003');
   Vue.Invalidate; // RedessinEcran(false);
+  AfficherMessage('Fuck the Christ 004');
 end;
 // attrape la hauteur de vue
 function TCadreDessinBGRA.GetRYMaxi(): double;
@@ -3726,8 +3780,7 @@ begin
               begin
                 CV := FDocumentDessin.CalcBoundingBoxCourbe(CV);
                 CV.IDStyleCourbe := FIDStyleCurveEditing;
-                // update de la courbe
-                FDocumentDessin.PutCourbe(FCurrentCurveIdx, CV);
+                FDocumentDessin.PutCourbe(FCurrentCurveIdx, CV);  // update de la courbe
               end;
               // redessin écran
               Vue.Invalidate; // RedessinEcran(false);
@@ -3777,10 +3830,8 @@ begin
         if (FCourbePolygoneProvisoire.GenerateCourbe(true, -1, -1, CV)) then
         begin
           CV := FDocumentDessin.CalcBoundingBoxCourbe(CV);
-          // update de la courbe
-          FDocumentDessin.PutCourbe(FCurrentCurveIdx, CV);
+          FDocumentDessin.PutCourbe(FCurrentCurveIdx, CV);   // update de la courbe
         end;
-        // redessin écran
         Vue.Invalidate; // RedessinEcran(false);
         SetModeTravail(mtNONE);            // indispensable pour réarmer le contexte
       end;
@@ -3808,10 +3859,8 @@ begin
               begin
                 PV := FDocumentDessin.CalcBoundingBoxPolygone(PV);
                 PV.IDStylePolygone := FIDStylePolygoneEditing;
-                // update de la courbe
                 FDocumentDessin.PutPolygone(FCurrentPolygonIdx, PV);
               end;
-              // redessin écran
               Vue.Invalidate; // RedessinEcran(false);
               SetModeTravail(mtNONE);
               Exit;
@@ -3835,7 +3884,6 @@ begin
           PG := FDocumentDessin.CalcBoundingBoxPolygone(PG);
           FDocumentDessin.PutPolygone(FCurrentPolygonIdx, PG);
         end;
-        // redessin écran
         Vue.Invalidate; // RedessinEcran(false);
         SetModeTravail(mtNONE);            // indispensable pour réarmer le contexte
       end;
@@ -3865,7 +3913,6 @@ begin
                 // update de la courbe
                 FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, PL);
               end;
-              // redessin écran
               Vue.Invalidate; // RedessinEcran(false);
               SetModeTravail(mtNONE);
               Exit;
@@ -3916,7 +3963,6 @@ begin
           PL := FDocumentDessin.CalcBoundingBoxPolyligne(PL);
           FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, PL);
         end;
-
         Vue.Invalidate;    // redessin écran
         SetModeTravail(mtNONE);            // indispensable pour réarmer le contexte
       end;
@@ -3958,7 +4004,6 @@ begin
          if (FEditableDrawing) then self.PopupMenu := mnuCourbe;  // réassignation du pop-up (si le dessin est éditable)
          if (Not FDoAddVertexCourbePolygone) then
          begin
-
            AfficherMessage(Format('Début courbe ou poly: Du point: ' + FORMAT_BASEPOINT, [FCurrentBasePoint.IDStation]));
            FProcGetInfoBasePoint(FCurrentBasePoint);
            FCourbePolygoneProvisoire.ClearVertex;
@@ -3974,7 +4019,6 @@ begin
          end
          else  // C'est le premier point
          begin
-           // réassignation du pop-up
           if (FEditableDrawing) then self.PopupMenu := mnuCourbe;  // réassignation du pop-up (si le dessin est éditable)
            AfficherMessage(Format('Poly : Au point: ' + FORMAT_BASEPOINT, [FCurrentBasePoint.IDStation]));
            FProcGetInfoBasePoint(FCurrentBasePoint);
@@ -4177,21 +4221,17 @@ begin
         end;
       end; // for NoGroupe ...
       //************************
-      //AfficherMessage('-- Quadrillage');
       if (tedQUADRILLES in FParamsVue2D.ElementsDrawn) then
       begin
         TmpBuffer.DrawQuadrillage();
       end;
-      //AfficherMessage('-- centerlines');
       if (tedCENTERLINES in FParamsVue2D.ElementsDrawn) then
       begin
         for ii:= 0 to FDocumentDessin.GetNbBaseStations - 1 do
           TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), 12);
       end;
-      // et enfin l'échelle
       if (tedECHELLE_NORD in FParamsVue2D.ElementsDrawn) then TmpBuffer.DrawEchelleNord(ImgWidth, ImgHeight);
-      // fin conventionnelle
-      TmpBuffer.EndDrawing(); // 1A11831244785
+      TmpBuffer.EndDrawing();  // fin conventionnelle
     except
     end;
     // ne pas utiliser le SaveToFile de TmpBuffer
@@ -4310,15 +4350,13 @@ procedure TCadreDessinBGRA.acDisplayDebugTextsExecute(Sender: TObject);
 begin
   if (tedDEBUG_TEXTS in FParamsVue2D.ElementsDrawn) then  FParamsVue2D.ElementsDrawn := FParamsVue2D.ElementsDrawn - [tedDEBUG_TEXTS]
                                                     else  FParamsVue2D.ElementsDrawn := FParamsVue2D.ElementsDrawn + [tedDEBUG_TEXTS];
-  //FDoDisplayDebugTexts := Not (FDoDisplayDebugTexts);
   acDisplayDebugTexts.Checked := (tedDEBUG_TEXTS in FParamsVue2D.ElementsDrawn); // FDoDisplayDebugTexts;
-  Vue.Invalidate; // RedessinEcran(false);
+  Vue.Invalidate;
 end;
 // callback de rafraichissement
 procedure TCadreDessinBGRA.RafraichirVue;
 begin
-  //AfficherMessageErreur('Callback de refresh dans TCadreDessin');
-  Vue.Invalidate; // RedessinEcran(false);
+  Vue.Invalidate;
 end;
 
 function TCadreDessinBGRA.GetDocDessin(): TDocumentDessin;
@@ -4356,7 +4394,7 @@ begin
        CV.BoundingBox := BBX; // restauration de la BoundingBox
        DrawVolatileCourbe(vue.Canvas, CV, q, True, True);
        // affecter le bouton de strip
-       AffecterActionABouton(btnEditObjectSpecial, acReverseCourbe);
+       AffecterActionABouton(btnEditObjectSpecial1, acReverseCourbe);
        QIdx := Q;
        Result := True;
      except
@@ -4479,10 +4517,7 @@ var
   V: TVertexPolygon;
   PM: TPoint2Df;
   PTSV: array of TPoint;
-  CP  : TPoint;  // point central du polygone
-  //GP  : TGroupeEntites;
   errCode: integer;
-  QStylePolygone: TStylePolygone;
   WU: Boolean;
   OO: TPoint3Df;
   BS1: TBaseStation;
@@ -4501,7 +4536,7 @@ begin
   Cnv.Brush.Color := SCRAP_COLOR;
   for i:=0 to NB do
   begin
-    V := MyScrap.Sommets[i];
+    V := MyScrap.getVertex(i);
     FDocumentDessin.GetCoordsGCS(V.IDStation, MyScrap.IDGroupe, V.Offset, PM, errCode);
     if (ErrCode = -1) then Exit;
     PTSV[i] := GetCoordsPlan(PM);
@@ -4536,7 +4571,7 @@ begin
     OO.Empty();
     for i:=0 to NB do
     begin
-      V := MyScrap.Sommets[i];
+      V := MyScrap.getVertex(i);
       // tracé du premier basepoint
       if (FDocumentDessin.GetBasePointByIndex(V.IDStation, BS1)) then VolatileDrawBasePoint(Cnv, BS1);
     end;
@@ -4558,11 +4593,6 @@ var
   QStyleCourbe: TStyleCourbe;
   BS1, BS2: TBaseStation;
   OO: TPoint3Df;
-  PM1: TPoint2Df;
-  errCode: integer;
-  QRM22: Integer;
-  QC1: TPoint2Df;
-  QC2: TPoint2Df;
   procedure GetBezierArc(const A: TArcCourbe; out QResult: TBezierArc; out errCode: integer);
   begin
     errCode := 0;
@@ -4602,8 +4632,7 @@ var
       VolatileTraceVers(Cnv, PC2.X, PC2.Y, True);
       VolatileTraceVers(Cnv, B.PT2.X, B.PT2.Y, True);
       Cnv.Brush.Color := clRed;
-      toto := arctan2(PC1.Y - B.PT1.Y,
-                      PC1.X - B.PT1.X);
+      toto := arctan2(PC1.Y - B.PT1.Y,  PC1.X - B.PT1.X);
       VolatileTraceCercle(Cnv, B.PT2.X, B.PT2.Y, 8);
       TraceMarqueurDirectionnel(Cnv, B.PT1.X, B.PT1.Y, toto);
       VolatileTraceCercle(Cnv, PC1.X, PC1.Y, 4);
@@ -4613,14 +4642,14 @@ var
 begin
   try
     if (Not FDoDraw) then Exit;
-    NB := High(MyCourbe.Arcs) + 1;
+    NB := MyCourbe.getNbArcs(); //High(MyCourbe.Arcs) + 1;
     if (Nb < 1) then Exit;
     Cnv.Pen.Style  := psSolid;
     Cnv.Pen.Color  := clRed;
     Cnv.Pen.Width  := 2;
     for i:=0 to NB - 1 do
     begin
-      AC := MyCourbe.Arcs[i];
+      AC := MyCourbe.getArc(i); //MyCourbe.Arcs[i];
       GetBezierArc(AC, AB, QErrCode);
       if (QErrCode = 0) then QDrawBezierArc(AB)
                         else AfficherMessageErreur(Format('Erreur en dessin de la courbe #%d, arc: %d/%d', [IdxCourbe, i, Nb]));
@@ -4629,7 +4658,7 @@ begin
     if (DoDrawPtsCtrls) then
     begin
       AfficherMessage(Format('Trace courbe ID = %d - Arcs = %d',[IdxCourbe, NB]));
-      AfficherMessage(Format('BB = %%f %f %f %f ',[MyCourbe.BoundingBox.C1.X , MyCourbe.BoundingBox.C1.Y,
+      AfficherMessage(Format('BB = %%f %f %f %f ',[MyCourbe.BoundingBox.C1.X, MyCourbe.BoundingBox.C1.Y,
                                                    MyCourbe.BoundingBox.C2.X, MyCourbe.BoundingBox.C2.Y]));
       Cnv.Pen.Color   := clGray;
       Cnv.Pen.Width   := 0;
@@ -4645,8 +4674,7 @@ begin
       OO.Empty();
       for i:=0 to NB - 1 do
       begin
-        AC := MyCourbe.Arcs[i];
-        // tracé du premier basepoint
+        AC := MyCourbe.getArc(i); //MyCourbe.Arcs[i];
         if (i = 0) then
         begin
           if (FDocumentDessin.GetBasePointByIndex(AC.IDStationP1, BS1)) then VolatileDrawBasePoint(Cnv, BS1);
@@ -4674,10 +4702,7 @@ var
   V: TVertexPolygon;
   PM: TPoint2Df;
   PTSV: array of TPoint;
-  CP  : TPoint;  // point central du polygone
-  //GP  : TGroupeEntites;
   errCode: integer;
-  QStylePolygone: TStylePolygone;
   WU: Boolean;
   OO: TPoint3Df;
   BS1: TBaseStation;
@@ -4695,7 +4720,7 @@ begin
   Cnv.Brush.Style := bsClear;
   for i:=0 to NB do
   begin
-    V := MyPolygon.Sommets[i];
+    V := MyPolygon.getVertex(i);
     FDocumentDessin.GetCoordsGCS(V.IDStation, MyPolygon.IDGroupe, V.Offset, PM, errCode);
     if (ErrCode = -1) then Exit;
     PTSV[i] := GetCoordsPlan(PM);
@@ -4731,7 +4756,7 @@ begin
     OO.Empty();
     for i:=0 to NB do
     begin
-      V := MyPolygon.Sommets[i];
+      V := MyPolygon.getVertex(i);
       // tracé du premier basepoint
       if (FDocumentDessin.GetBasePointByIndex(V.IDStation, BS1)) then  VolatileDrawBasePoint(Cnv, BS1);
     end;
@@ -4759,17 +4784,16 @@ var
   toto          : double;
 begin
   if (Not FDoDraw) then Exit;
-  WU := (QIdxGroupe = -1) OR
-        (QIdxGroupe = MyPolyLine.IDGroupe);
+  WU := (QIdxGroupe = -1) OR (QIdxGroupe = MyPolyLine.IDGroupe);
   if (not WU) then Exit;
 
-  NB := High(MyPolyLine.Sommets);
-  if (Nb < 1) then Exit;
-  SetLength(PTSV, NB+1);
+  NB := MyPolyLine.getNbVertex();//High(MyPolyLine.Sommets);
+  if (Nb < 2) then Exit;
+  SetLength(PTSV, NB);
 
-  for i:=0 to NB do
+  for i:=0 to NB - 1 do
   begin
-    V := MyPolyLine.Sommets[i];
+    V := MyPolyLine.getVertex(i);
     FDocumentDessin.GetCoordsGCS(V.IDStation, MyPolyLine.IDGroupe, V.Offset, PM, errCode);
     if (ErrCode = -1) then Exit;
     PTSV[i] := GetCoordsPlan(PM);
@@ -4804,10 +4828,10 @@ begin
   Cnv.Brush.Color := clRed;
   Cnv.Pen.Color   := clRed;
   Cnv.Pen.Width   := 0;
-  for i := 1 to NB do
+  for i := 1 to NB - 1do
   begin
-    V0 := MyPolyLine.Sommets[i-1];
-    V1 := MyPolyLine.Sommets[i];
+    V0 := MyPolyLine.getVertex(i-1);
+    V1 := MyPolyLine.getVertex(i);
 
     FDocumentDessin.GetCoordsGCS(V0.IDStation, MyPolyLine.IDGroupe, V0.Offset, PM0, errCode);
     FDocumentDessin.GetCoordsGCS(V1.IDStation, MyPolyLine.IDGroupe, V1.Offset, PM1, errCode);
@@ -4822,8 +4846,7 @@ begin
     AfficherMessageErreur('DoDrawBasePoints');
     for i:=0 to NB do
     begin
-      V := MyPolyLine.Sommets[i];
-      // tracé du premier basepoint
+      V := MyPolyLine.getVertex(i);
       if (FDocumentDessin.GetBasePointByIndex(V.IDStation, BS1)) then VolatileDrawBasePoint(Cnv, BS1);
     end;
     Cnv.Brush.Style := bsClear;
@@ -4868,8 +4891,8 @@ begin
   if (ErrCode = -1) then Exit;
   VolatileTraceVers(Cnv, E1.X, E1.Y, False);
   VolatileTraceVers(Cnv, E2.X, E2.Y, True);
-  // dessin des poignées
-  if (DoDrawHands) then
+
+  if (DoDrawHands) then    // dessin des poignées
   begin
     Cnv.Brush.Color := clRed;
     Cnv.Pen.Color := clRed;
@@ -5024,7 +5047,3 @@ begin
   Result := FCurrentTextIdx;
 end;
 end.
-
-
-//------------------------------------------------------------------------------
-
