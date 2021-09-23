@@ -43,12 +43,10 @@ type TCenterLines = class(TListeSimple<TBaseStation>)
     function FindBasePointByIndex(const Idx: TIDBaseStation; out BP: TBaseStation): boolean;
     function FindBasePointByCle(const Cle: string; out BP: TBaseStation): boolean;
     function GetNearBasePointA(const X, Y: double; const OldBasePoint: TBaseStation; const StLocked: boolean): TBaseStation;
-    // extractions
-    function  ExtractBasePointFromLine(const MyLine: string): TBaseStation;
     // utilitaires
     procedure TrierBasePointsParIDBaseStation();
-    function ImporterBasePoints(const FichierGCP: string): boolean;
-    function ExporterBasePoints(const FichierGCP: string; const Tag: string): boolean;
+    function  ImporterBasePoints(const FichierGCP: string): boolean;
+    function  ExporterBasePoints(const FichierGCP: string; const Tag: string): boolean;
 
 end;
 
@@ -88,7 +86,7 @@ begin
           if (MyLine = '') then Continue;
           if (Pos('#', MyLine) > 0) then Continue; // commentaires
           if (MyLine = ENDBASEPOINTMARKER) then Break;
-          EWE := ExtractBasePointFromLine(MyLine);
+          EWE.fromLineGCP(MyLine);
           self.AddBasePoint(EWE);
         end;
       end; //if (Line = BASEPOINTMARKER) then begin
@@ -123,7 +121,7 @@ begin
     for i:=0 to Nb - 1 do
     begin
       BP := self.GetBasePoint(i);
-      WriteLn(F, GenererLigneBasePoint(i, BP));
+      WriteLn(F, BP.toLineGCP());
     end;
     WriteLn(F, ENDBASEPOINTMARKER);
     result := True;
@@ -333,31 +331,6 @@ begin
 end;
 
 //******************************************************************************
-// définir station de base d'après les lignes de la section 'basepoints'
-function TCenterLines.ExtractBasePointFromLine(const MyLine: string): TBaseStation;
-var
-  q: integer;
-  AP: TGHStringArray;
-  BP: TBaseStation;
-begin
-  AP := Split(MyLine, #9);
-  //120400160	L3-16	0	10027212	119.56	215.88	-179.25	121.33	219.20	-180.62	120.44	219.67	-179.25	122.21	218.73	-178.75
-  {$IFDEF TIDBASEPOINT_AS_TEXT}
-  BP.IDStation     := UpperCase(Trim(AP[0]));
-  {$ELSE}
-  BP.IDStation     := StrToInt64Def(AP[0], -1);
-  {$ENDIF TIDBASEPOINT_AS_TEXT}
-
-  BP.IDTerrain     := Trim(AP[1]);
-  BP.TypeStation   := StrToIntDef(AP[2], 0);
-  BP.Couleur       := StrToIntDef(AP[3], 0);
-
-  BP.PosExtr0.setFrom(AP[4], AP[5], AP[6]);
-  BP.PosStation.setFrom(AP[7], AP[8], AP[9]);
-  BP.PosPG.setFrom(AP[10], AP[11], AP[12]);
-  BP.PosPD.setFrom(AP[13], AP[14], AP[15]);
-  Result := BP;
-end;
 // trier la table par index
 procedure TCenterLines.TrierBasePointsParIDBaseStation;
 begin

@@ -93,7 +93,7 @@ resourcestring
   rsCODE_ISO_COUNTRY  = 'fr';
   rsGHCAVEDRAWEXENAME = 'GHCaveDraw';
   // version
-  rsGHCD_VERSION  = 'Version %.4f du %.2d/%.2d/%.4d %.2d:%.2d';
+  rsGHCD_VERSION  = 'Version %.5f du %.2d/%.2d/%.4d %.2d:%.2d';
   rsGHCD_AUTHOR   = 'Jean Pierre CASSOU';
   rsGHCD_LICENSE  = 'Logiciel sous licence GPL';
   rsTYPE_INTERFACE_TABLETTE = 'Version tablette';
@@ -209,6 +209,8 @@ resourcestring
     rsMNU_PAN_UP        = 'Pan haut';
     rsMNU_PAN_DOWN      = 'Pan bas';
     rsMNU_PARAM_VUE_2D  = 'Préférences de la vue';
+    rsMNU_DISP_CONSOLE  = 'Afficher la console';
+
 
   rsMNU_AIDE            = '&Aide';
     rsMNU_APROPOS       = 'A propos de GHCaveDraw';
@@ -228,6 +230,13 @@ resourcestring
   rsDO_DELETE_IMAGE       = 'Supprimer l''image %d';
 
   rsBTN_MESURE_DISTANCE   = 'Mesurer une distance et une aire';
+  // resourcestring de la console
+  rsDLG_CONSOLE_TITLE                 = 'Console de suivi';
+  rsDLG_CONSOLE_LB_JOURNAL            = 'Journal';
+  rsDLG_CONSOLE_LB_CONSOLE_ERREUR     = 'Console de résultats et d''erreurs';
+  rsDLG_CONSOLE_BTN_COPY              = 'Copier';
+  rsDLG_CONSOLE_BTN_VOID              = 'Vider';
+
   // resourcestring des boutons de dessin
   rsBTN_DRW_HINT_SETMODE_0        = 'Mode Vue';
   rsBTN_DRW_HINT_NEW_OBJ          = 'Nouvel objet';
@@ -589,18 +598,27 @@ resourcestring
   rsLANDSCAPE                                = 'Paysage';
   rsPORTRAIT                                 = 'Portrait';
   rsPRN_START_PRINTING                       = 'Démarrage de l''impression';
+  rsPRN_PARAMS_VUE                           = 'Paramétrer la vue';
+
   rsPRN_PRINTING_DONE                        = 'Impression terminée';
   rsDLGIMP_TAB1                              = 'Aperçu';
   rsDLGIMP_TAB2                              = 'Imprimante';
   rsDLGIMP_TAB3                              = 'Options de dessin';
   rsDLGIMP_TAB4                              = 'Réseaux';
-  rsQDRSPACING                               = 'Espacement';
+  rsGRBX_QUADRILLAGE                         = 'Quadrillage';
+  rsQDR_MAIN                                 = 'Principal';
+  rsQDR_SECONDARY                            = 'Secondaire';
+  rsQDR_TYPE                                 = 'Type';
+
+  rsQDR_SPACING                              = 'Espacement';
+  rsQDR_COLOR                                = 'Couleur';
   rsECHELLE                                  = 'Echelle: 1 /';
   rsLAYERS                                   = 'Couches de dessin';
   rsPREVIEW                                  = 'Previsualisation';
   rsSTARTPRINTING                            = 'Lancer impression';
   rsREGLE                                    = 'Règle';
   rsIDSTATION_NOT_FOUND                      = 'Station "%s" introuvable';
+
 
   rsAC_DUMMY                                 = '---';
   rsACN_ADD_CURR_CURVE_AT_SCRAPLISTE         = 'Ajouter courbe courante';

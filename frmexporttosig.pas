@@ -26,25 +26,29 @@ type
     btnColorSilhouette: TColorButton;
     btnDoExport: TButton;
     btnChooseSystemeEPSG: TButton;
+    btnLeafletBySuperGroupes: TButton;
+    Button1: TButton;
+    chkDoUseDefaultStyle: TCheckBox;
     chkScrapsFilled: TCheckBox;
-    chkgbxFormatsOutput: TCheckGroup;
-    chkWithMetadata: TCheckBox;
-    chkWithPOI: TCheckBox;
     chkWithCenterlines: TCheckBox;
     chkWithEntrances: TCheckBox;
-    chkDoUseDefaultStyle: TCheckBox;
+    chkWithMetadata: TCheckBox;
+    chkWithPOI: TCheckBox;
+    chkWithScraps: TCheckBox;
+    chkWithWalls: TCheckBox;
+    chkgbxFormatsOutput: TCheckGroup;
     editFileName: TFileNameEdit;
     editMapHeight: TCurrencyEdit;
     editMapWidth: TCurrencyEdit;
+    grbxOptions: TGroupBox;
+    grbxScraps: TGroupBox;
     Label1: TLabel;
-    Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     lbEtape: TLabel;
-    Panel1: TPanel;
     Panel2: TPanel;
     pnlProgression: TPanel;
     ProgressBar1: TProgressBar;
@@ -53,9 +57,10 @@ type
     trkBarTransparence: TTrackBar;
     procedure btnChooseSystemeEPSGClick(Sender: TObject);
     procedure btnDoExportClick(Sender: TObject);
+    procedure btnLeafletBySuperGroupesClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    { private declarations }
     FMyDocDessin: TDocumentDessin;
     //FConversionSystem: TConversionSysteme; // le convertisseur est contenu dans TDocumentDessin
     procedure AfficherProgression(const Etape: string; const Min, Max, Position: integer);
@@ -101,7 +106,8 @@ begin
                                              chkScrapsFilled.Checked,
                                              btnColorSilhouette.ButtonColor,
                                              255 - trkBarTransparence.Position,
-                                             WithExportGIS);
+                                             WithExportGIS,
+                                             -1);
   if (chkgbxFormatsOutput.Checked[1]) then
     FMyDocDessin.ExporterScrapsToKML(ChangeFileExt(editFileName.FileName, '.kml'),
                                      chkDoUseDefaultStyle.Checked,
@@ -110,15 +116,12 @@ begin
                                      255 - trkBarTransparence.Position,
                                      WithExportGIS);
   if (chkgbxFormatsOutput.Checked[2]) then
-    ShowMessage('Export GeoJSON: Bugs en cours de fixation');
-    (*
     FMyDocDessin.ExporterScrapsToGeoJSON(ChangeFileExt(editFileName.FileName, '.json'),
                                             chkDoUseDefaultStyle.Checked,
                                             chkScrapsFilled.Checked,
                                             btnColorSilhouette.ButtonColor,
                                             255 - trkBarTransparence.Position,
                                             WithExportGIS);
-    //*)
   {$IFDEF DXF_SUPPORT}
   if (chkgbxFormatsOutput.Checked[3]) then
     FMyDocDessin.ExporterScrapsToDXF(self,
@@ -130,6 +133,56 @@ begin
                                             WithExportGIS);
 
   {$ENDIF DXF_SUPPORT}
+  FMyDocDessin.SetProcAfficherProgression(nil);
+  ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
+  pnlProgression.Visible := False;
+
+end;
+
+procedure TdlgExportSIG.btnLeafletBySuperGroupesClick(Sender: TObject);
+var
+  WithExportGIS: TWithExportGIS;
+begin
+  pnlProgression.Visible := true;
+  WithExportGIS := [];
+  if (chkWithCenterlines.Checked) then WithExportGIS := WithExportGIS + [gisWITH_CENTERLINES];
+  if (chkWithEntrances.Checked)   then WithExportGIS := WithExportGIS + [gisWITH_ENTRANCES];
+  if (chkWithPOI.Checked)         then WithExportGIS := WithExportGIS + [gisWITH_POI];
+  if (chkWithMetadata.Checked)    then WithExportGIS := WithExportGIS + [gisWITH_METADATA];
+  FMyDocDessin.SetProcAfficherProgression(self.AfficherProgression);
+  FMyDocDessin.GenererCarteLeaflet(ChangeFileExt(editFileName.FileName, '.htm'),
+                                   editMapWidth.AsInteger, editMapHeight.AsInteger,
+                                   chkDoUseDefaultStyle.Checked,
+                                   chkScrapsFilled.Checked,
+                                   btnColorSilhouette.ButtonColor,
+                                   255 - trkBarTransparence.Position,
+                                   WithExportGIS,
+                                   0);
+  FMyDocDessin.SetProcAfficherProgression(nil);
+  ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
+  pnlProgression.Visible := False;
+end;
+
+
+
+procedure TdlgExportSIG.Button1Click(Sender: TObject);
+var
+  WithExportGIS: TWithExportGIS;
+begin
+  pnlProgression.Visible := true;
+  WithExportGIS := [];
+  if (chkWithCenterlines.Checked) then WithExportGIS := WithExportGIS + [gisWITH_CENTERLINES];
+  if (chkWithEntrances.Checked)   then WithExportGIS := WithExportGIS + [gisWITH_ENTRANCES];
+  if (chkWithPOI.Checked)         then WithExportGIS := WithExportGIS + [gisWITH_POI];
+  if (chkWithMetadata.Checked)    then WithExportGIS := WithExportGIS + [gisWITH_METADATA];
+  FMyDocDessin.SetProcAfficherProgression(self.AfficherProgression);
+  FMyDocDessin.ExporterScrapsToKML(ChangeFileExt(editFileName.FileName, '.kml'),
+                                   chkDoUseDefaultStyle.Checked,
+                                   chkScrapsFilled.Checked,
+                                   btnColorSilhouette.ButtonColor,
+                                   255 - trkBarTransparence.Position,
+                                   WithExportGIS,
+                                   0);
   FMyDocDessin.SetProcAfficherProgression(nil);
   ShowMessage(GetResourceString(rsMISC_DONE_WITH_SUCCESS));
   pnlProgression.Visible := False;

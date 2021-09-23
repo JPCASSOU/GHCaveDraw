@@ -925,7 +925,6 @@ end;
 procedure TCadreSectionTransversale.acNewLigneExecute(Sender: TObject);
 begin
   PreparerSubButtons(mtDRAW_LINE);
-  //SetModeTravail(mtLIGNE_PREMIER_POINT);
 end;
 
 procedure TCadreSectionTransversale.acTexteCotationExecute(Sender: TObject);
@@ -936,8 +935,7 @@ end;
 
 procedure TCadreSectionTransversale.acNewTexteExecute(Sender: TObject);
 begin
-   PreparerSubButtons(mtDRAW_TEXTE);
-  //SetModeTravail(mtDRAW_TEXTE);
+  PreparerSubButtons(mtDRAW_TEXTE);
 end;
 
 procedure TCadreSectionTransversale.acTexteOrdinaireExecute(Sender: TObject);
@@ -964,7 +962,6 @@ begin
        ListerLesObjets(csloPOLYGONES, FMyCrossSection.getNbPolygones() - 1);
      end;
   end;
-
 end;
 
 procedure TCadreSectionTransversale.acZoomMoinsExecute(Sender: TObject);
@@ -1139,8 +1136,7 @@ begin
         for i := 0 to Nb -1 do
         begin
           QL := FMyCrossSection.getSimpleLigne(i);
-          lsbObjects.Items.Add(Format('Ligne%d: (%.3f, %.3f) - (%.3f, %.3f)',
-                                      [i, QL.Extr1.X, QL.Extr1.Y, QL.Extr2.X, QL.Extr2.Y]));
+          lsbObjects.Items.Add(Format('Ligne%d: (%.3f, %.3f) - (%.3f, %.3f)', [i, QL.Extr1.X, QL.Extr1.Y, QL.Extr2.X, QL.Extr2.Y]));
         end;
       end;
     csloTEXTES:
@@ -1175,6 +1171,7 @@ var
   T: TCrossSectionTexte;
   procedure SetBtnAlignement();
   begin
+    //FindComponent();
     rbAli1.Checked := False;
     rbAli2.Checked := False;
     rbAli3.Checked := False;
@@ -1251,7 +1248,7 @@ begin
     mtSELECT_POLYGONE: FCurrentPolygonIdx      := lsbObjects.ItemIndex;
     mtSELECT_TEXTE   : FCurrentTexteIdx        := lsbObjects.ItemIndex;
   else
-    ;
+    pass;
   end;
   case FModeTravail of
     mtSELECT_LIGNE   : DisplayAttributsSimpleLigne(lsbObjects.ItemIndex, true);
@@ -1259,9 +1256,8 @@ begin
     mtSELECT_POLYGONE: DisplayAttributsPolygone(lsbObjects.ItemIndex, true);
     mtSELECT_TEXTE   : DisplayAttributsTexte(lsbObjects.ItemIndex, true);
   else
-    ;
+    pass;
   end;
-
 end;
 
 procedure TCadreSectionTransversale.MenuItem1Click(Sender: TObject);

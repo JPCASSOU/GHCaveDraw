@@ -317,20 +317,23 @@ type
                                  const DoFillScraps: boolean;
                                  const DefaultColor: TColor;
                                  const DefaultOpacity: byte;
-                                 const WithExportGIS: TWithExportGIS): boolean;
+                                 const WithExportGIS: TWithExportGIS;
+                                 const MySuperGroupeIdx: TIDSuperGroupe = -1): boolean;
     function GenererCarteLeaflet(const QFileName: string;
                                  const MapWidth, MapHeight: integer;
                                  const DoUseDefaultStyle: boolean;
                                  const DoFillScraps: boolean;
                                  const DefaultColor: TColor;
                                  const DefaultOpacity: byte;
-                                 const WithExportGIS: TWithExportGIS): boolean;
+                                 const WithExportGIS: TWithExportGIS;
+                                 const MySuperGroupeIdx: TIDSuperGroupe): boolean;
     function ExporterScrapsToGeoJSON(const QFileName: string;
                                      const DoUseDefaultStyle: boolean;
                                      const DoFillScraps: boolean;
                                      const DefaultColor: TColor;
                                      const DefaultOpacity: byte;
-                                     const WithExportGIS: TWithExportGIS): boolean;
+                                     const WithExportGIS: TWithExportGIS;
+                                     const MySuperGroupeIdx: TIDSuperGroupe = -1): boolean;
     {$IFDEF DXF_SUPPORT}
     function ExporterScrapsToDXF(const AOwner: TComponent;
                                      const QFileName: string;
@@ -338,7 +341,8 @@ type
                                      const DoFillScraps: boolean;
                                      const DefaultColor: TColor;
                                      const DefaultOpacity: byte;
-                                     const WithExportGIS: TWithExportGIS): boolean;
+                                     const WithExportGIS: TWithExportGIS;
+                                     const MySuperGroupeIdx: TIDSuperGroupe = -1): boolean;
     {$ENDIF DXF_SUPPORT}
 
     // retourne le dossier contenant le document
@@ -354,9 +358,12 @@ type
     // calcul de l'aire d'un polygone ou d'un scrap
     procedure CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out VertexOrderedCounterClockWise: boolean; out Area, Perimeter: double);
 
+    //
+
   strict private
     // convertisseur de coordonnées
     FConversionSysteme: TConversionSysteme;
+
     {$IFDEF DXF_SUPPORT}
     //FMyExportDXF: TDXFExport;
     {$ENDIF DXF_SUPPORT}
@@ -431,6 +438,7 @@ type
     function ExtractArcPolyFromStr(const S: string): TArcCourbe;
     function ExtractGroupeFromStr(const S: string): TGroupeEntites;
 
+    // Laisser tel quel: les transformer en <>.fromLineGCD() complique pas mal
     function ExtractObjTexteFromStr(const S: string): TTextObject;
     function ExtractSimpleLineFromStr(const NoLigneFichier: integer; const S: string): TSimpleLigne;
     function ExtractSuperGroupeFromStr(const S: string): TSuperGroupe;
@@ -438,7 +446,7 @@ type
     function ExtractVertexPolyFromStr(const S: string): TVertexPolygon;
     function ExtractImageFromStr(const S: string): TImageObject;
 
-    // contrôle de validité des objets
+    // contrôle de validité des objets - Ne pas les mettre dans les pseudo-classes
     function ScrapEstValide(const QP: TScrap): boolean;
     function SimpleLigneEstValide(const QL: TSimpleLigne): boolean;
     function CourbeEstValide(const myCourbe: TCourbe): boolean;
@@ -545,26 +553,29 @@ uses
   , UnitExportToODG
   , UnitGraphismesProvisoires
   , UnitFindObjects
-  , unitClippingPolygonesByScrap, GeometryPolygonesUtils
+  , unitClippingPolygonesByScrap
+  , GeometryPolygonesUtils
   ;
 const
-
   // noms de styles SVG
-  SVG_NAME_CADRE_MASSICOT         = 'cadre-massicot';
-  SVG_NAME_CADRE_PERIMETRIQUE     = 'cadre-perimetrique';
-  SVG_NAME_POLYGONALE_CENTERLINE  = 'polygonale-centerline';
-  SVG_NAME_POLYGONALE_SECTIONS    = 'polygonale-sections';
-  SVG_NAME_CARTOUCHE_REGLE_CADRE  = 'cartouche-cadre';
-  SVG_NAME_CARTOUCHE_REGLE_GRADU  = 'cartouche-gradu';
-  SVG_NAME_CARTOUCHE_REGLE_TEXTE  = 'cartouche-cadre';
+  SVG_NAME_CADRE_MASSICOT               = 'cadre-massicot';
+  SVG_NAME_CADRE_PERIMETRIQUE           = 'cadre-perimetrique';
+  SVG_NAME_POLYGONALE_CENTERLINE        = 'polygonale-centerline';
+  SVG_NAME_POLYGONALE_SECTIONS          = 'polygonale-sections';
+  SVG_NAME_CARTOUCHE_REGLE_CADRE        = 'cartouche-cadre';
+  SVG_NAME_CARTOUCHE_REGLE_GRADU        = 'cartouche-gradu';
+  SVG_NAME_CARTOUCHE_REGLE_TEXTE        = 'cartouche-cadre';
   SVG_NAME_MARQUE_STATION_FILL          = 'fill-marque-station';
   SVG_NAME_MARQUE_STATION_CENTREFILL    = 'fill-marque-centre-station';
   SVG_NAME_SCRAP                        = 'fill-scrap';
 // constantes pour DXF
 const
+  DXF_LAYERNAME_THURLUTTE               = 'THURLUTTE';
+  DWF_LAYERNAME_CENTERLINES             = 'CENTERLINES';
   DXF_LAYERNAME_SCRAPS                  = 'SCRAPS';
-
-
+  DXF_LAYERNAME_WALLS                   = 'WALLS';
+  DXF_LAYERNAME_ENTRANCES               = 'ENTRANCES';
+  DXF_LAYERNAME_POIs                    = 'POI';
 
 // Trier les visées par ZOrder
 function SortGroupesByZOrder(Item1, Item2: Pointer): Integer;
@@ -836,18 +847,17 @@ end;
 function TDocumentDessin.ExtractSuperGroupeFromStr(const S: string): TSuperGroupe;
 var
   EWE: TGHStringArray;
-
+  CC: TColor;
 begin
   EWE := Split(S, #9);
+  Result.Couleur        := clGray;     // couleur par défault
   // Le mot clé est dans l'argument 0
-  // Parameters: IDSuperGroupe, NomGroupe, Offset XYZ components, Displayed, Locked
-  // supergroupe	0	SuperGroupe_0	1	1	0.00	0.00	0.00
-  //Result.ID        := StrToIntDef(EWE[1], 0);
+  // Parameters: Couleur, NomSuperGroupe, Displayed, Locked,  Offset XYZ components (unused)
+  CC := StrToIntDef(Trim(EWE[1]), -1);
+  if (CC > 0) then Result.Couleur := (CC AND $7FFFFFFF);
   Result.NomSuperGroupe := Trim(EWE[2]);
   Result.Displayed := (StrToIntDef(EWE[3], 1) = 1);
-  //Result.Locked    := (StrToIntDef(EWE[4], 0) = 0);
-
-  Result.ListeGroupes.fromString(EWE[8]);// := StrToArrayOfIdxGroupes(EWE[8]);
+  Result.ListeGroupes.fromString(EWE[8]);
 end;
 function TDocumentDessin.ExtractGroupeFromStr(const S: string): TGroupeEntites;
 var
@@ -918,6 +928,7 @@ begin
   Result.OffsetP2.setFrom(EWE[9], EWE[10], EWE[11]);
   Result.TangP2.setFrom(EWE[12], EWE[13], '0.00');
 end;
+
 function TDocumentDessin.ExtractVertexPolyFromStr(const S: string): TVertexPolygon;
 var
   EWE: TGHStringArray;
@@ -931,6 +942,7 @@ begin
 
   Result.Offset.setFrom(EWE[2], EWE[3], EWE[4]);
 end;
+//*)
 function TDocumentDessin.ExtractSimpleLineFromStr(const NoLigneFichier: integer; const S: string): TSimpleLigne;
 var
   EWE: TGHStringArray;
@@ -957,6 +969,7 @@ begin
   WU := Ord(Result.IDStyleLigne);
   if (WU > 4) then AfficherMessageErreur(Format('[%d]: Invalid linestyle: %d ; max = %d', [NoLigneFichier, WU, High(Result.IDStyleLigne)]));
 end;
+
 function TDocumentDessin.ExtractSymbolFromStr(const S: string): TSymbole;
 var
   EWE: TGHStringArray;
@@ -985,6 +998,7 @@ begin
   WU := Ord(Result.TypeObject);
 
 end;
+
 function TDocumentDessin.ExtractObjTexteFromStr(const S: string): TTextObject;
 var
   EWE: TGHStringArray;
@@ -995,7 +1009,7 @@ begin
   {$IFDEF TIDBASEPOINT_AS_TEXT}
   Result.IDBaseSt      := EWE[4];
   {$ELSE}
-  Result.IDBaseSt      := StrToInt64Def(EWE[4], 0);
+  Result.IDBaseStation := StrToInt64Def(EWE[4], 0);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 
   Result.Offset.setFrom(EWE[5], EWE[6], EWE[7]);
@@ -1005,6 +1019,7 @@ begin
   Result.MarkToDelete  := false;
   Result.LastModified  := StrToDateTimeDef(EWE[11], Now());
 end;
+//*)
 // cette fonction est volumineuse --> déportée dans DocDessinLoadFromFile.inc
 //function TDocumentDessin.LoadFromFile(const FichierGCD: string): boolean;
 {$INCLUDE DocDessinLoadFromFile.inc}
@@ -1015,7 +1030,6 @@ end;
 //------------------------------------------------------------------------------
 procedure TDocumentDessin.SetMiniEtMaxi();
 const
-  FMT0 = '%s: X = %12.2f Y = %12.2f Z = %12.2f';
   MARGE = 20.00;
 var
   i: integer;
@@ -1084,17 +1098,42 @@ begin
 end;
 // recherche de station
 function TDocumentDessin.FindBasePoint(const Cle: string; out BP: TBaseStation): boolean;
-var
-  i, n: Integer;
-  S, S1, S2: string;
-  EWE: TBaseStation;
-  WU: SizeInt;
-  qSer, qSt: Integer;
-  Idx: TIDBaseStation;
 begin
   Result := FCenterLines.FindBasePointByCle(Cle, BP);
 end;
 
+function TDocumentDessin.CalcPhotoData(const EP: TSymbole): TSymbole;
+
+var
+  s: string;
+  PhotoCtxt  : TImage;
+  Ratio      : Double;
+begin
+  Result := EP;
+  Result.PhotoDisplayed := False;
+  s := ExtractFilePath(FDocumentName) + Trim(Result.TagTexte);
+  if (not FileExists(s)) then
+  begin
+    AfficherMessage(Format('CalcPhotoData: %s not found',[s]));
+    Result.PhotoDisplayed := False;
+    Exit;
+  end;
+  PhotoCtxt := TImage.Create(nil); // ceci est destiné à récupérer les paramètres de la photo
+  try
+    PhotoCtxt.AutoSize:=False;
+    PhotoCtxt.Stretch :=True;
+    PhotoCtxt.Picture.LoadFromFile(s);
+    Ratio := PhotoCtxt.Picture.Height / PhotoCtxt.Picture.Width;
+    Result.ScaleX := Abs(Result.ScaleX); // toujours > 0 pour une photo
+    if (Result.ScaleX < 5.00) then Result.ScaleX := 5.00;  //taille minimale pour la photo
+    Result.AngleRot := 0.00;
+    Result.ScaleY := Result.ScaleX * Ratio;
+    AfficherMessage(Format('CalcPhotoData: %s OK',[s]));
+    Result.PhotoDisplayed := True;
+  finally
+    FreeAndNil(PhotoCtxt);//     PhotoCtxt.Free;
+  end;
+end;
 // attraper l'élément point le plus proche d'un point (x, y)
 function TDocumentDessin.GetNearBasepoint(const X, Y: double; const OldBasePoint: TBaseStation; const StLocked: boolean): TBaseStation;
 begin
@@ -1128,8 +1167,6 @@ begin
   end;
 end;
 
-
-
 function TDocumentDessin.GetNbCourbes(): integer;
 begin
   Result := FListeCourbes.GetNbElements();
@@ -1140,8 +1177,11 @@ begin
 end;
 
 procedure TDocumentDessin.AddABasePointFromString(const S: String); inline;
+var
+  BP: TBaseStation;
 begin
-  FCenterLines.AddBasePoint(FCenterLines.ExtractBasePointFromLine(S));
+  BP.fromLineGCP(S);
+  FCenterLines.AddBasePoint(BP); //FCenterLines.ExtractBasePointFromLine(S));
 end;
 //******************************************************************************
 // SCRAPS
@@ -1244,10 +1284,9 @@ var
 begin
   NbObj := GetNbImages();
   AfficherMessage(Format('%s.PurgerListeImages() - %d elements', [ClassName, NbObj]));
-  if (NbObj = 0) then AfficherMessage('--> Aucune entite')
-  else
+  if (NbObj > 0) then
   begin
-    for i:=0 to NbObj - 1 do
+    for i := 0 to NbObj - 1 do
     begin
       EWE := GetImage(i); // récupération de l'image pour détruire son conteneur
       try
@@ -1306,11 +1345,10 @@ procedure TDocumentDessin.DeleteImage(const Idx: integer);
 var
   EWE: TImageObject;
 begin
-  // on récupère l'image pour détruire son conteneur BGRA
-  EWE := GetImage(Idx);
+  EWE := GetImage(Idx);   // on récupère l'image pour détruire son conteneur BGRA
   FLastImageDeleted := EWE; // mise à jour de la variable pour undo
   try
-    FreeAndNil(EWE.ConteneurImg);//     EWE.ConteneurImg.Free;
+    FreeAndNil(EWE.ConteneurImg);
   except
   end;
   FListeImages.RemoveElement(Idx);
@@ -1383,8 +1421,6 @@ begin
   CalcBoundingBoxAllGroupes;
 end;
 //------------------------------------------------------------------------------
-
-
 function TDocumentDessin.CalcBoundingBoxScrap(const P: TScrap): TScrap;
 var
   errCode: Integer;
@@ -1409,8 +1445,6 @@ begin
   FLastScrapDeleted := GetScrap(Idx); // mise à jour de la variable pour undo
   FListeScraps.RemoveElement(Idx);
 end;
-
-
 
 //-GROUPES ---------------------------------------------------------------------
 procedure TDocumentDessin.PurgerListeGroupes();
@@ -1465,16 +1499,7 @@ function TDocumentDessin.GetGroupeByIDGroupe(const Idx: TIDGroupeEntites): TGrou
     end;
   end;
 begin
-  // On attrappe TOUJOURS le groupe 0 sans optimisation
-  (*
-  if (0 = Idx) then
-  begin
-    MiouMiou(0);
-    exit;
-  end;
-  //*)
-  // Optimisation: ne rechercher le groupe que si l'index courant n'a pas été modifié
-  // (vitesse de reconstruction du dessin doublée)
+  // Optimisation: ne rechercher le groupe que si l'index courant n'a pas été modifié (vitesse de reconstruction du dessin doublée)
   if (Idx <> FCurrentIdxGroupe) then MiouMiou(Idx);
   Result := FCurrentGroupe;
 end;
@@ -1504,13 +1529,12 @@ end;
 
 function  TDocumentDessin.CalcGrpBoundingBox(const Grp: TGroupeEntites): TGroupeEntites;
 var
-  dx, dy: double;
   i : integer;
   CC: TCourbe;
   PP: TPolygone;
   LL: TSimpleLigne;
   TT: TTextObject;
-  NbObj: Integer;
+  NbObj, NbTotalObjects: Integer;
   SC: TScrap;
   PL: TPolyLigne;
   function GrandBoundingBox(const BoxTeste, BoxInitial: TBoundingBox): TBoundingBox; overload;
@@ -1535,65 +1559,66 @@ var
     GP: TGroupeEntites;
     BS: TBaseStation;
   begin
-    if (GetBasePointByIndex(OT.IDBaseSt, BS)) then
+    if (GetBasePointByIndex(OT.IDBaseStation, BS)) then
     begin;
       GP := GetGroupeByIDGroupe(OT.IDGroupe);
       SP := MakeTPoint2DfWithGroupeAndBaseStation(BS, GP, 0.00, 0.00);
       Result := GrandBoundingBox(SP.X, SP.Y, BoxInitial);
     end;
   end;
+  function QGetNbObjects(const QN: integer): Int64;
+  begin
+    Result := QN;
+    NbTotalObjects += QN;
+  end;
+
 begin
   Result := Grp;
-  // box initiale = carré unitaire au centre du dessin
-  Result.BoundingBox.Reset();
+  Result.BoundingBox.Reset(); // box initiale = carré unitaire au centre du dessin
+  NbTotalObjects := 0;
   // parcours des tables
-  NbObj := GetNbScraps();
+  NbObj := QGetNbObjects(GetNbScraps());
   if (NbObj > 0) then begin // scraps
     for i:= 0 to NbObj - 1 do
     begin
       SC := GetScrap(i);
-      if (SC.IDGroupe = Grp.IDGroupeEntites) then
-        Result.BoundingBox := GrandBoundingBox(SC.BoundingBox, Result.BoundingBox);
+      if (SC.IDGroupe = Grp.IDGroupeEntites) then Result.BoundingBox := GrandBoundingBox(SC.BoundingBox, Result.BoundingBox);
     end;
   end;
-  NbObj := GetNbCourbes();
+  NbObj := QGetNbObjects(GetNbCourbes());
   if (NbObj > 0) then begin // courbes
     for i:= 0 to NbObj - 1 do
     begin
       CC := GetCourbe(i);
-      if (CC.IDGroupe = Grp.IDGroupeEntites) then
-        Result.BoundingBox := GrandBoundingBox(CC.BoundingBox, Result.BoundingBox);
+      if (CC.IDGroupe = Grp.IDGroupeEntites) then Result.BoundingBox := GrandBoundingBox(CC.BoundingBox, Result.BoundingBox);
     end;
   end;
-  NbObj := GetNbPolylignes();
+  NbObj := QGetNbObjects(GetNbPolylignes());
   if (NbObj > 0) then begin // polylignes
     for i:= 0 to NbObj - 1 do
     begin
       PL := GetPolyligne(i);
-      if (PL.IDGroupe = Grp.IDGroupeEntites) then
-        Result.BoundingBox := GrandBoundingBox(PL.BoundingBox, Result.BoundingBox);
+      if (PL.IDGroupe = Grp.IDGroupeEntites) then Result.BoundingBox := GrandBoundingBox(PL.BoundingBox, Result.BoundingBox);
     end;
   end;
-  NbObj := GetNbPolygones();
+  NbObj := QGetNbObjects(GetNbPolygones());
   if (NbObj > 0) then
   begin // polygones
     for i:= 0 to NbObj - 1 do begin
       PP := GetPolygone(i);
-      if (PP.IDGroupe = Grp.IDGroupeEntites) then
-        Result.BoundingBox := GrandBoundingBox(PP.BoundingBox, Result.BoundingBox);
+      if (PP.IDGroupe = Grp.IDGroupeEntites) then Result.BoundingBox := GrandBoundingBox(PP.BoundingBox, Result.BoundingBox);
     end;
   end;
-  NbObj := GetNbSimpleLignes();
+  NbObj := QGetNbObjects(GetNbSimpleLignes());
   if (NbObj > 0) then
   begin // lignes
     for i:= 0 to NbObj - 1 do
     begin
       LL := GetSimpleLigne(i);
-      if (LL.IDGroupe = Grp.IDGroupeEntites) then
-        Result.BoundingBox := GrandBoundingBox(LL.BoundingBox, Result.BoundingBox);
+      if (LL.IDGroupe = Grp.IDGroupeEntites) then Result.BoundingBox := GrandBoundingBox(LL.BoundingBox, Result.BoundingBox);
     end;
   end;
-  NbObj := GetNbTextes();
+  NbObj := QGetNbObjects(GetNbTextes());
   if (NbObj > 0) then
   begin // textes isolés
     for i:= 0 to NbObj - 1 do
@@ -1602,6 +1627,16 @@ begin
       if (TT.IDGroupe = Grp.IDGroupeEntites) then Result.BoundingBox := ExpandBoundingBoxByText(TT, Result.BoundingBox);
     end;
   end;
+  // BB trop grande ? Mise aux limites du dessin
+  if (Result.BoundingBox.C1.X > FCoordsMaxi.X) then Result.BoundingBox.C1.X := FCoordsMini.X;
+  if (Result.BoundingBox.C1.Y > FCoordsMaxi.Y) then Result.BoundingBox.C1.Y := FCoordsMini.Y;
+
+  if (Result.BoundingBox.C2.X < FCoordsMini.X) then Result.BoundingBox.C2.X := FCoordsMaxi.X;
+  if (Result.BoundingBox.C2.Y < FCoordsMini.Y) then Result.BoundingBox.C2.Y := FCoordsMaxi.Y;
+
+  //if (NbTotalObjects = 0) then Result.BoundingBox.setFrom(FCoordsMini.X, FCoordsMini.Y, FCoordsMaxi.X, FCoordsMaxi.Y);
+
+
 end;
 
 procedure TDocumentDessin.CalcGrpBoundingBoxAndUptdateGdpByIDX(const Idx: TIDGroupeEntites);
@@ -1648,7 +1683,6 @@ begin
     MyGRP.Visible := not MyGRP.Visible;
     PutGroupe(i, MyGRP);
   end;
-
 end;
 
 // Liste des éléments ponctuels: Gestion
@@ -1873,7 +1907,6 @@ begin
   if (DoRecalcBBX) then CalcGrpBoundingBoxAndUptdateGdpByIDX(pP.IDGroupe);
 end;
 
-
 function TDocumentDessin.GetPolyligne(const Idx: integer): TPolyligne;
 begin
   Result := FListePolyLignes.GetElement(Idx);
@@ -1883,9 +1916,6 @@ function TDocumentDessin.GetPtrCenterlines(): TCenterLines;
 begin
   Result := FCenterLines;
 end;
-
-
-
 procedure TDocumentDessin.PutPolyligne(const Idx: integer; const P: TPolyligne);
 var
   PP: TPolyLigne;
@@ -1895,8 +1925,6 @@ begin
   FListePolyLignes.PutElement(Idx, PP);
   CalcGrpBoundingBoxAndUptdateGdpByIDX(PP.IDGroupe);
 end;
-
-
 
 function TDocumentDessin.CalcBoundingBoxPolyligne(const P: TPolyligne): TPolyligne;
 var
@@ -1919,16 +1947,11 @@ begin
     if (PT.Y > Result.BoundingBox.C2.Y) then Result.BoundingBox.C2.Y := PT.Y;
   end;
 end;
-
-
-
 procedure TDocumentDessin.DeletePolyligne(const Idx: integer);
 begin
   FLastPolylineDeleted := GetPolyligne(Idx); // mise à jour de la variable pour undo
   FListePolyLignes.RemoveElement(Idx);
 end;
-
-
 
 // Liste des polygones
 procedure TDocumentDessin.PurgerListePolygones();
@@ -2083,18 +2106,17 @@ begin
 end;
 // calcul de l'aire et du périmètre d'un polygone, scrap ou polyligne
 // utilisé essentiellement pour la topo des carrières souterraines ou des grandes salles
-// AreaAlgebraic: boolean: Si spécifié, retourne l'aire algébrique
 procedure TDocumentDessin.CalcAreaPerimetrePolyOrScrap(const IDGrp: TIDGroupeEntites; const P: TArrayVertexPolygon; out VertexOrderedCounterClockWise: boolean; out Area, Perimeter: double);
 var
   Nb, i, j, ErrCode: Integer;
   V0, V1: TVertexPolygon;
-  Grp: TGroupeEntites;
+  //Grp: TGroupeEntites;
   PC0, PC1: TPoint2Df;
 begin
   Area      := 0.00;
   Perimeter := 0.00;
   Nb := Length(P);
-  Grp := GetGroupeByIDGroupe(IDGrp);
+  //Grp := GetGroupeByIDGroupe(IDGrp);
   if (Nb < 3) then Exit;
   j := Nb - 1;
   for i := 0 to Nb - 1 do
@@ -2108,9 +2130,8 @@ begin
     j := i;
   end;
   Area := Area * 0.5;
-  VertexOrderedCounterClockWise := (Area > 0);
-  Area := abs(Area)
-  //AfficherMessageErreur(Format('CalcAreaPolyOrScrap: Area: %f - Perimeter: %f', [Area, Perimeter]));
+  VertexOrderedCounterClockWise := (Area < 0);
+  Area := abs(Area);
 end;
 
 function  TDocumentDessin.GetTexte(const Idx: integer): TTextObject;
@@ -2522,21 +2543,8 @@ var
 
   procedure ReattribObjGrp(const MT: TModeSelectionEntites);
   var
-    WU: String;
     i, Nb: Integer;
   begin
-    WU := ChooseString(Ord(MT),
-                     ['mseNONE',
-                      'mseSCRAPS',
-                      'mseCOURBES',
-                      'msePOLYLIGNES',
-                      'msePOLYGONES',
-                      'mseLIGNES',
-                      'mseSYMBOLES',
-                      'mseTEXTES',
-                      'mseIMAGES'
-                     ]);
-    //WU := System.Delete(WU, 0, 3);
     case MT of
       mseSCRAPS      : Nb := GetNbScraps();
       mseCOURBES     : Nb := GetNbCourbes();
@@ -2548,7 +2556,6 @@ var
     else
       Exit;
     end;
-    //AfficherMessage(Format('--- Reattribution des %d %s', [Nb, WU]));
     if (Nb > 0) then
     begin
       for i := 0 to Nb - 1 do ReattribBasePointsDeUnObjet(MT, i, Grp.IDGroupeEntites);
@@ -2611,7 +2618,6 @@ begin
             EWE.putVertex(i, V);
           end;
         end;
-
       end;
       // et on actualise avec le scrap modifié
       PutScrap(QIdx, EWE);
@@ -2662,8 +2668,7 @@ begin
           end;
         end;
       end;
-      // et on actualise avec le scrap modifié
-      PutPolygone(QIdx, EWE);
+      PutPolygone(QIdx, EWE);    // et on actualise avec le scrap modifié
     except
       Result := -1;
     end;
@@ -2691,8 +2696,7 @@ begin
       for i := 0 to Nb - 1 do
       begin
         V := EWE.getVertex(i);
-        // récupère l'ancienne basepoint
-        if (GetBasePointByIndex(V.IDStation, BS)) then
+        if (GetBasePointByIndex(V.IDStation, BS)) then  // récupère l'ancienne basepoint
         begin
           OldIdxBasePt := BS.IDStation;
           // calcul des coordonnées absolues du sommet
@@ -2702,16 +2706,10 @@ begin
             // on recherche le basepoint le plus proche (cette recherche n'agit que sur les basepoints métafiltrés
             // En cas d'échec, GetNearBasepoint retourne le basepoint passé en paramètre
             BS := GetNearBasepoint(PM.X, PM.Y, BS, false);
-            // comptage du nombre de points modifiés
             if (BS.IDStation <> OldIdxBasePt) then Result += 1;
-            // nouvelle ID
-            V.IDStation := BS.IDStation;
-            // calcul du décalage
-            V.Offset.setFrom(PM.X - BS.PosStation.X,
-                             PM.Y - BS.PosStation.Y,
-                             0.00);
-            // et mise à jour
-            EWE.putVertex(i, V);
+            V.IDStation := BS.IDStation;                                             // nouvelle ID
+            V.Offset.setFrom(PM.X - BS.PosStation.X, PM.Y - BS.PosStation.Y, 0.00);  // calcul du décalage
+            EWE.putVertex(i, V); // et mise à jour
           end;
         end;
       end;
@@ -2722,8 +2720,7 @@ begin
     end;
   end;
 end;
-function TDocumentDessin.ReattribuerBasePointsSimpleLigne(const QIdx: integer;
-                                                          const QIdxGrp: TIDGroupeEntites): integer;
+function TDocumentDessin.ReattribuerBasePointsSimpleLigne(const QIdx: integer; const QIdxGrp: TIDGroupeEntites): integer;
 var
   EWE: TSimpleLigne;
   BS1, BS2: TBaseStation;
@@ -2731,10 +2728,8 @@ var
   ErrCode: integer;
 begin
   Result := -1;
-  //AfficherMessage(Format('%s.ReattribuerBasePointsSimpleLigne: %d', [ClassName, QIdx]));
   EWE := GetSimpleLigne(QIdx);
-  // si l'objet n'est pas dans le même groupe, on zappe
-  if (QIdxGrp = EWE.IDGroupe) then
+  if (QIdxGrp = EWE.IDGroupe) then   // si l'objet n'est pas dans le même groupe, on zappe
   begin
     try
       if (GetBasePointByIndex(EWE.IDBaseStExt1, BS1) AND
@@ -2749,14 +2744,9 @@ begin
         // nouvelle ID
         EWE.IDBaseStExt1 := BS1.IDStation;
         EWE.IDBaseStExt2 := BS2.IDStation;
-        EWE.OffsetExtr1.setFrom(PM1.X - BS1.PosStation.X,
-                                PM1.Y - BS1.PosStation.Y,
-                                0.00);
-        EWE.OffsetExtr2.setFrom(PM2.X - BS2.PosStation.X,
-                                PM2.Y - BS2.PosStation.Y,
-                                0.00);
-        // et on actualise avec le scrap modifié
-        PutSimpleLigne(QIdx, EWE);
+        EWE.OffsetExtr1.setFrom(PM1.X - BS1.PosStation.X, PM1.Y - BS1.PosStation.Y, 0.00);
+        EWE.OffsetExtr2.setFrom(PM2.X - BS2.PosStation.X, PM2.Y - BS2.PosStation.Y, 0.00);
+        PutSimpleLigne(QIdx, EWE);   // et on actualise avec le scrap modifié
       end;
     except
       Result := -1;
@@ -2764,8 +2754,7 @@ begin
   end;
 end;
 
-function TDocumentDessin.ReattribuerBasePointSymbole(const QIdx: integer;
-                                                     const QIdxGrp: TIDGroupeEntites): integer;
+function TDocumentDessin.ReattribuerBasePointSymbole(const QIdx: integer; const QIdxGrp: TIDGroupeEntites): integer;
 var
   EWE: TSymbole;
   ErrCode: integer;
@@ -2773,11 +2762,9 @@ var
   BS: TBaseStation;
   OldIdxBasePt: TIDBaseStation;
 begin
-  //AfficherMessage(Format('%s.ReattribuerBaseSymbole: %d', [ClassName, QIdx]));
   Result := 0;
   EWE := GetSymbole(QIdx);
-  // si l'objet n'est pas dans le même groupe, on zappe
-  if (QIdxGrp = EWE.IDGroupe) then
+  if (QIdxGrp = EWE.IDGroupe) then // si l'objet n'est pas dans le même groupe, on zappe
   begin
     try
       if (GetBasePointByIndex(EWE.IDBaseStation, BS)) then
@@ -2791,14 +2778,11 @@ begin
           BS := GetNearBasepoint(PM.X, PM.Y, BS, false);
           // comptage du nombre de points modifiés
           if (BS.IDStation <> OldIdxBasePt) then Result += 1;
-          // nouvelle ID
-          EWE.IDBaseStation := BS.IDStation;
+
+          EWE.IDBaseStation := BS.IDStation;       // nouvelle ID
           // calcul du décalage
-          EWE.Offset.setFrom(PM.X - BS.PosStation.X,
-                             PM.Y - BS.PosStation.Y,
-                             0.00);
+          EWE.Offset.setFrom(PM.X - BS.PosStation.X, PM.Y - BS.PosStation.Y, 0.00);
         end;
-        // et on actualise avec le scrap modifié
         PutSymbole(QIdx, EWE);
       end;
     except
@@ -2806,8 +2790,7 @@ begin
     end;
   end;
 end;
-function TDocumentDessin.ReattribuerBasePointTexte(const QIdx: integer;
-                                                   const QIdxGrp: TIDGroupeEntites): integer;
+function TDocumentDessin.ReattribuerBasePointTexte(const QIdx: integer; const QIdxGrp: TIDGroupeEntites): integer;
 var
   EWE: TTextObject;
   ErrCode: integer;
@@ -2818,11 +2801,11 @@ begin
   //AfficherMessage(Format('%s.ReattribuerBaseSymbole: %d', [ClassName, QIdx]));
   Result := 0;
   EWE := GetTexte(QIdx);
-  // si l'objet n'est pas dans le même groupe, on zappe
-  if (QIdxGrp = EWE.IDGroupe) then
+
+  if (QIdxGrp = EWE.IDGroupe) then // si l'objet n'est pas dans le même groupe, on zappe
   begin
     try
-      if (GetBasePointByIndex(EWE.IDBaseSt, BS)) then
+      if (GetBasePointByIndex(EWE.IDBaseStation, BS)) then
       begin
         OldIdxBasePt := BS.IDStation;
         GetCoordsGCS(BS.IDStation, EWE.IDGroupe, EWE.Offset, PM, ErrCode);
@@ -2831,16 +2814,10 @@ begin
           // on recherche le basepoint le plus proche (cette recherche n'agit que sur les basepoints métafiltrés
           // En cas d'échec, GetNearBasepoint retourne le basepoint passé en paramètre
           BS := GetNearBasepoint(PM.X, PM.Y, BS, false);
-          // comptage du nombre de points modifiés
           if (BS.IDStation <> OldIdxBasePt) then Result += 1;
-          // nouvelle ID
-          EWE.IDBaseSt := BS.IDStation;
-          // calcul du décalage
-          EWE.Offset.setFrom(PM.X - BS.PosStation.X,
-                             PM.Y - BS.PosStation.Y,
-                             0.00);
+          EWE.IDBaseStation := BS.IDStation;    // nouvelle ID
+          EWE.Offset.setFrom(PM.X - BS.PosStation.X, PM.Y - BS.PosStation.Y, 0.00); // calcul du décalage
         end;
-        // et on actualise avec l'objet modifié
         PutTexte(QIdx, EWE);
       end;
     except
@@ -2848,8 +2825,7 @@ begin
     end;
   end;
 end;
-function TDocumentDessin.ReattribuerBasePointsCourbe(const QIdx: integer;
-                                                     const QIdxGrp: TIDGroupeEntites): integer;
+function TDocumentDessin.ReattribuerBasePointsCourbe(const QIdx: integer; const QIdxGrp: TIDGroupeEntites): integer;
 var
   EWE: TCourbe;
   i, Nb: Integer;
@@ -2885,12 +2861,8 @@ begin
 
             QArc.IDStationP1 := BS1.IDStation;                        // nouvelle ID
             QArc.IDStationP2 := BS2.IDStation;
-            QArc.OffsetP1.setFrom(PM1.X - BS1.PosStation.X,  // calcul du décalage
-                                  PM1.Y - BS1.PosStation.Y,
-                                  0.00);
-            QArc.OffsetP2.setFrom(PM2.X - BS2.PosStation.X,
-                                  PM2.Y - BS2.PosStation.Y,
-                                  0.00);
+            QArc.OffsetP1.setFrom(PM1.X - BS1.PosStation.X, PM1.Y - BS1.PosStation.Y, 0.00); // calcul du décalage
+            QArc.OffsetP2.setFrom(PM2.X - BS2.PosStation.X, PM2.Y - BS2.PosStation.Y, 0.00);
             EWE.setArc(i, QArc); //Arcs[i] := QArc;                                      // et mise à jour
           end;
           PutCourbe(QIdx, EWE);        // et on actualise avec l'objet modifié
@@ -2968,39 +2940,7 @@ begin
   FListeSuperGroupes.PutElement(Idx, Grp);
 end;
 //******************************************************************************
-function TDocumentDessin.CalcPhotoData(const EP: TSymbole): TSymbole;
-var
-  s: string;
-  PhotoCtxt  : TImage;
-  Ratio      : Double;
-begin
-  Result := EP;
-  Result.PhotoDisplayed := False;
-  s := ExtractFilePath(FDocumentName) + Trim(Result.TagTexte);
-  if (not FileExists(s)) then
-  begin
-    AfficherMessage(Format('CalcPhotoData: %s not found',[s]));
-    Result.PhotoDisplayed := False;
-    Exit;
-  end;
-  PhotoCtxt:=TImage.Create(nil);
-  // ceci est destiné à récupérer les paramètres de la photo
-  try
-    PhotoCtxt.AutoSize:=False;
-    PhotoCtxt.Stretch :=True;
-    PhotoCtxt.Picture.LoadFromFile(s);
-    Ratio := PhotoCtxt.Picture.Height / PhotoCtxt.Picture.Width;
-    Result.ScaleX := Abs(Result.ScaleX); // toujours > 0 pour une photo
-    if (Result.ScaleX < 5.00) then Result.ScaleX := 5.00;  //taille minimale pour la photo
-    Result.AngleRot := 0.00;
-    Result.ScaleY := Result.ScaleX * Ratio;
-    //Result.PhotoDisplayed := True;
-    AfficherMessage(Format('CalcPhotoData: %s OK',[s]));
-    Result.PhotoDisplayed := True;
-  finally
-    FreeAndNil(PhotoCtxt);//     PhotoCtxt.Free;
-  end;
-end;
+
 
 //******************************************************************************
 // GESTION DES STYLES
@@ -3030,7 +2970,7 @@ var
     with WU do
     begin
       IDStyle        := id;
-      NameSVGStyle   := svgs;
+      NameSVGStyle   := LowerCase(svgs);
       DescStyle      := descs;
       LineColor      := LC;
       LineWidth      := LW;
@@ -3059,7 +2999,7 @@ var
     with WU do
     begin
       IDStyle        := id;
-      NameSVGStyle   := svgs;
+      NameSVGStyle   := LowerCase(svgs);
       DescStyle      := descs;
       LineColor      := LC;
       LineWidth      := LW;
@@ -3087,7 +3027,7 @@ var
     with WU do
     begin
       IDStyle     := id;
-      NameSVGStyle:= svgs;
+      NameSVGStyle:= LowerCase(svgs);
       DescStyle   := descs;
       LineWidth   := LW;
       LineColor   := LC;
@@ -3112,7 +3052,7 @@ var
     with WU do
     begin
       IDStyle       := ID;
-      NameSVGStyle  := svgs;
+      NameSVGStyle  := LowerCase(svgs);
       DescStyle     := descs;
       FontName      := FN;
       FontPrnHeight := FPH;
@@ -3123,95 +3063,84 @@ var
     AddStyleTexte(WU);
   end;
   procedure QSetStyleSymbole(const id: integer;
-                            const svgs : string;
-                            const descs: string;
-                            const OC: TColor;
-                            const SeuilDeVisibilite: double);
+                             const svgs : string;
+                             const descs: string;
+                             const OC: TColor;
+                             const SeuilDeVisibilite: double);
   var
     WU: TStyleSymboles;
   begin
-    with WU do
-    begin
-      IDStyle       := id;
-      NameSVGStyle  := svgs;
-      DescStyle     := descs;
-      Color         := OC;
-      SeuilVisibilite := SeuilDeVisibilite;
-    end;
+    WU.setFrom(id, svgs, descs, OC, SeuilDeVisibilite);
     AddStyleSymbole(WU);
   end;
 begin
   AfficherMessage(Format('%s.SetDefaultStyles()', [ClassName]));
   PurgerListeStyles();
   // lignes
-  QSetStyleLigne(0, LowerCase('LINE-DEFAULT')            , ListeStylesLignes[Ord(nolDEFAULT)     ], clBlack    , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
-  QSetStyleLigne(1, LowerCase('LINE-FLECHES')            , ListeStylesLignes[Ord(nolFLECHE)      ], clBlack    , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
-  QSetStyleLigne(2, LowerCase('LINE-FRACTURES')          , ListeStylesLignes[Ord(nolSUITE_RESEAU)], clBlue     , 0, 0.10, psSolid, SEUIL_PPAUX_DETAILS);
-  QSetStyleLigne(3, LowerCase('LINE-SUITE-RESEAUX')      , ListeStylesLignes[Ord(nolFRACTURE)    ], clRed      , 0, 0.05, psSolid, SEUIL_PPAUX_DETAILS);
-  QSetStyleLigne(4, LowerCase('LINE-PENTES')             , ListeStylesLignes[Ord(nolPENTE)       ], clGray     , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
-  QSetStyleLigne(5, LowerCase('LINE-PENDAGES')           , ListeStylesLignes[Ord(nolPENDAGE)     ], clGray     , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
-
+  QSetStyleLigne(0, 'LINE-DEFAULT'            , ListeStylesLignes[Ord(nolDEFAULT)     ], clBlack    , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
+  QSetStyleLigne(1, 'LINE-FLECHES'            , ListeStylesLignes[Ord(nolFLECHE)      ], clBlack    , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
+  QSetStyleLigne(2, 'LINE-FRACTURES'          , ListeStylesLignes[Ord(nolSUITE_RESEAU)], clBlue     , 0, 0.10, psSolid, SEUIL_PPAUX_DETAILS);
+  QSetStyleLigne(3, 'LINE-SUITE-RESEAUX'      , ListeStylesLignes[Ord(nolFRACTURE)    ], clRed      , 0, 0.05, psSolid, SEUIL_PPAUX_DETAILS);
+  QSetStyleLigne(4, 'LINE-PENTES'             , ListeStylesLignes[Ord(nolPENTE)       ], clGray     , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
+  QSetStyleLigne(5, 'LINE-PENDAGES'           , ListeStylesLignes[Ord(nolPENDAGE)     ], clGray     , 0, 0.03, psSolid, SEUIL_TOUS_DETAILS);
   // courbes
-  QSetStyleCourbe( 0, LowerCase('CURVE-DEFAULT')         , ListeStylesCourbes[Ord(nocDEFAULT)           ], clBlack    , 0, 0.10, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleCourbe( 1, LowerCase('CURVE-WALLS')           , ListeStylesCourbes[Ord(nocPAROI)             ], clMaroon   , 2, 0.25, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleCourbe( 2, LowerCase('CURVE-HIDDEN_WALLS')    , ListeStylesCourbes[Ord(nocPAROIS_CACHEE)     ], clGray     , 2, 0.15, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleCourbe( 3, LowerCase('CURVE-FLOODINGS')       , ListeStylesCourbes[Ord(nocECOULEMENT)        ], clBlue     , 3, 0.35, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleCourbe( 4, LowerCase('CURVE-PENTES')          , ListeStylesCourbes[Ord(nocLIGNES_PENTE)      ], clGray     , 0, 0.03 , psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUS_DETAILS);
-  QSetStyleCourbe( 5, LowerCase('CURVE-RESSAUTS')        , ListeStylesCourbes[Ord(nocRESSAUT)           ], clMaroon   , 0, 0.03 , psSolid, True, tbRESSAUT, LONG_BARB, SEUIL_PPAUX_DETAILS);
-  QSetStyleCourbe( 6, LowerCase('CURVE-SURPLOMBS')       , ListeStylesCourbes[Ord(nocSURPLOMB)          ], clGreen    , 0, 0.03 , psSolid, True, tbSURPLOMB, LONG_BARB, SEUIL_PPAUX_DETAILS);
-  QSetStyleCourbe( 7, LowerCase('CURVE-CHENAL_VOUTE')    , ListeStylesCourbes[Ord(nocCHENAL_VOUTE)      ], clNavy     , 0, 0.03 , psSolid, True, tbCHENAL_VOUTE, LONG_BARB, SEUIL_TOUS_DETAILS);
-  QSetStyleCourbe( 8, LowerCase('CURVE-MINI-RESSAUTS')   , ListeStylesCourbes[Ord(nocMARCHE)            ], clBlue     , 0, 0.03 , psSolid, True, tbMINI_RESSAUT, LONG_BARB / 2, SEUIL_TOUS_DETAILS);
-  QSetStyleCourbe( 9, LowerCase('CURVE-PAROI-INCERTAINE'), ListeStylesCourbes[Ord(nocPAROI_INCERTAINE) ], clMaroon   , 0, 0.25 , psDash, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleCourbe(10, LowerCase('CURVE-MUR-MACONNE'     ), ListeStylesCourbes[Ord(nocMUR_MACONNE)      ], clYellow   , 2, 0.55 , psDash, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
-
+  QSetStyleCourbe( 0, 'CURVE-DEFAULT'         , ListeStylesCourbes[Ord(nocDEFAULT)           ], clBlack    , 0, 0.10, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleCourbe( 1, 'CURVE-WALLS'           , ListeStylesCourbes[Ord(nocPAROI)             ], clMaroon   , 2, 0.25, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleCourbe( 2, 'CURVE-HIDDEN_WALLS'    , ListeStylesCourbes[Ord(nocPAROIS_CACHEE)     ], clGray     , 2, 0.15, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleCourbe( 3, 'CURVE-FLOODINGS'       , ListeStylesCourbes[Ord(nocECOULEMENT)        ], clBlue     , 3, 0.35, psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleCourbe( 4, 'CURVE-PENTES'          , ListeStylesCourbes[Ord(nocLIGNES_PENTE)      ], clGray     , 0, 0.03 , psSolid, True, tbNONE, LONG_BARB, SEUIL_TOUS_DETAILS);
+  QSetStyleCourbe( 5, 'CURVE-RESSAUTS'        , ListeStylesCourbes[Ord(nocRESSAUT)           ], clMaroon   , 0, 0.03 , psSolid, True, tbRESSAUT, LONG_BARB, SEUIL_PPAUX_DETAILS);
+  QSetStyleCourbe( 6, 'CURVE-SURPLOMBS'       , ListeStylesCourbes[Ord(nocSURPLOMB)          ], clGreen    , 0, 0.03 , psSolid, True, tbSURPLOMB, LONG_BARB, SEUIL_PPAUX_DETAILS);
+  QSetStyleCourbe( 7, 'CURVE-CHENAL_VOUTE'    , ListeStylesCourbes[Ord(nocCHENAL_VOUTE)      ], clNavy     , 0, 0.03 , psSolid, True, tbCHENAL_VOUTE, LONG_BARB, SEUIL_TOUS_DETAILS);
+  QSetStyleCourbe( 8, 'CURVE-MINI-RESSAUTS'   , ListeStylesCourbes[Ord(nocMARCHE)            ], clBlue     , 0, 0.03 , psSolid, True, tbMINI_RESSAUT, LONG_BARB / 2, SEUIL_TOUS_DETAILS);
+  QSetStyleCourbe( 9, 'CURVE-PAROI-INCERTAINE', ListeStylesCourbes[Ord(nocPAROI_INCERTAINE) ], clMaroon   , 0, 0.25 , psDash, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleCourbe(10, 'CURVE-MUR-MACONNE'     , ListeStylesCourbes[Ord(nocMUR_MACONNE)      ], clYellow   , 2, 0.55 , psDash, True, tbNONE, LONG_BARB, SEUIL_TOUJOURS_VISIBLE);
   // polygones
-  QSetStylePolygone( 0, LowerCase('POLYGON-DEFAULT')       , ListeStylesPolygones[Ord(nopDEFAULT)     ] , 0, clBlack  , psSolid, clSilver, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 1, LowerCase('POLYGON-LAKE')          , ListeStylesPolygones[Ord(nopLAC)         ] , 0, clNavy  ,  psSolid, clBlue, 0, SEUIL_PPAUX_DETAILS);
-  QSetStylePolygone( 2, LowerCase('POLYGON-ARGILE')        , ListeStylesPolygones[Ord(nopARGILE)      ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 3, LowerCase('POLYGON-SABLE')         , ListeStylesPolygones[Ord(nopSABLE)       ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 4, LowerCase('POLYGON-BLOCKS')        , ListeStylesPolygones[Ord(nopEBOULIS)     ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 5, LowerCase('POLYGON-GALETS')        , ListeStylesPolygones[Ord(nopGALETS)      ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 6, LowerCase('POLYGON-NEIGE')         , ListeStylesPolygones[Ord(nopNEIGE)       ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_PPAUX_DETAILS);
-  QSetStylePolygone( 7, LowerCase('POLYGON-SILHOUETTES')   , ListeStylesPolygones[Ord(nopSILHOUETTE)  ] , 0, clSilver, psSolid, clSilver, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 8, LowerCase('POLYGON-GROS-BLOC')     , ListeStylesPolygones[Ord(nopGROS_BLOC)   ] , 0, clBlack , psSolid, clSilver, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone( 9, LowerCase('POLYGON-GOUR')          , ListeStylesPolygones[Ord(nopGOUR)        ] , 0, clBlue  , psSolid, clAqua  , 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone(10, LowerCase('POLYGON-SIPHON')        , ListeStylesPolygones[Ord(nopSIPHON)      ], 0, clNavy  , psSolid, clNavy  , 0, SEUIL_PPAUX_DETAILS);
-  QSetStylePolygone(11, LowerCase('POLYGON-ARGILE-GALETS') , ListeStylesPolygones[Ord(nopARGILES_GALETS)], 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
-  QSetStylePolygone(12, LowerCase('POLYGON-PARCOURS')      , ListeStylesPolygones[Ord(nopCHEMINS)       ], 0, clMaroon, psSolid, clYellow, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 0, 'POLYGON-DEFAULT'       , ListeStylesPolygones[Ord(nopDEFAULT)     ] , 0, clBlack  , psSolid, clSilver, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 1, 'POLYGON-LAKE'          , ListeStylesPolygones[Ord(nopLAC)         ] , 0, clNavy  ,  psSolid, clBlue, 0, SEUIL_PPAUX_DETAILS);
+  QSetStylePolygone( 2, 'POLYGON-ARGILE'        , ListeStylesPolygones[Ord(nopARGILE)      ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 3, 'POLYGON-SABLE'         , ListeStylesPolygones[Ord(nopSABLE)       ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 4, 'POLYGON-BLOCKS'        , ListeStylesPolygones[Ord(nopEBOULIS)     ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 5, 'POLYGON-GALETS'        , ListeStylesPolygones[Ord(nopGALETS)      ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 6, 'POLYGON-NEIGE'         , ListeStylesPolygones[Ord(nopNEIGE)       ] , 0, clMaroon, psSolid, clMaroon, 0, SEUIL_PPAUX_DETAILS);
+  QSetStylePolygone( 7, 'POLYGON-SILHOUETTES'   , ListeStylesPolygones[Ord(nopSILHOUETTE)  ] , 0, clSilver, psSolid, clSilver, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 8, 'POLYGON-GROS-BLOC'     , ListeStylesPolygones[Ord(nopGROS_BLOC)   ] , 0, clBlack , psSolid, clSilver, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone( 9, 'POLYGON-GOUR'          , ListeStylesPolygones[Ord(nopGOUR)        ] , 0, clBlue  , psSolid, clAqua  , 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone(10, 'POLYGON-SIPHON'        , ListeStylesPolygones[Ord(nopSIPHON)      ], 0, clNavy  , psSolid, clNavy  , 0, SEUIL_PPAUX_DETAILS);
+  QSetStylePolygone(11, 'POLYGON-ARGILE-GALETS' , ListeStylesPolygones[Ord(nopARGILES_GALETS)], 0, clMaroon, psSolid, clMaroon, 0, SEUIL_TOUS_DETAILS);
+  QSetStylePolygone(12, 'POLYGON-PARCOURS'      , ListeStylesPolygones[Ord(nopCHEMINS)       ], 0, clMaroon, psSolid, clYellow, 0, SEUIL_TOUS_DETAILS);
   // textes
-  QSetStyleTexte( 0, LowerCase('TEXT-DEBUG')               , ListeStylesTextes[Ord(notDEBUG)               ], 'Arial',  1.5, clRed   , [], SEUIL_TOUS_DETAILS);
-  QSetStyleTexte( 1, LowerCase('TEXT-TITRES')              , ListeStylesTextes[Ord(notTITRES)              ], 'Arial',  8.0, clBlack , [fsBold, fsUnderline], SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleTexte( 2, LowerCase('TEXT-SOUS-TITRES')         , ListeStylesTextes[Ord(notSOUS_TITRES)         ], 'Arial',  6.0, clBlack , [fsBold, fsItalic], SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleTexte( 3, LowerCase('TEXT-COTATION')            , ListeStylesTextes[Ord(notCOTATION)            ], 'Arial',  2.5, clBlue  , [], SEUIL_TOUS_DETAILS);
-  QSetStyleTexte( 4, LowerCase('TEXT-ORDINAIRE1')          , ListeStylesTextes[Ord(notTEXTE1)              ], 'Arial',  1.5, clBlack , [], SEUIL_TOUS_DETAILS);
-  QSetStyleTexte( 5, LowerCase('TEXT-ORDINAIRE2')          , ListeStylesTextes[Ord(notTEXTE2)              ], 'Arial',  1.2, clBlack , [fsItalic], SEUIL_TOUS_DETAILS);
-  QSetStyleTexte( 6, LowerCase('TEXT-LIEUDIT')             , ListeStylesTextes[Ord(notLIEU_DIT)            ], 'Arial',  1.0, clBlack , [fsItalic, fsUnderline], SEUIL_TOUS_DETAILS);
-  QSetStyleTexte( 7, LowerCase('TEXT-COTATION-EXTERIEUR')  , ListeStylesTextes[Ord(notCOTATION_EXTERIEURE) ], 'Arial',  2.5, clGreen , [], SEUIL_TOUS_DETAILS);
-
-
+  QSetStyleTexte( 0, 'TEXT-DEBUG'               , ListeStylesTextes[Ord(notDEBUG)               ], 'Arial',  1.5, clRed   , [], SEUIL_TOUS_DETAILS);
+  QSetStyleTexte( 1, 'TEXT-TITRES'              , ListeStylesTextes[Ord(notTITRES)              ], 'Arial',  8.0, clBlack , [fsBold, fsUnderline], SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleTexte( 2, 'TEXT-SOUS-TITRES'         , ListeStylesTextes[Ord(notSOUS_TITRES)         ], 'Arial',  6.0, clBlack , [fsBold, fsItalic], SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleTexte( 3, 'TEXT-COTATION'            , ListeStylesTextes[Ord(notCOTATION)            ], 'Arial',  2.5, clBlue  , [], SEUIL_TOUS_DETAILS);
+  QSetStyleTexte( 4, 'TEXT-ORDINAIRE1'          , ListeStylesTextes[Ord(notTEXTE1)              ], 'Arial',  1.5, clBlack , [], SEUIL_TOUS_DETAILS);
+  QSetStyleTexte( 5, 'TEXT-ORDINAIRE2'          , ListeStylesTextes[Ord(notTEXTE2)              ], 'Arial',  1.2, clBlack , [fsItalic], SEUIL_TOUS_DETAILS);
+  QSetStyleTexte( 6, 'TEXT-LIEUDIT'             , ListeStylesTextes[Ord(notLIEU_DIT)            ], 'Arial',  1.0, clBlack , [fsItalic, fsUnderline], SEUIL_TOUS_DETAILS);
+  QSetStyleTexte( 7, 'TEXT-COTATION-EXTERIEUR'  , ListeStylesTextes[Ord(notCOTATION_EXTERIEURE) ], 'Arial',  2.5, clGreen , [], SEUIL_TOUS_DETAILS);
   // objets ponctuels
-  QSetStyleSymbole( 0, LowerCase('OBJECT-PHOTO')           , ListeNatureSymboles[Ord(nosPHOTO)            ] , clBlack, SEUIL_PPAUX_DETAILS);              // Photo
-  QSetStyleSymbole( 1, LowerCase('OBJECT-ENTRANCE')        , ListeNatureSymboles[Ord(nosENTREE)           ] , clBlue, SEUIL_TOUJOURS_VISIBLE);               // Entrée
-  QSetStyleSymbole( 2, LowerCase('OBJECT-STATION')         , ListeNatureSymboles[Ord(nosPOINT_TOPO)       ] , clRed, SEUIL_TOUS_DETAILS);                // Point topo
-  QSetStyleSymbole( 3, LowerCase('OBJECT-FIXPOINT')        , ListeNatureSymboles[Ord(nosPOINT_FIXE)       ] , clGreen, SEUIL_TOUS_DETAILS);              // Point fixe''
-  QSetStyleSymbole( 4, LowerCase('OBJECT-GRP-RELATION')    , ListeNatureSymboles[Ord(nosCORRESPONDANCE)   ] , clGray, SEUIL_TOUS_DETAILS);               // Correspondance entre groupes
-  QSetStyleSymbole( 5, LowerCase('OBJECT-FISTULEUSES')     , ListeNatureSymboles[Ord(nosFISTULEUSE)       ] , clBlack, SEUIL_TOUS_DETAILS);              // Fistuleuses'
-  QSetStyleSymbole( 6, LowerCase('OBJECT-CONCRETIONS')     , ListeNatureSymboles[Ord(nosCONCRETION_PAROI) ] , clBlack, SEUIL_TOUS_DETAILS);              // Concrétions de paroi'
-  QSetStyleSymbole( 7, LowerCase('OBJECT-HELICTITES')      , ListeNatureSymboles[Ord(nosEXCENTRIQUES)     ] , clBlack, SEUIL_TOUS_DETAILS);              // Excentriques
-  QSetStyleSymbole( 8, LowerCase('OBJECT-STALACTITES')     , ListeNatureSymboles[Ord(nosSTALACTITES)      ] , clBlack, SEUIL_TOUS_DETAILS);              // Stalactites
-  QSetStyleSymbole( 9, LowerCase('OBJECT-COLUMNS')         , ListeNatureSymboles[Ord(nosCOLONNES)         ] , clBlack, SEUIL_TOUS_DETAILS);              // Colonnes
-  QSetStyleSymbole(10, LowerCase('OBJECT-STALAGMITES')     , ListeNatureSymboles[Ord(nosSTALAGMITES)      ] , clBlack, SEUIL_TOUS_DETAILS);              // Stalagmites
-  QSetStyleSymbole(11, LowerCase('OBJECT-ARAGONITES')      , ListeNatureSymboles[Ord(nosCRISTAUX)         ] , clBlack, SEUIL_TOUS_DETAILS);              // Cristaux d'aragonite
-  QSetStyleSymbole(12, LowerCase('OBJECT-FAILLES')         , ListeNatureSymboles[Ord(nosFRACTURES)        ] , clBlack, SEUIL_TOUS_DETAILS);
-  QSetStyleSymbole(13, LowerCase('OBJECT-CUPULES')         , ListeNatureSymboles[Ord(nosCUPULES)          ] , clBlack, SEUIL_TOUS_DETAILS);
-  QSetStyleSymbole(14, LowerCase('OBJECT-ZEFF')            , ListeNatureSymboles[Ord(nosZEFF)             ] , clBlack, SEUIL_TOUS_DETAILS);
-  QSetStyleSymbole(15, LowerCase('OBJECT-ARRIVEE-EAU')     , ListeNatureSymboles[Ord(nosARRIVEE_EAU)      ] , clBlack, SEUIL_TOUS_DETAILS);
-  QSetStyleSymbole(16, LowerCase('OBJECT-PERTE')           , ListeNatureSymboles[Ord(nosPERTE)            ] , clBlack, SEUIL_TOUS_DETAILS);
-  QSetStyleSymbole(17, LowerCase('OBJECT-DESOB')           , ListeNatureSymboles[Ord(nosDESOB)            ] , clBlack, SEUIL_TOUS_DETAILS);
-  QSetStyleSymbole(18, LowerCase('OBJECT-DANGER')          , ListeNatureSymboles[Ord(nosDANGER)           ] , clBlack, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleSymbole(19, LowerCase('OBJECT-GOUFFRE')         , ListeNatureSymboles[Ord(nosGOUFFRE_SURFACE)  ] , clBlack, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleSymbole(20, LowerCase('OBJECT-GROTTE')          , ListeNatureSymboles[Ord(nosGROTTE_SURFACE)   ] , clBlack, SEUIL_TOUJOURS_VISIBLE);
-  QSetStyleSymbole(21, LowerCase('OBJECT-PT-REMARQUABLE')  , ListeNatureSymboles[Ord(nosPOINT_REMARQUABLE)] , clBlack, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleSymbole( 0, 'OBJECT-PHOTO'           , ListeNatureSymboles[Ord(nosPHOTO)            ] , clBlack, SEUIL_PPAUX_DETAILS);              // Photo
+  QSetStyleSymbole( 1, 'OBJECT-ENTRANCE'        , ListeNatureSymboles[Ord(nosENTREE)           ] , clBlue , SEUIL_TOUJOURS_VISIBLE);               // Entrée
+  QSetStyleSymbole( 2, 'OBJECT-STATION'         , ListeNatureSymboles[Ord(nosPOINT_TOPO)       ] , clRed  , SEUIL_TOUS_DETAILS);                // Point topo
+  QSetStyleSymbole( 3, 'OBJECT-FIXPOINT'        , ListeNatureSymboles[Ord(nosPOINT_FIXE)       ] , clGreen, SEUIL_TOUS_DETAILS);              // Point fixe''
+  QSetStyleSymbole( 4, 'OBJECT-GRP-RELATION'    , ListeNatureSymboles[Ord(nosCORRESPONDANCE)   ] , clGray , SEUIL_TOUS_DETAILS);               // Correspondance entre groupes
+  QSetStyleSymbole( 5, 'OBJECT-FISTULEUSES'     , ListeNatureSymboles[Ord(nosFISTULEUSE)       ] , clBlack, SEUIL_TOUS_DETAILS);              // Fistuleuses'
+  QSetStyleSymbole( 6, 'OBJECT-CONCRETIONS'     , ListeNatureSymboles[Ord(nosCONCRETION_PAROI) ] , clBlack, SEUIL_TOUS_DETAILS);              // Concrétions de paroi'
+  QSetStyleSymbole( 7, 'OBJECT-HELICTITES'      , ListeNatureSymboles[Ord(nosEXCENTRIQUES)     ] , clBlack, SEUIL_TOUS_DETAILS);              // Excentriques
+  QSetStyleSymbole( 8, 'OBJECT-STALACTITES'     , ListeNatureSymboles[Ord(nosSTALACTITES)      ] , clBlack, SEUIL_TOUS_DETAILS);              // Stalactites
+  QSetStyleSymbole( 9, 'OBJECT-COLUMNS'         , ListeNatureSymboles[Ord(nosCOLONNES)         ] , clBlack, SEUIL_TOUS_DETAILS);              // Colonnes
+  QSetStyleSymbole(10, 'OBJECT-STALAGMITES'     , ListeNatureSymboles[Ord(nosSTALAGMITES)      ] , clBlack, SEUIL_TOUS_DETAILS);              // Stalagmites
+  QSetStyleSymbole(11, 'OBJECT-ARAGONITES'      , ListeNatureSymboles[Ord(nosCRISTAUX)         ] , clBlack, SEUIL_TOUS_DETAILS);              // Cristaux d'aragonite
+  QSetStyleSymbole(12, 'OBJECT-FAILLES'         , ListeNatureSymboles[Ord(nosFRACTURES)        ] , clBlack, SEUIL_TOUS_DETAILS);
+  QSetStyleSymbole(13, 'OBJECT-CUPULES'         , ListeNatureSymboles[Ord(nosCUPULES)          ] , clBlack, SEUIL_TOUS_DETAILS);
+  QSetStyleSymbole(14, 'OBJECT-ZEFF'            , ListeNatureSymboles[Ord(nosZEFF)             ] , clBlack, SEUIL_TOUS_DETAILS);
+  QSetStyleSymbole(15, 'OBJECT-ARRIVEE-EAU'     , ListeNatureSymboles[Ord(nosARRIVEE_EAU)      ] , clBlack, SEUIL_TOUS_DETAILS);
+  QSetStyleSymbole(16, 'OBJECT-PERTE'           , ListeNatureSymboles[Ord(nosPERTE)            ] , clBlack, SEUIL_TOUS_DETAILS);
+  QSetStyleSymbole(17, 'OBJECT-DESOB'           , ListeNatureSymboles[Ord(nosDESOB)            ] , clBlack, SEUIL_TOUS_DETAILS);
+  QSetStyleSymbole(18, 'OBJECT-DANGER'          , ListeNatureSymboles[Ord(nosDANGER)           ] , clBlack, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleSymbole(19, 'OBJECT-GOUFFRE'         , ListeNatureSymboles[Ord(nosGOUFFRE_SURFACE)  ] , clBlack, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleSymbole(20, 'OBJECT-GROTTE'          , ListeNatureSymboles[Ord(nosGROTTE_SURFACE)   ] , clBlack, SEUIL_TOUJOURS_VISIBLE);
+  QSetStyleSymbole(21, 'OBJECT-PT-REMARQUABLE'  , ListeNatureSymboles[Ord(nosPOINT_REMARQUABLE)] , clBlack, SEUIL_TOUJOURS_VISIBLE);
 end;
 
 procedure TDocumentDessin.SetDocumentName(const N: string);
@@ -3990,7 +3919,7 @@ begin
  Result := false;  // Entité supposée dégénérée
  if ('' = Trim(QT.Text)) then Exit; // texte vide ? OK, je sort
  try
-   if (not GetBasePointByIndex(QT.IDBaseSt, BS1)) then Exit;
+   if (not GetBasePointByIndex(QT.IDBaseStation, BS1)) then Exit;
    // TODO: autres tests de validité
  except
  end;
@@ -4580,17 +4509,20 @@ function TDocumentDessin.ExporterScrapsToKML(const QFileName: string;
                                              const DoFillScraps: boolean;
                                              const DefaultColor: TColor;
                                              const DefaultOpacity: byte;
-                                             const WithExportGIS: TWithExportGIS): boolean;
+                                             const WithExportGIS: TWithExportGIS;
+                                             const MySuperGroupeIdx: TIDSuperGroupe = -1): boolean;
 const
   SCRAP_BY_DEFAULT = 'ScrapDefault';
   FOLDER_Entrances = 'Entrances';
   FOLDER_Scraps    = 'Scraps';
   FOLDER_POI       = 'POIs';
+  STYLE_SUPERGROUPE_NTH  = 'StyleSupergroupe%d';
+  FOLDER_SUPERGROUPE_NTH = 'Supergroupe%d';
+
 var
   MyKMLExport: TKMLExport;
-  NbScraps, ss, NbPoly: Integer;
-  MonScrap: TScrap;
-  MaPoly: TPolyLigne;
+  NbreScraps, NbrePoly  : integer;
+  DoExportSuperGroupes: Boolean;
   procedure ExportCenterlines();
   begin
     MyKMLExport.BeginFolder(4, 'MyCenterlines');
@@ -4709,7 +4641,9 @@ var
   begin
     NbSymboles := Self.GetNbSymboles();
     if (0 = NbSymboles) then Exit;
-    for ee := 0 to NbSymboles - 1 do WriteAEntrance(self.GetSymbole(ee));
+    MyKMLExport.BeginFolder(4, FOLDER_Entrances);
+      for ee := 0 to NbSymboles - 1 do WriteAEntrance(self.GetSymbole(ee));
+    MyKMLExport.EndFolder(4, FOLDER_Entrances);
   end;
   procedure WritePOIs();
   var
@@ -4717,18 +4651,18 @@ var
   begin
     NbSymboles := Self.GetNbSymboles();
     if (0 = NbSymboles) then Exit;
-    for ee := 0 to NbSymboles - 1 do WriteAPOI(self.GetSymbole(ee));
+    MyKMLExport.BeginFolder(4, FOLDER_POI);
+      for ee := 0 to NbSymboles - 1 do WriteAPOI(self.GetSymbole(ee));
+    MyKMLExport.EndFolder(4, FOLDER_POI);
   end;
-
-begin
-  Result := false;
-  AfficherMessageErreur(Format('%s.ExporterScrapsToKML: EPSG:%d; %s ', [ClassName, FCodeEPSG, QFileName]));
-  NbScraps := self.GetNbScraps();
-  NbPoly   := self.GetNbPolylignes();
-  if (0 = NbScraps) then Exit;
-  MyKMLExport := TKMLExport.Create;
-  try
-    if (MyKMLExport.Initialiser(QFileName)) then
+  procedure WriteScraps();
+  var
+    ss, NbScraps, NbPolylines: Integer;
+    MyScrap: TScrap;
+    MyPolyline: TPolyLigne;
+  begin
+    NbScraps := self.GetNbScraps();
+    if (NbScraps > 0) then  // les styles de scraps
     begin
       // style de scrap par défaut
       MyKMLExport.DefineStylePoly(SCRAP_BY_DEFAULT, 1.0, DefaultColor, DefaultColor, 255, DefaultOpacity);
@@ -4737,43 +4671,149 @@ begin
       begin
         for ss := 0 to NbScraps - 1 do
         begin
-          MonScrap := GetScrap(ss);
-          MyKMLExport.DefineStylePoly(Format('Scrap%d', [ss]), 1.0, MonScrap.Couleur, MonScrap.Couleur, 255, MonScrap.Opacite);
+          MyScrap := GetScrap(ss);
+          MyKMLExport.DefineStylePoly(Format('Scrap%d', [ss]), 1.0, MyScrap.Couleur, MyScrap.Couleur, 255, MyScrap.Opacite);
         end;
       end;
-      // les scraps de la cavité
-      MyKMLExport.BeginFolder(4, FOLDER_Scraps);
+    end; // if (NbScraps > 0) then
+
+    MyKMLExport.BeginFolder(4, FOLDER_Scraps);
+    if (NbScraps > 0) then // les scraps de la cavité
+    begin
       for ss := 0 to NbScraps - 1 do
       begin
-        MonScrap := GetScrap(ss);
-        WriteAScrap(ss, MonScrap);
-        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [ss, NbScraps, MonScrap.Nom]), 0, NbScraps - 1, ss);
+        MyScrap := GetScrap(ss);
+        WriteAScrap(ss, MyScrap);
+        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [ss, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, ss);
       end;
-      // Polylignes
-      for ss := 0 to NbPoly - 1 do
+    end; //  if (NbScraps > 0) then
+    // Polylignes fermées (piliers)
+    NbPolylines := self.GetNbPolylignes();
+    if (NbPolylines > 0) then
+    begin
+      for ss := 0 to NbPolylines - 1 do
       begin
-        MaPoly := GetPolyligne(ss);
-        QDessinerPilier(ss, MaPoly);
-        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [ss, NbPoly]), 0, NbPoly - 1, ss);
+        MyPolyline := GetPolyligne(ss);
+        QDessinerPilier(ss, MyPolyline);
+        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [ss, NbPolylines]), 0, NbPolylines - 1, ss);
       end;
-      MyKMLExport.EndFolder(4, FOLDER_Scraps);
-      // les entrées (seulement si avec métadonnées activées)
-      if (gisWITH_METADATA in WithExportGIS) then
+    end; // if (NbPolylines > 0) then
+    MyKMLExport.EndFolder(4, FOLDER_Scraps);
+  end;
+  procedure QExporterScrapsBySupergroupes();
+  var
+    NbScraps, NbSuperGroupes, sg, NbGroupesOf: Integer;
+    EWE, FolderSupergroupe: String;
+    MySuperGroupe: TSuperGroupe;
+  begin
+    NbScraps        := self.GetNbScraps();
+    NbSuperGroupes  := self.GetNbSuperGroupes();
+    EWE := format(' --- QExporterScrapsBySupergroupes(%d supergroupes, %d scraps)', [NbScraps, NbSuperGroupes]);
+    AfficherMessage(EWE);
+    AfficherMessageErreur(EWE);
+    if (NbScraps = 0) then exit;
+    if (NbSuperGroupes = 0) then exit;
+    // Définition des styles de supergroupes
+    MyKMLExport.DefineStylePoly(SCRAP_BY_DEFAULT, 1.0, DefaultColor, DefaultColor, 255, DefaultOpacity);        // style de scrap par défaut
+    for sg := 0 to NbSuperGroupes - 1 do
+    begin
+      MySuperGroupe := self.GetSuperGroupe(sg);
+      MyKMLExport.DefineStylePoly(Format(STYLE_SUPERGROUPE_NTH, [sg]), 1.0, MySuperGroupe.Couleur, MySuperGroupe.Couleur, 255, DefaultOpacity);
+    end;
+    // création des dossiers et export des supergroupes
+    for sg := 0 to NbSuperGroupes - 1 do
+    begin
+      MySuperGroupe := self.GetSuperGroupe(sg);
+      NbGroupesOf   := MySuperGroupe.getNbGroupes();
+      FolderSupergroupe := Format(FOLDER_SUPERGROUPE_NTH, [sg]);
+      AfficherMessageErreur(Format('Supergroupe%d - %s, contenant %d groupes, va dans le dossier %s', [sg, MySuperGroupe.NomSuperGroupe, NbGroupesOf, FolderSupergroupe]));
+      MyKMLExport.BeginFolder(4, FolderSupergroupe);
+      if (NbGroupesOf > 0) then
       begin
-        if (gisWITH_ENTRANCES in WithExportGIS) then
+         //TODO
+      end;
+
+      MyKMLExport.EndFolder(4, FolderSupergroupe);
+    end;
+
+
+
+
+   (*
+    procedure WriteScraps();
+  var
+    ss, NbScraps, NbPolylines: Integer;
+    MyScrap: TScrap;
+    MyPolyline: TPolyLigne;
+  begin
+
+    if (NbScraps > 0) then  // les styles de scraps
+    begin
+      // style de scrap par défaut
+      MyKMLExport.DefineStylePoly(SCRAP_BY_DEFAULT, 1.0, DefaultColor, DefaultColor, 255, DefaultOpacity);
+      // styles de scraps
+      if (not DoUseDefaultStyle) then
+      begin
+        for ss := 0 to NbScraps - 1 do
         begin
-          MyKMLExport.BeginFolder(4, FOLDER_Entrances);
-            WriteEntrances();
-          MyKMLExport.EndFolder(4, FOLDER_Entrances);
+          MyScrap := GetScrap(ss);
+          MyKMLExport.DefineStylePoly(Format('Scrap%d', [ss]), 1.0, MyScrap.Couleur, MyScrap.Couleur, 255, MyScrap.Opacite);
         end;
-        // les POI
-        if (gisWITH_POI in WithExportGIS) then
+      end;
+    end; // if (NbScraps > 0) then
+
+    MyKMLExport.BeginFolder(4, FOLDER_Scraps);
+    if (NbScraps > 0) then // les scraps de la cavité
+    begin
+      for ss := 0 to NbScraps - 1 do
+      begin
+        MyScrap := GetScrap(ss);
+        WriteAScrap(ss, MyScrap);
+        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [ss, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, ss);
+      end;
+    end; //  if (NbScraps > 0) then
+    // Polylignes fermées (piliers)
+    NbPolylines := self.GetNbPolylignes();
+    if (NbPolylines > 0) then
+    begin
+      for ss := 0 to NbPolylines - 1 do
+      begin
+        MyPolyline := GetPolyligne(ss);
+        QDessinerPilier(ss, MyPolyline);
+        if ((0 = (ss MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [ss, NbPolylines]), 0, NbPolylines - 1, ss);
+      end;
+    end; // if (NbPolylines > 0) then
+    MyKMLExport.EndFolder(4, FOLDER_Scraps);
+  end;
+
+
+   //*)
+  end;
+
+begin
+  Result := false;
+  DoExportSuperGroupes := (MySuperGroupeIdx >= 0);
+  AfficherMessageErreur(Format('%s.ExporterScrapsToKML: EPSG:%d; %s ', [ClassName, FCodeEPSG, QFileName]));
+  NbreScraps := self.GetNbScraps();
+  NbrePoly   := self.GetNbPolylignes();
+  if (0 = NbreScraps) then Exit;
+  MyKMLExport := TKMLExport.Create;
+  try
+    if (MyKMLExport.Initialiser(QFileName)) then
+    begin
+      MyKMLExport.WriteHeader();
+      if (DoExportSuperGroupes) then  QExporterScrapsBySupergroupes()
+                                else  WriteScraps(); // scraps
+      if (gisWITH_METADATA in WithExportGIS) then // (seulement si avec métadonnées activées)
+      begin
+        if (gisWITH_ENTRANCES in WithExportGIS) then WriteEntrances();   // les entrées
+        if (gisWITH_POI       in WithExportGIS) then WritePOIs();       // les POI
         begin
           MyKMLExport.BeginFolder(4, FOLDER_POI);
-            WritePOIs();
           MyKMLExport.EndFolder(4, FOLDER_POI);
         end;
       end;
+      MyKMLExport.WriteFooter();
       MyKMLExport.Finaliser();
     end;
     Result := True;
@@ -4786,122 +4826,23 @@ function TDocumentDessin.GetDossierContenantDoc(): string;
 begin
   Result := FDossierDuDocument;
 end;
-//------------------------------------------------------------------------------
+
+
 function TDocumentDessin.GenererCarteLeaflet(const QFileName: string;
                                              const MapWidth, MapHeight: integer;
                                              const DoUseDefaultStyle: boolean;
                                              const DoFillScraps: boolean;
                                              const DefaultColor: TColor;
                                              const DefaultOpacity: byte;
-                                             const WithExportGIS: TWithExportGIS): boolean;
-const
-  IDX_LAYER_OSM_MAPNIK    = 0;
-  IDX_LAYER_OSM_TOPO      = 1;
-  IDX_LAYER_GOOGLE_SAT    = 2;
-  IDX_LAYER_ENTRANCES     = 3; VAR_LAYER_ENTRANCES     = 'LayerEntrances';
-  IDX_LAYER_SCRAPS        = 4; VAR_LAYER_SCRAPS        = 'LayerScraps';
-  IDX_LAYER_CENTERLINES   = 5; VAR_LAYER_CENTERLINES   = 'LayerCenterlines';
-  IDX_LAYER_POI           = 6; VAR_LAYER_POI           = 'LayerPOIs';
-  IDX_LAYER_STATIONS      = 7; VAR_LAYER_PointsTopo    = 'LayerPointsTopo';
-var
-  MyLeafletExport: TLeafletExport;
-  Coin1, Coin2 , Centroide: TPoint3Df;
-  QCentroideLonLat: TProjUV;
-  i, NbScraps, NbSymboles: Integer;
-  MyScrap: TScrap;
-  MySymbole: TSymbole;
-  MyBaseStation: TBaseStation;
-  VarCond: String;
-  function MiouMiou(const QX, QY: double): TProjUV;
-  var
-    PT: TProjUV;
-  begin
-    PT.setFrom(QX, QY);
-    Result := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, PT);
-  end;
-  procedure DessinerScrap(const IdxScrap: int64;
-                          const QScrap: TScrap;
-                          const TagString: string;
-                          const TagNum: Int64);
-  var
-    ii, Nb: Integer;
-    V: TVertexPolygon;
-    BS: TBaseStation;
-    P2: TProjUV;
-    MyGroupe: TGroupeEntites;
-    QAT: String;
-  begin
-    if (gisWITH_METADATA in WithExportGIS) then MyLeafletExport.WrtLinFmt(' // Scrap%d - %s', [IdxScrap, QScrap.Nom]);
-    //MyLeafletExport.DefineStylePoly(0.05, MyScrap.Couleur, MyScrap.Couleur, 255, MyScrap.Opacite);
-    MyLeafletExport.DefineStylePoly(1.00, DefaultColor, DefaultColor, 255, 255);
-
-    MyGroupe := GetGroupeByIDGroupe(QScrap.IDGroupe);
-    QAT := IIF (gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
-    if (DoFillScraps) then MyLeafletExport.BeginPolygon(QAT, '')
-                      else MyLeafletExport.BeginPolyLine(QAT, '');
-
-    Nb := Length(QScrap.Sommets); // - 1;
-    for ii := 0 to Nb - 1 do
-    begin
-      V := QScrap.getVertex(ii);
-      if (GetBasePointByIndex(V.IDStation, BS)) then
-      begin
-        P2 := MiouMiou(BS.PosStation.X + V.Offset.X, BS.PosStation.Y + V.Offset.Y);
-        MyLeafletExport.AddVertex(P2.U, P2.V, BS.PosStation.Z, ii < (Nb-1));
-      end;
-    end;
-    if (DoFillScraps) then MyLeafletExport.EndPolygon()
-                      else MyLeafletExport.EndPolyLine();
-  end;
-  procedure DessinerSymbole(const IdxSymbole: int64; const QSymbole: TSymbole);
-  var
-    BS: TBaseStation;
-    P2: TProjUV;
-    EWE: string;
-  begin
-    if (GetBasePointByIndex(QSymbole.IDBaseStation, BS)) then
-    begin
-      P2 := MiouMiou(BS.PosStation.X + QSymbole.Offset.X,
-                     BS.PosStation.Y + QSymbole.Offset.Y);
-    {$IFDEF TIDBASEPOINT_AS_TEXT}
-    EWE := BS.IDStation;
-    {$ELSE}
-    EWE := BS.getToporobotIDStationAsString();
-    {$ENDIF TIDBASEPOINT_AS_TEXT}
-      MyLeafletExport.AddPoint(P2.U, P2.V, BS.PosStation.Z, EWE, QSymbole.TagTexte);
-    end;
-  end;
-  procedure DessinerBaseStation(const BS: TBaseStation);
-  var
-    P2: TProjUV;
-    EWE: string;
-  begin
-    P2 := MiouMiou(BS.PosStation.X, BS.PosStation.Y);
-    {$IFDEF TIDBASEPOINT_AS_TEXT}
-    EWE := BS.IDStation;
-    {$ELSE}
-    EWE := BS.GetToporobotIDStationAsString();
-    {$ENDIF TIDBASEPOINT_AS_TEXT}
-    MyLeafletExport.DrawPoint(P2.U, P2.V, BS.PosStation.Z,
-                              0.2,
-                              EWE,
-                              Format('X = %.0f, Y = %.0f, Z = %.2f', [BS.PosStation.X, BS.PosStation.Y, BS.PosStation.Z])
-                              );
-
-  end;
-  procedure DessinerViseeCenterline(const BS: TBaseStation);
-  var
-    P0, P1: TProjUV;
-  begin
-    P0 := MiouMiou(BS.PosExtr0.X, BS.PosExtr0.Y);
-    P1 := MiouMiou(BS.PosStation.X, BS.PosStation.Y);
-    MyLeafletExport.DrawSegment(P0.U, P0.V, P1.U, P1.V);
-  end;
+                                             const WithExportGIS: TWithExportGIS;
+                                             const MySuperGroupeIdx: TIDSuperGroupe): boolean;
+// Inclusion des déclarations locales et des fonctions nested, utilisées aussi dans la variante 'supergroupes', organisée différemment
+{$INCLUDE NestedFuncInLeafletUtils.inc}
 begin
   result := false;
-  AfficherMessageErreur(Format('%s.GenererCarteLeaflet: EPSG:%d; %s', [ClassName, FCodeEPSG, QFileName]));
-  NbScraps := self.GetNbScraps();
-  if (NbScraps = 0) then Exit;
+  DoExportSuperGroupes := (MySuperGroupeIdx >= 0);
+  AfficherMessageErreur(Format('%s.GenererCarteLeafletBySuperGroupes: EPSG:%d; %s', [ClassName, FCodeEPSG, QFileName]));
+  if (0 = self.GetNbScraps()) then exit;
   // calcul du centroide
   Coin1 := self.GetCoordsMini();
   Coin2 := self.GetCoordsMaxi();
@@ -4911,13 +4852,10 @@ begin
   QCentroideLonLat := MiouMiou(Centroide.X, Centroide.Y); //FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, QCentroideXY);
   MyLeafletExport := TLeafletExport.Create;
   try
-    if (MyLeafletExport.Initialiser(QFilename, 'Export Leaflet', MapWidth, MapHeight, QCentroideLonLat.U, QCentroideLonLat.V)) then
+    if (MyLeafletExport.Initialiser(QFilename, 'Export Leaflet (supergroupes)', MapWidth, MapHeight, QCentroideLonLat.U, QCentroideLonLat.V)) then
     begin
-      MyLeafletExport.AddLayer(VAR_LAYER_ENTRANCES  , 'Entrées');
-      MyLeafletExport.AddLayer(VAR_LAYER_SCRAPS     , 'Scraps');
-      MyLeafletExport.AddLayer(VAR_LAYER_CENTERLINES, 'Centerlines');
-      MyLeafletExport.AddLayer(VAR_LAYER_POI        , 'Points d''intérêt');
-      MyLeafletExport.AddLayer(VAR_LAYER_PointsTopo , 'Stations topo');
+      QCreateLayers(DoExportSuperGroupes);
+      // Layers des supergroupes
       MyLeafletExport.WriteHeader();
         // les options WithExportGIS;
         MyLeafletExport.WriteLine(' // Options WithExportGIS: Scraps +');
@@ -4926,77 +4864,18 @@ begin
         if (gisWITH_METADATA    in WithExportGIS) then MyLeafletExport.WriteLine(' // Metadata +');
         if (gisWITH_CENTERLINES in WithExportGIS) then MyLeafletExport.WriteLine(' // Centerlines +');
         MyLeafletExport.WriteLine(' // -----------------------');
-
-        // scraps
+        QExporterAllScraps();             // on exporte d'abord tout le réseau
+        if (DoExportSuperGroupes) then QExporterScrapsBySupergroupes();  // puis les supergroupes
         MyLeafletExport.setCurrentLayer(IDX_LAYER_SCRAPS);
-        for i := 0 to NbScraps - 1 do
-        begin
-          MyScrap := GetScrap(i);
-          DessinerScrap(i, MyScrap, '', 0);
-          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
-        end;
         // Entrées, POIs, Points topo: exportés ssi métadonnées activées
         if (gisWITH_METADATA in WithExportGIS) then
         begin
-          // entrées
-          MyLeafletExport.setCurrentLayer(IDX_LAYER_ENTRANCES);
-          NbSymboles := GetNbSymboles();
-          if (NbSymboles > 0) then // and (gisWITH_ENTRANCES in WithExportGIS)) then
-          begin
-            //VarCond := MyLeafletExport.getLeafletVarNameDispEntrances();
-            //MyLeafletExport.BeginConditionalSection(True, VarCond);
-              for i := 0 to NbSymboles - 1 do
-              begin
-                MySymbole := GetSymbole(i);
-                if (nosGROTTE_SURFACE  = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
-                if (nosGOUFFRE_SURFACE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
-              end;
-            //MyLeafletExport.EndConditionalSection(VarCond);
-          end;
-          // POIs
-          MyLeafletExport.setCurrentLayer(IDX_LAYER_POI);
-          NbSymboles := GetNbSymboles();
-          if (NbSymboles > 0) then // and (gisWITH_POI in WithExportGIS)) then
-          begin
-            for i := 0 to NbSymboles - 1 do
-            begin
-              MySymbole := GetSymbole(i);
-              if (nosPOINT_REMARQUABLE = mySymbole.TypeObject) then DessinerSymbole(i, MySymbole);
-            end;
-          end;
-          // Points topo
-          MyLeafletExport.setCurrentLayer(IDX_LAYER_STATIONS);
-          MyLeafletExport.DefineStylePoly(0.0, clRed, clRed, 255, 255);
-          VarCond := MyLeafletExport.getLeafletVarNameDispStations();
-          MyLeafletExport.BeginConditionalSection(True, VarCond);
-            for i := 0 to GetNbBaseStations() - 1 do
-            begin
-              MyBaseStation:= GetBaseStation(i);
-              {$IFDEF TIDBASEPOINT_AS_TEXT}
-              if (MyBaseStation.IDStation <> '') then DessinerBaseStation(MyBaseStation);
-              {$ELSE}
-              if (MyBaseStation.IDStation > 0)   then DessinerBaseStation(MyBaseStation);
-              {$ENDIF TIDBASEPOINT_AS_TEXT}
-            end;
-          MyLeafletExport.EndConditionalSection(VarCond);
-
-          MyLeafletExport.setCurrentLayer(IDX_LAYER_CENTERLINES);
-          MyLeafletExport.DefineStylePoly(0.0, clRed, clRed, 255, 255);
-          VarCond := MyLeafletExport.getLeafletVarNameDispCenterlines();
-          MyLeafletExport.BeginConditionalSection(True, VarCond);
-            for i := 0 to GetNbBaseStations() - 1 do
-            begin
-              MyBaseStation:= GetBaseStation(i);
-              {$IFDEF TIDBASEPOINT_AS_TEXT}
-              if (MyBaseStation.IDStation <> '') then DessinerViseeCenterline(MyBaseStation);
-              {$ELSE}
-              if (MyBaseStation.IDStation > 0)   then DessinerViseeCenterline(MyBaseStation);
-              {$ENDIF TIDBASEPOINT_AS_TEXT}
-            end;
-          MyLeafletExport.EndConditionalSection(VarCond);
-
+          QExporterEntrances();
+          QExporterPOIs();
+          QExporterPointsTopo();
+          QExporterCenterlines();
         end; // if (gisWITH_METADATA in WithExportGIS) then
-        MyLeafletExport.WriteFooter();
+      MyLeafletExport.WriteFooter();
     end;
     MyLeafletExport.Finaliser();
     Result := True;
@@ -5010,7 +4889,8 @@ function TDocumentDessin.ExporterScrapsToGeoJSON(const QFileName: string;
                                                  const DoFillScraps: boolean;
                                                  const DefaultColor: TColor;
                                                  const DefaultOpacity: byte;
-                                                 const WithExportGIS: TWithExportGIS): boolean;
+                                                 const WithExportGIS: TWithExportGIS;
+                                                 const MySuperGroupeIdx: TIDSuperGroupe = -1): boolean;
 var
   MyExportGeoJSON: TGeoJSONExport;
   NbScraps, i, NbPolylines: Integer;
@@ -5024,31 +4904,41 @@ var
     PT.setFrom(QX, QY);
     Result := FConversionSysteme.ConversionSyst1ToSyst2EPSG(FCodeEPSG, CODE_EPSG_WGS84, PT);
   end;
+  // OK avec le valideur http://geojson.io/#map=17/43.09257/-0.07949
   procedure DessinerScrap(const IdxScrap: int64; const QScrap: TScrap; const TagString: string; const TagNum: Int64; const IsLastScrap: boolean);
   var
     ii, Nb: Integer;
-    V: TVertexPolygon;
-    BS: TBaseStation;P2: TProjUV;
+    //V: TVertexPolygon;
+
     MyGroupe: TGroupeEntites;
     QAT: String;
+    procedure thurlutte(const QIdx: integer; const IsLastVertex: boolean);
+    var
+      V : TVertexPolygon;
+      BS: TBaseStation;P2: TProjUV;
+    begin
+      V := QScrap.getVertex(QIdx);
+      if (GetBasePointByIndex(V.IDStation, BS)) then
+      begin
+        P2 := MiouMiou(BS.PosStation.X + V.Offset.X, BS.PosStation.Y + V.Offset.Y);
+        MyExportGeoJSON.AddVertex(P2.U, P2.V, BS.PosStation.Z, IsLastVertex);
+      end;
+    end;
   begin
     MyGroupe := GetGroupeByIDGroupe(QScrap.IDGroupe);
     QAT := IIF(gisWITH_METADATA in WithExportGIS, MyGroupe.NomGroupe, 'Metadata unavailable');
     if (DoFillScraps) then MyExportGeoJSON.BeginPolygon(QAT, '')
                       else MyExportGeoJSON.BeginPolyLine(QAT, '');
+
     Nb := Length(QScrap.Sommets) - 1;
-    for ii := 0 to Nb - 1 do
-    begin
-      V := QScrap.getVertex(ii);
-      if (GetBasePointByIndex(V.IDStation, BS)) then
-      begin
-        P2 := MiouMiou(BS.PosStation.X + V.Offset.X, BS.PosStation.Y + V.Offset.Y);
-        MyExportGeoJSON.AddVertex(P2.U, P2.V, BS.PosStation.Z, ii = (Nb - 1));
-      end;
-    end;
-    if (DoFillScraps) then MyExportGeoJSON.EndPolygon(IsLastScrap)
-                      else MyExportGeoJSON.EndPolyLine(IsLastScrap);
+    // Fix de l'erreur GeoJSON Polygons and MultiPolygons should follow the right-hand rule"
+    if (QScrap.VertexOrderedCounterClockWise) then QScrap.ReverseVertex();
+    for ii := 0 to Nb - 1 do thurlutte(ii, false);
+    thurlutte(0, true); // Indispensable: Fermeture du polygone
+    MyExportGeoJSON.EndPolygon(IsLastScrap);
+    //if (DoFillScraps) then MyExportGeoJSON.EndPolygon(IsLastScrap)                      else MyExportGeoJSON.EndPolyLine(IsLastScrap);
   end;
+  //  *** Non implémenté du fait de l'erreur JSON " Polygons and MultiPolygons should follow the right-hand rule"
   procedure QDessinerPilier(const IdxScrap: int64; const QPoly: TPolyLigne; const TagString: string; const TagNum: Int64; const IsLastScrap: boolean);
   var
     ii, Nb: Integer;
@@ -5073,6 +4963,7 @@ var
           MyExportGeoJSON.AddVertex(P2.U, P2.V, BS.PosStation.Z, ii = (Nb - 1));
         end;
       end;
+
       if (DoFillScraps) then MyExportGeoJSON.EndPolygon(IsLastScrap) else MyExportGeoJSON.EndPolyLine(IsLastScrap);
     end;
   end;
@@ -5102,7 +4993,7 @@ begin
           DessinerScrap(i, MyScrap, '', 0, (i = (NbScraps - 1)));
           if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, NbScraps, MyScrap.Nom]), 0, NbScraps - 1, i);
         end;
-        // Polylignes
+        // Polylignes *** Non implémenté du fait de l'erreur JSON " Polygons and MultiPolygons should follow the right-hand rule"
         (*
         for i := 0 to NbPolylines - 1 do
         begin
@@ -5127,14 +5018,13 @@ function TDocumentDessin.ExporterScrapsToDXF(const AOwner: TComponent;
                                              const DoFillScraps: boolean;
                                              const DefaultColor: TColor;
                                              const DefaultOpacity: byte;
-                                             const WithExportGIS: TWithExportGIS): boolean;
+                                             const WithExportGIS: TWithExportGIS;
+                                             const MySuperGroupeIdx: TIDSuperGroupe = -1): boolean;
 var
-  Nb, i: Integer;
+  NbScraps: Integer;
   Coin1, Coin2, Centroide: TPoint3Df;
   FMyExportDXF: TDXFExport2;
   MyLayer: TDxfLayer;
-  MonScrap: TScrap;
-  MaPolyligne: TPolyLigne;
   r: Boolean;
   procedure QDessinerScrap(const MyScrap: TScrap);
   var
@@ -5165,10 +5055,9 @@ var
     end;
     FMyExportDXF.PolyLine(MyDXFPolyline);
   end;
-  procedure QDessinerPilier(const MyPilier: TPolyligne);
+  procedure QDessinerPolyligne(const MyPoly: TPolyligne);
+  const IS_CLOSED_POLY: boolean = false;
   var
-    EWE: String;
-    LstVertex: array of TPoint3Df;
     v, NbV: Integer;
     MyVertex: TVertexPolygon;
     BS: TBaseStation;
@@ -5176,17 +5065,18 @@ var
     MyDXFPolyline: TDxfPolyline;
     QC1: TDXFPoint3Df;
   begin
-    if (MyPilier.Closed) then
+    //if (MyPoly.Closed) then
+    if (MyPoly.IDStylePolyLine in [nocPAROI, nocPAROIS_CACHEE, nocPAROI_FRACASSEE]) then
     begin
-      NbV := Length(MyPilier.Sommets);
+      NbV := Length(MyPoly.Sommets);
       if (NbV < 3) then exit;
-      MyVertex := MyPilier.getVertex(0);
+      MyVertex := MyPoly.getVertex(0);
       GetBasePointByIndex(MyVertex.IDStation, BS);
       QC1.setFrom(BS.PosStation.X, BS.PosStation.Y, 0.00);
-      MyDXFPolyline.setFrom(MyLayer, QC1, true, NbV);
+      MyDXFPolyline.setFrom(MyLayer, QC1, IS_CLOSED_POLY, NbV);
       for v := 0 to NbV - 1 do
       begin
-        MyVertex := MyPilier.getVertex(v);
+        MyVertex := MyPoly.getVertex(v);
         if (GetBasePointByIndex(MyVertex.IDStation, BS)) then
         begin
           MyDXFPolyline.setVertex(v, BS.PosStation.X + MyVertex.Offset.X,
@@ -5197,11 +5087,53 @@ var
       FMyExportDXF.PolyLine(MyDXFPolyline);
     end;
   end;
+  procedure QExportScraps();
+  var
+    Nb, i: Integer;
+    MonScrap: TScrap;
+  begin
+    Nb := GetNbScraps();
+    if (0 = Nb) then exit;
+    MyLayer := FMyExportDXF.GetLayerByName(DXF_LAYERNAME_SCRAPS);
+    for i := 0 to Nb - 1 do
+    begin
+      MonScrap := self.GetScrap(i);
+      QDessinerScrap(MonScrap);
+      if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, Nb, MonScrap.Nom]), 0, Nb - 1, i);
+    end;
+  end;
+  procedure QExportPolylignes();
+  var
+    Nb, i: Integer;
+    MaPolyligne: TPolyLigne;
+  begin
+    Nb := GetNbPolylignes();
+    if (0 = Nb) then exit;
+    MyLayer := FMyExportDXF.GetLayerByName(DXF_LAYERNAME_WALLS);
+    for i := 0 to Nb - 1 do
+    begin
+      MaPolyligne := self.GetPolyligne(i);
+      QDessinerPolyligne(MaPolyligne);
+      if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [i, Nb]), 0, Nb - 1, i);
+    end;
+  end;
+  procedure QExportCenterlines();
+  begin
+
+  end;
+  procedure QExportEntrances();
+  begin
+
+  end;
+  procedure QExportPOIs();
+  begin
+
+  end;
 begin
   result := false;
-  Nb := self.GetNbScraps();
-  AfficherMessageErreur(Format('%s.ExporterScrapsToDXF: EPSG:%d; %d scraps to %s', [ClassName, FCodeEPSG, Nb, QFileName]));
-  if (Nb = 0) then Exit;
+  NbScraps := self.GetNbScraps();
+  AfficherMessageErreur(Format('%s.ExporterScrapsToDXF: EPSG:%d; %d scraps to %s', [ClassName, FCodeEPSG, NbScraps, QFileName]));
+  if (NbScraps = 0) then Exit;
   // calcul du centroide
   Coin1 := self.GetCoordsMini();
   Coin2 := self.GetCoordsMaxi();
@@ -5214,30 +5146,22 @@ begin
                                  Coin1.X, Coin1.Y, Coin1.Z,
                                  Coin2.X, Coin2.Y, Coin2.Z)) then
     begin
-      FMyExportDXF.AddLayer(DXF_LAYERNAME_SCRAPS, 2);
-      MyLayer := FMyExportDXF.GetLayer(FMyExportDXF.GetNbLayers() - 1);
+      FMyExportDXF.AddLayer(DXF_LAYERNAME_THURLUTTE    , 2);
+      FMyExportDXF.AddLayer(DWF_LAYERNAME_CENTERLINES  , RGB2Acad(clRed));
+      FMyExportDXF.AddLayer(DXF_LAYERNAME_SCRAPS       , 1);
+      FMyExportDXF.AddLayer(DXF_LAYERNAME_WALLS        , 6);
+      FMyExportDXF.AddLayer(DXF_LAYERNAME_ENTRANCES    , RGB2Acad(clGreen));
+      FMyExportDXF.AddLayer(DXF_LAYERNAME_POIs         , 200);
+
 
       FMyExportDXF.BeginDXF();
-        Nb := GetNbScraps();
-        for i := 0 to Nb - 1 do
-        begin
-          MonScrap := self.GetScrap(i);
-          QDessinerScrap(MonScrap);
-          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Scrap %d / %d: %s', [i, Nb, MonScrap.Nom]), 0, Nb - 1, i);
-        end;
-
-        Nb := GetNbPolylignes();
-        for i := 0 to Nb - 1 do
-        begin
-          MaPolyligne := self.GetPolyligne(i);
-          QDessinerPilier(MaPolyligne);
-          if ((0 = (i MOD 100)) AND assigned(FProcAfficherProgression)) then FProcAfficherProgression(Format('Polyline %d / %d', [i, Nb]), 0, Nb - 1, i);
-        end;
+        if (gisWITH_SCRAPS            in WithExportGIS) then QExportScraps();
+        if (gisWITH_WALLS             in WithExportGIS) then QExportPolylignes();
+        if (gisWITH_CENTERLINES       in WithExportGIS) then QExportCenterlines();
       FMyExportDXF.EndDXF();
       FMyExportDXF.Finaliser();
     end;
     result := True;
-    //*)
   finally
     FreeAndNil(FMyExportDXF);
   end;
@@ -5263,7 +5187,7 @@ begin
     end;
     Result := (LS.Count > 0);
   except
-
+    pass;
   end;
 end;
 
@@ -5277,7 +5201,6 @@ var
   QVertexOrderedCounterClockWise: boolean;
 begin
   Result := 0.00;
-  //AfficherMessage(Format('%s.CalcSuperficieVides(%d - %s)', [ClassName, MyGroupe.IDGroupeEntites, MyGroupe.NomGroupe]));
   // superficie des scraps
   n := GetNbScraps();
   if (n = 0) then Exit(0.00);
@@ -5292,7 +5215,7 @@ begin
   end;
   // A déduire: superficie des piliers tournés (spécifiés par l'attribut Closed des polylignes)
   n := GetNbPolylignes();
-  if (n = 0) then Exit;
+  if (n = 0) then Exit(Result);
   for i := 0 to n - 1 do
   begin
     MyPolyligne := GetPolyligne(i);
@@ -5325,7 +5248,7 @@ begin
           case DelimiterUnPolygoneParUnScrap(self, MyScrap, MyPolygone) of
             errMERGE_SCRAP_AND_POLYGON_OK               : self.PutPolygone(NoPoly, MyPolygone);
             errMERGE_SCRAP_AND_POLYGON_GROUPES_MISMATCH : AfficherMessageErreur('--> Les objets sont dans des groupes différents');
-            errMERGE_SCRAP_AND_POLYGON_NO_INTERSECT     : AfficherMessageErreur('--Intersection impossible entre objets disjoints ou imbriqués');
+            errMERGE_SCRAP_AND_POLYGON_NO_INTERSECT     : AfficherMessageErreur('--> Intersection impossible entre objets disjoints ou imbriqués');
           else
             AfficherMessageErreur('--> Erreur lors de la délimitation de certains polygones');
           end;
@@ -5339,19 +5262,19 @@ var
   MyScrap: TScrap;
   MyPolygone: TPolygone;
 begin
- if ((self.GetNbScraps() = 0) or (self.GetNbPolygones() = 0)) then Exit;
+  result := false;
+  if ((self.GetNbScraps() = 0) or (self.GetNbPolygones() = 0)) then Exit;
   // remplir un tronçon de galerie
   // Utilisation: 1: Dessiner un polygone dépassant du scrap
   //              2. Sélectionner un scrap
   //              3. Sélectionner un polygone
   //              4. Fusionner (intersection)
   AfficherMessage(Format('%s.TrimPolygonByScrap: polygone %d par le scrap %d', [ClassName, IdxPolygone, IdxScrap]));
-
   MyScrap    := self.GetScrap(IdxScrap);          // extraction du scrap
   MyPolygone := self.GetPolygone(IdxPolygone);    // extraction du polygone
 
   case DelimiterUnPolygoneParUnScrap(self, MyScrap, MyPolygone) of
-    errMERGE_SCRAP_AND_POLYGON_OK               : self.PutPolygone(IdxPolygone, MyPolygone);
+    errMERGE_SCRAP_AND_POLYGON_OK               : begin self.PutPolygone(IdxPolygone, MyPolygone); result := true; end;
     errMERGE_SCRAP_AND_POLYGON_GROUPES_MISMATCH : AfficherMessageErreur('-- Les objets sont dans des goupes différents');
     errMERGE_SCRAP_AND_POLYGON_NO_INTERSECT     : AfficherMessageErreur('-- Intersection impossible entre objets disjoints ou imbriqués');
   else
@@ -5385,13 +5308,6 @@ begin
   Nb := GetNbPolylignes();
   if (0 = Nb) then Exit;
 end;
-
-//******************************************************************************
-
-
-
-
-
 end.
 
 

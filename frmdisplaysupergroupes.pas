@@ -17,7 +17,7 @@ uses
   , CallDialogsGHCaveDraw
   , LCLType
   , UnitDocDessin, CdrListeGroupes, CadreListboxGroupes,
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, ComCtrls, PairSplitter;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, ComCtrls, PairSplitter, Types;
 
 type
 
@@ -29,12 +29,16 @@ type
     btnClearListeGroupesOfSG: TButton;
     btnModifyCurrSuperGroupe: TButton;
     btnSupprimerSuperGroupe: TButton;
-    Button1: TButton;
+    btnRemoveGroupe: TButton;
     btnMarquerDepuisSupergroupe: TButton;
     btnGroupeDepuisTexte: TButton;
+    btnSuperGroupeColor: TColorButton;
+    btnLstGrpsToText: TButton;
     CdrListBoxGroupes1: TCdrListBoxGroupes;
     editNomSupergroupe: TEdit;
     grbxCurrentSuperGroupe: TGroupBox;
+    hcSupergroupes: THeaderControl;
+    hcGroupesLies: THeaderControl;
     Label2: TLabel;
     lbNbGroupesAssocies: TLabel;
     lbNbSuperGroupes: TLabel;
@@ -53,9 +57,13 @@ type
     procedure btnAddSuperGroupeClick(Sender: TObject);
     procedure btnClearListeGroupesOfSGClick(Sender: TObject);
     procedure btnGroupeDepuisTexteClick(Sender: TObject);
+    procedure btnLstGrpsToTextClick(Sender: TObject);
     procedure btnMarquerDepuisSupergroupeClick(Sender: TObject);
     procedure btnModifyCurrSuperGroupeClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btnSupprimerSuperGroupeClick(Sender: TObject);
+    procedure btnRemoveGroupeClick(Sender: TObject);
+    procedure lsbGroupesOfSuperGroupeDrawItem(Control: TWinControl; Index: Integer; ARect: TRect; State: TOwnerDrawState);
+    procedure lsbSuperGroupesDrawItem(Control: TWinControl; Index: Integer; ARect: TRect; State: TOwnerDrawState);
     procedure lsbSuperGroupesSelectionChange(Sender: TObject; User: boolean);
   private
     FDocDessin: TDocumentDessin;
@@ -129,7 +137,8 @@ var
   begin
     lsbGroupesOfSuperGroupe.Clear;
     lbNbGroupesAssocies.Caption := format(FMT_NB_GROUPES_ASSOCIES, [lsbGroupesOfSuperGroupe.Count]);
-    n := MySG.ListeGroupes.GetNbElements();//length(MySG.ListeGroupes);
+    n := MySG.getNbGroupes();//length(MySG.ListeGroupes);
+    //ShowMessageFmt('%d groupes', [n]);
     if (n = 0) then exit;
     for i := 0 to n - 1 do
     begin
@@ -137,7 +146,7 @@ var
       if (QIdxGrp >= 0) then
       begin
         MyGrp := FDocDessin.GetGroupeByIDGroupe(QIdxGrp);
-        lsbGroupesOfSuperGroupe.Items.Add(Format('%d: %s', [MyGrp.IDGroupeEntites, MyGrp.NomGroupe]));
+        lsbGroupesOfSuperGroupe.Items.Add(Format('%d', [MyGrp.IDGroupeEntites]));
       end;
     end;
     lbNbGroupesAssocies.Caption := format(FMT_NB_GROUPES_ASSOCIES, [lsbGroupesOfSuperGroupe.Count]);
@@ -145,6 +154,7 @@ var
 begin
   grbxCurrentSuperGroupe.Caption := format('Supergroupe #%d', [FCurrentIdxSuperGroupe]);
   MySG := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
+  btnSuperGroupeColor.ButtonColor := MySG.Couleur;
   editNomSupergroupe.Text := MySG.NomSuperGroupe;
   StaticText1.Caption :=  MySG.ListeGroupes.toString(); //ArrayOfIdxGroupesToStr(MySG.ListeGroupes);
   QDispListeGroupes();
@@ -162,12 +172,12 @@ function TdlgDisplaySuperGroupes.GetSuperGroupeFromForm(): TSuperGroupe;
     if (0 = n) then exit;
     for i := 0 to n - 1 do
     begin
-      EWE := split(lsbGroupesOfSuperGroupe.Items[i], ':');
-      q := StrToIntDef(EWE[0], -1);
-      if (q >= 0) then Result += Format('%d;', [q]);
+      q := StrToIntDef(lsbGroupesOfSuperGroupe.Items[i], -1);
+      if (q > 0) then Result += Format('%d;', [q]);
     end;
   end;
 begin
+  Result.Couleur        := btnSuperGroupeColor.ButtonColor;
   Result.NomSuperGroupe := Trim(editNomSupergroupe.Text);
   Result.ListeGroupes.fromString(QExtractGroupes()); //  := StrToArrayOfIdxGroupes(QExtractGroupes());
 end;
@@ -185,7 +195,7 @@ begin
   for i := 0 to n-1 do
   begin
     MySuperGroupe := FDocDessin.GetSuperGroupe(i);
-    lsbSuperGroupes.Items.Add(MySuperGroupe.NomSuperGroupe);
+    lsbSuperGroupes.Items.Add(''); // Item redessiné par le composant
   end;
   lsbSuperGroupes.ItemIndex := IdxGr;
   lsbSuperGroupes.Visible   := true;
@@ -210,10 +220,12 @@ begin
   EWE := format('Supergroupe_%d', [FDocDessin.GetNbSuperGroupes()]);
   if (InputQuery('Ajout d''un supergroupe', 'Nom', EWE)) then
   begin
-    MySG.NomSuperGroupe := Trim(EWE);
+    MySG.Couleur            := clYellow;
+    MySG.NomSuperGroupe     := Trim(EWE);
     if (MySG.NomSuperGroupe = '') then exit;
-    //SetLength(MySG.ListeGroupes, 0);
-    MySG.Displayed      := true;
+    MySG.Displayed          := true;
+    MySG.ListeGroupes.Empty();
+
     FDocDessin.AddSuperGroupe(MySG);
     n := FDocDessin.GetNbSuperGroupes() - 1;
     ListerLesSuperGroupes(n);
@@ -250,6 +262,17 @@ begin
   end;
   FDocDessin.PutSuperGroupe(FCurrentIdxSuperGroupe, MySG);
   SetSuperGroupeInForm();
+end;
+
+procedure TdlgDisplaySuperGroupes.btnLstGrpsToTextClick(Sender: TObject);
+var
+  MySG: TSuperGroupe;
+  EWE: String;
+begin
+  MySG := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
+  EWE  := MySG.ListeGroupesToText();
+  AfficherMessageErreur(EWE);
+  EWE := InputBox('Liste des groupes', 'Groupes', EWE);
 end;
 
 procedure TdlgDisplaySuperGroupes.btnMarquerDepuisSupergroupeClick(Sender: TObject);
@@ -291,12 +314,197 @@ begin
   ListerLesSuperGroupes(FCurrentIdxSuperGroupe);
 end;
 
-procedure TdlgDisplaySuperGroupes.Button1Click(Sender: TObject);
+procedure TdlgDisplaySuperGroupes.btnSupprimerSuperGroupeClick(Sender: TObject);
 begin
-  if (lsbGroupesOfSuperGroupe.Count = 0) then exit;
-  lsbGroupesOfSuperGroupe.Items.Delete(lsbGroupesOfSuperGroupe.ItemIndex);
-  lbNbGroupesAssocies.Caption := format(FMT_NB_GROUPES_ASSOCIES, [lsbGroupesOfSuperGroupe.Count]);
+  pass;
 end;
+
+procedure TdlgDisplaySuperGroupes.btnRemoveGroupeClick(Sender: TObject);
+var
+  MySuperGRP: TSuperGroupe;
+  i, n: Integer;
+  IdxGrp: TIDGroupeEntites;
+  MyGroupe: TGroupeEntites;
+begin
+  MySuperGRP := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
+  AfficherMessageErreur(MySuperGRP.ListeGroupesToText());
+  if (MySuperGRP.getNbGroupes() = 0) then exit;
+  i := lsbGroupesOfSuperGroupe.ItemIndex;
+  IdxGrp := MySuperGRP.ListeGroupes.GetElement(i);
+  MyGroupe := FDocDessin.GetGroupeByIDGroupe(IdxGrp);
+  if (QuestionOuiNon(Format('Supprimer le groupe %d: %d - %s', [i, MyGroupe.IDGroupeEntites, MyGroupe.NomGroupe]))) then
+  begin
+    MySuperGRP.RemoveGroupe(i);
+    AfficherMessageErreur(MySuperGRP.ListeGroupesToText());
+    // enregistrement pour le lsbGroupesOfSuperGroupe.OnDrawItem
+    FDocDessin.PutSuperGroupe(FCurrentIdxSuperGroupe, MySuperGRP);
+    // puis récupération
+    MySuperGRP := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
+    n := MySuperGRP.getNbGroupes();
+    lbNbGroupesAssocies.Caption := format(FMT_NB_GROUPES_ASSOCIES, [n]);
+    // relister
+    lsbGroupesOfSuperGroupe.Clear;
+
+    if (0 = n) then exit;
+    for i := 0 to n - 1 do lsbGroupesOfSuperGroupe.Items.add(format('%d', [MySuperGRP.ListeGroupes.GetElement(i)]));
+    lsbGroupesOfSuperGroupe.ItemIndex := 0;
+  end;
+end;
+
+procedure TdlgDisplaySuperGroupes.lsbGroupesOfSuperGroupeDrawItem(Control: TWinControl; Index: Integer; ARect: TRect; State: TOwnerDrawState);
+const
+  Q4  = 4; // compensation du décalage entre le header et la liste
+  mg  = 1;
+var
+  MySuperGRP: TSuperGroupe;
+  MyGRP: TGroupeEntites;
+  procedure DessineCoche(const TB: integer; const IsChecked: boolean; const bg: TColor);
+  var
+    QR: TRect;
+    H : Integer;
+  begin
+    lsbGroupesOfSuperGroupe.Canvas.Pen.Style   := psSolid;
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Style := bsSolid;
+    lsbGroupesOfSuperGroupe.Canvas.Pen.Color   := clBlack;
+    QR.Left   := ARect.Left   + TB + 2;
+    QR.Top    := ARect.Top    + 1;
+    QR.Bottom := ARect.Bottom - 1;
+    H := QR.Bottom - QR.Top;
+    QR.Right  := QR.Left + H;
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Color := clWhite;
+    if (IsChecked) then lsbGroupesOfSuperGroupe.Canvas.Brush.Color := clRed;
+    lsbGroupesOfSuperGroupe.Canvas.Rectangle(QR);
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Color := bg;
+  end;
+  procedure DessineRectCouleur(const TB: integer; const W: integer;const Coul: TColor; const bg: TColor);
+  var
+    QR: TRect;
+  begin
+    lsbGroupesOfSuperGroupe.Canvas.Pen.Style   := psSolid;
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Style := bsSolid;
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Color := Coul;
+    lsbGroupesOfSuperGroupe.Canvas.Pen.Color   := clBlack;
+    QR.Left   := ARect.Left   + TB + 3;
+    QR.Top    := ARect.Top    + 1;
+    QR.Bottom := ARect.Bottom - 1;
+    QR.Right  := QR.Left + W - 4;
+    lsbGroupesOfSuperGroupe.Canvas.Rectangle(QR);
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Color := bg;
+  end;
+  procedure DessineFiletColonne(const TB: integer);
+  begin
+    lsbGroupesOfSuperGroupe.Canvas.Pen.Color   := clSilver; // pour les filets
+    lsbGroupesOfSuperGroupe.Canvas.MoveTo(TB, ARect.Top);
+    lsbGroupesOfSuperGroupe.Canvas.LineTo(TB, ARect.Bottom);
+  end;
+  procedure DessineItem(const bg,tc: TColor);
+  VAR
+    HS: THeaderSection;
+    QR: TRect;
+  begin
+    lsbGroupesOfSuperGroupe.Canvas.Brush.Color := bg;
+    lsbGroupesOfSuperGroupe.Canvas.Font.Color  := tc;
+    lsbGroupesOfSuperGroupe.Canvas.FillRect(ARect);
+    HS := hcGroupesLies.Sections.Items[0];
+    lsbGroupesOfSuperGroupe.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%d', [MyGRP.IDGroupeEntites]));
+    HS := hcGroupesLies.Sections.Items[1];  // affiché
+    DessineFiletColonne(HS.Left - Q4);
+    DessineRectCouleur(HS.Left - Q4, HS.Width, MyGRP.CouleurGroupe, bg);
+    HS := hcGroupesLies.Sections.Items[2];  // nom
+    DessineFiletColonne(HS.Left - Q4);
+    lsbGroupesOfSuperGroupe.Canvas.TextOut(HS.Left + 4, ARect.Top,  MyGRP.NomGroupe);
+  end;
+begin
+  MySuperGRP := FDocDessin.GetSuperGroupe(FCurrentIdxSuperGroupe);
+  if (MySuperGRP.getNbGroupes() = 0) then exit;
+  try
+    MyGRP := FDocDessin.GetGroupeByIDGroupe(MySuperGRP.ListeGroupes.GetElement(Index));
+    if (odSelected in state) then DessineItem(clBlue     , clWhite)
+                             else DessineItem(clWhite    , clBlack);
+  except
+    pass;
+  end;
+end;
+
+
+
+procedure TdlgDisplaySuperGroupes.lsbSuperGroupesDrawItem(Control: TWinControl; Index: Integer; ARect: TRect; State: TOwnerDrawState);
+const
+  Q4  = 4; // compensation du décalage entre le header et la liste
+  mg  = 1;
+var
+  MySuperGRP: TSuperGroupe;
+  procedure DessineCoche(const TB: integer; const IsChecked: boolean; const bg: TColor);
+  var
+    QR: TRect;
+    H : Integer;
+  begin
+    lsbSuperGroupes.Canvas.Pen.Style   := psSolid;
+    lsbSuperGroupes.Canvas.Brush.Style := bsSolid;
+    lsbSuperGroupes.Canvas.Pen.Color   := clBlack;
+
+    QR.Left   := ARect.Left   + TB + 2;
+    QR.Top    := ARect.Top    + 1;
+    QR.Bottom := ARect.Bottom - 1;
+    H := QR.Bottom - QR.Top;
+    QR.Right  := QR.Left + H;
+    lsbSuperGroupes.Canvas.Brush.Color := clWhite;
+    if (IsChecked) then lsbSuperGroupes.Canvas.Brush.Color := clRed;
+    lsbSuperGroupes.Canvas.Rectangle(QR);
+    lsbSuperGroupes.Canvas.Brush.Color := bg;
+  end;
+  procedure DessineRectCouleur(const TB: integer; const W: integer;const Coul: TColor; const bg: TColor);
+  var
+    QR: TRect;
+  begin
+    lsbSuperGroupes.Canvas.Pen.Style   := psSolid;
+    lsbSuperGroupes.Canvas.Brush.Style := bsSolid;
+    lsbSuperGroupes.Canvas.Brush.Color := Coul;
+    lsbSuperGroupes.Canvas.Pen.Color   := clBlack;
+    QR.Left   := ARect.Left   + TB + 3;
+    QR.Top    := ARect.Top    + 1;
+    QR.Bottom := ARect.Bottom - 1;
+    QR.Right  := QR.Left + W - 4;
+    lsbSuperGroupes.Canvas.Rectangle(QR);
+    lsbSuperGroupes.Canvas.Brush.Color := bg;
+  end;
+  procedure DessineFiletColonne(const TB: integer);
+  begin
+    lsbSuperGroupes.Canvas.Pen.Color   := clSilver; // pour les filets
+    lsbSuperGroupes.Canvas.MoveTo(TB, ARect.Top);
+    lsbSuperGroupes.Canvas.LineTo(TB, ARect.Bottom);
+  end;
+  procedure DessineItem(const bg,tc: TColor);
+  VAR
+    HS: THeaderSection;
+    QR: TRect;
+  begin
+    lsbSuperGroupes.Canvas.Brush.Color := bg;
+    lsbSuperGroupes.Canvas.Font.Color  := tc;
+    lsbSuperGroupes.Canvas.FillRect(ARect);
+    HS := hcSupergroupes.Sections.Items[0];
+    lsbSuperGroupes.Canvas.TextOut(HS.Left + 4, ARect.Top, Format('%d', [Index]));
+    HS := hcSupergroupes.Sections.Items[1];  // affiché
+    DessineFiletColonne(HS.Left - Q4);
+    DessineRectCouleur(HS.Left - Q4, HS.Width, MySuperGRP.Couleur, bg);
+    HS := hcSupergroupes.Sections.Items[2];  // nom
+    DessineFiletColonne(HS.Left - Q4);
+    lsbSuperGroupes.Canvas.TextOut(HS.Left + 4, ARect.Top,  format('%d', [MySuperGRP.getNbGroupes()]));
+    HS := hcSupergroupes.Sections.Items[3];  // nom
+    DessineFiletColonne(HS.Left - Q4);
+    lsbSuperGroupes.Canvas.TextOut(HS.Left + 4, ARect.Top,  MySuperGRP.NomSuperGroupe);
+  end;
+begin
+  try
+    MySuperGRP := FDocDessin.GetSuperGroupe(Index);
+    if (odSelected in state) then DessineItem(clBlue     , clWhite)
+                             else DessineItem(clWhite    , clBlack);
+  except
+    pass;
+  end;
+end;
+
+
 
 procedure TdlgDisplaySuperGroupes.btnAddGrpsAtCurrSuperGroupeClick(Sender: TObject);
 var
@@ -315,7 +523,6 @@ begin
     begin
       MyGrp := FDocDessin.GetGroupe(i);
       MySG.ListeGroupes.AddElementAndSort(MyGrp.IDGroupeEntites);
-      //AddToArrayOfIdxGroupes(MySG.ListeGroupes, MyGrp.IDGroupeEntites);
     end;
   end;
   // sauvegarde des modifs

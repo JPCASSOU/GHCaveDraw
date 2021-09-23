@@ -39,66 +39,60 @@ type
   TfrmPrintingCenterExt = class(TForm)
     BitBtn1: TBitBtn;
     btnApply: TButton;
-    btnColorQuadrilles: TColorButton;
-    btnDegradeStart: TColorButton;
-    btnDegradeStop: TColorButton;
+    btnApplyParams2D: TButton;
     btnHelpFiltres: TButton;
-    btnPreview: TButton;
     btnSelectPrinter: TButton;
     btnStartImpression: TButton;
-    btnApplyParams2D: TButton;
+    btnParametrerVue2D: TButton;
     chkRegle: TCheckBox;
-    cmbEchelle: TComboBox;
-    cmbRepresentation: TComboBox;
-    cmbTypeQuadrillage: TComboBox;
-    editQdrSpacing: TCurrencyEdit;
+    editEchelle: TCurrencyEdit;
     editFiltres: TEdit;
-    editTailleRegle: TCurrencyEdit;
+    editTailleEchelle: TCurrencyEdit;
     grbPrinterNames: TGroupBox;
-    GroupBox1: TGroupBox;
-    GroupBox2: TGroupBox;
-    Label2: TLabel;
+    grbQuadrillage: TGroupBox;
+    GroupBox3: TGroupBox;
     Label3: TLabel;
-    lbCoteMaxi: TLabel;
-    lbCoteMini: TLabel;
+    lbTitreQdrType: TLabel;
+    lbTitreQdrSpacing: TLabel;
+    lbTitreQdrColor: TLabel;
+    lbSecQuadrillesColor: TStaticText;
+    lbMainQuadrillesSpacing: TStaticText;
+    lbMainQuadrillesColor: TStaticText;
     lbEchelle: TLabel;
+    lbSecQuadrillesSpacing: TStaticText;
+    lbSecQuadrillesType: TStaticText;
     lbMouseCoordinates: TStaticText;
     lbNbPages: TLabel;
     lbOrientation: TLabel;
     lbPageFormat: TLabel;
     lbPrintCurrent: TLabel;
     lbPrinterName: TLabel;
-    lbQdrSpacing: TLabel;
-    lbRepresentationMode: TLabel;
     PaintBoxVue: TPaintBox;
     Panel1: TPanel;
     pnlPrintSettings: TPanel;
     pnlCadre: TPanel;
     pnlProgressPrinting: TPanel;
     progbarPrinting: TProgressBar;
+    lbQdrMain: TStaticText;
+    lbQdrSec: TStaticText;
+    lbMainQuadrillesType: TStaticText;
     procedure btnPreviewClick(Sender: TObject);
     procedure btnStartImpressionClick(Sender: TObject);
     procedure btnSelectPrinterClick(Sender: TObject);
     procedure btnApplyParams2DClick(Sender: TObject);
-    procedure chkGrpElementsDessinClick(Sender: TObject);
-    procedure cmbEchelleChange(Sender: TObject);
-    procedure cmbTypeQuadrillageChange(Sender: TObject);
+    procedure btnParametrerVue2DClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
-    procedure lbPageFormatClick(Sender: TObject);
     procedure PaintBoxVueDblClick(Sender: TObject);
     procedure PaintBoxVueMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure PaintBoxVuePaint(Sender: TObject);
   private
     { private declarations }
     // Doc topo
-    FDocTopo: TDocumentDessin;
-    FTextures       : TTexturesPolygonObject;
-    FImgWidth, FImgHeight: integer;
-
-    FParamsVue2D: TParamsVue2D;
-    FEchelle    : double;
-
+    FDocTopo              : TDocumentDessin;
+    FTextures             : TTexturesPolygonObject;
+    FParamsVue2D          : TParamsVue2D;
+    FEchelle              : double;
 
     // nombre de pages sur X et Y
     // tableau des pages dessinées
@@ -106,8 +100,7 @@ type
     FNbPagesY         : integer;
     FTableauPagesDrawn: array of array of boolean;
     FDoDrawPages      : boolean;
-    // modes de représentation
-    //FModeRepresentationGaleries: TModeRepresentationGaleries;
+
     // variables internes
     FRappScrReal : double;
     FInvRappScrReal: double;
@@ -122,6 +115,7 @@ type
     procedure CalcIndexPageIncludingPt(const Pt: TPoint2Df; var IdxX, IdxY: integer);
     procedure ImprimerLaTopo();
     procedure PrintAPage(const QEchelle: double; const L, C: integer);
+    procedure SetControlsWithParamsVue2D(const FPP: TParamsVue2D);
     procedure SetMyCurrentPrinter();
     // conversion de coordonnées
     function GetCoordsMonde(const PP: TPoint): TPoint2Df;
@@ -176,13 +170,9 @@ begin
                                           ['PORTRAIT', 'LANDSCAPE', 'REVERSE LANDSCAPE', 'REVERSEPORTRAIT']);
   lbPageFormat.Caption  := Format('%f mm x %f mm', [Pixels2MillimetresX(Printer.PageWidth),
                                                     Pixels2MillimetresY(Printer.PageHeight)]);
-
-  // reconstruire le plan
-  Recadrer();
-  // calculer le nombre de pages
-  CalcNbPagesAndEmpty();
-  // redessiner
-  DrawApercu();
+  Recadrer();            // reconstruire le plan
+  CalcNbPagesAndEmpty(); // calculer le nombre de pages
+  DrawApercu();          // redessiner
 end;
 
 
@@ -278,13 +268,13 @@ begin
                               else Result.ongElementsDrawn := Result.ongElementsDrawn - [edJONCTIONS];
   // récupérer les valeurs de quadrillage depuis les box
   Result.ongQdrSpc        := editQdrSpacing.Value;
-  Result.ongQdrColor      := btnColorQuadrilles.ButtonColor;
+  Result.ongQdrColor      := btnColorMainQuadrilles.ButtonColor;
   Result.ongQdrType       := TQdrType(cmbTypeQuadrillage.ItemIndex);
 
 
   FQdrCrossSize  := Result.ongQdrSpc / 5.00 ; // provisoire
 
-  FRegleSize     := editTailleRegle.Value;
+  FRegleSize     := editTailleEchelle.Value;
   Result.ongDegradeStart := btnDegradeStart.ButtonColor;
   Result.ongDegradeStop  := btnDegradeStop.ButtonColor;
   // largeur de trait
@@ -312,7 +302,7 @@ begin
   chkAnnotations.Checked := (edANNOTATIONS    in FE.ongElementsDrawn);
   chkNoeuds.Checked      := (edJONCTIONS      in FE.ongElementsDrawn);
 
-  btnColorQuadrilles.ButtonColor := FE.ongQdrColor;
+  btnColorMainQuadrilles.ButtonColor := FE.ongQdrColor;
   cmbTypeQuadrillage.ItemIndex   := Ord(FE.ongQdrType);
   editQdrSpacing.Value           := FE.ongQdrSpc;
 
@@ -322,8 +312,17 @@ end;
 //*)
 
 
+procedure TfrmPrintingCenterExt.SetControlsWithParamsVue2D(const FPP: TParamsVue2D);
+begin
+  lbMainQuadrillesType.Caption    := FPP.MainGrid.DescTypeQuadrillage();
+  lbMainQuadrillesSpacing.Caption := Format('%.0f m', [FPP.MainGrid.Spacing]);
+  lbMainQuadrillesColor.Color     := FPP.MainGrid.Color;
 
-
+  lbSecQuadrillesType.Caption     := FPP.SecGrid.DescTypeQuadrillage();
+  lbSecQuadrillesSpacing.Caption  := Format('%.0f m', [FPP.SecGrid.Spacing]);
+  lbSecQuadrillesColor.Color      := FPP.SecGrid.Color;
+  editTailleEchelle.Value         := FParamsVue2D.TailleEchelle;
+end;
 
 function TfrmPrintingCenterExt.Initialiser(const QDocDessin: TDocumentDessin;
                                            const TP: TTexturesPolygonObject;
@@ -342,6 +341,7 @@ begin
   FBddDemarreeDepuisFichier   := false;
   //*)
   FParamsVue2D := FP;
+  SetControlsWithParamsVue2D(FParamsVue2D);
 
   // affecter pointeur sur la BDD
   FDocTopo := QDocDessin;
@@ -360,11 +360,9 @@ begin
     // Ne pas utiliser  TPrinter.Create;
     AfficherMessage('Fixation variables locales');
     // fixation de variables locales
+    editEchelle.Value := 1000.00;
+    FEchelle       := 1 / editEchelle.Value;
 
-    FEchelle       := 1 / 1000.00;
-
-
-    editTailleRegle.Value   := FParamsVue2D.TailleEchelle;
 
     AfficherMessage('Setting printer');
     // définition de l'imprimante
@@ -380,14 +378,11 @@ begin
   end;
 end;
 
-procedure TfrmPrintingCenterExt.lbPageFormatClick(Sender: TObject);
-begin
 
-end;
 
 procedure TfrmPrintingCenterExt.Finaliser();
 begin
-  ;
+  pass;
 end;
 // calcul des pages vides
 // calculer le nombre de pages et celles qui sont vides
@@ -443,10 +438,7 @@ begin
     FDoDrawPages:=True;
 end;
 
-procedure TfrmPrintingCenterExt.chkGrpElementsDessinClick(Sender: TObject);
-begin
 
-end;
 
 //******************************************************************************
 // dessin de l'aperçu
@@ -699,15 +691,18 @@ procedure TfrmPrintingCenterExt.PrintAPage(const QEchelle: double; const L,C: in
 var
   WU: String;
   MyPageTopo: TFichesPointTopo;
+  MyEchelle: Double;
 begin
   MyPageTopo := TFichesPointTopo.Create;
   try
     AfficherMessage(Format('Impression carré %d.%d (page %d)',[L,C, Printer.PageNumber]));
     WU := ChooseString(Ord(Printer.Orientation), ['PORTRAIT', 'LANDSCAPE', 'REVERSE LANDSCAPE', 'REVERSEPORTRAIT']);
     AfficherMessage('-- Orientation: ' + WU);
+    MyEchelle := QEchelle;
+    //if (Printer.Orientation = poLandscape) then MyEchelle := QEchelle / sqrt(2);
 
     MyPageTopo.Initialiser(FDocTopo, FTextures, FParamsVue2D);
-    MyPageTopo.CreerUnePage(L, C, QEchelle);
+    MyPageTopo.CreerUnePage(L, C, MyEchelle);
   finally
   end;
 end;
@@ -734,11 +729,20 @@ end;
 
 procedure TfrmPrintingCenterExt.btnApplyParams2DClick(Sender: TObject);
 begin
-  //FVue2DParams := GetVue2DParamsFromDialog();
-  //if (FVue2DParams.ongQdrSpc < 5.00) then FVue2DParams.ongQdrSpc := 5.00;
-  //CalcNbPagesAndEmpty;
+  FEchelle := 1 / editEchelle.value;
+  CalcNbPagesAndEmpty();
   Recadrer();
   DrawApercu();
+end;
+
+procedure TfrmPrintingCenterExt.btnParametrerVue2DClick(Sender: TObject);
+begin
+  if (ParametrerVue2D(FParamsVue2D)) then
+  begin
+    SetControlsWithParamsVue2D(FParamsVue2D);
+    Recadrer();
+    DrawApercu();
+  end;
 end;
 
 procedure TfrmPrintingCenterExt.btnSelectPrinterClick(Sender: TObject);
@@ -747,24 +751,8 @@ begin
   SetMyCurrentPrinter();
 end;
 
-procedure TfrmPrintingCenterExt.cmbEchelleChange(Sender: TObject);
-var
-  WU: Integer;
-begin
-  WU := StrToIntDef(cmbEchelle.Text, 1000);
-  if (WU = 0) then WU := 1000;
-  FEchelle := 1 / WU;
-  CalcNbPagesAndEmpty();
-  Recadrer();
-  DrawApercu();
-end;
 
-procedure TfrmPrintingCenterExt.cmbTypeQuadrillageChange(Sender: TObject);
-begin
-  //FVue2DParams.ongQdrType  := TQdrType(cmbTypeQuadrillage.ItemIndex);
-  Recadrer();
-  DrawApercu();
-end;
+
 
 
 
@@ -773,11 +761,18 @@ begin
   chkRegle.Caption             := GetResourceString(rsREGLE);
 
   grbPrinterNames.Caption      := GetResourceString(rsPRN_TBPRINTER);
-  lbQdrSpacing.Caption         := GetResourceString(rsQDRSPACING);
+  grbQuadrillage.Caption       := GetResourceString(rsGRBX_QUADRILLAGE);
+  lbQdrMain.Caption            := GetResourceString(rsQDR_MAIN);
+  lbQdrSec.Caption             := GetResourceString(rsQDR_SECONDARY);
+
+  lbTitreQdrType.Caption       := GetResourceString(rsQDR_TYPE);
+  lbTitreQdrSpacing.Caption    := GetResourceString(rsQDR_SPACING);
+  lbTitreQdrColor.Caption      := GetResourceString(rsQDR_COLOR);
+
   lbEchelle.Caption            := GetResourceString(rsECHELLE);
   btnStartImpression.Caption   := GetResourceString(rsSTARTPRINTING);
-  btnPreview.Caption           := GetResourceString(rsPREVIEW);
 
+  btnParametrerVue2D.Caption   := GetResourceString(rsPRN_PARAMS_VUE);
 end;
 
 procedure TfrmPrintingCenterExt.PaintBoxVueDblClick(Sender: TObject);

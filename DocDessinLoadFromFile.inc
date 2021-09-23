@@ -102,7 +102,6 @@ var
         begin
           Argv := Split(MyLine, #9);
           FCodeEPSG := StrToIntDef(Trim(Argv[1]), DEFAULT_SYSTEME_COORDONNEES_CODE_EPSG);
-
           AfficherMessageErreur(Format('Code EPSG:%d', [FCodeEPSG]));
         end;
         // Lecture des centerlines
@@ -119,7 +118,7 @@ var
                   if (Pos('#', MyLine)>0) then Continue; // commentaires
                   if (MyLine = ENDBASEPOINTMARKER) then   // si le marqueur de fin de section 'Basepoints' est trouvé,
                   begin
-                    TrierBasePointsParIDBaseStation();            // Trier la table des basepoints
+                    TrierBasePointsParIDBaseStation();    // Trier la table des basepoints
                     Break;                                // puis sortir du while
                   end;
                   self.AddABasePointFromString(MyLine);
@@ -148,8 +147,8 @@ var
             end;
         end;
         //*)
-        // lecture images
-        if (MyLine = IMAGESSECTION) then
+
+        if (MyLine = IMAGESSECTION) then   // lecture images
         begin
           AfficherMessage(Format('--> (%d) - ''%s'' section found',[NumLigne, IMAGESSECTION]));
           while (True) do
@@ -168,8 +167,8 @@ var
             AddImage(MyIMG);
           end; // while (True) do begin
         end;
-        // lecture super-groupes
-        if (MyLine = SUPERGROUPESSECTION) then
+
+        if (MyLine = SUPERGROUPESSECTION) then  // lecture super-groupes
         begin
           AfficherMessage(Format('--> (%d) - ''%s'' section found',[NumLigne, SUPERGROUPESSECTION]));
           while (True) do
@@ -177,20 +176,18 @@ var
             MyLine := LireLigne();
             if (MyLine = '') then Continue;
             if (Pos('#', MyLine)>0) then Continue; // commentaires
-
-             //LirePolyLigne(MyLine);
             if (MyLine = ENDSUPERGROUPESSECTION) then
             begin
               AfficherMessage('--> '''+ ENDSUPERGROUPESSECTION +''' section found');
               Break;
             end;
-            // check sommaire
+
             SG := ExtractSuperGroupeFromStr(MyLine);
             AddSuperGroupe(SG);
           end; // while (True) do begin
         end;
-        // lecture groupes
-        if (MyLine = GROUPESSECTION) then
+
+        if (MyLine = GROUPESSECTION) then  // lecture groupes
         begin
           IdxMaxGroupe := -1;
           AfficherMessage(Format('--> (%d) - ''%s'' section found',[NumLigne, GROUPESSECTION]));
@@ -423,8 +420,7 @@ var
               AfficherMessage('--> '''+ ENDTEXTSECTION +''' section found');
               Break;
             end;
-            T := ExtractObjTexteFromStr(MyLine);
-            AddTexte(T, false);
+            AddTexte(ExtractObjTexteFromStr(MyLine), false);
           end;
         end; // if MyLine = TEXTSECTION;
         if (MyLine = PONCTOBJSECTION) then
@@ -439,26 +435,17 @@ var
              AfficherMessage('--> '''+ PONCTOBJSECTION +''' section found');
              Break;
             end;
-            O := ExtractSymbolFromStr(MyLine);
-            AddSymbole(O, false);
+            AddSymbole(ExtractSymbolFromStr(MyLine), false);
           end;
         end; // if Line = PONCTOBJSECTION;
       end; // while général not eof
 
       //*****************************************
-      // controle de la section basepoints
-      // tri par index
-      FCenterLines.TrierBasePointsParIDBaseStation();
-      TrierGroupesByZOrder();
-      // filtres
-      FCenterLines.MetaFiltrer('');
-      // mini et maxi
-      AfficherMessage('-- SetMiniEtMaxi');
-      SetMiniEtMaxi();
-      // calcul des boites englobantes des groupes
-      AfficherMessage('-- CalcBoundingBoxAllGroupes');
-      CalcBoundingBoxAllGroupes;
-      AfficherMessage('-- NbObjets');
+      FCenterLines.TrierBasePointsParIDBaseStation();   // tri par index
+      TrierGroupesByZOrder();                           // tri des groupes par altitudes
+      FCenterLines.MetaFiltrer('');                     // filtres
+      SetMiniEtMaxi();                                  // mini et maxi
+      CalcBoundingBoxAllGroupes();                      // calcul des boites englobantes des groupes
       //******************************************
       AfficherMessageErreur(Format('%d images', [GetNbImages()]));
       AfficherMessage(Format('%d supergroupes', [GetNbSuperGroupes()]));
@@ -471,8 +458,6 @@ var
       AfficherMessage(Format('%d symboles', [GetNbSymboles()]));
       AfficherMessage(Format('%d labels', [GetNbTextes()]));
       //********************************************
-      // calcul du nombre d'objets pour les groupes
-      //CalcNbObjetsGroupes();
       AfficherMessage(FDocumentName + ' ouvert avec succes');
       Result := 0;
       LS.Clear;
@@ -502,19 +487,21 @@ begin
       begin
         if (self.GetNbSuperGroupes() = 0) then
         begin
+          MySuperGroupe.Couleur        := clBlue;
           MySuperGroupe.NomSuperGroupe := 'SuperGroupe0';
-          MySuperGroupe.Displayed  := True;
+          MySuperGroupe.Displayed      := True;
+          MySuperGroupe.ListeGroupes.Empty();
           AddSuperGroupe(MySuperGroupe);
         end;
         if (self.GetNbGroupes() = 0) then
         begin
-          MyGroupe.IDGroupeEntites := 0;
-          MyGroupe.NomGroupe       := 'Groupe0';
-          MyGroupe.CouleurGroupe   := clBlue;
+          MyGroupe.IDGroupeEntites     := 0;
+          MyGroupe.NomGroupe           := 'Groupe0';
+          MyGroupe.CouleurGroupe       := clBlue;
           MyGroupe.Decalage.Empty();
-          MyGroupe.DateLastModif   := Now();
-          MyGroupe.Filtres         := '';
-          MyGroupe.Visible         := true;
+          MyGroupe.DateLastModif       := Now();
+          MyGroupe.Filtres             := '';
+          MyGroupe.Visible             := true;
           AddGroupe(MyGroupe, false);
         end;
       end;

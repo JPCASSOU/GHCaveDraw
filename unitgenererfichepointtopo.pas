@@ -228,7 +228,7 @@ begin
     if (tedCENTERLINES in FParamsVue2D.ElementsDrawn) then
     begin
       for ii:= 0 to FMyDocDessin.GetNbBaseStations - 1 do
-        QGHCaveDrawDrawingContext.DessinerBaseStation(FMyDocDessin.GetBaseStation(ii), Millimetres2PixelsYf(Printer, 3.0));
+        QGHCaveDrawDrawingContext.DessinerBaseStation(FMyDocDessin.GetBaseStation(ii), Millimetres2PixelsYf(Printer, HAUTEUR_LBL_BASESTATION_IN_MM));
     end;
     QGHCaveDrawDrawingContext.RestoreBrosse();
     // et enfin l'échelle
@@ -354,12 +354,17 @@ var
   QFX, QFY: Double;
   CoinBasGauche: TPoint3Df;
 begin
+  if (FRedessinInProcess) then
+  begin
+    AfficherMessageErreur(Format('[FRedessinInProcess = %s] Redessin en cours', [BoolToStr(FRedessinInProcess)]));
+    exit;
+  end;
+  FRedessinInProcess := True;   // Armement du sémaphore de dessin
+
   // préparation et génération de l'extrait de plan
   FImgWidth  := Printer.PageWidth - 2 * MARGE_PERIMETRIQUE;
   FImgHeight := Printer.PageHeight - 2 * MARGE_PERIMETRIQUE;
   AfficherMessage(format('%d x %d', [FImgWidth, FImgHeight]));
-
-
 
   TmpBuffer  := TGHCaveDrawDrawingContext.Create(FImgWidth, FImgHeight,
                                                  BGRA(Red(FParamsVue2D.BackGroundColor), Green(FParamsVue2D.BackGroundColor), Blue(FParamsVue2D.BackGroundColor), 255));
@@ -399,14 +404,14 @@ var
   QOldStyleCourbe, QSC: TStyleCourbe;
   QPosImgX, QPosImgY, QReticulePosX, QReticulePosY,
   QPosEchelleX,  QPosEchelleY: Extended;
-
-
 begin
   if (FRedessinInProcess) then
   begin
     AfficherMessageErreur(Format('[FRedessinInProcess = %s] Redessin en cours', [BoolToStr(FRedessinInProcess)]));
     exit;
   end;
+  FRedessinInProcess := True;   // Armement du sémaphore de dessin
+
   // définition de la taille de la fiche
   LargeurFiche := Pixels2MillimetresX(Printer, Printer.PageWidth);
   HauteurFiche := Pixels2MillimetresY(Printer, Printer.PageHeight);
@@ -414,12 +419,11 @@ begin
   LargeurExtraitPlan := LargeurFiche - 10.00;
   QPosImgX := (LargeurFiche - LargeurExtraitPlan) * 0.5;
   QPosImgY := MARGE_PERIMETRIQUE + 40.00;
-
   HauteurExtraitPlan := LargeurExtraitPlan;
 
 
 
-  FRedessinInProcess := True;   // Armement du sémaphore de dessin
+
   HalfWidth := 50.00;
   // modification de styles d'objets
   QOldStyleCourbe := FMyDocDessin.GetStyleCourbe(IDX_STYLE_COURBE_PAROIS);

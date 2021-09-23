@@ -21,6 +21,7 @@ uses
   , Windows
   {$ENDIF}
   , Graphics
+  , ExtCtrls
   , LCLType
   , BGRABitmap
   , BGRABitmapTypes
@@ -57,7 +58,7 @@ function GetGHCaveDrawVersionAndDateBuild(): string;
 function MakeTPoint(const QX, QY: integer): TPoint;
 function MakeTPoint2DfWithGroupeAndBaseStation(const BP: TBaseStation; const GP: TGroupeEntites; const OffX, OffY: double): TPoint2Df;
 function MakeTPoint2DfWithBaseStationOnly(const BP: TBaseStation; const OffX, OffY: double): TPoint2Df; inline;
-function MakeTRect(const Left, Top, Right, Bottom: Integer): TRect;
+function MakeTRect(const QLeft, QTop, QRight, QBottom: Integer): TRect;
 //function MakeTRect2Df(const QX1, QY1, QX2, QY2: double): TRect2Df;
 
 // ifs immédiats
@@ -69,7 +70,7 @@ function IIF(const Condition: boolean; const V1, V2: TColor): TColor; overload; 
 
 // extraction de paramètres d'une chaine
 function ShortSplit(const Str: string; const Sep: string):TGHShortStringArray;
-function Split(const Str: string; const Sep: string):TGHStringArray;
+function Split(const Str: string; const Sep: string): TGHStringArray;
 function SplitEx(const Str: string; const Seps: array of Char; const DoRemoveQuotes: boolean): TStringArray;
 function ExtractStringsToTStringArray(Separators, WhiteSpace: TSysCharSet; const MyStr: string): TGHStringArray;
 function DecoupeChaineEspacesGuillemets(const S: string; const DoRemoveQuotes: boolean): TGHStringArray;
@@ -123,7 +124,7 @@ function GetConstantVector3D(const Value: double): TPoint3Df; inline;
 function IntersectRectangles(const R1, R2: TRect2Df): boolean; inline;
 function PointIsInRectangle(const PT: TPoint2Df; const R1: TRect2Df): boolean; inline;
 function IsInBoundingBox(const XX, YY: Double; const BB: TBoundingBox): boolean; inline;
-function CCW(const P0, P1, P2: TPoint2Df): integer;
+function CounterClockWise(const P0, P1, P2: TPoint2Df): integer;
 function Intersect(const D1, D2: TDroite): boolean;    // function Intersect: intersection de deux droites
 function PointDansPolygone(const QX, QY: double; const LstSommets: TArrayPoints2Df): boolean;
 
@@ -138,6 +139,8 @@ function Acad2RGB(const n : integer) : tColor; // palette par défaut d'Autocad
 function RGB2Acad(const C: TColor) : Byte;
 function RGB2HTMLColor(const C: TColor): string;
 function GetColorByScale(const V, QMin, QMax: double; const ColDefault: TColor; const AC: array of TColor): TColor;     // échelle de couleurs
+function GetColorDegrade(const z, zmin, zmax: Double; const Coul1, Coul2: TColor): TColor;
+
 
 // fonctions TOPOROBOT
 {$IFDEF TIDBASEPOINT_AS_TEXT}
@@ -177,21 +180,17 @@ function SelectSVGStyleCourbe(const SC: TNatureObjetCourbe): string;
 function CalcBezierCurve(const P0, P1, P2, P3: TPoint2Df; const NbSubdivs: integer): TArrayPoints2Df;
 
 // fonctions issues de TDocumentDessin
-function GenererLigneBasepoint(const QIdx: integer; const BP: TBaseStation): string;
-function GenererLigneSimpleLigne(const QIdx: integer; const L: TSimpleLigne): string;
-function GenererLigneSymbole(const QIdx: integer; const Obj: TSymbole): string;
-function GenererLigneTexte(const QIdx: integer; const Obj: TTextObject): string;
-function GenererLigneArcCourbe(const QIdx: integer; const A: TArcCourbe): string;
-function GenererLigneGroupe(const QIdx: integer; const Grp: TGroupeEntites): string;
-function GenererLigneVertexPolygon(const QIdx: integer; const V: TVertexPolygon): string;
-function GenererLigneEnteteScrap(const QIdx: integer; const S: TScrap): string;
-function GenererLigneEnteteCourbe(const QIdx: integer; const C: TCourbe): string;
-function GenererLigneEntetePolyligne(const QIdx: integer; const PL: TPolyLigne): string;
-function GenererLigneEntetePolygone(const QIdx: integer; const PG: TPolygone): string;
-function GenererLigneEndScrap: string;
-function GenererLigneEndCourbe: string;
-function GenererLigneEndPolyligne: string;
-function GenererLigneEndPolygone: string;
+//function GenererLigneSimpleLigne(const QIdx: integer; const L: TSimpleLigne): string;
+//function GenererLigneArcCourbe(const QIdx: integer; const A: TArcCourbe): string;
+//function GenererLigneVertexPolygon(const QIdx: integer; const V: TVertexPolygon): string;
+//function GenererLigneEnteteScrap(const QIdx: integer; const S: TScrap): string;
+//function GenererLigneEnteteCourbe(const QIdx: integer; const C: TCourbe): string;
+//function GenererLigneEntetePolyligne(const QIdx: integer; const PL: TPolyLigne): string;
+//function GenererLigneEntetePolygone(const QIdx: integer; const PG: TPolygone): string;
+//function GenererLigneEndScrap(): string;
+//function GenererLigneEndCourbe(): string;
+//function GenererLigneEndPolyligne(): string;
+//function GenererLigneEndPolygone(): string;
 
 // rotation d'un ensemble de points autour de leur centre
 function RotatePoint(const Angle: double; const PT: TPoint2Df): TPoint2Df;
@@ -205,7 +204,7 @@ function GetOffsetCentrage(const MC: integer; const L, H: double): TPoint2Df;
 function GetLlanfairPG(): string;
 
 // formattage de nombres
-function FormatterNombreOOo(const Value: extended; const NbDecs: integer; const IgnoreNulls: boolean): string;
+function FormatterNombreOOo(const Value: extended; const NbDecs: integer; const IgnoreNulls: boolean = false): string;
 // extraction de la liste des groupes d'une chaine
 //function StrToArrayOfIdxGroupes(const S: string): TArrayOfIdxGroupes;
 //function ArrayOfIdxGroupesToStr(const A: TArrayOfIdxGroupes): string;
@@ -213,7 +212,7 @@ function FormatterNombreOOo(const Value: extended; const NbDecs: integer; const 
 
 function CompareIDStations(const I1, I2: TIDBaseStation): boolean;
 // Station valide (= n'est pas une visée radiante)
-function IsValidBaseStation(const BS: TBaseStation): boolean;
+//function IsValidBaseStation(const BS: TBaseStation): boolean;
 
 // distance sur grand cercle entre deux points (Lon, Lat)
 function HaversineDist(const Lat1, Lon1, Lat2, Lon2:double):double;
@@ -230,7 +229,7 @@ uses
 uses
   frmJournal;
 {$ENDIF}
-procedure pass();
+procedure pass(); // Identique à l'instruction 'pass' du Python, qui ne fait rien
 begin
   ;;
 end;
@@ -247,7 +246,6 @@ begin
   {$IFDEF LINUX}
      pass;
   {$ENDIF}
-
 end;
 
 procedure AfficherMessage(const Msg: string);
@@ -318,12 +316,7 @@ end;
 
 function GetGHCaveDrawDirectory(): string;
 begin
-  {$IFDEF MSWINDOWS}
   Result := ExtractFilePath(ParamStr(0));
-  {$ENDIF}
-  {$IFDEF LINUX}
-  Result := ExtractFilePath(ParamStr(0));
-  {$ENDIF}
 end;
 
 // Envoyer une fenêtre vers le moniteur N à la position X, Y:
@@ -355,7 +348,6 @@ begin
   except
     pass;
   end;
-  //}
 end;
 
 
@@ -409,8 +401,7 @@ begin
   Result := ((Value >= MinValue) and (Value <= MaxValue));
 end;
 // extraction de paramètres d'une chaine
-// récupération de données d'une ligne de texte
-
+// Très utilisé, TGHShortStringArray est un tableau de 8 éléments
 function ShortSplit(const Str: string; const Sep: string): TGHShortStringArray;
 var
   pn   : integer;
@@ -418,44 +409,46 @@ var
   S    : string;
 begin
   for pn:=0 to High(Result) do Result[pn] := '';
-  S:=Str;
-  ps:=0;
+  S  := Str;
+  ps := 0;
   try
-    pn:=0;
+    pn := 0;
     repeat
-     if pn>High(Result) then Break;
-     ps:=Pos(Sep, S);
-     Result[pn]:=Trim(Copy(s,0, ps-1));
+     if (pn > High(Result)) then Break;
+     ps := Pos(Sep, S);
+     Result[pn] := Trim(Copy(s,0, ps - 1));
+
      Inc(pn);
-     s:=Copy(s, 1+ps, Length(s));
-    until ps=0;
+     s := Copy(s, 1 + ps, Length(s));
+    until ps = 0;
     Result[pn-1]:=Trim(s);
   except
   end;
 end;
+// Split simplifié (TGHStringArray est un tableau fixe de 64 éléments)
 function Split(const Str: string; const Sep: string):TGHStringArray;
 var
   pn   : integer;
   ps   : integer;
   S    : string;
 begin
-  for pn:=0 to High(Result) do Result[pn]:='';
-  S:=Str;
-  ps:=0;
+  for pn := 0 to High(Result) do Result[pn] := '';
+  S  := Str;
+  ps := 0;
   try
-    pn:=0;
+    pn := 0;
     repeat
-     if pn>High(Result) then Break;
-     ps:=Pos(Sep, S);
-     Result[pn]:=Trim(Copy(s,0, ps-1));
+     if (pn > High(Result)) then Break;
+     ps := Pos(Sep, S);
+     Result[pn] := Trim(Copy(s, 0, ps-1));
      Inc(pn);
-     s:=Copy(s, 1+ps, Length(s));
-    until ps=0;
-    Result[pn-1]:=Trim(s);
+     s := Copy(s, 1 + ps, Length(s));
+    until ps = 0;
+    Result[pn - 1] := Trim(s);
   except
   end;
 end;
-//*)
+// Split illimité avec suppression éventuelle des doubles quotes
 function SplitEx(const Str: string; const Seps: array of Char; const DoRemoveQuotes: boolean): TStringArray;
 var
   n, i: Integer;
@@ -481,13 +474,12 @@ var
   i: integer;
   PasT, t : double;
   A, B, C, D, Q1, Q2, Q3, T2, T3: double;
-
 begin
   PasT := 1/NbSubdivs;
   SetLength(Result, 1+NbSubdivs);
   t := 0;
-  // coefs
-  for i:= 0 to High(Result) do
+
+  for i:= 0 to High(Result) do   // coefs
   begin
     Q1 := 1 - t;
     Q2 := Q1 * Q1;
@@ -542,6 +534,7 @@ begin
   Result.X := Vect1.Y*Vect2.Z-Vect1.Z*Vect2.Y;
   Result.Y := Vect1.Z*Vect2.X-Vect1.X*Vect2.Z;
   Result.Z := Vect1.X*Vect2.Y-Vect1.Y*Vect2.X;
+
   if (Normalized) then
   begin
     r := sqrt(Sqr(Result.x)+sqr(Result.y)+sqr(Result.z))+1e-12;
@@ -555,17 +548,14 @@ function GetAngleBissecteur(const X1, Y1, X2, Y2: double): double;
 var
   V1, V2, W: TPoint3Df;
 begin
-  // vecteur V1           vecteur V2        vecteur w
-  V1.X:=X1;               V2.X:=X2;         W.X :=0;
-  V1.Y:=Y1;               V2.Y:=Y2;         W.Y :=0;
-  V1.Z:=0;                V2.Z:=0;          W.Z :=1;
+  V1.setFrom(X1, Y1, 0);  // vecteur V1
+  V2.setFrom(X2, Y2, 0);  // vecteur V2
+   W.setFrom(0 ,  0, 1);     // vecteur w
   // produits vectoriels
-  v1 := ProduitVectoriel(v1,w,True);
-  v2 := ProduitVectoriel(v2,w,True);
+  v1 := ProduitVectoriel(v1, w, True);
+  v2 := ProduitVectoriel(v2, w, True);
   //composition vectorielle
-  w.x:=v1.x+v2.X;
-  w.y:=v1.y+v2.Y;
-  w.z:=v1.z+v2.z;
+  w.setFrom(v1.x + v2.X, v1.y + v2.Y, v1.z + v2.z);
   // angles
   Result := ArcTan2(w.y+1e-12, w.x+1e-12);
 end;
@@ -607,7 +597,6 @@ var
   {$ELSE}
   qTRB: TToporobotIDStation;
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-
   function zdar(const qStr, qCode, qReplace: string): string;
   var
     PPPP: SizeInt;
@@ -625,7 +614,6 @@ begin
   {$ELSE}
   qTRB := Station.getToporobotIDStation(); // GetToporobotIDStation(Station);
   {$ENDIF TIDBASEPOINT_AS_TEXT}
-
   // Longueur, azimut, pente
   GetBearingInc(Station.PosStation.X - Station.PosExtr0.X,
                 Station.PosStation.Y - Station.PosExtr0.Y,
@@ -674,7 +662,6 @@ begin
   Result := Strs[Index];
 end;
 
-
 {$IFDEF TIDBASEPOINT_AS_TEXT}
 {$ELSE}
 function SetIDStationFromSerSt(const qSer, qSt: integer): TIDBaseStation;
@@ -703,7 +690,6 @@ var
   begin
     if (a < 0) then a += TWO_PI;
   end;
-
 begin
   a := ArcTan2(dy, dx+1e-12);
   MiouMiou();
@@ -895,37 +881,48 @@ begin
   Result := Format('#%.2X%.2X%.2X',[qr, qg, qb]);
 
 end;
+
+// dégradé de couleurs
+function GetColorDegrade(const z, zmin, zmax: Double; const Coul1, Coul2: TColor): TColor;
+var
+  D: Double;
+  H: Double;
+  DR, DG, DB : integer; // et non byte !!!
+begin
+  if (Z < ZMin) then Exit(Coul1);
+  if (Z > zmax) then Exit(Coul2);
+  D := zmax - zmin;
+  if (Abs(D) < 1e-8) then Exit(Coul1);
+  H := (z - zmin) / D;
+  DR := Red(Coul2)   - Red(Coul1);
+  DG := Green(Coul2) - Green(Coul1);
+  DB := Blue(Coul2)  - Blue(Coul1);
+  Result := RGBToColor(Red(Coul1)   + Trunc(DR * H),
+                       Green(Coul1) + Trunc(DG * H),
+                       Blue(Coul1)  + Trunc(DB * H));
+end;
+
 //************************************************************************
 // retourne 1 si P0P1 x P0P2 pointe vers le haut
-function CCW(const P0, P1, P2: TPoint2Df): integer;
+function CounterClockWise(const P0, P1, P2: TPoint2Df): integer;
 var
   dx1, dx2, dy1, dy2: Double;
   cp1, cp2: double;
 begin
   dx1 := P1.x - P0.X;  dy1 := P1.Y - P0.Y;
   dx2 := P2.x - P0.X;  dy2 := P2.Y - P0.Y;
-
   cp1 := dx1 * dy2;
   cp2 := dy1 * dx2;
-
-  if (CP1 > CP2) then begin Result:=  1; Exit; End;
-  if (CP1 < CP2) then begin Result:= -1; Exit; End;
-  if ( ((dx1 * dx2) < 0) OR
-       ((dy1 * dy2) < 0)
-     ) then begin Result := -1; Exit; End;
-  if (Sqr(dx1) + Sqr(dy1)) >= (Sqr(dx2) + Sqr(dy2))
-       then begin Result := 0; Exit; End;
-
+  if (CP1 > CP2) then exit( 1);  //begin Result:=  1; Exit; End;
+  if (CP1 < CP2) then exit(-1); //begin Result:= -1; Exit; End;
+  if (((dx1 * dx2) < 0) OR ((dy1 * dy2) < 0))       then exit(-1); //begin Result := -1; Exit; End; OK
+  if (Sqr(dx1) + Sqr(dy1)) >= (Sqr(dx2) + Sqr(dy2)) then exit( 0); //begin Result := 0; Exit; End;
 end;
 // function Intersect: intersection de deux droites
 function Intersect(const D1, D2: TDroite): boolean;
 begin
-  Result := (
-              (CCW(D1.PT1, D1.PT2, D2.PT1) * CCW(D1.PT1, D1.PT2, D2.PT2) <=0)
-            ) AND
-            (
-              (CCW(D2.PT1, D2.PT2, D1.PT1) * CCW(D2.PT1, D2.PT2, D1.PT2) <=0)
-            )
+  Result := (CounterClockWise(D1.PT1, D1.PT2, D2.PT1) * CounterClockWise(D1.PT1, D1.PT2, D2.PT2) <= 0) AND
+            (CounterClockWise(D2.PT1, D2.PT2, D1.PT1) * CounterClockWise(D2.PT1, D2.PT2, D1.PT2) <= 0);
 end;
 
 // point dans zone  -- Test unitaire OK
@@ -948,8 +945,7 @@ begin
   for i:=0 to NbPts-1 do begin
     LP.PT1 := LstSommets[i];
     LP.PT2 := LstSommets[i];
-    if Intersect(LT, LP) then
-      Continue;
+    if (Intersect(LT, LP)) then Continue;
     LP.PT2 := LstSommets[j];
     j := i;
     if(Intersect(LP,LT)) then Inc(CountIntersects);
@@ -995,63 +991,63 @@ end;
 function SelectSVGStylePolygone(const SP: TNatureObjetPolygone): string;
 begin
   case SP of
-    nopDEFAULT         : Result := STYLE_POLYGONE_DEFAUT;
-    nopLAC             : Result := STYLE_POLYGONE_LAC;
-    nopARGILE          : Result := STYLE_POLYGONE_ARGILE;
-    nopSABLE           : Result := STYLE_POLYGONE_SABLE;
-    nopEBOULIS         : Result := STYLE_POLYGONE_EBOULIS;
-    nopGALETS          : Result := STYLE_POLYGONE_GALETS;
-    nopNEIGE           : Result := STYLE_POLYGONE_NEIGE;
-    nopSILHOUETTE      : Result := STYLE_POLYGONE_SILHOUETTE;
-    nopGROS_BLOC       : Result := STYLE_POLYGONE_GROS_BLOC;
-    nopGOUR            : Result := STYLE_POLYGONE_GOUR;
-    nopSIPHON          : Result := STYLE_POLYGONE_SIPHON;
-    nopARGILES_GALETS  : Result := STYLE_POLYGONE_VARVES;
-    nopCHEMINS         : Result := STYLE_POLYGONE_CHEMIN;
+    nopDEFAULT         : Result := SVG_STYLE_POLYGONE_DEFAUT;
+    nopLAC             : Result := SVG_STYLE_POLYGONE_LAC;
+    nopARGILE          : Result := SVG_STYLE_POLYGONE_ARGILE;
+    nopSABLE           : Result := SVG_STYLE_POLYGONE_SABLE;
+    nopEBOULIS         : Result := SVG_STYLE_POLYGONE_EBOULIS;
+    nopGALETS          : Result := SVG_STYLE_POLYGONE_GALETS;
+    nopNEIGE           : Result := SVG_STYLE_POLYGONE_NEIGE;
+    nopSILHOUETTE      : Result := SVG_STYLE_POLYGONE_SILHOUETTE;
+    nopGROS_BLOC       : Result := SVG_STYLE_POLYGONE_GROS_BLOC;
+    nopGOUR            : Result := SVG_STYLE_POLYGONE_GOUR;
+    nopSIPHON          : Result := SVG_STYLE_POLYGONE_SIPHON;
+    nopARGILES_GALETS  : Result := SVG_STYLE_POLYGONE_VARVES;
+    nopCHEMINS         : Result := SVG_STYLE_POLYGONE_CHEMIN;
   else
-    Result := STYLE_POLYGONE_DEFAUT;
+    Result := SVG_STYLE_POLYGONE_DEFAUT;
   end;
 end;
 function SelectSVGStyleLigne(const SL: TNatureObjetLigne): string;
 begin
   case SL of
-   nolDEFAULT      : Result := STYLE_LIGNE_DEFAULT;
-   nolFLECHE       : Result := STYLE_LIGNE_FLECHE;
-   nolSUITE_RESEAU : Result := STYLE_LIGNE_SUITE_RESEAU;
-   nolFRACTURE     : Result := STYLE_LIGNE_FRACTURE;
-   nolPENTE        : Result := STYLE_LIGNE_PENTE;
+   nolDEFAULT      : Result := SVG_STYLE_LIGNE_DEFAULT;
+   nolFLECHE       : Result := SVG_STYLE_LIGNE_FLECHE;
+   nolSUITE_RESEAU : Result := SVG_STYLE_LIGNE_SUITE_RESEAU;
+   nolFRACTURE     : Result := SVG_STYLE_LIGNE_FRACTURE;
+   nolPENTE        : Result := SVG_STYLE_LIGNE_PENTE;
   else
-    Result := STYLE_LIGNE_DEFAULT;
+    Result := SVG_STYLE_LIGNE_DEFAULT;
   end;
 end;
 function SelectSVGStyleTexte(const ST: TNatureObjetTexte): string;
 begin
   case ST of
-    notDEBUG         : Result := STYLE_TEXTE_DEBUG;
-    notTITRES        : Result := STYLE_TEXTE_TITRES;
-    notSOUS_TITRES   : Result := STYLE_TEXTE_SOUS_TITRES;
-    notCOTATION      : Result := STYLE_TEXTE_COTATION;
-    notTEXTE1        : Result := STYLE_TEXTE_ORDINAIRE_1;
-    notTEXTE2        : Result := STYLE_TEXTE_ORDINAIRE_2;
-    notLIEU_DIT      : Result := STYLE_TEXTE_LIEU_DIT;
+    notDEBUG         : Result := SVG_STYLE_TEXTE_DEBUG;
+    notTITRES        : Result := SVG_STYLE_TEXTE_TITRES;
+    notSOUS_TITRES   : Result := SVG_STYLE_TEXTE_SOUS_TITRES;
+    notCOTATION      : Result := SVG_STYLE_TEXTE_COTATION;
+    notTEXTE1        : Result := SVG_STYLE_TEXTE_ORDINAIRE_1;
+    notTEXTE2        : Result := SVG_STYLE_TEXTE_ORDINAIRE_2;
+    notLIEU_DIT      : Result := SVG_STYLE_TEXTE_LIEU_DIT;
   else
-    Result := STYLE_TEXTE_DEFAULT;
+    Result := SVG_STYLE_TEXTE_DEFAULT;
   end;
 end;
 function SelectSVGStyleCourbe(const SC: TNatureObjetCourbe): string;
 begin
   case SC of
-    nocDEFAULT        : Result := STYLE_COURBE_DEFAULT;
-    nocPAROI          : Result := STYLE_COURBE_PAROIS;
-    nocPAROIS_CACHEE  : Result := STYLE_COURBE_PAROIS_CACHEES;
-    nocECOULEMENT     : Result := STYLE_COURBE_ECOULEMENTS;
-    nocLIGNES_PENTE   : Result := STYLE_COURBE_PENTES;
-    nocRESSAUT        : Result := STYLE_COURBE_RESSAUTS;
-    nocMARCHE         : Result := STYLE_COURBE_MINI_RESSAUTS;
-    nocSURPLOMB       : Result := STYLE_COURBE_SURPLOMB;
-    nocCHENAL_VOUTE   : Result := STYLE_COURBE_CHENAL;
+    nocDEFAULT        : Result := SVG_STYLE_COURBE_DEFAULT;
+    nocPAROI          : Result := SVG_STYLE_COURBE_PAROIS;
+    nocPAROIS_CACHEE  : Result := SVG_STYLE_COURBE_PAROIS_CACHEES;
+    nocECOULEMENT     : Result := SVG_STYLE_COURBE_ECOULEMENTS;
+    nocLIGNES_PENTE   : Result := SVG_STYLE_COURBE_PENTES;
+    nocRESSAUT        : Result := SVG_STYLE_COURBE_RESSAUTS;
+    nocMARCHE         : Result := SVG_STYLE_COURBE_MINI_RESSAUTS;
+    nocSURPLOMB       : Result := SVG_STYLE_COURBE_SURPLOMB;
+    nocCHENAL_VOUTE   : Result := SVG_STYLE_COURBE_CHENAL;
   else
-    Result := STYLE_COURBE_DEFAULT;
+    Result := SVG_STYLE_COURBE_DEFAULT;
   end;
 end;
 function ColorToHTMLColor(const Couleur: TColor): string;
@@ -1095,8 +1091,7 @@ var
   DG: TPoint2Df;
 begin
   if (GP.DecalageActif) then DG := MakeTPoint2Df(GP.Decalage.X, GP.Decalage.Y) else DG := MakeTPoint2Df(0.00, 0.00);
-  Result := MakeTPoint2Df(BP.PosStation.X + DG.X + OffX,
-                          BP.PosStation.Y + DG.Y + OffY);
+  Result := MakeTPoint2Df(BP.PosStation.X + DG.X + OffX, BP.PosStation.Y + DG.Y + OffY);
 end;
 // crée un TPoint2Df sans tenir compte des décalages de groupes (utilisé pour les BoundingBox des objets)
 function MakeTPoint2DfWithBaseStationOnly(const BP: TBaseStation; const OffX, OffY: double): TPoint2Df;
@@ -1104,12 +1099,12 @@ begin
   Result := MakeTPoint2Df(BP.PosStation.X + OffX, BP.PosStation.Y + OffY);
 end;
 
-function MakeTRect(const Left, Top, Right, Bottom: Integer): TRect;
+function MakeTRect(const QLeft, QTop, QRight, QBottom: Integer): TRect;
 begin
-  Result.Top     := Top;
-  Result.Left    := Left;
-  Result.Bottom  := Bottom;
-  Result.Right   := Right;
+  Result.Top     := QTop;
+  Result.Left    := QLeft;
+  Result.Bottom  := QBottom;
+  Result.Right   := QRight;
 end;
 
 
@@ -1203,13 +1198,8 @@ begin
   Step := (QMax - QMin) / n;
   for i := 0 to n do
   begin
-    if (IsInRange(V, QMin + Step * i, QMin + Step * (i + 1))) then
-    begin
-      Result := AC[i];
-      exit;
-    end;
+    if (IsInRange(V, QMin + Step * i, QMin + Step * (i + 1))) then exit(AC[i]);
   end;
-
 end;
 // pour les textures
 function Interp256(const value1,value2,position: integer): integer; inline; overload;
@@ -1229,12 +1219,10 @@ const
   blurSize     = 5;
   tile_overlap = 4;
 var
-  QTileOverlap : LongInt;
   WU      : TRect;
   temp    : TBGRABitmap;
   phong   : TPhongShading;
 begin
-  QTileOverlap := 4;
   // GetPart crée également l'objet Temp
   result := CreateCyclicPerlinNoiseMap(128, 128, 0.01, 0.01, 0.07000);
   // Bumped procedural texture
@@ -1264,12 +1252,10 @@ const
   blurSize     = 5;
   tile_overlap = 4;
 var
-  QTileOverlap : LongInt;
   WU      : TRect;
   temp    : TBGRABitmap;
   phong   : TPhongShading;
 begin
-  QTileOverlap := 4;
   // GetPart crée également l'objet Temp
   result := CreateCyclicPerlinNoiseMap(128, 128,  0.08, 0.08, 0.21000);
   // Bumped procedural texture
@@ -1361,7 +1347,9 @@ begin
   //           2.71       Editeur graphique opérationnel, centre d'impression, export SVG (2009 .. 2015)
   //           2.718      Support des scraps et des images, génération des atlas, génération de topos as images de grande taille (2015-)
   //           2.7182     Sections transversales (2016-)
-  Result := Format('%.4f', [exp(1)]);
+  //           2.71828    Documents-programmes HTML, supergroupes
+
+  Result := Format('%.5f', [exp(1)]);
 end;
 
 function GetIconesTexturesDirectory(): string;
@@ -1472,28 +1460,7 @@ end;
 
 // fonctions issues de TDocumentDessin
 //===========================================================================
-
-function GenererLigneBasepoint(const QIdx: integer; const BP: TBaseStation): string;
-begin
-  Result := (Format(FMT_BASE_STS,
-                       [BP.IDStation,
-                        BP.IDTerrain,
-                        BP.TypeStation, BP.Couleur,
-                          FormatterNombreWithDotDecimal(BP.PosExtr0.X    , 2),
-                          FormatterNombreWithDotDecimal(BP.PosExtr0.Y    , 2),
-                          FormatterNombreWithDotDecimal(BP.PosExtr0.Z    , 2),
-                          FormatterNombreWithDotDecimal(BP.PosStation.X  , 2),
-                          FormatterNombreWithDotDecimal(BP.PosStation.Y  , 2),
-                          FormatterNombreWithDotDecimal(BP.PosStation.Z  , 2),
-                          FormatterNombreWithDotDecimal(BP.PosPG.X       , 2),
-                          FormatterNombreWithDotDecimal(BP.PosPG.Y       , 2),
-                          FormatterNombreWithDotDecimal(BP.PosPG.Z       , 2),
-                          FormatterNombreWithDotDecimal(BP.PosPD.X       , 2),
-                          FormatterNombreWithDotDecimal(BP.PosPD.Y       , 2),
-                          FormatterNombreWithDotDecimal(BP.PosPD.Z       , 2),
-                        BP.IDTerrain
-                       ]));
-end;
+(*
 function GenererLigneSimpleLigne(const QIdx: integer; const L: TSimpleLigne): string;
 begin
   Result := Format('    line '+ #9 + '%d' + #9 + '%d' + #9 + '%d' + //ID, Groupe, Style
@@ -1512,7 +1479,8 @@ begin
                         DateTimeToStr(Now)
                        ]);
 end;
-
+//*)
+(*
 function GenererLigneSymbole(const QIdx: integer; const Obj: TSymbole): string;
 begin
   Result := Format('    ponctualobject '+ #9 + '%d' + #9 + '%d' + #9 + '%d' +  #9 + '%d' + //IDXGroupe, TypeObject, Couleur,
@@ -1533,6 +1501,8 @@ begin
                         DateTimeToStr(Now)
                        ]);
 end;
+//*)
+(*
 function GenererLigneTexte(const QIdx: integer; const Obj: TTextObject): string;
 begin
   Result := Format('    text '+ #9 + '%d' + #9 + '%d' + #9 + '%d' + //ID, Groupe, Style
@@ -1548,7 +1518,8 @@ begin
                        ])
 
 end;
-
+//*)
+(*
 function GenererLigneArcCourbe(const QIdx: integer; const A: TArcCourbe): string;
 begin
   Result := Format(ENTITYARCBEZIER,
@@ -1568,7 +1539,8 @@ begin
                          FormatterNombreWithDotDecimal(-2.00, 2)
                         ]);
 end;
-
+//*)
+(*
 function GenererLigneGroupe(const QIdx: integer; const Grp: TGroupeEntites): string;
 begin
   Result := Format('  groupe'+ #9 +'%d' + #9 +
@@ -1591,6 +1563,8 @@ begin
                          GRP.Filtres
                        ]);
 end;
+//*)
+(*
 function GenererLigneVertexPolygon(const QIdx: integer; const V: TVertexPolygon): string;
 begin
   Result := Format(ENTITYVERTEXPOLYGON,
@@ -1600,6 +1574,8 @@ begin
                          FormatterNombreWithDotDecimal(V.Offset.Z, 2)
                         ]);
 end;
+//*)
+(*
 function GenererLigneEnteteScrap(const QIdx: integer; const S: TScrap): string;
 begin
   Result := Format('  ' + SCRAP + FMT_SCRAP, [QIdx, S.IDGroupe,
@@ -1607,7 +1583,8 @@ begin
                                                    S.Opacite,
                                                    S.Nom]);
 end;
-
+//*)
+(*
 function GenererLigneEnteteCourbe(const QIdx: integer; const C: TCourbe): string;
 begin
   Result := Format('  ' + ENTITYCURVE + FMT_CURVE, [QIdx, C.IDGroupe, C.IDStyleCourbe, IIF(C.Closed, 1, 0)]);
@@ -1617,43 +1594,57 @@ function GenererLigneEntetePolyligne(const QIdx: integer; const PL: TPolyLigne):
 begin
   Result := Format('  ' + ENTITYPOLYLINE + FMT_POLYLINE, [QIdx, PL.IDGroupe, PL.IDStylePolyLine, IIF(PL.Closed, 1, 0)]);
 end;
-
+//*)
+(*
 function GenererLigneEntetePolygone(const QIdx: integer; const PG: TPolygone): string;
 begin
   Result := Format('  ' + ENTITYPOLYGON + FMT_POLYGON, [QIdx, PG.IDGroupe, PG.IDStylePolygone]);
 
 end;
-
+//*)
+(*
 function GenererLigneEndScrap: string;
 begin
   Result := '  ' + ENDSCRAP;
 end;
-
+//*)
+(*
 function GenererLigneEndCourbe: string;
 begin
   Result := '  ' + ENDENTITYCURVE;
 end;
-
+//*)
+(*
 function GenererLigneEndPolyligne: string;
 begin
   Result := '  ' + ENDENTITYPOLYLINE;
 end;
-
+//*)
+(*
 function GenererLigneEndPolygone: string;
 begin
   Result := '  ' + ENDENTITYPOLYGON;
 end;
-
+//*)
 // échappement des guillemets et autres. Même nom que la fonction php.
 // OK pour les guillemets "
 function mysqli_real_escape_string(const S: string): string;
 begin
   Result := StringReplace(S, '"', '\"', [rfReplaceAll]);
+  // TODO: à compléter
 end;
 
 function XML_real_escape_string(const S: string): string;
+  function toto(const OldPattern, NewPattern: string): string;
+  begin
+    Result := StringReplace(S, OldPattern, NewPattern, [rfReplaceAll]);
+  end;
 begin
-  result := S;
+  result := toto('"', '&quot;');
+  result := toto('&', '&amp;');
+  result := toto('<', '&lt;');
+  result := toto('>', '&gt;');  
+  // TODO: à compléter
 end;
 
 
@@ -1724,7 +1715,7 @@ begin
 end;
 
 // formatage OOo des nombres
-function FormatterNombreOOo(const Value: extended; const NbDecs: integer; const IgnoreNulls: boolean): string;
+function FormatterNombreOOo(const Value: extended; const NbDecs: integer; const IgnoreNulls: boolean = false): string;
 var
   EWE: String;
 begin
@@ -1744,14 +1735,7 @@ begin
   {$ENDIF TIDBASEPOINT_AS_TEXT}
 end;
 
-function IsValidBaseStation(const BS: TBaseStation): boolean;
-begin
-  {$IFDEF TIDBASEPOINT_AS_TEXT}
-  Result := (BS.IDStation <> '');
-  {$ELSE}
-  Result := (BS.IDStation > 0);
-  {$ENDIF TIDBASEPOINT_AS_TEXT}
-end;
+
 // distance sur grand cercle entre deux points (Lon, Lat)
 function HaversineDist(const Lat1, Lon1, Lat2, Lon2: double):double;
 const diameter = 2 * 6372.8;
@@ -1788,7 +1772,5 @@ begin
     SetLength(tmp, 0);
   end;
 end;
-
-
 
 end.

@@ -13,7 +13,8 @@ object dlgProcessing: TdlgProcessing
   Font.Pitch = fpVariable
   Font.Quality = fqDraft
   Font.Style = [fsBold]
-  LCLVersion = '1.6.0.4'
+  OnCreate = FormCreate
+  LCLVersion = '2.0.0.4'
   object PairSplitter1: TPairSplitter
     Cursor = crVSplit
     Left = 0
@@ -21,56 +22,66 @@ object dlgProcessing: TdlgProcessing
     Top = 0
     Width = 672
     Align = alClient
-    Position = 384
+    Position = 308
     SplitterType = pstVertical
     object PairSplitterSide1: TPairSplitterSide
       Cursor = crArrow
       Left = 0
-      Height = 384
+      Height = 308
       Top = 0
       Width = 672
       ClientWidth = 672
-      ClientHeight = 384
+      ClientHeight = 308
       object lsbMessages: TListBox
         Left = 4
-        Height = 328
-        Top = 24
+        Height = 272
+        Top = 32
         Width = 663
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 0
         TabOrder = 0
       end
-      object Label1: TLabel
+      object lbTitreLsbJournal: TLabel
         Left = 4
         Height = 16
         Top = 4
-        Width = 43
-        Caption = 'Label1'
+        Width = 111
+        Caption = 'lbTitreLsbJournal'
         ParentColor = False
       end
-      object btnCopyMsg: TButton
-        Left = 488
+      object btnCopyJournal: TButton
+        Left = 444
         Height = 25
-        Top = 356
-        Width = 179
-        Anchors = [akRight, akBottom]
-        Caption = 'Copier journal'
-        OnClick = btnCopyMsgClick
+        Top = 4
+        Width = 115
+        Anchors = [akTop, akRight]
+        Caption = 'Copier'
+        OnClick = btnCopyJournalClick
         TabOrder = 1
+      end
+      object btnViderJournal: TButton
+        Left = 564
+        Height = 25
+        Top = 4
+        Width = 103
+        Anchors = [akTop, akRight]
+        Caption = 'Vider'
+        OnClick = btnViderJournalClick
+        TabOrder = 2
       end
     end
     object PairSplitterSide2: TPairSplitterSide
       Cursor = crArrow
       Left = 0
-      Height = 176
-      Top = 389
+      Height = 252
+      Top = 313
       Width = 672
       ClientWidth = 672
-      ClientHeight = 176
+      ClientHeight = 252
       inline memoMsgsErreur: TSynEdit
         Left = 4
-        Height = 168
-        Top = 4
+        Height = 216
+        Top = 32
         Width = 663
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Height = -13
@@ -562,6 +573,34 @@ object dlgProcessing: TdlgProcessing
             MouseActionsCollapsed = <>
           end
         end
+      end
+      object lbTitreConsoleErreur: TLabel
+        Left = 4
+        Height = 16
+        Top = 4
+        Width = 131
+        Caption = 'lbTitreConsoleErreur'
+        ParentColor = False
+      end
+      object btnCopyConsole: TButton
+        Left = 444
+        Height = 25
+        Top = 4
+        Width = 115
+        Anchors = [akTop, akRight]
+        Caption = 'Copier'
+        OnClick = btnCopyConsoleClick
+        TabOrder = 1
+      end
+      object btnViderConsole: TButton
+        Left = 564
+        Height = 25
+        Top = 4
+        Width = 103
+        Anchors = [akTop, akRight]
+        Caption = 'Vider'
+        OnClick = btnViderConsoleClick
+        TabOrder = 2
       end
     end
   end

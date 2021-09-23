@@ -1,238 +1,38 @@
-object dlgHierarchieObjets: TdlgHierarchieObjets
-  Left = 296
-  Height = 642
-  Top = 199
-  Width = 1195
-  Caption = 'dlgHierarchieObjets'
-  ClientHeight = 642
-  ClientWidth = 1195
-  Font.CharSet = ANSI_CHARSET
-  Font.Color = clBlack
-  Font.Height = -13
-  Font.Name = 'Arial'
-  Font.Pitch = fpVariable
-  Font.Quality = fqDraft
-  Font.Style = [fsBold]
-  OnCreate = FormCreate
-  LCLVersion = '1.6.0.4'
-  object pnlScrap: TPanel
-    Left = 660
-    Height = 224
-    Top = 8
-    Width = 530
-    Anchors = [akTop, akRight]
-    BevelInner = bvRaised
-    BevelOuter = bvLowered
-    ClientHeight = 224
-    ClientWidth = 530
+object dlgHierarchieDesObjets: TdlgHierarchieDesObjets
+  Left = 480
+  Height = 605
+  Top = 277
+  Width = 713
+  Caption = 'dlgHierarchieDesObjets'
+  ClientHeight = 605
+  ClientWidth = 713
+  LCLVersion = '2.0.0.4'
+  object Panel1: TPanel
+    Left = 0
+    Height = 552
+    Top = 4
+    Width = 710
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelInner = bvLowered
+    BevelWidth = 2
+    BorderWidth = 2
+    ClientHeight = 552
+    ClientWidth = 710
     TabOrder = 0
-    OnClick = pnlScrapClick
-    object Label1: TLabel
-      Left = 4
-      Height = 16
-      Top = 4
-      Width = 13
-      Caption = 'ID'
-      ParentColor = False
-    end
-    object lbIdxObject: TStaticText
-      Left = 52
-      Height = 21
-      Top = 4
-      Width = 75
-      BorderStyle = sbsSingle
-      Caption = 'lbIdxObject'
-      TabOrder = 0
-    end
-    object lbCouleurScrap: TStaticText
-      Left = 148
-      Height = 21
-      Top = 4
-      Width = 75
-      BorderStyle = sbsSingle
-      Color = clRed
-      ParentColor = False
-      TabOrder = 1
-      Transparent = False
-    end
-    object lbNbSommetsObject: TLabel
-      Left = 52
-      Height = 16
-      Top = 88
-      Width = 129
-      Caption = 'lbNbSommetsObject'
-      ParentColor = False
-    end
-    object lbGroupe: TStaticText
-      Left = 52
-      Height = 21
-      Top = 28
-      Width = 471
-      Anchors = [akTop, akLeft, akRight]
-      BorderStyle = sbsSingle
-      Caption = 'lbGroupe'
-      TabOrder = 2
-    end
-    object lbDescObject: TStaticText
-      Left = 52
-      Height = 21
-      Top = 52
-      Width = 471
-      Anchors = [akTop, akLeft, akRight]
-      BorderStyle = sbsSingle
-      TabOrder = 3
-    end
-    object editNomTexte: TEdit
-      Left = 52
-      Height = 24
-      Top = 108
-      Width = 471
-      Anchors = [akTop, akLeft, akRight]
-      TabOrder = 4
-    end
-    object lbBoundingBoxX1: TStaticText
-      Left = 52
-      Height = 17
-      Top = 168
-      Width = 133
-      Caption = '0.00'
-      TabOrder = 5
-    end
-    object lbBoundingBoxX2: TStaticText
-      Left = 248
-      Height = 17
-      Top = 168
-      Width = 133
-      Caption = '0.00'
-      TabOrder = 6
-    end
-    object lbBoundingBoxY2: TStaticText
-      Left = 248
-      Height = 17
-      Top = 192
-      Width = 133
-      Caption = '0.00'
-      TabOrder = 7
-    end
-    object lbBoundingBoxY1: TStaticText
-      Left = 52
-      Height = 17
-      Top = 192
-      Width = 133
-      Caption = '0.00'
-      TabOrder = 8
-    end
-    object lbIDBaseStation: TStaticText
-      Left = 52
-      Height = 21
-      Top = 136
-      Width = 180
-      BorderStyle = sbsSingle
-      Caption = 'lbIDBaseStation'
-      TabOrder = 9
-    end
-    object lbCoordsBaseStation: TLabel
-      Left = 249
-      Height = 16
-      Top = 136
-      Width = 132
-      Caption = 'lbCoordsBaseStation'
-      ParentColor = False
-    end
-  end
-  object PageControl1: TPageControl
-    Left = 4
-    Height = 632
-    Top = 8
-    Width = 648
-    ActivePage = TabSheet1
-    Anchors = [akTop, akLeft, akRight]
-    TabIndex = 0
-    TabOrder = 1
-    object TabSheet1: TTabSheet
-      Caption = 'Hierarchy'
-      ClientHeight = 603
-      ClientWidth = 640
-      object Panel1: TPanel
-        Left = 0
-        Height = 599
-        Top = 4
-        Width = 640
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        BevelInner = bvLowered
-        Caption = 'Panel1'
-        ClientHeight = 599
-        ClientWidth = 640
-        TabOrder = 0
-        inline CadreHierarchieObjets1: TCadreHierarchieObjets
-          Left = 2
-          Height = 595
-          Top = 2
-          Width = 636
-          ClientHeight = 595
-          ClientWidth = 636
-          OnClick = nil
-          DesignLeft = 684
-          DesignTop = 248
-          inherited TreeView1: TTreeView
-            Height = 538
-            Width = 629
-            DefaultItemHeight = 18
-          end
-          inherited StaticText1: TStaticText
-            Top = 574
-          end
-          inherited StaticText2: TStaticText
-            Top = 574
-          end
-          inherited StaticText3: TStaticText
-            Top = 574
-          end
-        end
+    inline CdrHierarchieObjets1: TCdrHierarchieObjets
+      Left = 6
+      Height = 540
+      Top = 6
+      Width = 698
+      ClientHeight = 540
+      ClientWidth = 698
+      inherited VirtualStringTree1: TVirtualStringTree
+        Height = 465
+        Width = 585
       end
-    end
-    object TabSheet2: TTabSheet
-      Caption = 'TabSheet2'
-      ClientHeight = 603
-      ClientWidth = 640
-      object Label2: TLabel
-        Left = 4
-        Height = 16
-        Top = 4
-        Width = 34
-        Caption = 'Série'
-        ParentColor = False
-      end
-      object editNumSerie: TCurrencyEdit
-        Left = 56
-        Height = 24
-        Top = 4
-        Width = 100
-        Alignment = taRightJustify
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        MaxValue = 0
-        MinValue = 0
-        TabOrder = 0
-        Value = 0
-      end
-      object Button1: TButton
-        Left = 168
-        Height = 25
-        Top = 4
-        Width = 75
-        Caption = 'Button1'
-        OnClick = Button1Click
-        TabOrder = 1
-      end
-      object lsbObjectsFound: TListBox
-        Left = 5
-        Height = 558
-        Top = 36
-        Width = 628
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        ItemHeight = 0
-        TabOrder = 2
+      inherited lbNodeInfo: TStaticText
+        Top = 507
+        Width = 585
       end
     end
   end

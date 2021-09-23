@@ -820,12 +820,9 @@ begin
     end;
     if (DoDrawPtsCtrls) then
     begin
-      //AfficherMessage(Format('Trace courbe ID = %d - Arcs = %d',[IdxCourbe, NB]));
-      //AfficherMessage(Format('BB = %%f %f %f %f ',[MyCourbe.BoundingBox.C1.X , MyCourbe.BoundingBox.C1.Y, MyCourbe.BoundingBox.C2.X, MyCourbe.BoundingBox.C2.Y]));
       Self.CanvasBGRA.Brush.Color := clYellow;
       Self.DrawRectangle(MyCourbe.BoundingBox.C1, MyCourbe.BoundingBox.C2);
-      Self.TraceTexte(MyCourbe.BoundingBox.C1.X, MyCourbe.BoundingBox.C2.Y,
-                     IntToStr(IdxCourbe));
+      Self.TraceTexte(MyCourbe.BoundingBox.C1.X, MyCourbe.BoundingBox.C2.Y, IntToStr(IdxCourbe));
     end;
   except
     AfficherMessageErreur(Format('** Echec en dessin de la courbe: %d ***', [IdxCourbe]));
@@ -834,8 +831,7 @@ end;
 //TGHCaveDrawDrawingContext
 function TGHCaveDrawDrawingContext.CalcFontHeightFromHauteurEnMetres(const Hauteur: double): integer;
 var
-  r: Extended;
-  c1, c2: TPoint3Df;
+  c1 : TPoint3Df;
   PP1: TPOINT;
   PP2: TPOINT;
 begin
@@ -883,7 +879,6 @@ begin
           Hypot(B.PT2.X - PC2.X, B.PT2.Y - PC2.Y);
     Nb := round(LC / B.Pas);
     if (Nb = 0) then Nb := 1;
-
     Bezier := CalcBezierCurve(B.PT1, PC1, PC2, B.PT2, Nb);
     // tracé de la courbe-support (sauf pour chenal de voute, )
     if (Barbule <> tbCHENAL_VOUTE) then
@@ -931,7 +926,6 @@ begin
   // Points de contrôle
   if (DoDrawPtsCtrls) then
   begin
-    // points de contrôle
     self.CanvasBGRA.Pen.Width := 0;
     self.CanvasBGRA.Pen.Color := clGray;
     self.TraceVers(B.PT1.X, B.PT1.Y, False);
@@ -953,10 +947,11 @@ var
   WU: Extended;
 begin
   WU := 7.00; //FTailleEchelle / 20.00;
+  self.CanvasBGRA.Brush.Color   := FParamsVue2D.BackGroundColor;
   self.CanvasBGRA.Brush.Opacity := 128;
-  self.CanvasBGRA.Font.Height  := CalcFontHeightFromHauteurEnMetres(WU);
-  self.CanvasBGRA.Font.Color   := clBlack;
-  self.CanvasBGRA.Font.Opacity := self.CanvasBGRA.Brush.Opacity;
+  self.CanvasBGRA.Font.Height   := CalcFontHeightFromHauteurEnMetres(WU);
+  self.CanvasBGRA.Font.Color    := clBlack;
+  self.CanvasBGRA.Font.Opacity  := self.CanvasBGRA.Brush.Opacity;
   // pour amener le point de base en bas gauche du texte
   PP := QGetCoordsPlan(QPosition.X, QPosition.Y + WU);
   self.CanvasBGRA.TextOut(PP.X, PP.Y, StrCopyright);
@@ -964,25 +959,23 @@ end;
 
 // dessin d'un polygone
 procedure TGHCaveDrawDrawingContext.DessinerPolygone(const MyPolygon: TPolygone;
-                                                 const IdxPolygone: Int64;
-                                                 const DoDrawSommets: boolean;
-                                                 const QIdxGroupe: integer);
+                                                     const IdxPolygone: Int64;
+                                                     const DoDrawSommets: boolean;
+                                                     const QIdxGroupe: integer);
 const
   C = 4;
 var
   i, NB: integer; // NB Points
-  V: TVertexPolygon;
-  PM: TPoint2Df;
-  PTSV: array of TPoint;
-  CP  : TPoint;  // point central du polygone
-  //GP  : TGroupeEntites;
-  errCode: integer;
+  V    : TVertexPolygon;
+  PM   : TPoint2Df;
+  PTSV : array of TPoint;
+  CP   : TPoint;  // point central du polygone
+  errCode       : integer;
   QStylePolygone: TStylePolygone;
   WU: Boolean;
 begin
   try
-    WU := (QIdxGroupe = -1) OR
-          (QIdxGroupe = MyPolygon.IDGroupe);
+    WU := (QIdxGroupe = -1) OR (QIdxGroupe = MyPolygon.IDGroupe);
     if (not WU) then Exit;
 
     NB := High(MyPolygon.Sommets);
@@ -1003,8 +996,7 @@ begin
       self.CanvasBGRA.Pen.Color := clBlue;
       for i:= 0 to High(PTSV) do
       begin
-        self.CanvasBGRA.Rectangle(PTSV[i].X - C, PTSV[i].Y - C,
-                                  PTSV[i].X + C, PTSV[i].Y + C);
+        self.CanvasBGRA.Rectangle(PTSV[i].X - C, PTSV[i].Y - C, PTSV[i].X + C, PTSV[i].Y + C);
       end;
       self.CanvasBGRA.Brush.Color := clAqua;
       self.CanvasBGRA.Pen.Color   := clGray;
@@ -1024,8 +1016,7 @@ begin
       // calcul du point central
       CP := MakeTPoint(0, 0);
       Nb := High(PTSV);
-      for i := 0 to NB do CP := MakeTPoint(PTSV[i].X + CP.X,
-                                           PTSV[i].Y + CP.Y);
+      for i := 0 to NB do CP := MakeTPoint(PTSV[i].X + CP.X, PTSV[i].Y + CP.Y);
       // pas de MakeTPoint2Df(): modif de la même variable;
       CP.X := CP.X div (Nb+1);
       CP.Y := CP.Y div (Nb+1);
@@ -1039,8 +1030,6 @@ begin
       self.CanvasBGRA.MoveTo(PTSV[NB].X, PTSV[NB].Y);
       self.CanvasBGRA.LineTo(PTSV[0].X, PTSV[0].Y);
     end;
-
-    //---------------------------------------------------------------------------
     SetLength(PTSV, 0);
   except
     AfficherMessageErreur(Format('** Echec en dessin du polygone: %d ***', [IdxPolygone]));
@@ -1057,7 +1046,6 @@ var
   V: TVertexPolygon;
   P0, P1, PM: TPoint2Df;
   PTSV: array of TPoint;
-  CP  : TPoint;  // point central du polygone
   errCode: integer;
   Ang: Extended;
   QStyleCourbe: TStyleCourbe;
@@ -1076,11 +1064,10 @@ begin
   try
     WU := (QIdxGroupe = -1) OR (QIdxGroupe = MyPolyLine.IDGroupe);
     if (not WU) then Exit;
-
     NB := High(MyPolyLine.Sommets);
     if (Nb < 1) then Exit;
     SetLength(PTSV, NB+1);
-    for i:=0 to NB do
+    for i := 0 to NB do
     begin
       V := MyPolyLine.getVertex(i);
       FDocumentDessin.GetCoordsGCS(V.IDStation, MyPolyLine.IDGroupe, V.Offset, PM, errCode);
@@ -1092,8 +1079,7 @@ begin
       DefineBrosseEtCrayon(bsSolid, clAqua, 255, psSolid, 0, clAqua, 255);
       for i:= 0 to High(PTSV) do
       begin
-        self.CanvasBGRA.Rectangle(PTSV[i].X - C, PTSV[i].Y - C,
-                                 PTSV[i].X + C, PTSV[i].Y + C);
+        self.CanvasBGRA.Rectangle(PTSV[i].X - C, PTSV[i].Y - C, PTSV[i].X + C, PTSV[i].Y + C);
       end;
       RestoreBrosseEtCrayon();
       DefineBrosseEtCrayon(bsSolid, clAqua, 255, psSolid, 0, clGray, 255);
@@ -1107,13 +1093,11 @@ begin
     if (MyPolyLine.Closed) then
     begin
       self.CanvasBGRA.Brush.Texture := nil;
-      //DefineCrayon(psSolid, 0, clAqua, 255);
       DefineBrosse(bsSolid, clSilver, 192);
         self.CanvasBGRA.Polygon(PTSV);
       RestoreBrosse();
     end;
     // barbules
-    //******************
     if (QStyleCourbe.Barbules <> tbNONE) then
     begin
       for i := 1 to NB do
@@ -1133,13 +1117,12 @@ begin
         // utilisation des identités trigo: cos(a+90°) = -sin(a) et sin(a+90) = cos(a)
         qdx := QStyleCourbe.LongBarbules * (-sa);
         qdy := QStyleCourbe.LongBarbules *  ca;
-
         // dessin des barbules
         Ldd := 0.00;
         self.CanvasBGRA.Pen.Width := QStyleCourbe.LineWidth;
         self.CanvasBGRA.Pen.Color := QStyleCourbe.LineColor;
         case QStyleCourbe.Barbules of
-          tbRESSAUT, tbMINI_RESSAUT:  // _|_|_|_|;
+          tbRESSAUT, tbMINI_RESSAUT:  // _|_|_|_|_;
             begin
               while (Ldd < R) do
               begin
@@ -1193,15 +1176,14 @@ begin
         DrawPolyligne(MyPolyligne, IdxPolyligne, False, MyPolyligne.IDGroupe, false);
       self.RestoreCrayon();
     end;
-
     DrawPolyligne(MyPolyligne, IdxPolyligne, False, MyPolyligne.IDGroupe, True);
   end;
 end;
 
 //------------------------------------------------------------------------------
 procedure TGHCaveDrawDrawingContext.DessinerTexte(const T: TTextObject;
-                                              const DoDrawTextExt: boolean;
-                                              const QIdxGroupe: Integer);
+                                                  const DoDrawTextExt: boolean;
+                                                  const QIdxGroupe: Integer);
 var
   BP: TBaseStation;
   GP: TGroupeEntites;
@@ -1220,20 +1202,15 @@ begin
   end;
   try
     DefineTextStyle(T.IDStyleTexte, QStyleTexte);
-    if (Not FDocumentDessin.GetBasePointByIndex(T.IDBaseSt, BP)) then Exit;
-
-    //if (Not (GP.Displayed)) then Exit;
-    WU := (QIdxGroupe = -1) OR
-          (QIdxGroupe = T.IDGroupe);
+    if (Not FDocumentDessin.GetBasePointByIndex(T.IDBaseStation, BP)) then Exit;
+    WU := (QIdxGroupe = -1) OR (QIdxGroupe = T.IDGroupe);
     if (not WU) then Exit;
     GP   := FDocumentDessin.GetGroupeByIDGroupe(T.IDGroupe);
     PM   := MakeTPoint2DfWithGroupeAndBaseStation(BP, GP, T.Offset.X,  T.Offset.Y);
     PP   := QGetCoordsPlan(PM);
-    //S :=LLANFAIR_PG(T.Text, T.MaxLength, BP.PosStation.Z, BP.Caption);
-    S     := InterpreterTexteAnnotation(T.Text, T.MaxLength, BP);
-    S := Utf8ToAnsi(S);
+    S    := InterpreterTexteAnnotation(T.Text, T.MaxLength, BP);
+    S    := Utf8ToAnsi(S); // TODO: A revoir
     ExTxt :=  self.CanvasBGRA.TextExtent(S);
-
     if (T.IDStyleTexte = notLIEU_DIT) then
     begin
       // dessin de la ligne d'attache
@@ -1250,7 +1227,6 @@ begin
                                 PosTXT.Y + 1 + self.CanvasBGRA.TextExtent(s).cY,
                                 True);
       self.CanvasBGRA.TextOut(PosTXT.X, PosTXT.Y, S);
-
     end
     else  // les autres types de textes
     begin
@@ -1276,8 +1252,8 @@ begin
         self.CanvasBGRA.Brush.Color := clAqua;     // modification d'un seul paramètre de brosse ou crayon
         self.CanvasBGRA.Pen.Color   := clBlue;     // modification d'un seul paramètre de brosse ou crayon
         self.CanvasBGRA.Rectangle(PosTXT.X, PosTXT.y,
-                                 PosTXT.X + self.CanvasBGRA.TextExtent(s).cX,
-                                 PosTXT.Y + self.CanvasBGRA.TextExtent(s).cY);
+                                  PosTXT.X + self.CanvasBGRA.TextExtent(s).cX,
+                                  PosTXT.Y + self.CanvasBGRA.TextExtent(s).cY);
         self.CanvasBGRA.Rectangle(PP.X, PP.Y, PP.X + 2, PP.Y + 2); // débogage: Tracé du point de base
         self.CanvasBGRA.TextOut(PosTXT.X, PosTXT.Y, S);
       end else begin
@@ -1335,7 +1311,7 @@ begin
         self.CanvasBGRA.Pen.Width   := 2;
         dy := E2.Y - E1.Y; dx := E2.X - E1.X;
         if (dx < 0) then begin dx := -dx; dy := -dy; PTD := E2; end
-                    else begin PTD := E1; end;
+                    else begin PTD := E1;                       end;
         Ang := ArcTan2(dy, dx);
         A1  := Trunc(Ang * INV_PI_180);
         QAngle := Trunc(90 - A1);
@@ -1383,14 +1359,10 @@ var
     GP         : TGroupeEntites;
     errCode: integer;
   begin
-    //if (not FDoDisplayCadresPhoto) then Exit;
     if (not (tedCADRES_PHOTO in FParamsVue2D.ElementsDrawn)) then Exit;
-    // crayon
-    DefineCrayon(psSolid, 0, clBlue, 255);
-    // calcul de l'offset de centrage
-    P0 := GetOffsetCentrage(EP.UnTag, EP.ScaleX, EP.ScaleY);
-    // point de base
-    FDocumentDessin.GetCoordsGCSPonctObj(EP, S0, errCode);
+    DefineCrayon(psSolid, 0, clBlue, 255);                         // crayon
+    P0 := GetOffsetCentrage(EP.UnTag, EP.ScaleX, EP.ScaleY);       // calcul de l'offset de centrage
+    FDocumentDessin.GetCoordsGCSPonctObj(EP, S0, errCode);         // point de base
     if (errCode = -1) then Exit;
     Q0 := QGetCoordsPlan(S0);
     DefineBrosse(bsSolid, clSilver, 255);
@@ -1409,9 +1381,7 @@ var
     GP := FDocumentDessin.GetGroupeByIDGroupe(EP.IDGroupe);
     DefineCrayon(psSolid, 0, clGray, 255);
     self.TraceVers(S0.X, S0.Y, False);
-    self.TraceVers(BS.PosStation.X + GP.Decalage.X,
-                        BS.PosStation.Y + GP.Decalage.Y,
-                        True);
+    self.TraceVers(BS.PosStation.X + GP.Decalage.X, BS.PosStation.Y + GP.Decalage.Y, True);
     // dessin de la zone photo
     self.CanvasBGRA.Rectangle(RR);
     if (EP.PhotoDisplayed) then
@@ -1433,21 +1403,17 @@ var
   const PHI_2 = 15.0;
   var
     P1, P2, P3: TPoint2Df;
-    A1        : double;
+    A1, AAA   : double;
     errCode: integer;
-    AAA: ValReal;
   begin
-
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P1, errCode);
     if (errCode = -1) then Exit;
-    A1 := EP.AngleRot + PHI_2;
+    A1  := EP.AngleRot + PHI_2;
     AAA := A1 * PI_180;
-    P2.setFrom(P1.X + EP.ScaleX * cos(AAA),
-               P1.Y + EP.ScaleX * sin(AAA));
+    P2.setFrom(P1.X + EP.ScaleX * cos(AAA), P1.Y + EP.ScaleX * sin(AAA));
     A1  := EP.AngleRot - PHI_2;
     AAA := A1 * PI_180;
-    P3.setFrom(P1.X + EP.ScaleX * cos(AAA),
-               P1.Y + EP.ScaleX * sin(AAA));
+    P3.setFrom(P1.X + EP.ScaleX * cos(AAA), P1.Y + EP.ScaleX * sin(AAA));
     self.DrawTriangle(P1, P2, P3, clBlack, clLime, 255, 255, 0);
   end;
   procedure DrawPointTopo();
@@ -1515,7 +1481,6 @@ var
   begin
 
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P1, errCode);
-    //AfficherMessageErreur(Format('DrawFistuleuses: %.2f, %.2f - %d', [P1.X, P1.Y, FDocumentDessin.GetNbSymboles()]));
     if (errCode = -1) then Exit;
     P1.X := P1.X - EP.ScaleX / 2;
     P1.Y := P1.Y - EP.ScaleY / 2;
@@ -1624,7 +1589,6 @@ var
     DefineCrayon(psSolid, 1, clBlack, 255);
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P0, errCode);
     if (errCode = -1) then Exit;
-
     X1   := P0.X; // réutilisé plus loin
     S1   := EP.ScaleX / 2;
     P1.setFrom(X1 - S1, P0.Y - EP.ScaleY / 2);
@@ -1647,7 +1611,6 @@ var
     DefineCrayon(psSolid, 1, clBlack, 255);
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P0, errCode);
     if (errCode = -1) then Exit;
-
     X1   := P0.X; // réutilisé plus loin
     S1   := EP.ScaleX / 2;
     P1.setFrom(X1 - S1, P0.Y - EP.ScaleY / 2);
@@ -1674,7 +1637,6 @@ var
     DefineCrayon(psSolid, 1, clBlack, 255);
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P0, errCode);
     if (errCode = -1) then Exit;
-
     X1   := P0.X; // réutilisé plus loin
     S1   := EP.ScaleX / 2;
     P1.setFrom(X1 - S1, P0.Y - EP.ScaleY / 2);
@@ -1700,7 +1662,6 @@ var
     DefineCrayon(psSolid, 2, clBlack, 255);
     FDocumentDessin.GetCoordsGCSPonctObj(EP, P0, errCode);
     if (errCode = -1) then Exit;
-
     P1.setFrom(P0.X + EP.ScaleX, P0.Y + EP.ScaleY);
     A := ArcTan2(EP.ScaleY, EP.ScaleX);
     Angle := Trunc(A * INV_PI_180);
@@ -1716,8 +1677,7 @@ var
     self.CanvasBGRA.Font.Height   := CalcFontHeightFromHauteurEnMetres(2.0);
     A := A - PI_2;
     R := 0.50;
-    P0.X := P0.X + R * cos(A);
-    P0.Y := P0.Y + R * sin(A);
+    P0.setFrom(P0.X + R * cos(A), P0.Y + R * sin(A));
     PP := self.QGetCoordsPlan(P0);
     self.TracerRotatedTexte(PP.X, PP.Y, Angle, Format(FMT_DIRECTION_FAILLE, [AngleTopo]));
     // reset angle de rotation des textes
@@ -1731,14 +1691,13 @@ var
   var
     PS   : TArrayPoints2Df;
     PTSV : array of TPoint;
-    PR, Q1, Q2: TPoint2Df;
+    PR   : TPoint2Df;
     i: Integer;
     errCode: integer;
   begin
     DefineCrayon(psSolid, 1, clBlack, 255);
     SetLength(PS, N);
     SetLength(PTSV, N);
-
     FDocumentDessin.GetCoordsGCSPonctObj(EP, PR, errCode);
     if (errCode = -1) then Exit;
     PS[0].setFrom(PR.X + EP.ScaleX, PR.Y + 0.50 * EP.ScaleY);

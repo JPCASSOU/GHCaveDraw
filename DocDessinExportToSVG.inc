@@ -44,10 +44,10 @@ var
   begin
     ST := GetStyleTexte(Ord(T.IDStyleTexte));                 // style
     GP := GetGroupeByIDGroupe(T.IDGroupe);        // groupe
-    if (GetBasePointByIndex(T.IDBaseSt, BP)) then
+    if (GetBasePointByIndex(T.IDBaseStation, BP)) then
     begin
-      if (IsValidBaseStation(BP)) then PM.setFrom(BP.PosStation.X + T.Offset.X, BP.PosStation.Y + T.Offset.Y)
-                                  else PM.setFrom(T.Offset.X, T.Offset.Y);
+      if (BP.IsStationTopo()) then PM.setFrom(BP.PosStation.X + T.Offset.X, BP.PosStation.Y + T.Offset.Y)
+                              else PM.setFrom(T.Offset.X, T.Offset.Y);
       S :=InterpreterTexteAnnotation(T.Text, T.MaxLength, BP);
       MySVGCanvas.DrawTexte(ST.NameSVGStyle, T.Alignment, PM.X, PM.Y, 0.00, S);
     end;

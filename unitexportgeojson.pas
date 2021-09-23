@@ -1,6 +1,8 @@
 unit UnitExportGeoJSON;
 // OK
-// Plateforme de tests à utiliser: https://geojson.io/#map=16/44.7013/-0.3812
+// Plateformes de tests à utiliser: https://geojson.io/#map=16/44.7013/-0.3812        OK
+//                                  https://geojsonlint.com/                          OK
+// 2021-08-31: Fixation de l'erreur GeoJSON "Polygons and MultiPolygons should follow the right-hand rule", imposé depuis 2016
 {$mode delphi}
 
 interface
@@ -8,7 +10,11 @@ interface
 uses
   Classes, SysUtils, Graphics;
 type TPolygoneOrPolyline = (tpPOLYGON, tpPOLYLINE);
-type TGeoJSONExport = class
+type
+
+{ TGeoJSONExport }
+
+ TGeoJSONExport = class
  strict private
    FP                 : TextFile;
    procedure BeginPolygonPolyline(const P: TPolygoneOrPolyline; const Name: string; const TagString: string);
@@ -37,30 +43,31 @@ type TGeoJSONExport = class
 
    FCurrentTagString    : string;
    FCurrentObjectName   : string;
- public
+   procedure DefineStylePoly(const LineWidth: double; const LineColor, FillColor: TColor; const LineOpacity, FillOpacity: byte);
    procedure SetLineProperties(const QLineColor: TColor; const QLineOpacity: byte = 255;  const QLineWidth: byte = 0);
    procedure SetFillProperties(const QFillColor: TColor; const QFillOpacity: byte = 255);
+   procedure WriteLine(const S: string);
+ public
    function  Initialiser(const QFilename: string;
                          const QDocTitle: string;
                          const QCentroideLon, QCentroideLat: Double;
                          const QDefaultColor: TColor;
                          const QOpacity: byte): boolean;
+   procedure Finaliser();
    procedure WriteHeader();
    procedure WriteFooter();
-   procedure Finaliser();
-   procedure WriteLine(const S: string);
+   // couches (ou dossiers)
    procedure AddLayer(const L: string; const Desc: string);
-   procedure setCurrentLayer(const Idx: integer);
-   procedure DefineStylePoly(const LineWidth: double; const LineColor, FillColor: TColor; const LineOpacity, FillOpacity: byte);
-
+   procedure SetCurrentLayer(const Idx: integer);
+   function  GetNbLayers(): integer;
+   // Entités
    procedure AddPoint(const Lat, Lon, Alt: double; const Name: string; const Description: string; const IsLast: boolean);
    procedure BeginPolygon(const Name: string; const TagString: string);
-   procedure AddVertex(const Lat, Lon, Alt: double; const IsLast: boolean);
    procedure EndPolygon(const IsLast: boolean);
    procedure BeginPolyLine(const Name: string; const TagString: string);
    procedure EndPolyLine(const IsLast: boolean);
+   procedure AddVertex(const Lat, Lon, Alt: double; const IsLast: boolean);
    procedure DrawSegment(const Lat1, Lon1, Lat2, Lon2: double);
-
 end;
 
 implementation
@@ -184,12 +191,18 @@ end;
 
 procedure TGeoJSONExport.AddLayer(const L: string; const Desc: string);
 begin
-
+  ;;
 end;
 
-procedure TGeoJSONExport.setCurrentLayer(const Idx: integer);
+procedure TGeoJSONExport.SetCurrentLayer(const Idx: integer);
 begin
+  ;;
+end;
 
+function TGeoJSONExport.GetNbLayers(): integer;
+begin
+  ;;
+  result := 0;
 end;
 
 procedure TGeoJSONExport.DefineStylePoly(const LineWidth: double; const LineColor, FillColor: TColor; const LineOpacity, FillOpacity: byte);
@@ -204,7 +217,6 @@ begin
   WriteLine(Format('      "%s": "%s",', ['type', 'Point']));
   WriteLine(Format('      "%s":[%s, %s]', ['coordinates']));
   WriteLine(Format('   }%s', [BoolToStr(IsLast, '' ,',')]));
-
 end;
 
 

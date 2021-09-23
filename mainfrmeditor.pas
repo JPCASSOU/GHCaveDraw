@@ -170,6 +170,8 @@ type
     acGenererScrapFromCourbes: TAction;
     acGenererScrapFromPolylines: TAction;
     acDummy: TAction;
+    acDisplayConsole: TAction;
+    acSandbox: TAction;
     acUndoDeleteImage: TAction;
     acUndoDeleteTexte: TAction;
     Action2: TAction;
@@ -328,6 +330,7 @@ type
     MenuItem33: TMenuItem;
     MenuItem44: TMenuItem;
     MenuItem45: TMenuItem;
+    MenuItem47: TMenuItem;
     MenuItem68: TMenuItem;
     MenuItem73: TMenuItem;
     MenuItem76: TMenuItem;
@@ -340,6 +343,8 @@ type
     MenuItem83: TMenuItem;
     MenuItem84: TMenuItem;
     MenuItem85: TMenuItem;
+    MenuItem86: TMenuItem;
+    MenuItem87: TMenuItem;
     pnlSuperGroupe: TPanel;
     Polylignes: TButton;
     chkCenterlinesInExternalFile: TCheckBox;
@@ -483,6 +488,7 @@ type
     procedure acDeleteLastSimpleLineExecute(Sender: TObject);
     procedure acDeleteLastSymboleExecute(Sender: TObject);
     procedure acDeleteLastTexteExecute(Sender: TObject);
+    procedure acDisplayConsoleExecute(Sender: TObject);
     procedure acDisplayPOIExecute(Sender: TObject);
     procedure acDummyExecute(Sender: TObject);
     procedure acEditCourbeExecute(Sender: TObject);
@@ -560,6 +566,7 @@ type
     procedure acReattribBasePointsExecute(Sender: TObject);
     procedure acRechercherExecute(Sender: TObject);
     procedure acRefreshExecute(Sender: TObject);
+    procedure acSandboxExecute(Sender: TObject);
     procedure acSaveAnCopyExecute(Sender: TObject);
     procedure acSaveAsExecute(Sender: TObject);
     procedure acExportImgVueCouranteExecute(Sender: TObject);
@@ -815,6 +822,8 @@ begin
   acEditerSection.Visible        := R90;
   //*)
 end;
+
+
 
 
 
@@ -1103,7 +1112,7 @@ begin
     BP := MakeTBaseStation(100010, '1.00B', 8, TColor(26367),
     {$ENDIF TIDBASEPOINT_AS_TEXT}
     P1, P2, P3, P4, True);
-    LS.Add(GenererLigneBasepoint(0, BP));
+    LS.Add(BP.toLineGCP());
     P1.setFrom(392349.81, 3286106.12, 0.00);
     P2.setFrom(392349.65, 3286106.01, 0.00);
     P3.setFrom(392350.79, 3286104.37, 0.00);
@@ -1114,7 +1123,7 @@ begin
     BP := MakeTBaseStation(100020, '1.00C', 8, TColor(26367),
     {$ENDIF TIDBASEPOINT_AS_TEXT}
     P1, P2, P3, P4, True);
-    LS.Add(GenererLigneBasepoint(0, BP));
+    LS.Add(BP.toLineGCP());
     LS.Add(ENDBASEPOINTMARKER);
     LS.SaveToFile(QFileName);
   finally
@@ -1241,6 +1250,7 @@ begin
     S777(acExporterCenterLines   , rsMNU_EXPORT_GCP);
     s777(acCreerUnAtlasHTML      , rsMNU_GENERER_ATLAS);
     S777(acExportVersSIG         , rsMNU_EXPORT_VERS_SIG);
+
     S777(acQuit                  , rsMNU_QUIT);
 
   //mnuDESSIN.Caption   := rsMNU_DESSIN;
@@ -1294,6 +1304,7 @@ begin
     S777(acPanUp          , rsMNU_PAN_UP);
     S777(acPanDown        , rsMNU_PAN_DOWN);
     S777(acParamsVue2D    , rsMNU_PARAM_VUE_2D);
+    S777(acDisplayConsole , rsMNU_DISP_CONSOLE);
 
   mnuAide.Caption       := GetResourceString(rsMNU_AIDE);
     S777(acApropos        , rsMNU_APROPOS);
@@ -1458,6 +1469,11 @@ end;
 procedure TMainWindow.acRefreshExecute(Sender: TObject);
 begin
   CadreDessinBGRA1.RefreshVue();
+end;
+
+procedure TMainWindow.acSandboxExecute(Sender: TObject);
+begin
+  DisplaySandbox(CadreDessinBGRA1.MyDocumentDessin);
 end;
 
 procedure TMainWindow.QSave(const DoUpdateCurrentFolder: boolean);
@@ -1909,7 +1925,7 @@ begin
   FD := CadreDessinBGRA1.GetDocDessin;
   if (FD.GetNbImages() = 0) then Exit;
   WU := lsbImages.ItemIndex;
-  DoDelete := QuestionOuiNon(Format(GetResourceString(rsDO_DELETE_IMAGE), [WU]));
+  DoDelete := QuestionOuiNon(Format(rsDO_DELETE_IMAGE, [WU]));
   if ((WU >= 0) and (DoDelete)) then
   begin
     FD.DeleteImage(WU);
@@ -2379,7 +2395,7 @@ var
   WU: TIDGroupeEntites;
   FD: TDocumentDessin;
 begin
-  if (not QuestionOuiNon(GetResourceString(rsADVICE_FOR_SCRAPS_FROM_COURBES))) then Exit;
+  if (not QuestionOuiNon(rsADVICE_FOR_SCRAPS_FROM_COURBES)) then Exit;
   FD  := CadreDessinBGRA1.GetDocDessin;
   WU  := CadreDessinBGRA1.GetCurrentGroupeIdx;
 
@@ -2836,6 +2852,11 @@ begin
   CadreDessinBGRA1.DeleteLastObject(mseTEXTES);
 end;
 
+procedure TMainWindow.acDisplayConsoleExecute(Sender: TObject);
+begin
+  dlgProcessing.ShowOnTop;
+end;
+
 procedure TMainWindow.acDisplayPOIExecute(Sender: TObject);
 var
   FD: TDocumentDessin;
@@ -2885,7 +2906,7 @@ var
   EWE: TParamsVue2D;
 begin
   EWE := CadreDessinBGRA1.GetParametresVue2D();
-  if (QuestionOuiNon(GetResourceString('Fermer le document courant'))) then InitialiserGHC(EWE);
+  if (QuestionOuiNon('Fermer le document courant')) then InitialiserGHC(EWE);
 end;
 
 procedure TMainWindow.acAproposExecute(Sender: TObject);
@@ -3125,14 +3146,14 @@ begin
           // un premier redessin
           CadreDessinBGRA1.RefreshVue();
           // et on supprime les courbes support après demande de confirmation
-          if (DoRemoveCurves and QuestionOuiNon(GetResourceString(rsMSG_MERGE_CONFIRM_REMOVE_BUILD_COURBES))) then
+          if (DoRemoveCurves and QuestionOuiNon(rsMSG_MERGE_CONFIRM_REMOVE_BUILD_COURBES)) then
           begin
             //for i := 1 to 4 do FD.RemoveLastObject(mseCOURBES);
             for i := 1 to 2 do FD.RemoveLastObject(mseCOURBES);
             // un nouveau redess pour acquitter la suppression des courbes
             CadreDessinBGRA1.RefreshVue();
           end;
-          if (not QuestionOuiNon(GetResourceString(rsMSG_MERGE_CONFIRM_CORRECT_RESULT))) then
+          if (not QuestionOuiNon(rsMSG_MERGE_CONFIRM_CORRECT_RESULT)) then
           begin
             FD.RemoveLastObject(msePOLYGONES);
           end;
@@ -3142,7 +3163,7 @@ begin
       errMERGE_POLYGONES_GROUPES_MISMATCH: NotifyError(GetResourceString(rsMSG_MERGE_POLY_GROUPES_MISMATCH));
       errMERGE_POLYGONES_NO_INTERSECT    : NotifyError(GetResourceString(rsMSG_MERGE_POLY_OBJ_DISJOINTS));
       else
-        NotifyError(GetResourceString(rsMSG_MERGE_POLY_ANY_ERROR));
+        NotifyError(rsMSG_MERGE_POLY_ANY_ERROR);
     end;
   end;
 end;
@@ -3189,7 +3210,7 @@ begin
           // un premier redessin pour contrôle
           CadreDessinBGRA1.RefreshVue();
           // si le résultat est incorrect, on supprime l'objet créé
-          if (not QuestionOuiNon(GetResourceString(rsMSG_MERGE_CONFIRM_CORRECT_RESULT))) then
+          if (not QuestionOuiNon(rsMSG_MERGE_CONFIRM_CORRECT_RESULT)) then
           begin
             FD.RemoveLastObject(msePOLYGONES);
             // et on redessine
@@ -3527,7 +3548,7 @@ begin
   // vérifier si les polygones sont de même nature
   if (S1.IDStylePolygone <> S2.IDStylePolygone) then
   begin
-    if (not QuestionOuiNon(GetResourceString(rsMSG_MERGE_POLY_TYPES_MISMATCH_QUESTION))) then Exit;
+    if (not QuestionOuiNon(rsMSG_MERGE_POLY_TYPES_MISMATCH_QUESTION)) then Exit;
   end;
   case MergePolygones(FD, S1, S2, BoolOpsMode, SR) of
     errMERGE_POLYGONES_OK:
@@ -3722,14 +3743,12 @@ var
   Maintenant: TDateTime;
 begin
   if (Not CadreDessinBGRA1.DoDraw) then Exit;
-
   BackUpDir := GetGHCaveDrawDirectory() + 'Sauvegardes_rapides' + PathDelim;
   ForceDirectories(BackUpDir);
   Maintenant := Now();
   DecodeDate(Maintenant, AAAA, MM, JJ);
   DecodeTime(Maintenant, HH, MN, SS, MS);
-
-  QFileName := BackUpDir +
+  QFileName := BackUpDir + // ne pas utiliser DateTimeToDateSql() en raison des deux-points dans le format date SQL;
                Format('QSave_%.4d%.2d%.2d_%.2dh%.2dm%.2ds%.3dms.gcd',
                       [AAAA, MM, JJ, HH, MN, SS, MS]);
   CadreDessinBGRA1.SetMsgInLbMessage(errBUSY, Format('Sauvegarde de %s', [ExtractFileName(QFileName)]));

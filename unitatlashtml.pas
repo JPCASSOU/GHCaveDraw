@@ -599,7 +599,7 @@ begin
       //AfficherMessage('-- centerlines');
       if (tedCENTERLINES in FParamsVue2D.ElementsDrawn) then
       begin
-        for ii:= 0 to FDocumentDessin.GetNbBaseStations - 1 do TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), 12);
+        for ii:= 0 to FDocumentDessin.GetNbBaseStations - 1 do TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), HAUTEUR_LBL_BASESTATION_IN_PIXELS);
       end;
       // et enfin l'échelle
       if (tedECHELLE_NORD in FParamsVue2D.ElementsDrawn) then TmpBuffer.DrawEchelleNord(ImgWidth, ImgHeight);

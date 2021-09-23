@@ -19,6 +19,7 @@ uses
   , GeneralFunctions
   , UnitDocDessin
   ;
+type TNextMouvementDir = (tmdINDETERMINE, tmdirGAUCHE, tmdirDEVANT, tmdirDROITE);
 type
 
 { TSquarredSegment }
@@ -26,12 +27,19 @@ type
  TSquarredSegment = record
   Extr0   : TPoint3Df;
   Extr1   : TPoint3Df;
+  IdxBaseStation: TIDBaseStation;
   Longueur: double;
   Ratio   : double;  // longueur du segment / longueur polyligne
-  Cap     : double;
+  EastCap : double;
+  NextMouvementDir: TNextMouvementDir;
+  procedure SetExtr0(const QX, QY: double);
+  procedure SetExtr1(const QX, QY: double);
+
   procedure CalcCap();
   procedure CalcLongueur();
   procedure CalcRatioOfLongueur(const L: double);
+  function  DescribeNextMouvement(): string;
+  function  DebugString(const Idx: integer = 0): string;
 
 end;
 // structure provisoire de stockage des courbes et polygones
@@ -226,22 +234,60 @@ end;
 
 { TSquarredSegment }
 
+procedure TSquarredSegment.SetExtr0(const QX, QY: double);
+begin
+  self.Extr0.setFrom(QX, QY, 0.00);
+end;
+
+procedure TSquarredSegment.SetExtr1(const QX, QY: double);
+begin
+  self.Extr1.setFrom(QX, QY, 0.00);
+end;
+
 procedure TSquarredSegment.CalcCap();
 begin
-  self.Cap := Arctan2(self.Extr1.Y - self.Extr0.Y,
-                      self.Extr1.X - self.Extr0.X);
+  self.EastCap := radtodeg(Arctan2(self.Extr1.Y - self.Extr0.Y,
+                                   self.Extr1.X - self.Extr0.X));
+  if (self.EastCap <   0.00) then self.EastCap := self.EastCap + 360.00;
+  if (self.EastCap > 360.00) then self.EastCap := self.EastCap - 360.00;
 end;
 
 procedure TSquarredSegment.CalcLongueur();
 begin
-  self.Longueur := Hypot3D(self.Extr1.X - self.Extr0.X,
-                           self.Extr1.Y - self.Extr0.Y,
-                           self.Extr1.Z - self.Extr0.Z);
+  self.Longueur := sqrt(sqr(self.Extr1.X - self.Extr0.X) +
+                        sqr(self.Extr1.Y - self.Extr0.Y));
 end;
 
 procedure TSquarredSegment.CalcRatioOfLongueur(const L: double);
 begin
   self.Ratio := self.Longueur / L;
+end;
+
+function TSquarredSegment.DescribeNextMouvement(): string;
+begin
+  case self.NextMouvementDir of
+    tmdINDETERMINE: Result := 'On baise';
+    tmdirGAUCHE   : Result := 'On tourne à gauche';
+    tmdirDEVANT   : Result := 'On va tout droit';
+    tmdirDROITE   : Result := 'On tourne à droite';
+  end;
+end;
+
+function TSquarredSegment.DebugString(const Idx: integer = 0): string;
+begin
+  result := Format('Segment %d: BP: %d' + #9 +         // Idx, self.IdxBaseStation,
+                   '%s' + #9 + '%s' + #9 +
+                   'EastCap: %s' + #9 +                         // radtodeg(self.Cap)
+                   '' + #9 +
+                   '%s' + #9 + '%s' + #9 + '%s' + #9,
+                   [Idx, self.IdxBaseStation,
+                   FormatterNombreOOo(self.Longueur  , 3),
+                   FormatterNombreOOo(self.Ratio     , 3),
+                   FormatterNombreOOo(self.EastCap   , 3),
+                   FormatterNombreOOo(self.Extr1.X   , 3),
+                   FormatterNombreOOo(self.Extr1.Y   , 3),
+                   FormatterNombreOOo(self.Extr1.Z   , 3)
+                   ]);
 end;
 
 { TCrossSectionPolyProvisoire }
@@ -670,7 +716,7 @@ begin
   FIDStylePolygoneEditing := nopDEFAULT;
   if (not DoAppend) then // DoAppend = Ajout à la courbe existante
   begin                  // sinon, on crée un nouvel objet
-    self.ClearVertex;
+    self.ClearVertex();
     FMyPolyligne := PV;
   end;
   n := PV.getNbVertex(); //High(PV.Sommets);
@@ -1255,25 +1301,48 @@ begin
 end;
 
 function TCourbePolygoneProvisoire.SquarrerPoly(): boolean;
+const
+  R90 = 90.0; // pi / 2;
+  DemiTol = 0.30; // +/- 10°
 var
   Nb, i: Integer;
   ArrSqared: array of TSquarredSegment;
   V0, V1: TVertexCourbe;
   P0, P1: TBaseStation;
+  v01, v12, w: TPoint3Df;
+  MyPointAtteint, MyPointAAtteindre: TPoint3Df;
   Q0, Q1: Boolean;
   LongueurTotale: double;
+  SinAlpha,  QCapInitial, qDeltaX0n, qDeltaY0n, AngleAlpha: double;
+  EWE: String;
+  PT0, PT1: TSquarredSegment;
+  qdx, qdy, QCumulX, QCumulY: Extended;
+  MyAzimut, AAA: float;
+  qca, qsa, PPPX0, PPPY0, PPPX1, PPPY1: ValReal;
+  MyPointOrigine: TPoint3Df;
+  procedure ResetPos0();
+  var
+    qV1: TVertexCourbe;
+    qP1: TBaseStation;
+    QQ1: Boolean;
+  begin
+    qV1 := GetVertex(0);
+    QQ1 := FDocDessin.GetBasePointByIndex(qV1.IDStation, qP1);
+    qdx := qP1.PosStation.X + qV1.Offset.X;
+    qdy := qP1.PosStation.Y + qV1.Offset.Y;
+    ArrSqared[0].SetExtr0(qdx, qdy);
+    ArrSqared[0].SetExtr1(qdx, qdy);
+    MyPointOrigine.setFrom(qdx, qdy, 0.00);
+  end;
 begin
   result := false;
   Nb := GetNbVertex();
-  if (Nb < 3) then exit;
+  if (Nb < 3) then exit; // moins de 3 sommets => rien à faire
   ClearConsoleErreur();
-  AfficherMessage(Format('%s.SquarrerPoly(): %d', [ClassName, Nb]));
-  AfficherMessageErreur(Format('%s.SquarrerPoly(): %d', [ClassName, Nb]));
+  EWE := Format('%s - %s.SquarrerPoly(): %d ', [DateTimeToStr(Now), ClassName, Nb]);
+  AfficherMessage(EWE);
+  AfficherMessageErreur(EWE);
   SetLength(ArrSqared, Nb);
-  V0 := GetVertex(0);
-  V1 := GetVertex(1);
-  Q0 := FDocDessin.GetBasePointByIndex(V0.IDStation, P0);
-  Q1 := FDocDessin.GetBasePointByIndex(V0.IDStation, P1);
   // Etape 0: Point de départ PD et point d'Arrivée PA
   // Etape 1: On calcule la longueur de chaque segment
   // Etape 2: Calcul du rapport longueur segment / longueur polyligne
@@ -1288,97 +1357,168 @@ begin
   // Etape 4: On obtient une sorte d'escalier de P0 jusqu'à P'A
   // Etape 5: Homothétie et rotation pour amener P'A sur PA
   // Le segment 0 n'est pas utilisé
-
-  ArrSqared[0].Cap := 0;
-  ArrSqared[0].Extr0.setFrom(P0.PosStation.X + V0.Offset.X,
-                             P0.PosStation.Y + V0.Offset.Y,
-                             P0.PosStation.Z + V0.Offset.Z);
-  ArrSqared[0].Extr1.setFrom(P1.PosStation.X + V0.Offset.X,
-                             P1.PosStation.Y + V0.Offset.Y,
-                             P1.PosStation.Z + V0.Offset.Z);
-  ArrSqared[0].CalcCap();
-
+  V0 := self.GetVertex(0);
+  ArrSqared[0].NextMouvementDir := tmdirDEVANT;
+  ArrSqared[0].IdxBaseStation   := V0.IDStation;
+  ResetPos0();
+  ArrSqared[0].EastCap   := 0.00;
   ArrSqared[0].Longueur  := 0.001;
   ArrSqared[0].Ratio     := 0.00000001;
-
-
-  LongueurTotale := 0.00;
-
+  LongueurTotale         := 0.00;
+  //Rappel: La liste des vertex est en lecture seule dans cette fonction
   for i := 1 to Nb - 1 do
   begin
-    V0 := GetVertex(i - 1);
-    V1 := GetVertex(i);
-    Q0 := FDocDessin.GetBasePointByIndex(V0.IDStation, P0);     // basepoint fin courbe courante
-    Q1 := FDocDessin.GetBasePointByIndex(V1.IDStation, P1);     // basepoint fin courbe courante
-    ArrSqared[i].Extr0 := ArrSqared[i-1].Extr1;
-    ArrSqared[i].Extr1.setFrom(P1.PosStation.X + V1.Offset.X,
-                               P1.PosStation.Y + V1.Offset.Y,
-                               P1.PosStation.Z + V1.Offset.Z);
+    V0 := self.GetVertex(i - 1);
+    V1 := self.GetVertex(i);
+    Q0 := FDocDessin.GetBasePointByIndex(V0.IDStation, P0);
+    Q1 := FDocDessin.GetBasePointByIndex(V1.IDStation, P1);
+    ArrSqared[i].NextMouvementDir := tmdINDETERMINE;
+
+    ArrSqared[i].SetExtr0(P0.PosStation.X + V0.Offset.X,
+                          P0.PosStation.Y + V0.Offset.Y);
+    ArrSqared[i].SetExtr1(P1.PosStation.X + V1.Offset.X,
+                          P1.PosStation.Y + V1.Offset.Y);
+    ArrSqared[i].IdxBaseStation := V1.IDStation;
+
 
     ArrSqared[i].CalcLongueur();
     ArrSqared[i].CalcCap();
     LongueurTotale += ArrSqared[i].Longueur;
   end;
+  // Point à atteindre
+  MyPointAAtteindre.setFrom(ArrSqared[Nb - 1].Extr1.X - ArrSqared[0].Extr1.X,
+                            ArrSqared[Nb - 1].Extr1.Y - ArrSqared[0].Extr1.Y,
+                            0.00);
+  ArrSqared[0].EastCap := ArrSqared[1].EastCap;  // le EastCap du segment 0 = celui du segment 1
+  AfficherMessageErreur(ArrSqared[0].DebugString(0));
   AfficherMessageErreur(Format('Calculs sur les %d segments', [Nb]));
-  // autres calculs
+  // calcul des ratios longueur segment / longueur polyligne
+  for i := 1 to Nb - 1 do ArrSqared[i].CalcRatioOfLongueur(LongueurTotale);
+  // détermination de la direction vers le point suivant: à gauche, tout droit, à droite
+  AfficherMessageErreur('Détermination de la direction au prochain point');
+
+  ResetPos0();  // reset du point zéro
   for i := 1 to Nb - 1 do
   begin
-    ArrSqared[i].CalcRatioOfLongueur(LongueurTotale);
-  end;
+    PT0 := ArrSqared[i-1];
+    PT1 := ArrSqared[i];
+    qdx := PT0.Extr1.X - PT0.Extr0.X;
+    qdy := PT0.Extr1.Y - PT0.Extr0.Y;
+    v01.setFrom(qdx, qdy, 0.00);
+    qdx := PT1.Extr1.X - PT1.Extr0.X;
+    qdy := PT1.Extr1.Y - PT1.Extr0.Y;
+    v12.setFrom(qdx, qdy, 0.00);
+    qdx := PT1.Extr1.X - PT0.Extr1.X;
+    qdy := PT1.Extr1.Y - PT0.Extr1.Y;
+    ArrSqared[i].Longueur := hypot(qdx, qdy);
+    if (v01.Norme() < 0.001) then v01 := v12;
+    // Détermination de la direction via le produit vectoriel et la formule |v01 x v02 | = |v01|.|v02|.sin(Alpha)
+    W := ProduitVectoriel(v01, v12, false);
+    SinAlpha := W.Norme() / (V01.Norme() * V12.Norme());  // SinAlpha est TOUJOURS positif
+    SinAlpha := SinAlpha * Sign(W.Z);
+    if      (SinAlpha >  DemiTol) then ArrSqared[i].NextMouvementDir := tmdirGAUCHE  //'On tourne à gauche'
+    else if (SinAlpha < -DemiTol) then ArrSqared[i].NextMouvementDir := tmdirDROITE  // 'On tourne à droite'
+    else                               ArrSqared[i].NextMouvementDir := tmdirDEVANT; //'On va tout droit';
+    // calcul des caps
+    case ArrSqared[i].NextMouvementDir of
+      tmdirGAUCHE: ArrSqared[i].EastCap := ArrSqared[i-1].EastCap + R90;
+      tmdirDEVANT: ArrSqared[i].EastCap := ArrSqared[i-1].EastCap;
+      tmdirDROITE: ArrSqared[i].EastCap := ArrSqared[i-1].EastCap - R90;
+    else
+      qdx := 0.00; qdy := 0.00;
+    end;
 
-  // controles
-  AfficherMessageErreur(Format('Liste des %d segments', [Nb]));
+  end;
+  // RAZ des caps
+  QCapInitial := ArrSqared[1].EastCap;
   for i := 0 to Nb - 1 do
   begin
-    AfficherMessageErreur(Format('Segment %d: %s %s, L = %.3f (%.3f%% de %.3f) - Cap: %.3f deg', [i,
-                                                       ArrSqared[i].Extr0.DebugString('Extr0'),
-                                                       ArrSqared[i].Extr1.DebugString('Extr1'),
-                                                       ArrSqared[i].Longueur,
-                                                       ArrSqared[i].Ratio,
-                                                       LongueurTotale,
-                                                       radtodeg(ArrSqared[i].Cap)]));
-
-    //VV1 :=
-    //W := ProduitVectoriel();
-
-
-
-
+    ArrSqared[i].EastCap := ArrSqared[i].EastCap - QCapInitial;
   end;
+  // calcul des coordonnées nouvelles
+  ResetPos0();
+  ArrSqared[0].SetExtr1(0.00, 0.00);
 
+  QCumulX := 0.00;
+  QCumulY := 0.00;
+  for i := 0 to Nb - 1 do
+  begin
+    AAA := degtorad(ArrSqared[i].EastCap);
+    QCumulX += ArrSqared[i].Longueur * cos(AAA);
+    QCumulY += ArrSqared[i].Longueur * sin(AAA);
+    ArrSqared[i].Extr1.setFrom(QCumulX, QCumulY, 0.00);
+  end;
+  // et obtention des coordonnées du point nouvellement atteint
+  MyPointAtteint.setFrom(QCumulX, QCumulY, 0.00);
+
+  (*
+
+  // compensations X et Y si les extrémitées sont confondues
+
+  qDeltaX0n := ArrSqared[Nb - 1].Extr1.X - ArrSqared[0].Extr1.X;
+  qDeltaY0n := ArrSqared[Nb - 1].Extr1.Y - ArrSqared[0].Extr1.Y;
+  rx := qDeltaX0n / (BB.C2.X - BB.C1.X);
+  ry := qDeltaY0n / (BB.C2.Y - BB.C1.Y);
+  for i := 0 to Nb - 1 do
+  begin
+    qdx := ArrSqared[i].Extr1.X - BB.C1.X;
+    qdy := ArrSqared[i].Extr1.Y - BB.C1.Y;
+    ArrSqared[i].Extr1.X := qdx + (1 - rx);
+    ArrSqared[i].Extr1.Y := qdy * (1 - ry);
+  end;
+  //*)
+
+  // rotation et TODO: Homothétie à implémenter
+  AfficherMessageErreur(Format('Point atteint passe 1        : %.3f, %.3f (norme: %.3f)', [MyPointAAtteindre.X, MyPointAAtteindre.Y, MyPointAAtteindre.Norme()]));
+  AfficherMessageErreur(Format('Point atteint après quarrage : %.3f, %.3f (norme: %.3f)', [MyPointAtteint.X   , MyPointAtteint.Y   , MyPointAtteint.Norme()]));
+
+  // calcul de l'angle
+  W := ProduitVectoriel(MyPointAtteint, MyPointAAtteindre, false);
+  // |v01 x v02 | = |v01|.|v02|.sin(Alpha)
+  SinAlpha := W.Norme() / (MyPointAtteint.Norme() * MyPointAAtteindre.Norme());
+  AngleAlpha := arcsin(SinAlpha) * Sign(W.Z);
+  // Angle initial
+
+
+  //AngleAlpha  := arctan2(ArrSqared[0].Extr1.Y - ArrSqared[0].Extr0.Y,
+  //                       ArrSqared[0].Extr1.X - ArrSqared[0].Extr0.X);
+
+  AfficherMessageErreur(Format('Angle de rotation à appliquer: %.3f', [radtodeg(AngleAlpha)]));
+  (* | X |   | cos(A)   -sin(A)  0 |   | x |
+     | Y | = | sin(A)    cos(A)  0 | x | y |
+     | 1 |   |     0        0    1 |   | 1 |
+  //*)
+  qca := cos(AngleAlpha);  qsa := sin(AngleAlpha);
+  for i := 0 to Nb - 1 do
+  begin
+    PPPX0 := MyPointOrigine.X + qca * ArrSqared[i].Extr0.X - qsa * ArrSqared[i].Extr0.Y;
+    PPPY0 := MyPointOrigine.Y + qsa * ArrSqared[i].Extr0.X + qca * ArrSqared[i].Extr0.Y;
+    PPPX1 := MyPointOrigine.X + qca * ArrSqared[i].Extr1.X - qsa * ArrSqared[i].Extr1.Y;
+    PPPY1 := MyPointOrigine.Y + qsa * ArrSqared[i].Extr1.X + qca * ArrSqared[i].Extr1.Y;
+    ArrSqared[i].Extr0.setFrom(PPPX0, PPPY0, 0.00);
+    ArrSqared[i].Extr1.setFrom(PPPX1, PPPY1, 0.00);
+  end;
+  // controles
+  AfficherMessageErreur(Format('Liste des %d segments; longueur totale: %.3f m (qdx: %.2f, qdy:%.2f', [Nb, LongueurTotale, qDeltaX0n, qDeltaY0n]));
+  for i := 0 to Nb - 1 do AfficherMessageErreur(ArrSqared[i].DebugString(i));
+  // génération de la polyligne
+  // Rappel: La liste des vertex est en lecture seule dans cette fonction
+  V1 := GetVertex(0); // Récupération du vertex 0
+  self.ClearVertex(); // Vidage de la liste
+  self.AddVertex(V1); // et restauraion du vertex 0
+  for i := 1 to Nb - 1 do
+  begin
+    PT1 := ArrSqared[i];
+    FDocDessin.GetBasePointByIndex(Pt1.IdxBaseStation, P0);
+    V1.IDStation := PT1.IdxBaseStation;
+    V1.Offset.setFrom(PT1.Extr1.X - P0.PosStation.X,
+                      PT1.Extr1.Y - P0.PosStation.Y,
+                      PT1.Extr1.Z - P0.PosStation.Z);
+    self.AddVertex(V1);
+  end;
+  PurgerVertex(DIST_MERGE_VERTEX); // Purge des vertex
   SetLength(ArrSqared, 0);
-  result := false; // Mettre à True après mise au point
-
-
+  result := (GetNbVertex() >= 3); // Mettre à True après mise au point
 end;
 
 end.
-
-/**
-     * This method tests if secondNode is clockwise to first node.
-     *
-     * The line through the two points commonNode and firstNode divides the
-     * plane into two parts. The test returns true, if secondNode lies in
-     * the part that is to the right when traveling in the direction from
-     * commonNode to firstNode.
-     *
-     * @param commonNode starting point for both vectors
-     * @param firstNode first vector end node
-     * @param secondNode second vector end node
-     * @return true if first vector is clockwise before second vector.
-     */
-    public static boolean angleIsClockwise(EastNorth commonNode, EastNorth firstNode, EastNorth secondNode) {
-
-        CheckParameterUtil.ensureThat(commonNode.isValid(), () -> commonNode + " invalid");
-        CheckParameterUtil.ensureThat(firstNode.isValid(), () -> firstNode + " invalid");
-        CheckParameterUtil.ensureThat(secondNode.isValid(), () -> secondNode + " invalid");
-
-        double dy1 = firstNode.getY() - commonNode.getY();
-        double dy2 = secondNode.getY() - commonNode.getY();
-        double dx1 = firstNode.getX() - commonNode.getX();
-        double dx2 = secondNode.getX() - commonNode.getX();
-
-        return dy1 * dx2 - dx1 * dy2 > 0;
-    }
-
-

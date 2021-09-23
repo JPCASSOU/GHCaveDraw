@@ -520,7 +520,7 @@ begin
                            MakeTPoint3Df(392350.96, 3286104.48, 0.00),
                            MakeTPoint3Df(392348.66, 3286107.76, 0.00),
                            True);
-    LS.Add(GenererLigneBasepoint(0, BP));
+    LS.Add(BP.toLineGCP());
     {$IFDEF TIDBASEPOINT_AS_TEXT}
     BP := MakeTBaseStation('1.1', '1.00B', 8, TColor(26367),
     {$ELSE}
@@ -531,7 +531,7 @@ begin
                            MakeTPoint3Df(392350.79, 3286104.37, 0.00),
                            MakeTPoint3Df(392348.50, 3286107.64, 0.00),
                            True);
-    LS.Add(GenererLigneBasepoint(0, BP));
+    LS.Add(BP.toLineGCP());
     LS.Add(ENDBASEPOINTMARKER);
     LS.SaveToFile(QFileName);
   finally
@@ -1271,7 +1271,7 @@ var
   EWE: TParamsVue2D;
 begin
   EWE := CadreDessinBGRA1.GetParametresVue2D();
-  if (QuestionOuiNon(GetResourceString('Fermer le document courant'))) then InitialiserGHC(EWE);
+  if (QuestionOuiNon('Fermer le document courant')) then InitialiserGHC(EWE);
 end;
 
 procedure TMainWindow.acAproposExecute(Sender: TObject);

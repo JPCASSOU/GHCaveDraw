@@ -23,7 +23,7 @@ uses
   , machoreader {needed for reading MACH-O executables}
   , UnitKMLExport
   , UnitLeafletExport
-  ,CadreEditeurTexte
+  , CadreEditeurTexte
   , BGRABitmap, BGRABitmapTypes, BGRAGradients, curredit, SynHighlighterPas,
   SynEdit, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons, ComCtrls,
   ExtCtrls, ubarcodes, types;
@@ -339,10 +339,10 @@ begin
         MiouMiou(Format('    %s.LightPositionZ            := %d;', [OBJ_PHONG, 80]));
         MiouMiou(Format('    %s.LightColor := BGRA(%d, %d, %d, %d);', [OBJ_PHONG, sclLightColorB.Position, sclLightColorG.Position, sclLightColorR.Position, sclLightColorA.Position]));
         MiouMiou('');
-        MiouMiou(Format('    %s.NegativeDiffusionFactor   := %s; ', [OBJ_PHONG, FormatterNombreWithDotDecimal(0.3, 2)]));
-        MiouMiou(Format('    %s.SpecularIndex             := %d;'  , [20]));
-        MiouMiou(Format('    %s.AmbientFactor            := %s;', [OBJ_PHONG, FormatterNombreWithDotDecimal(0.4, 2)]));
-        MiouMiou(Format('    %s.Draw(Result, Temp, %d, -blurSize,-blurSize, BGRA(%d, %d, %d, %d));', [20, sclColorB.Position, sclColorG.Position, sclColorR.Position,  sclColorA.Position]));
+        MiouMiou(Format('    %s.NegativeDiffusionFactor   := %s;', [OBJ_PHONG, FormatterNombreWithDotDecimal(0.3, 2)]));
+        MiouMiou(Format('    %s.SpecularIndex             := %d;', [OBJ_PHONG, 20]));
+        MiouMiou(Format('    %s.AmbientFactor             := %s;', [OBJ_PHONG, FormatterNombreWithDotDecimal(0.4, 2)]));
+        MiouMiou(Format('    %s.Draw(Result, Temp, %d, -blurSize, -blurSize, BGRA(%d, %d, %d, %d));', [OBJ_PHONG, 20, sclColorB.Position, sclColorG.Position, sclColorR.Position,  sclColorA.Position]));
         MiouMiou('  finally');
         MiouMiou(Format('    FreeAndNil(%s);', [OBJ_PHONG]));
         MiouMiou('    FreeAndNil(temp);');

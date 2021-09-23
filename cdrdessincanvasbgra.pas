@@ -406,14 +406,8 @@ type
     procedure acPolylineAffecterStyleExecute(Sender: TObject);
     procedure acReverseCourbeExecute(Sender: TObject);
     procedure acReversePolylineExecute(Sender: TObject);
-
-
     procedure acSetCurrGroupeByObjectExecute(Sender: TObject);
-
-
     procedure acSymboleAffecterStyleExecute(Sender: TObject);
-
-
     procedure acCourbeAffecterStyleExecute(Sender: TObject);
     procedure acPolygoneAffecterStyleExecute(Sender: TObject);
 
@@ -471,7 +465,7 @@ type
     procedure AjouterUnePolyligne();       // ajout d'une entité polyligne
     procedure AjouterUnPolygone();         // ajout d'une entité polygone
     // redessin écran
-    procedure RedessinEcran(const DoGenererImage: boolean);
+    function RedessinEcran(const DoGenererImage: boolean): integer;
     // édition et dessin des courbes
     // dessin de la courbe provisoire
     procedure DessinerCourbeProvisoire(const Cnv: TCanvas);
@@ -538,13 +532,8 @@ type
                                 const DoDrawHands: boolean;
                                 const DoDrawBasePoints: boolean);
 
-    Procedure VolatileDrawRectangle(const Cnv: TCanvas;
-                                    const C1, C2: TPoint2Df);
-
-    procedure VolatileDrawTriangle(const Cnv: TCanvas;
-                                   const P1, P2, P3: TPoint2Df);
-
-
+    Procedure VolatileDrawRectangle(const Cnv: TCanvas; const C1, C2: TPoint2Df);
+    procedure VolatileDrawTriangle(const Cnv: TCanvas; const P1, P2, P3: TPoint2Df);
     procedure VolatileTraceTexte(const Cnv: TCanvas; const XX, YY: Double; const T: string);
     procedure VolatileTraceVers(const Cnv: TCanvas; const XX, YY: Double; const Drawn: boolean);
     procedure VolatileTraceCercle(const Cnv: TCanvas; const XX, YY: Double; const R: integer);
@@ -564,8 +553,6 @@ type
     FFichierImage : string;
     // document de dessin
     FDocumentDessin   : TDocumentDessin;
-
-
     // limites du dessin
     FRXMini      : double;
     FRXMaxi      : double;
@@ -655,14 +642,11 @@ type
 
     // liste des points obtenus par tracé à main levée
     FListePtsFreeHand : TListeSimple<TPoint2Df>;
-
-
     // Coordonnées d'extrémités de lignes en valeur absolue
     FAbsFirstPoint,
     FAbsSecondpoint: TPoint2Df;
 
     // points pour opérations de zoom, pan et tracé de ligne
-    //FLastPos: TPoint;
     FFirstPoint,
     FSecondPoint: TPoint2Df;
 
@@ -673,24 +657,21 @@ type
     // Bitmaps de remplissage
     FTexturesPolygones      : TTexturesPolygonObject;
 
-
-
-
-
     procedure AffecterActionABouton(const btn: TSpeedButton; const Actn: TAction);
-    function BasePointIsVisible(const BP: TBaseStation): boolean;
-    function CalcFontHeightFromHauteurEnMetres(const Hauteur: double): integer;
+    function  BasePointIsVisible(const BP: TBaseStation): boolean;
+    function  CalcFontHeightFromHauteurEnMetres(const Hauteur: double): integer;
+    procedure DisplayNewCurrentGroupe(const Idx: TIDGroupeEntites);
 
 
-    function QRechercheEtTraceLigne(out QIdx: integer): boolean;
-    function QRechercheEtTraceCourbe(out QIdx: integer): boolean;
-    function QRechercheEtTracePolyligne(out QIdx: integer): boolean;
-    function QRechercheEtTracePolygone(out QIdx: integer): boolean;
-    function QRechercheEtTraceScrap(out QIdx: integer): boolean;
+    function  QRechercheEtTraceLigne(out QIdx: integer): boolean;
+    function  QRechercheEtTraceCourbe(out QIdx: integer): boolean;
+    function  QRechercheEtTracePolyligne(out QIdx: integer): boolean;
+    function  QRechercheEtTracePolygone(out QIdx: integer): boolean;
+    function  QRechercheEtTraceScrap(out QIdx: integer): boolean;
 
     procedure RafraichirVue;
     // le groupe est dans la vue courante ?
-    function GroupeIsInView(const QGroupe: TGroupeEntites): boolean;
+    function  GroupeIsInView(const QGroupe: TGroupeEntites): boolean;
     procedure SetLabelsGroupe(const GP: TGroupeEntites);
 
     procedure VolatileDrawBasePoint(const Cnv: TCanvas; const BP: TBaseStation);
@@ -706,8 +687,6 @@ type
     // paramètres vue 2D
     procedure SetParametresVue2D(const PG: TParamsVue2D);
     function  GetParametresVue2D(): TParamsVue2D;
-
-
 
     // initialisation  et finalisation
     function  CdrDrwInitialize(): boolean;
@@ -740,8 +719,7 @@ type
 
     // paramètres de vue
     procedure SetGrdSpcGrid(const QdrSpcMain, QdrSpcSec: double);
-    property MyDocumentDessin : TDocumentDessin     read FDocumentDessin
-                                                    write FDocumentDessin;
+    property MyDocumentDessin : TDocumentDessin read FDocumentDessin write FDocumentDessin;
     // fonctions de rappel
     property MyProcActualiserOnglet: TProcActualiserOnglet read FProcActualiserOnglet write FProcActualiserOnglet;
     property MyProcGetInfoBasePoint: TProcGetInfoBasePoint read  FProcGetInfoBasePoint write FProcGetInfoBasePoint;
@@ -793,11 +771,8 @@ type
 
     procedure SetTailleEchelle(const T: double);
     procedure SetLimiteDispPente(const T: double);
-
-
     // zoom et pan
     procedure SetWindowView(const Fact: double; const OffFactorX, OffFactorY: double);
-
     // enregistrer le contenu de la vue comme image
     procedure SaveVueAsImage(const FichierImage: string);
     // effacer le dernier objet
@@ -817,8 +792,6 @@ type
     function GetCurrImgIdx(): integer;
 
     function GetModeSelectionEntites(): TModeSelectionEntites;
-
-
   end;
 
 implementation
@@ -832,8 +805,7 @@ const SEUIL_VISIBILITE_POLYGONES          = 500.00;
 const SEUIL_VISIBILITE_SYMBOLES           = 500.00;
 const SEUIL_VISIBILITE_TEXTES             = 500.00;
 
-const TAB = #9;
-
+const FMT_GROUPE_COURANT                  = 'Groupe courant: %d - %s';
 {$R *.lfm}
 
 //------------------------------------------------------------------------------
@@ -856,7 +828,7 @@ end;
 
 procedure TCadreDessinBGRA.MenuItem19Click(Sender: TObject);
 begin
-
+  pass;
 end;
 
 //------------------------------------------------------------------------------
@@ -999,7 +971,6 @@ var
   EWE: TScrap;
 begin
   EWE := FDocumentDessin.GetScrap(FCurrentScrapIdx);
-  ShowMessageFmt('FCurrentScrapIdx: %d - Groupe: %d', [FCurrentScrapIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 
@@ -1008,7 +979,6 @@ var
   EWE: TCourbe;
 begin
   EWE := FDocumentDessin.GetCourbe(FCurrentCurveIdx);
-  ShowMessageFmt('FCurrentCourbeIdx: %d - Groupe: %d', [FCurrentCurveIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 
@@ -1017,7 +987,6 @@ var
   EWE: TPolyLigne;
 begin
   EWE := FDocumentDessin.GetPolyligne(FCurrentPolylineIdx);
-  ShowMessageFmt('FCurrentPolylineIdx: %d - Groupe: %d', [FCurrentPolylineIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 
@@ -1026,7 +995,6 @@ var
   EWE: TPolygone;
 begin
   EWE := FDocumentDessin.GetPolygone(FCurrentPolygonIdx);
-  ShowMessageFmt('FCurrentPolygonIdx: %d - Groupe: %d', [FCurrentPolygonIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 procedure TCadreDessinBGRA.acSetCurrentGroupeFromThisSimpleLineExecute(Sender: TObject);
@@ -1034,7 +1002,6 @@ var
   EWE: TSimpleLigne;
 begin
   EWE := FDocumentDessin.GetSimpleLigne(FCurrentSimpleLineIdx);
-  ShowMessageFmt('FCurrentSimpleLineIdx: %d - Groupe: %d', [FCurrentSimpleLineIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 procedure TCadreDessinBGRA.acSetCurrentGroupeFromThisSymboleExecute(Sender: TObject);
@@ -1042,7 +1009,6 @@ var
   EWE: TSymbole;
 begin
   EWE := FDocumentDessin.GetSymbole(FCurrentSymboleIdx);
-  ShowMessageFmt('FCurrentSymboleIdx: %d - Groupe: %d', [FCurrentSymboleIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
 procedure TCadreDessinBGRA.acSetCurrentGroupeFromThisTextObjectExecute(Sender: TObject);
@@ -1050,31 +1016,34 @@ var
   EWE: TTextObject;
 begin
   EWE := FDocumentDessin.GetTexte(FCurrentTextIdx);
-  ShowMessageFmt('FCurrentTextIdx: %d - Groupe: %d', [FCurrentTextIdx, EWE.IDGroupe]);
   self.SetCurrentGroupeByIDGroupe(EWE.IDGroupe);
 end;
+
 
 
 procedure TCadreDessinBGRA.acSquarePolylineExecute(Sender: TObject);
 var
   EWE: TPolyLigne;
   QCourbeProvisoire: TCourbePolygoneProvisoire;
+  Q1, Q2, Q3: Boolean;
 begin
   EWE := FDocumentDessin.GetPolyligne(FCurrentPolylineIdx);
   QCourbeProvisoire := TCourbePolygoneProvisoire.Create;
   try
-    AfficherMessageErreur('001');
     QCourbeProvisoire.SetDocDessin(FDocumentDessin);
-    AfficherMessageErreur('002');
     QCourbeProvisoire.LoadPolyligne(EWE, false);
-    AfficherMessageErreur('003');
-    QCourbeProvisoire.SquarrerPoly();
-    AfficherMessageErreur('004');
-    //QCourbeProvisoire.StripVertex;
-    //if (QCourbeProvisoire.GeneratePolyLine(EWE)) then FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, EWE);
+    Q1 := QCourbeProvisoire.SquarrerPoly();
+    Q2 := QuestionOuiNon('Remplacer la polyligne existante');
+
+    if (Q1 AND Q2) then
+    begin
+      Q3 := QCourbeProvisoire.GeneratePolyLine(EWE);
+      if (Q3) then FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, EWE);
+    end;
+    SetModeTravail(mtNONE);
     Vue.Invalidate; // RedessinEcran(false);
   finally
-    FreeAndNil(QCourbeProvisoire);//QCourbeProvisoire.Free;
+    FreeAndNil(QCourbeProvisoire);
   end;
 end;
 
@@ -1086,15 +1055,17 @@ var
 begin
   EWE := FDocumentDessin.GetPolygone(FCurrentPolygonIdx);
   ShowMessageFmt('Squarrer polygone %d', [FCurrentPolygonIdx]);
+  exit;
   QCourbeProvisoire := TCourbePolygoneProvisoire.Create;
   try
     QCourbeProvisoire.SetDocDessin(FDocumentDessin);
     QCourbeProvisoire.LoadPolygone(EWE);
     //QCourbeProvisoire.StripVertex;
     //if (QCourbeProvisoire.GeneratePolyLine(EWE)) then FDocumentDessin.PutPolyligne(FCurrentPolylineIdx, EWE);
+    SetModeTravail(mtNONE);
     Vue.Invalidate; // RedessinEcran(false);
   finally
-    FreeAndNil(QCourbeProvisoire);//QCourbeProvisoire.Free;
+    FreeAndNil(QCourbeProvisoire);
   end;
 end;
 //******************************************************************************
@@ -1323,8 +1294,8 @@ var
   WU : Byte;
   EWE: Boolean;
 begin
-  OT.IDBaseSt  := FCurrentBasePoint.IDStation;
-  OT.IDGroupe  := FCurrentGroupeIdx;
+  OT.IDBaseStation  := FCurrentBasePoint.IDStation;
+  OT.IDGroupe       := FCurrentGroupeIdx;
   OT.Offset.setFrom(FMyPos.X - FCurrentBasePoint.PosStation.X,
                     FMyPos.Y - FCurrentBasePoint.PosStation.Y,
                     0.00);
@@ -1554,46 +1525,46 @@ begin
        mseSCRAPS:
          begin
           MyScrap := FDocumentDessin.GetScrap(QIdxObj);
-          LS.Add(GenererLigneEnteteScrap(QIdxObj, MyScrap));
+          LS.Add(MyScrap.toLineGCD_Begin(QIdxObj)); //GenererLigneEnteteScrap(QIdxObj, MyScrap));
           for j := 0 to High(MyScrap.Sommets) do
           begin
             V := MyScrap.getVertex(j);
-            LS.Add(GenererLigneVertexPolygon(j, V));
+            LS.Add(V.toLineGCD(j)); //GenererLigneVertexPolygon(j, V));
           end;
-          LS.Add(GenererLigneEndScrap());
+          LS.Add(MyScrap.toLineGCD_End()); // GenererLigneEndScrap());
          end;
        mseCOURBES:
          begin
            MyCourbe      := FDocumentDessin.GetCourbe(QIdxObj);
-           LS.Add(GenererLigneEnteteCourbe(QIdxObj, MyCourbe));
+           LS.Add(MyCourbe.toLineGCD_Begin(QIdxObj)); //GenererLigneEnteteCourbe(QIdxObj, MyCourbe));
            for j := 0 to MyCourbe.getNbArcs() - 1 do // High(MyCourbe.Arcs) do
            begin
              A := MyCourbe.getArc(j); //MyCourbe.Arcs[j];
-             LS.Add(GenererLigneArcCourbe(j, A));
+             LS.Add(A.toLineGCD(j)); //GenererLigneArcCourbe(j, A));
            end;
-           LS.Add(GenererLigneEndCourbe());
+           LS.Add(MyCourbe.toLineGCD_End()); // GenererLigneEndCourbe());
          end;
        msePOLYLIGNES:
          begin
            MyPolyligne   := FDocumentDessin.GetPolyligne(QIdxObj);
-           LS.Add(GenererLigneEntetePolyligne(QIdxObj, MyPolyligne));
+           LS.Add(MyPolyligne.toLineGCD_Begin(QIdxObj)); //GenererLigneEntetePolyligne(QIdxObj, MyPolyligne));
            for j := 0 to High(MyPolyligne.Sommets) do
            begin
              V := MyPolyligne.getVertex(j);
-             LS.Add(GenererLigneVertexPolygon(j, V));
+             LS.Add(V.toLineGCD(j)); //GenererLigneVertexPolygon(j, V));
            end;
-           LS.Add(GenererLigneEndPolyligne());
+           LS.Add(MyPolyligne.toLineGCD_End()); //GenererLigneEndPolyligne());
          end;
        msePOLYGONES:
          begin
            MyPolygone    := FDocumentDessin.GetPolygone(QIdxObj);
-           LS.Add(GenererLigneEntetePolygone(QIdxObj, MyPolygone));
+           LS.Add(MyPolygone.toLineGCD_Begin(QIdxObj)); //GenererLigneEntetePolygone(QIdxObj, MyPolygone));
            for j := 0 to High(MyPolygone.Sommets) do
            begin
              V := MyPolygone.getVertex(j);
-             LS.Add(GenererLigneVertexPolygon(j, V));
+             LS.Add(V.toLineGCD(j)); //GenererLigneVertexPolygon(j, V));
            end;
-           LS.Add(GenererLigneEndPolygone());
+           LS.Add(MyPolygone.toLineGCD_End()); //GenererLigneEndPolygone());
          end;
        mseLIGNES:
          begin
@@ -1602,13 +1573,13 @@ begin
        mseSYMBOLES:
          begin
            MySymbole     := FDocumentDessin.GetSymbole(QIdxObj);
-           WU := GenererLigneSymbole(QIdxObj, MySymbole);
+           WU := MySymbole.toLineGCD(QIdxObj);//GenererLigneSymbole(QIdxObj, MySymbole);
            LS.Add(WU);
          end;
        mseTEXTES:
          begin
            MyTexte       := FDocumentDessin.GetTexte(QIdxObj);
-           WU := GenererLigneTexte(QIdxObj, MyTexte);
+           WU := MyTexte.toLineGCD(QIdxObj); //;GenererLigneTexte(QIdxObj, MyTexte);
          end;
        mseIMAGES:
          begin
@@ -2083,8 +2054,11 @@ var
 begin
   Result := false;
   R0.setFrom(FRXMini, FRYMini, FRXMaxi, FRYMaxi);
+  //AfficherMessage(format('%d: %f %f -> %f %f', [QGroupe.IDGroupeEntites, QGroupe.BoundingBox.C1.X, QGroupe.BoundingBox.C1.Y, QGroupe.BoundingBox.C2.X, QGroupe.BoundingBox.C2.Y]));
+
   R1.setFrom(QGroupe.BoundingBox.C1, QGroupe.BoundingBox.C2);
   result := IntersectRectangles(R0, R1);
+  //*)
 end;
 // une station est visible ?
 function TCadreDessinBGRA.BasePointIsVisible(const BP: TBaseStation): boolean;
@@ -2317,6 +2291,15 @@ begin
   SetModeTravail(mtNONE);
 end;
 
+procedure TCadreDessinBGRA.DisplayNewCurrentGroupe(const Idx: TIDGroupeEntites);
+var
+  GRP: TGroupeEntites;
+begin
+  GRP := FDocumentDessin.GetGroupeByIDGroupe(Idx);
+  DisplayToast(self, Format(FMT_GROUPE_COURANT, [GRP.IDGroupeEntites, GRP.NomGroupe]), 1000);
+end;
+
+
 procedure TCadreDessinBGRA.SetCurrentGroupeByIDGroupe(const IDGrp: TIDGroupeEntites);
 var
   GP: TGroupeEntites;
@@ -2325,13 +2308,11 @@ begin
     FCurrentGroupeIdx := IDGrp;
     GP := FDocumentDessin.GetGroupeByIDGroupe(IDGRP);
     SetLabelsGroupe(GP);
+    DisplayNewCurrentGroupe(FCurrentGroupeIdx);
   except
     AfficherMessageErreur('Aucun dessin');
   end;
 end;
-
-
-
 procedure TCadreDessinBGRA.SetCurrentGroupeByIdx(const Idx: integer);
 var
   GP: TGroupeEntites;
@@ -2340,6 +2321,7 @@ begin
     GP := FDocumentDessin.GetGroupe(Idx);
     FCurrentGroupeIdx := GP.IDGroupeEntites;
     SetLabelsGroupe(GP);
+    DisplayNewCurrentGroupe(FCurrentGroupeIdx);
   except
     AfficherMessageErreur('Aucun dessin');
   end;
@@ -3134,11 +3116,8 @@ begin
   qX2 := Math.Max(X1, X2);
   qY2 := Math.Max(Y1, Y2);
   d1  := qX2-qX1;
-  d2:=qY2-qY1;
-  AfficherMessage('Fuck the Christ 002');
+  d2  := qY2-qY1;
   if ((Abs(d1) < Epsilon) or (Abs(d2) < Epsilon)) then Exit;   // si zone trop étroite, abandonner
-
-
   FRXMini := qX1;
   FRXMaxi := qX2;
   FRYMini := qY1;
@@ -3150,9 +3129,7 @@ begin
   // Redéfinition de la hauteur maxi
   FRYMaxi:=GetRYMaxi;
   // redessine
-  AfficherMessage('Fuck the Christ 003');
   Vue.Invalidate; // RedessinEcran(false);
-  AfficherMessage('Fuck the Christ 004');
 end;
 // attrape la hauteur de vue
 function TCadreDessinBGRA.GetRYMaxi(): double;
@@ -4070,7 +4047,7 @@ var
   WU: Integer;
   IdGrp: TIDGroupeEntites;
 begin
-  if (QuestionOuiNon(GetResourceString('Confirmer cette action'))) then
+  if (QuestionOuiNon('Confirmer cette action')) then
   begin
     WU   := GetCurrentIdxObjectForModeSelection();
     IdGrp := GetCurrentGroupeIdx();
@@ -4108,11 +4085,10 @@ var
   NumGroupe: Integer;
   MyGroupe: TGroupeEntites;
   ii: Integer;
-  QQC1: TPoint3Df;
-  QQC2: TPoint3Df;
   NbImages: Integer;
   MyImage: TImageObject;
 begin
+  result := false;
   if (Not FDoDraw) then Exit;
   dx := LimitesDessin.X2 - LimitesDessin.X1;
   dy := LimitesDessin.Y2 - LimitesDessin.Y1;
@@ -4228,7 +4204,7 @@ begin
       if (tedCENTERLINES in FParamsVue2D.ElementsDrawn) then
       begin
         for ii:= 0 to FDocumentDessin.GetNbBaseStations - 1 do
-          TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), 12);
+          TmpBuffer.DessinerBaseStation(FDocumentDessin.GetBaseStation(ii), HAUTEUR_LBL_BASESTATION_IN_PIXELS);
       end;
       if (tedECHELLE_NORD in FParamsVue2D.ElementsDrawn) then TmpBuffer.DrawEchelleNord(ImgWidth, ImgHeight);
       TmpBuffer.EndDrawing();  // fin conventionnelle
@@ -4935,7 +4911,7 @@ var
 begin
   if (DoDrawBasePoints) then
   begin
-    if (FDocumentDessin.GetBasePointByIndex(TT.IDBaseSt, BS1)) then VolatileDrawBasePoint(Cnv, BS1);
+    if (FDocumentDessin.GetBasePointByIndex(TT.IDBaseStation, BS1)) then VolatileDrawBasePoint(Cnv, BS1);
     Cnv.Brush.Style := bsClear;
     Cnv.Brush.Color := clWhite;
     Cnv.Font.Color := clBlack;

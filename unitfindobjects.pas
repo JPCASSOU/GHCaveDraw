@@ -424,7 +424,7 @@ begin
     GP := FDocDessin.GetGroupeByIDGroupe(SC.IDGroupe);
     if (GroupeIsEditable(GP)) then
     begin
-      FDocDessin.GetCoordsGCS(SC.IDBaseSt, GP.IDGroupeEntites, SC.Offset, P1, errCode);
+      FDocDessin.GetCoordsGCS(SC.IDBaseStation, GP.IDGroupeEntites, SC.Offset, P1, errCode);
       qd := sqr(X - P1.X) + sqr(Y - P1.Y);
       if ((qd < SQ_RAYON_CAPTURE_MAXIMAL) and (qd < DistCourante)) then
       begin

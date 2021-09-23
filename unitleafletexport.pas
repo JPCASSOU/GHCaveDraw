@@ -20,6 +20,7 @@ type
     FLeafletVarNameDispEntrances    : string;
     FLeafletVarNameDispCenterlines  : string;
     FLeafletVarNameDispStations     : string;
+    FLeafletVarNameDispSymbols      : string;
 
     FDocTitle          : string;
     FP                 : TextFile;
@@ -41,17 +42,6 @@ type
     FCurrentTagString    : string;
     FCurrentObjectName   : string;
 
-
-
-  public
-    function  Initialiser(const QFilename: string;
-                          const QDocTitle: string;
-                          const QMapWidth, QMapHeight: integer;
-                          const QCentroideLon, QCentroideLat: Double): boolean;
-    procedure Finaliser();
-    procedure WrtLinFmt(const Fmt: String; const Args: array of const);
-    procedure WriteLine(const S: string);
-
     procedure BeginJSFunction(const QProcName: string; const QParams: string='');
     procedure EndJSFunction();
 
@@ -61,9 +51,10 @@ type
     procedure BeginJSEventListener(const EventName: string; const Desc: string='');
     procedure EndJSEventListener();
 
+
+
     procedure jsFOR(const QVarCounter, QVarNb: string; const QStart: integer=0; const QTag: string=''; const QIndent: integer=4);
     procedure jsNEXT(const QVarCounter: string; const QTag: string=''; const QIndent: integer=4);
-
     procedure jsIF(const QCondition: string; const QTag: string=''; const QIndent: integer=4);
     procedure jsELSE(const QTag: string=''; const QIndent: integer=4);
     procedure jsENDIF(const QTag: string=''; const QIndent: integer=4);
@@ -73,14 +64,27 @@ type
     procedure jsBREAK(const QIndent: integer=4);
     procedure jsEND_SELECT(const QTag: string=''; const QIndent: integer=4);
 
-
     procedure JSSeparateur(const QMotif: Char='='; const nb: integer=80);
     procedure jsWEND(const QTag: string=''; const QIndent: integer=4);
     procedure jsWHILE(const QCondition: string; const QTag: string=''; const QIndent: integer=4);
 
+
+  public
+    function  Initialiser(const QFilename: string;
+                          const QDocTitle: string;
+                          const QMapWidth, QMapHeight: integer;
+                          const QCentroideLon, QCentroideLat: Double): boolean;
+    procedure Finaliser();
+
+    procedure WriteLine(const S: string);
+    procedure WrtLinFmt(const Fmt: String; const Args: array of const);
+
+
     procedure WriteHeader();
     procedure WriteFooter();
 
+    procedure BeginConditionalSection(const B: boolean; const VariableName: string);
+    procedure EndConditionalSection(const VariableName: string);
 
     procedure AddLayer(const L: string; const Desc: string);
     procedure setCurrentLayer(const Idx: integer);
@@ -93,8 +97,7 @@ type
     procedure BeginPolyLine(const Name: string; const TagString: string);
     procedure EndPolyLine();
 
-    procedure BeginConditionalSection(const B: boolean; const VariableName: string);
-    procedure EndConditionalSection(const VariableName: string);
+
     procedure DrawPoint(const Lat, Lon, Alt: double;
                         const Taille: double;
                         const Caption: string;
@@ -103,6 +106,7 @@ type
     function  getLeafletVarNameDispEntrances(): string;
     function  getLeafletVarNameDispCenterlines(): string;
     function  getLeafletVarNameDispStations(): string;
+    function  getLeafletVarNameDispSymbols(): string;
 
 
 end;
@@ -164,7 +168,7 @@ procedure TLeafletExport.WriteLine(const S: string); inline;
 begin
   WriteLn(fp, S);
 end;
-procedure TLeafletExport.WrtLinFmt(Const Fmt : String; const Args : Array of const);
+procedure TLeafletExport.WrtLinFmt(const Fmt: String; const Args: array of const);
 begin
   WriteLn(fp, Format(Fmt, Args));
 end;
@@ -325,6 +329,7 @@ begin
   FLeafletVarNameDispEntrances   := 'DoDisplayEntrances';
   FLeafletVarNameDispCenterlines := 'DoDisplayCenterlines';
   FLeafletVarNameDispStations    := 'DoDisplayStations';
+  FLeafletVarNameDispSymbols     := 'DoDisplaySymbols';
 
   FDocTitle        := QDocTitle;
   FMapWidth        := QMapWidth;
@@ -372,6 +377,11 @@ end;
 function TLeafletExport.getLeafletVarNameDispStations(): string;
 begin
   result := FLeafletVarNameDispStations;
+end;
+
+function TLeafletExport.getLeafletVarNameDispSymbols(): string;
+begin
+  result := FLeafletVarNameDispSymbols;
 end;
 
 
@@ -530,8 +540,9 @@ begin
     BeginJSFunction(JS_FUNCTION_INITIALISER, '');
 
       WrtLinFmt('     var %s = %s;', [FLeafletVarNameDispEntrances  , 'true']);
-      WrtLinFmt('     var %s = %s;', [FLeafletVarNameDispCenterlines, 'false']);
-      WrtLinFmt('     var %s = %s;', [FLeafletVarNameDispStations   , 'false']);
+      WrtLinFmt('     var %s = %s;', [FLeafletVarNameDispCenterlines, 'true']);
+      WrtLinFmt('     var %s = %s;', [FLeafletVarNameDispStations   , 'true']);
+      WrtLinFmt('     var %s = %s;', [FLeafletVarNameDispSymbols    , 'true']);
 
       WrtLinFmt('     var %s = L.map(''%s'').setView([%s, %s], %d);',
                             [NAMEREF_MAP, NAMEREF_MAP,

@@ -327,7 +327,7 @@ var
   beuh: String;
 begin
   // point 451.0 -159.0 station -name 4
-  if (FMyDocDessin.GetBasePointByIndex(MyTexte.IDBaseSt, BP)) then
+  if (FMyDocDessin.GetBasePointByIndex(MyTexte.IDBaseStation, BP)) then
   begin
     PP  := ConvertGCSCoordsToLocalScrapCoords(BP, MyTexte.Offset.X, MyTexte.Offset.Y);
     //AddLineBuffer(Format('      %.3f %.3f %s', [PP.X, PP.Y, beuh]));

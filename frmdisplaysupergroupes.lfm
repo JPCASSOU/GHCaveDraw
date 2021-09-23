@@ -1,7 +1,7 @@
 object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
-  Left = 190
+  Left = 352
   Height = 689
-  Top = 51
+  Top = 202
   Width = 1084
   Caption = 'dlgDisplaySuperGroupes'
   ClientHeight = 689
@@ -70,13 +70,15 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
             end
             object lsbSuperGroupes: TListBox
               Left = 6
-              Height = 230
-              Top = 24
-              Width = 448
+              Height = 206
+              Top = 48
+              Width = 446
               Anchors = [akTop, akLeft, akRight, akBottom]
-              ItemHeight = 0
+              ItemHeight = 18
+              OnDrawItem = lsbSuperGroupesDrawItem
               OnSelectionChange = lsbSuperGroupesSelectionChange
               ScrollWidth = 446
+              Style = lbOwnerDrawFixed
               TabOrder = 0
             end
             object btnAddSuperGroupe: TButton
@@ -96,7 +98,46 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
               Width = 99
               Anchors = [akRight, akBottom]
               Caption = 'Supprimer'
+              OnClick = btnSupprimerSuperGroupeClick
               TabOrder = 2
+            end
+            object hcSupergroupes: THeaderControl
+              Left = 8
+              Height = 22
+              Top = 24
+              Width = 444
+              DragReorder = False
+              Sections = <              
+                item
+                  Alignment = taLeftJustify
+                  MaxWidth = 50
+                  MinWidth = 50
+                  Text = 'ID'
+                  Width = 50
+                  Visible = True
+                end              
+                item
+                  Alignment = taLeftJustify
+                  MaxWidth = 30
+                  MinWidth = 30
+                  Width = 30
+                  Visible = True
+                end              
+                item
+                  Alignment = taLeftJustify
+                  MaxWidth = 60
+                  MinWidth = 60
+                  Text = 'Nb'
+                  Width = 60
+                  Visible = True
+                end              
+                item
+                  Alignment = taLeftJustify
+                  Text = 'Nom'
+                  Width = 666
+                  Visible = True
+                end>
+              Anchors = [akTop, akLeft, akRight]
             end
           end
         end
@@ -121,7 +162,7 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
             object editNomSupergroupe: TEdit
               Left = 4
               Height = 24
-              Top = 22
+              Top = 32
               Width = 448
               Anchors = [akTop, akLeft, akRight]
               TabOrder = 0
@@ -136,18 +177,20 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
             end
             object lsbGroupesOfSuperGroupe: TListBox
               Left = 4
-              Height = 270
-              Top = 71
+              Height = 233
+              Top = 108
               Width = 352
               Anchors = [akTop, akLeft, akRight, akBottom]
-              ItemHeight = 0
+              ItemHeight = 18
+              OnDrawItem = lsbGroupesOfSuperGroupeDrawItem
               ScrollWidth = 352
+              Style = lbOwnerDrawFixed
               TabOrder = 1
             end
             object lbNbGroupesAssocies: TLabel
               Left = 4
               Height = 16
-              Top = 52
+              Top = 62
               Width = 53
               Caption = 'Groupes'
               ParentColor = False
@@ -155,21 +198,21 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
             object btnClearListeGroupesOfSG: TButton
               Left = 360
               Height = 25
-              Top = 100
+              Top = 136
               Width = 92
               Anchors = [akTop, akRight]
               Caption = 'Vider'
               OnClick = btnClearListeGroupesOfSGClick
               TabOrder = 2
             end
-            object Button1: TButton
+            object btnRemoveGroupe: TButton
               Left = 360
               Height = 25
-              Top = 72
+              Top = 108
               Width = 92
               Anchors = [akTop, akRight]
               Caption = 'Supprimer'
-              OnClick = Button1Click
+              OnClick = btnRemoveGroupeClick
               TabOrder = 3
             end
             object btnModifyCurrSuperGroupe: TButton
@@ -185,12 +228,61 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
             object btnGroupeDepuisTexte: TButton
               Left = 360
               Height = 25
-              Top = 128
+              Top = 164
               Width = 92
               Anchors = [akTop, akRight]
               Caption = 'Depuis texte'
               OnClick = btnGroupeDepuisTexteClick
               TabOrder = 5
+            end
+            object btnSuperGroupeColor: TColorButton
+              Left = 341
+              Height = 25
+              Top = 4
+              Width = 111
+              Anchors = [akTop, akRight]
+              BorderWidth = 2
+              ButtonColorSize = 16
+              ButtonColor = clOlive
+            end
+            object hcGroupesLies: THeaderControl
+              Left = 4
+              Height = 22
+              Top = 84
+              Width = 352
+              DragReorder = False
+              Sections = <              
+                item
+                  Alignment = taLeftJustify
+                  MaxWidth = 50
+                  MinWidth = 50
+                  Text = 'ID'
+                  Width = 50
+                  Visible = True
+                end              
+                item
+                  Alignment = taLeftJustify
+                  MaxWidth = 30
+                  MinWidth = 30
+                  Width = 30
+                  Visible = True
+                end              
+                item
+                  Alignment = taLeftJustify
+                  Text = 'Nom'
+                  Width = 666
+                  Visible = True
+                end>
+              Anchors = [akTop, akLeft, akRight]
+            end
+            object btnLstGrpsToText: TButton
+              Left = 360
+              Height = 25
+              Top = 192
+              Width = 92
+              Caption = 'Vers texte'
+              OnClick = btnLstGrpsToTextClick
+              TabOrder = 7
             end
           end
         end
@@ -221,8 +313,8 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
           Width = 608
           ClientHeight = 615
           ClientWidth = 608
-          DesignLeft = 737
-          DesignTop = 322
+          DesignLeft = 842
+          DesignTop = 314
           inherited Label1: TLabel
             Height = 16
             Width = 68
@@ -237,56 +329,11 @@ object dlgDisplaySuperGroupes: TdlgDisplaySuperGroupes
             Width = 603
           end
           inherited hcColonnes: THeaderControl
-            Left = 4
-            Top = 48
-            Width = 598
-            Sections = <            
-              item
-                Alignment = taLeftJustify
-                Width = 20
-                Visible = True
-              end            
-              item
-                Alignment = taLeftJustify
-                Text = 'V'
-                Width = 25
-                Visible = True
-              end            
-              item
-                Alignment = taLeftJustify
-                Text = 'X'
-                Width = 25
-                Visible = True
-              end            
-              item
-                Alignment = taLeftJustify
-                Text = 'Coul.'
-                Width = 30
-                Visible = True
-              end            
-              item
-                Alignment = taLeftJustify
-                Text = 'No'
-                Width = 40
-                Visible = True
-              end            
-              item
-                Alignment = taLeftJustify
-                Text = 'ZOrder'
-                Width = 55
-                Visible = True
-              end            
-              item
-                Alignment = taLeftJustify
-                Text = 'Nom'
-                Width = 200
-                Visible = True
-              end>
+            Width = 601
           end
           inherited lsbGroupes: TListBox
-            Height = 552
+            Height = 544
             Width = 601
-            ScrollWidth = 599
           end
         end
       end

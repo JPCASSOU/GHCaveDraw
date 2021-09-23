@@ -414,7 +414,7 @@ Begin
   FNbTextes           := 0;
   FNbPhotos           := 0;
   // Styles
-  FCurrentStyleName := 'standard';
+  FCurrentStyleName := STYLE_STANDARD;
   TEMPDIR := GetGHCaveDrawDirectory();
 end;
 
@@ -622,7 +622,7 @@ begin
   AddAttribute(EWE, 'style:name',  QNamestyle, False);    // nom interne
   AddAttribute(EWE, 'style:display-name', QNamestyle, False);    // nom affiché
   AddAttribute(EWE, 'style:family', 'graphic', False);
-  AddAttribute(EWE, 'style:parent-style-name', 'standard', False);
+  AddAttribute(EWE, 'style:parent-style-name', STYLE_STANDARD, False);
   QBeginSection(QNameSubSection, EWE);
     // cadre du texte = rectangle qui le contient
     EWE := '';
@@ -1175,7 +1175,7 @@ begin
 
         EndSection(fp, 2, NameSubSection);
         EWE := '';
-        AddAttribute(EWE, 'style:name'             , 'Standard', false);
+        AddAttribute(EWE, 'style:name'             , STYLE_STANDARD, false);
         AddAttribute(EWE, 'style:page-layout-name' , STYLE_LAYOUT_PAGE_PRINCIPALE, false);
         AddAttribute(EWE, 'draw:style-name'          , STYLE_DRAWING_PAGE_PRINCIPALE, false);
         WriteItem(fp, 1, 'style:master-page', EWE);

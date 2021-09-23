@@ -156,7 +156,7 @@ end;
 
 procedure TfrmEditeurSections.acNouvelleSectionExecute(Sender: TObject);
 begin
-  if (not (QuestionOuiNon(GetResourceString(rsEDITOR_SECTIONS_MSG_BEFORE_RESET_SECTION)))) then Exit;
+  if (not (QuestionOuiNon(rsEDITOR_SECTIONS_MSG_BEFORE_RESET_SECTION))) then Exit;
   initSectionVierge();
   self.Serialiser();
   PageControl1.ActivePageIndex := 0;
@@ -372,7 +372,7 @@ end;
 procedure TfrmEditeurSections.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   CanClose := false;
-  if (QuestionOuiNon(GetResourceString(rsEDITOR_SECTIONS_MSG_BEFORE_RESET_SECTION))) then CanClose := true;
+  if (QuestionOuiNon(rsEDITOR_SECTIONS_MSG_BEFORE_RESET_SECTION)) then CanClose := true;
 end;
 
 procedure TfrmEditeurSections.FormShow(Sender: TObject);

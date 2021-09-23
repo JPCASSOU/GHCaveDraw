@@ -178,7 +178,7 @@ begin
       end;
     medMODIF:
       begin
-        if (FDocumentDessin.GetBasePointByIndex(FObjetTexte.IDBaseSt, EWE)) then
+        if (FDocumentDessin.GetBasePointByIndex(FObjetTexte.IDBaseStation, EWE)) then
         begin
           {$IFDEF TIDBASEPOINT_AS_TEXT}
           editIDBaseStation.Text       := EWE.IDStation;
@@ -189,7 +189,7 @@ begin
 
           cmbStyles.ItemIndex  := Ord(FObjetTexte.IDStyleTexte);
 
-          if (FDocumentDessin.GetBasePointByIndex(FObjetTexte.IDBaseSt, EWE)) then
+          if (FDocumentDessin.GetBasePointByIndex(FObjetTexte.IDBaseStation, EWE)) then
           begin
             editOffsetX.Value := FObjetTexte.Offset.X;
             editOffsetY.Value := FObjetTexte.Offset.Y;
@@ -290,7 +290,7 @@ begin
     ShowMessagefmt(rsIDSTATION_NOT_FOUND, [EWE]);
     exit;
   end;
-  SB.IDBaseSt     := BP.IDStation;
+  SB.IDBaseStation:= BP.IDStation;
   SB.IDGroupe     := FDocumentDessin.GetIndexGroupeByInternalIdx(cmbGroupes.ItemIndex);
   SB.Text         := Trim(editTexte.Text);
   SB.IDStyleTexte := TNatureObjetTexte(cmbStyles.ItemIndex);

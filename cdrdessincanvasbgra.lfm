@@ -7,8 +7,8 @@ object CadreDessinBGRA: TCadreDessinBGRA
   ClientHeight = 724
   ClientWidth = 1230
   TabOrder = 0
-  DesignLeft = 374
-  DesignTop = 397
+  DesignLeft = 164
+  DesignTop = 129
   object lbModeTravail: TStaticText
     Left = 0
     Height = 21

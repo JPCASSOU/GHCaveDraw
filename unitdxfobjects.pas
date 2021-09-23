@@ -10,8 +10,13 @@ uses
 //////////////////////////////////////////////////////////////////////////////////////////
 // constantes
 const ACAD_VERSION                   = 'AC1006';
+const ACAD_SEQEND                    = 'SEQEND';
 const ACAD_LINESTYLE_CONTINUOUS      = 'CONTINUOUS';
 const ACAD_TEXT_STYLENAME_GENERIC    = 'GENERIC';
+
+const ACAD_LAYER                     = 'LAYER';
+const ACAD_STYLE                     = 'STYLE';
+const ACAD_DIMSTYLE                  = 'DIMSTYLE';
 const ACAD_LAYER_LineType_HIDDEN     = 'HIDDEN';
 const ACAD_LAYER_LineType_CENTER     = 'CENTER';
 const ACAD_LAYER_LineType_DOT        = 'DOT';
@@ -19,7 +24,37 @@ const ACAD_LAYER_LineType_DASHDOT    = 'DASHDOT';
 const ACAD_LAYER_LineType_DIVIDE     = 'DIVIDE';
 const ACAD_LAYER_LineType_BORDER     = 'BORDER';
 
-const ACAD_DATABASE_VAR_AcDbEntity   = 'AcDbEntity';
+
+
+const ACAD_AcDbSymbolTableRecord     = 'AcDbSymbolTableRecord';
+const ACAD_AcDbLayerTableRecord      = 'AcDbLayerTableRecord';
+const ACAD_AcDbTextStyleTableRecord  = 'AcDbTextStyleTableRecord';
+const ACAD_AcDbLinetypeTableRecord   = 'AcDbLinetypeTableRecord';
+const ACAD_AsciiLinePattern          = 'AsciiLinePattern';
+const ACAD_AcDbDimStyleTableRecord   = 'AcDbDimStyleTableRecord';
+const ACAD_AcDbEntity                = 'AcDbEntity';
+const ACAD_AcDbPoint                 = 'AcDbPoint';
+const ACAD_AcDbLine                  = 'AcDbLine';
+const ACAD_AcDb3dPolyline            = 'AcDb3dPolyline';
+const ACAD_AcDb2dPolyline            = 'AcDb2dPolyline';
+const ACAD_AcDb3dVertex              = 'AcDb3dVertex';
+const ACAD_AcDb2dVertex              = 'AcDb2dVertex';
+const ACAD_AcDbVertex                = 'AcDbVertex';
+const ACAD_AcDbCircle                = 'AcDbCircle';
+const ACAD_AcDbText                  = 'AcDbText';
+
+const ACAD_ENTITY_POINT              = 'POINT';
+const ACAD_ENTITY_VERTEX             = 'VERTEX';
+const ACAD_ENTITY_TEXT               = 'TEXT';
+const ACAD_ENTITY_LINE               = 'LINE';
+const ACAD_ENTITY_CIRCLE             = 'CIRCLE';
+const ACAD_ENTITY_POLYLINE           = 'POLYLINE';
+
+const ACAD_ATTRIBUTES_BYLAYER        = 'BYLAYER';
+const ACAD_ATTR_LTYPE                = 'LTYPE';
+const ACAD_ATTR_LineTypeName         = 'LineTypeName';
+
+const ACAD_DEFAULT_TEXT_STYLE_TXT    = 'TXT';
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // énumérations
@@ -78,7 +113,7 @@ type  TDxfTextStyleCode = (
       LAST_HEIGHT_USED  = 42,
       TEXT_ANGLE        = 50,
       STANDARD_FLAG     = 70,
-      GENERATION_FLAGS = 71);
+      GENERATION_FLAGS  = 71);
 
 type TDxfLineTypeCode = (
       ASCII_LINE_PATTERN      =  3,
@@ -336,7 +371,6 @@ begin
   self.vA := qA;
   self.vB := qB;
   self.vC := qC;
-
 end;
 
 
@@ -408,7 +442,7 @@ function TDxfTextStyle.ToDXF(var fp: TextFile): boolean;
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue(fp, 0, 'STYLE');
+    WriteDXFIdxKeyStringValue(fp, 0, ACAD_STYLE);
     WriteDXFIdxKeyStringValue(fp, 2, TextStyleName);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfTextStyleCode.GENERATION_FLAGS), GenerationFlags);
     WriteDXFIdxKeyFloatValue(fp, Ord(TDxfTextStyleCode.FIXED_HEIGHT), FixedHeight, 2);
@@ -416,8 +450,8 @@ begin
     WriteDXFIdxKeyFloatValue(fp, Ord(TDxfTextStyleCode.TEXT_ANGLE), TextAngle, 2);
     WriteDXFIdxKeyFloatValue(fp, Ord(TDxfTextStyleCode.WIDTH_FACTOR), WidthFactor, 2);
     WriteDXFIdxKeyStringValue(fp, Ord(TDxfTextStyleCode.PRIMARY_FILE_NAME), PrimaryFileName);
-    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbSymbolTableRecord');
-    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbTextStyleTableRecord');
+    WriteDXFIdxKeyStringValue(fp, 100, ACAD_AcDbSymbolTableRecord);
+    WriteDXFIdxKeyStringValue(fp, 100, ACAD_AcDbTextStyleTableRecord);
     WriteDXFIdxKeyStringValue(fp,  70, '0'); // 70 or 64
     Result := True;
   except
@@ -433,7 +467,7 @@ begin
   self.GenerationFlags  := 0;
   self.LastHeightUsed   := 1.0;
   self.TextAngle        := 0;
-  if (fontFileName = '') then PrimaryFileName:= 'TXT' else PrimaryFileName:= fontFileName;
+  if (fontFileName = '') then PrimaryFileName:= ACAD_DEFAULT_TEXT_STYLE_TXT else PrimaryFileName:= fontFileName;
 end;
 //************************************************
 { TDxfLineType }
@@ -444,11 +478,11 @@ var
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue(fp, 0, 'LTYPE');
-    WriteDXFIdxKeyStringValue(fp, 2, 'LineTypeName');
-    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbSymbolTableRecord');
-    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbLinetypeTableRecord');
-    WriteDXFIdxKeyStringValue(fp, Ord(TDxfLineTypeCode.ASCII_LINE_PATTERN), 'AsciiLinePatern');
+    WriteDXFIdxKeyStringValue(fp, 0, ACAD_ATTR_LTYPE);
+    WriteDXFIdxKeyStringValue(fp, 2, ACAD_ATTR_LineTypeName);
+    WriteDXFIdxKeyStringValue(fp, 100, ACAD_AcDbSymbolTableRecord);
+    WriteDXFIdxKeyStringValue(fp, 100, ACAD_AcDbLinetypeTableRecord);
+    WriteDXFIdxKeyStringValue(fp, Ord(TDxfLineTypeCode.ASCII_LINE_PATTERN), ACAD_AsciiLinePattern);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLineTypeCode.ALIGNMENT), Alignment);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLineTypeCode.DASH_ELEMENT_COUNT), DashElementCount);
     WriteDXFIdxKeyFloatValue(fp, Ord(TDxfLineTypeCode.SUM_DASH_ELEMENT_LENGTH), SUMDashElementLength, 3);
@@ -483,9 +517,9 @@ var
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue(fp,   0, 'DIMSTYLE');
-    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbSymbolTableRecord');
-    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbDimStyleTableRecord');
+    WriteDXFIdxKeyStringValue(fp,   0, ACAD_DIMSTYLE);
+    WriteDXFIdxKeyStringValue(fp, 100, ACAD_AcDbSymbolTableRecord);
+    WriteDXFIdxKeyStringValue(fp, 100, ACAD_AcDbDimStyleTableRecord);
     WriteDXFIdxKeyStringValue(fp,   2, DimStyleName);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfDimStyleCode.DIMSTANDARD_FLAGS)                 , DimStandardFlags);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfDimStyleCode.VERTICAL_TEXT_LOCATION)            , VerticalTextLocation);
@@ -536,33 +570,33 @@ begin
   if (styleName = '') or (Pos(styleName, ACAD_TEXT_STYLENAME_GENERIC) > 0 )  then
   begin
     DimStyleName:= ACAD_TEXT_STYLENAME_GENERIC;
-    {DIMCLRD} LineAndArrowHeadColor:= 256;
-    {DIMDLE}  LineSizePassing:= 0.0; //0:for arrow; OR <>0: for tickes/strok...line size after Extensionline
-    {DIMCLRE} ExtensionLineColor:=  256;
-    {DIMEXE}  ExtensionLinePassing:= 0.1800;   {or 1.2500 metric}  // Extension line size after Dimension line
-    {DIMEXO}  OffsetExtensionLineFromOrigin:= 0.0625;    //distance from extension line from baseline/shape
-    {DIMASZ}  ArrowSize:=  0.1800;
-    ArrowWidth:= 0.0625;
-    {DIMCLRT} TextColor:= 256;
-    {DIMTXT}  TextHeight:= 0.1800; {imperial 2.5 = metric}
-    {DIMTIH}  PositionTextInsideExtensionLines:= 1; {1= force horizontal  0=metric}
-    {DIMTAD}  VerticalTextLocation:= 0; {imperial} {1=metric}  //Place text above the dimension line
-    {DIMGAP}  OffsetFromDimensionLineToText:= 0.0900;{0.6250 = metric} {imperial=0.0900};  //Gape from dimension line to text
+    {DIMCLRD} LineAndArrowHeadColor            := 256;
+    {DIMDLE}  LineSizePassing                  := 0.0;       // 0:for arrow; OR <>0: for tickes/strok...line size after Extensionline
+    {DIMCLRE} ExtensionLineColor               := 256;
+    {DIMEXE}  ExtensionLinePassing             := 0.1800;    {or 1.2500 metric}  // Extension line size after Dimension line
+    {DIMEXO}  OffsetExtensionLineFromOrigin    := 0.0625;    //distance from extension line from baseline/shape
+    {DIMASZ}  ArrowSize                        := 0.1800;
+    ArrowWidth                                 := 0.0625;
+    {DIMCLRT} TextColor                        := 256;
+    {DIMTXT}  TextHeight                       := 0.1800;    {imperial 2.5 = metric}
+    {DIMTIH}  PositionTextInsideExtensionLines := 1;      {1= force horizontal  0=metric}
+    {DIMTAD}  VerticalTextLocation             := 0;      {imperial} {1=metric}  //Place text above the dimension line
+    {DIMGAP}  OffsetFromDimensionLineToText    := 0.0900; {0.6250 = metric} {imperial=0.0900};  //Gape from dimension line to text
   end  else
   begin
-    DimStyleName:= styleName;
-    {DIMCLRD} LineAndArrowHeadColor:= color;
-    {DIMDLE}  LineSizePassing:= 0.0;
-    {DIMCLRE} ExtensionLineColor:= color;
-    {DIMEXE}  ExtensionLinePassing:= 0.1800;
-    {DIMEXO}  OffsetExtensionLineFromOrigin:= 0.0625;
-    {DIMASZ}  ArrowSize:=  arrwSize;
-    ArrowWidth:= arrwWidth;
-    {DIMCLRT} TextColor:= color;
-    {DIMTXT}  TextHeight:= txtHeight;
-    {DIMTIH}  PositionTextInsideExtensionLines:= 1; {1= force horizontal}
-    {DIMTAD}  VerticalTextLocation:= 0;
-    {DIMGAP}  OffsetFromDimensionLineToText:= 0.0900; {0.6250 or 0.0900};
+    DimStyleName                               := styleName;
+    {DIMCLRD} LineAndArrowHeadColor            := color;
+    {DIMDLE}  LineSizePassing                  := 0.0;
+    {DIMCLRE} ExtensionLineColor               := color;
+    {DIMEXE}  ExtensionLinePassing             := 0.1800;
+    {DIMEXO}  OffsetExtensionLineFromOrigin    := 0.0625;
+    {DIMASZ}  ArrowSize                        :=  arrwSize;
+    ArrowWidth                                 := arrwWidth;
+    {DIMCLRT} TextColor                        := color;
+    {DIMTXT}  TextHeight                       := txtHeight;
+    {DIMTIH}  PositionTextInsideExtensionLines := 1; {1= force horizontal}
+    {DIMTAD}  VerticalTextLocation             := 0;
+    {DIMGAP}  OffsetFromDimensionLineToText    := 0.0900; {0.6250 or 0.0900};
   end;
 end;
 //*********************************************
@@ -578,9 +612,9 @@ function TDxfLayer.toDXF(var fp: TextFile): boolean;
 begin
   result := false;
   try
-    WriteDXFIdxKeyStringValue(fp,   0, 'LAYER');
-    WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbSymbolTableRecord'); //    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbSymbolTableRecord');
-    WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbLayerTableRecord');  //    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbLayerTableRecord');
+    WriteDXFIdxKeyStringValue(fp,   0, ACAD_LAYER);
+    WriteDXF_ACAD_DATABASE_VAR(fp,  ACAD_AcDbSymbolTableRecord); //    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbSymbolTableRecord');
+    WriteDXF_ACAD_DATABASE_VAR(fp,  ACAD_AcDbLayerTableRecord);  //    WriteDXFIdxKeyStringValue(fp, 100, 'AcDbLayerTableRecord');
     WriteDXFIdxKeyStringValue(fp,   2, self.LayerName);
     WriteDXFIdxKeyIntegerValue(fp, 70, 0);
     WriteDXFIdxKeyIntegerValue(fp, 62, self.Color);
@@ -596,13 +630,13 @@ function TDxfPoint.ToDXF(var fp: TextFile): boolean;
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue (fp,   0, 'POINT');
-    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_DATABASE_VAR_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
-    WriteDXFIdxKeyStringValue (fp,   8, 'DxfLayer.LayerName');
-    WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLayerCode.COLOR)         , DxfLayer.Color);              // 62
+    WriteDXFIdxKeyStringValue (fp,   0, ACAD_ENTITY_POINT);
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
+    WriteDXFIdxKeyStringValue (fp,   8, self.DxfLayer.LayerName); ////'DxfLayer.LayerName');
+    WriteDXFIdxKeyIntegerValue(fp , Ord(TDxfLayerCode.COLOR)         , DxfLayer.Color);              // 62
     WriteDXFIdxKeyStringValue (fp , Ord(TDxfLayerCode.LINE_TYPE)     , DxfLayer.LineType);
     WriteDXFIdxKeyFloatValue (fp  , Ord(TDxfCommonCode.THICKNESS)    , Thickness);
-    WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbPoint'); //WriteDXFIdxKeyStringValue(fp, 100, 'AcDbPoint');
+    WriteDXF_ACAD_DATABASE_VAR(fp , ACAD_AcDbPoint); //WriteDXFIdxKeyStringValue(fp, 100, 'AcDbPoint');
     self.Position.toDXF(fp);
     Result:= True;
   except
@@ -613,23 +647,23 @@ end;
 procedure TDxfPoint.setFrom(const QDxfLayer: TDxfLayer; const QX1, QY1, QZ1: double; const QThickness: double; const QDxfCommonCode: TDxfCommonCode);
 begin
   self.Position.setFrom(QX1, QY1, QZ1);
-  self.Thickness  := QThickness;
-  self.DxfLayer   := QDxfLayer;
-  self.DxfCommonCode := QDxfCommonCode;
-  self.DxfLayer.LineType   := 'BYLAYER';
+  self.Thickness           := QThickness;
+  self.DxfLayer            := QDxfLayer;
+  self.DxfCommonCode       := QDxfCommonCode;
+  self.DxfLayer.LineType   := ACAD_ATTRIBUTES_BYLAYER;
 end;
 //*************************************
 function TDxfLine.ToDXF(var fp: TextFile): boolean;
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue(fp,   0, 'LINE');
-    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_DATABASE_VAR_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
+    WriteDXFIdxKeyStringValue(fp,   0, ACAD_ENTITY_LINE);
+    WriteDXF_ACAD_DATABASE_VAR(fp,  ACAD_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
     WriteDXFIdxKeyStringValue(fp,   8, self.DxfLayer.LayerName);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLayerCode.COLOR), DxfLayer.Color);
     WriteDXFIdxKeyStringValue(fp, Ord(TDxfLayerCode.LINE_TYPE), DxfLayer.LineType);
     WriteDXFIdxKeyFloatValue(fp, Ord(TDxfCommonCode.THICKNESS), Thickness);
-    WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbLine'); //WriteDXFIdxKeyStringValue(fp, 100, 'AcDbLine');
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbLine); //WriteDXFIdxKeyStringValue(fp, 100, 'AcDbLine');
     Extr1.toDXF(fp);
     Extr2.toDXF(fp);
     Result := True;
@@ -641,10 +675,10 @@ procedure TDxfLine.setFrom(const QDxfLayer: TDxfLayer; const QX1, QY1, QZ1, QX2,
 begin
   self.Extr1.setFrom(QX1, QY1, QZ1);
   self.Extr2.setFrom(QX2, QY2, QZ2);
-  self.Thickness  := QThickness;
-  self.DxfLayer   := QDxfLayer;
-  self.DxfCommonCode := QDxfCommonCode;
-  self.DxfLayer.LineType   := 'BYLAYER';
+  self.Thickness           := QThickness;
+  self.DxfLayer            := QDxfLayer;
+  self.DxfCommonCode       := QDxfCommonCode;
+  self.DxfLayer.LineType   := ACAD_ATTRIBUTES_BYLAYER;
 end;
 //*************************************
 procedure TDxfPolyline.setFrom(const QDxfLayer: TDxfLayer;
@@ -671,16 +705,15 @@ procedure TDxfPolyline.setFrom(const QDxfLayer: TDxfLayer;
                                const QVertexCapacity: integer;
                                const QUse3DPoly: boolean = false);
 begin
-  self.Start := QCentroid;
-
-  self.DxfLayer   := QDxfLayer;
-  self.Thickness  := QThickness;
-  self.FollowFlag := 1;   //set to 1!
-  self.DxfCommonCode := QDxfCommonCode;
-  self.DxfLayer.LineType   := 'BYLAYER';
+  self.Start               := QCentroid;
+  self.DxfLayer            := QDxfLayer;
+  self.Thickness           := QThickness;
+  self.FollowFlag          := 1;   // set to 1!
+  self.DxfCommonCode       := QDxfCommonCode;
+  self.DxfLayer.LineType   := ACAD_ATTRIBUTES_BYLAYER;
   SetLength(self.ListeVertex, QVertexCapacity);
-  self.ClosedPoly    := QClosedPoly;
-  self.Use3DPoly     := QUse3DPoly;
+  self.ClosedPoly          := QClosedPoly;
+  self.Use3DPoly           := QUse3DPoly;
 end;
 
 procedure TDxfPolyline.setVertex(const Idx: integer; const V: TDXFPoint3Df);
@@ -709,32 +742,30 @@ begin
   Result := false;
   n := self.getNbVertex();
   if (n < 2) then exit; // moins de 2 sommets = poly invalide, on sort
-  if (self.Use3DPoly) then QType2D3DPoly   := 'AcDb3dPolyline' else QType2D3DPoly := 'AcDb2dPolyline';
-  if (self.Use3DPoly) then QType2D3DVertex := 'AcDb3dVertex'   else QType2D3DPoly := 'AcDb2dVertex';
+  if (self.Use3DPoly) then QType2D3DPoly   := ACAD_AcDb3dPolyline else QType2D3DPoly := ACAD_AcDb2dPolyline;
+  if (self.Use3DPoly) then QType2D3DVertex := ACAD_AcDb3dVertex   else QType2D3DPoly := ACAD_AcDb2dVertex;
   try
-    WriteDXFIdxKeyStringValue (fp,   0                             , 'POLYLINE');
-    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_DATABASE_VAR_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
+    WriteDXFIdxKeyStringValue (fp,   0                             , ACAD_ENTITY_POLYLINE);
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
     WriteDXFIdxKeyStringValue (fp,   8                             , DxfLayer.LayerName);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLayerCode.COLOR)        , DxfLayer.Color);
     WriteDXFIdxKeyStringValue (fp, Ord(TDxfLayerCode.LINE_TYPE)    , DxfLayer.LineType);
     WriteDXF_ACAD_DATABASE_VAR(fp, QType2D3DPoly); //WriteDXFIdxKeyStringValue (fp, 100, QType2D3DPoly);
     WriteDXFIdxKeyStringValue (fp, Ord(TDxfCommonCode.OPENED_CLOSED_FLAG), BoolToStr(ClosedPoly, '1', '0'));
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfCommonCode.FOLLOW_FLAG) , FollowFlag);
-
     for i := 0 to n - 1 do
     begin
       VX := ListeVertex[i];
-      WriteDXFIdxKeyStringValue (fp,   0, 'VERTEX');
-      WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_DATABASE_VAR_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
+      WriteDXFIdxKeyStringValue (fp,   0, ACAD_ENTITY_VERTEX);
+      WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbEntity); //   WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
       WriteDXFIdxKeyStringValue (fp,   8, DxfLayer.LayerName);
       WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLayerCode.COLOR)        , DxfLayer.Color);
       WriteDXFIdxKeyStringValue (fp, Ord(TDxfLayerCode.LINE_TYPE)    , DxfLayer.LineType);
       WriteDXFIdxKeyFloatValue  (fp, Ord(TDxfCommonCode.THICKNESS)   , Thickness, 2);
-      WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbVertex'); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbVertex');
-      //WriteDXF_ACAD_DATABASE_VAR(fp, QType2D3DVertex);  //WriteDXFIdxKeyStringValue (fp, 100, QType2D3DVertex);
+      WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbVertex); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbVertex');
       VX.toDXF(fp);
     end;
-    WriteDXFIdxKeyStringValue(fp, 0, 'SEQEND');
+    WriteDXFIdxKeyStringValue(fp, 0, ACAD_SEQEND);
     Result := True;
   except
     ;;
@@ -747,15 +778,13 @@ function TDxfCircle.ToDXF(var fp: TextFile): boolean;
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue(fp,   0, 'CIRCLE');
-    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_DATABASE_VAR_AcDbEntity); // writeDXFIdxKeyStringValue(fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
+    WriteDXFIdxKeyStringValue(fp,   0, ACAD_ENTITY_CIRCLE);
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbEntity); // writeDXFIdxKeyStringValue(fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
     WriteDXFIdxKeyStringValue(fp,   8, DxfLayer.LayerName);
-
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLayerCode.COLOR)        , DxfLayer.Color);
     WriteDXFIdxKeyStringValue (fp, Ord(TDxfLayerCode.LINE_TYPE)    , DxfLayer.LineType);
     WriteDXFIdxKeyFloatValue  (fp, Ord(TDxfCommonCode.THICKNESS)   , Thickness);
-
-    WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbCircle'); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbCircle');
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbCircle); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbCircle');
     Position.toDXF(fp);
     WriteDXFIdxKeyFloatValue  (fp, Ord(TDxfCommonCode.SIZE)        , Radius);
     Result := True;
@@ -767,11 +796,11 @@ end;
 procedure TDxfCircle.setFrom(const QDxfLayer: TDxfLayer; const QX1, QY1, QZ1, QRadius: double; const QThickness: double; const QDxfCommonCode: TDxfCommonCode);
 begin
   self.Position.setFrom(QX1, QY1, QZ1);
-  self.Radius     := QRadius;
-  self.Thickness  := QThickness;
-  self.DxfLayer   := QDxfLayer;
-  self.DxfCommonCode := QDxfCommonCode;
-  self.DxfLayer.LineType   := 'BYLAYER';
+  self.Radius              := QRadius;
+  self.Thickness           := QThickness;
+  self.DxfLayer            := QDxfLayer;
+  self.DxfCommonCode       := QDxfCommonCode;
+  self.DxfLayer.LineType   := ACAD_ATTRIBUTES_BYLAYER;
 end;
 //*************************************************
 procedure TDxfDataText.setFrom(const QDxfLayer: TDxfLayer;
@@ -784,26 +813,26 @@ procedure TDxfDataText.setFrom(const QDxfLayer: TDxfLayer;
                                const QText: string);
 begin
   self.Position.setFrom(QX1, QY1, QZ1);
-  self.Thickness  := QThickness;
-  self.DxfLayer   := QDxfLayer;
+  self.Thickness           := QThickness;
+  self.DxfLayer            := QDxfLayer;
   self.DxfCommonCode       := QDxfCommonCode;
-  self.DxfLayer.LineType   := 'BYLAYER';        // DxfLayer.Color = 256;
-  self.TextStyleName := QTextStyleName; // = 'GENERIC'
-  self.Height        := QHeight;
-  self.AngleRot      := QAngleRot;
-  self.Caption       := QText;
+  self.DxfLayer.LineType   := ACAD_ATTRIBUTES_BYLAYER;        // DxfLayer.Color = 256;
+  self.TextStyleName       := QTextStyleName; // = 'GENERIC'
+  self.Height              := QHeight;
+  self.AngleRot            := QAngleRot;
+  self.Caption             := QText;
 end;
 
 function TDxfDataText.ToDXF(var fp: TextFile): boolean;
 begin
   Result := false;
   try
-    WriteDXFIdxKeyStringValue (fp,   0, 'TEXT');
-    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_DATABASE_VAR_AcDbEntity); // WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
+    WriteDXFIdxKeyStringValue (fp,   0, ACAD_ENTITY_TEXT);
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbEntity); // WriteDXFIdxKeyStringValue (fp, 100, ACAD_DATABASE_VAR_AcDbEntity);
     WriteDXFIdxKeyStringValue (fp,   8, DxfLayer.LayerName);
     WriteDXFIdxKeyIntegerValue(fp, Ord(TDxfLayerCode.COLOR)        , DxfLayer.Color);
     WriteDXFIdxKeyStringValue (fp, Ord(TDxfLayerCode.LINE_TYPE)    , DxfLayer.LineType);
-    WriteDXF_ACAD_DATABASE_VAR(fp, 'AcDbText'); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbText');
+    WriteDXF_ACAD_DATABASE_VAR(fp, ACAD_AcDbText); //WriteDXFIdxKeyStringValue (fp, 100, 'AcDbText');
     Position.toDXF(fp);
     WriteDXFIdxKeyStringValue (fp, Ord(TDxfCommonCode.TEXT1)       , Caption);
     WriteDXFIdxKeyStringValue (fp, Ord(TDxfCommonCode.STYLE_NAME)  , TextStyleName);

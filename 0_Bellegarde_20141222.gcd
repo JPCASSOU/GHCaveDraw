@@ -1,5 +1,5 @@
-# File C:\0_Logiciels_JPC\0_GHCaveDraw\0_Bellegarde_20141222.gcd saved 04/08/2021 00:37:23
-# Producer: GHCaveDraw - Version 2.7183 du 04/08/2021 00:35
+# File D:\0_LogicielsJPC\0_GHCaveDraw\0_Bellegarde_20141222.gcd saved 10/08/2021 16:42:26
+# Producer: GHCaveDraw - Version 2.7183 du 10/08/2021 16:37
 
 # Standard saving document
 # =========================
@@ -2738,7 +2738,7 @@ endgroupes
 
 
 curveobjects
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Parameters for curve: ID Curve, IDGroupe, IDStyleCourbe, Closed (=1)
   # Parameters for each arc: IDStationP1, Offset_from_P1, "-1.0", Tangent_at_P1, IDStationP1, Offset_from_P2, Tangent_at_P2, "-2.0"
   polybezier	0	0	8	0
@@ -2746,7 +2746,7 @@ curveobjects
     arc	2500180	-2.92	-2.08	0.00	0.00	0.00	-1.00	2500180	-2.92	-2.08	0.00	0.00	0.00	-2.00
     arc	2500180	-2.92	-2.08	0.00	0.00	0.00	-1.00	2500180	-2.92	-2.08	0.00	0.00	0.00	-2.00
   endpolybezier
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Parameters for curve: ID Curve, IDGroupe, IDStyleCourbe, Closed (=1)
   # Parameters for each arc: IDStationP1, Offset_from_P1, "-1.0", Tangent_at_P1, IDStationP1, Offset_from_P2, Tangent_at_P2, "-2.0"
   polybezier	1	1	1	1
@@ -2781,7 +2781,7 @@ curveobjects
     arc	3100070	17.93	13.85	43.54	0.57	-0.04	-1.00	3100070	19.61	13.61	43.54	-0.57	0.04	-2.00
     arc	3100070	19.61	13.61	43.54	2.16	-0.15	-1.00	3100070	26.12	13.61	43.54	-2.17	0.00	-2.00
   endpolybezier
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Parameters for curve: ID Curve, IDGroupe, IDStyleCourbe, Closed (=1)
   # Parameters for each arc: IDStationP1, Offset_from_P1, "-1.0", Tangent_at_P1, IDStationP1, Offset_from_P2, Tangent_at_P2, "-2.0"
   polybezier	2	1	1	1
@@ -2832,52 +2832,71 @@ endcurveobjects
 # Parameters: ID, IDGroupe, Style Line, First Point: IDStation , Offset XYZ, Second Point: IDStation , Offset XYZ
 
 lineobjects
-    line 	0	0	4	2500190	-0.41	-2.48	41.24	2500140	-2.10	-2.90	41.96	04/08/2021 00:37:24
+    line 	0	0	4	2500190	-0.41	-2.48	41.24	2500140	-2.10	-2.90	41.96	10/08/2021 16:42:27
 endlineobjects
-# Section: Polylines (2 elements)
+# Section: Polylines (4 elements)
 #-------------------------------------------------------
 # Parameters: 
 
 polylineobjects
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Polylines Parameters: IDPolygon, IDGroupe, Style PolyLine, Closed (= 1)
   # Vertex  Parameters: IDStation, Offset XYZ Components
   polyln	0	0	3	0
-    vertex	100140	9.24	-11.36	42.52
-    vertex	3100070	12.31	12.10	0.00
-    vertex	3100070	19.13	0.87	0.00
-    vertex	3100070	35.57	-8.96	0.00
-    vertex	3100070	44.20	-10.16	0.00
-    vertex	3100090	53.08	-1.45	0.00
-    vertex	3100090	48.47	-11.28	0.00
-    vertex	3100090	31.02	-23.11	0.00
-    vertex	3100100	32.87	-37.58	0.00
-    vertex	3100100	44.90	-46.40	0.00
-    vertex	3100100	77.19	-49.81	0.00
-    vertex	100030	24.05	-47.83	0.00
-    vertex	100030	10.62	-17.14	0.00
+    vertex	100290	-95.29	-3.64	47.22
+    vertex	100290	-44.70	-2.68	0.00
+    vertex	100280	-44.64	-29.91	0.00
+    vertex	2900010	-2.03	-0.53	0.00
+    vertex	2900080	9.63	-6.66	0.00
+    vertex	3100090	46.85	-0.17	0.00
+    vertex	100110	-8.43	-22.20	0.00
+    vertex	2500020	-0.46	0.72	0.00
+    vertex	1100010	2.95	-0.19	0.00
+    vertex	1800020	-2.42	0.84	0.00
+    vertex	1600010	7.30	1.26	0.00
+    vertex	400030	5.83	9.33	0.00
+    vertex	600020	0.04	18.84	0.00
+    vertex	100120	-1.62	-3.97	0.00
+    vertex	100020	9.14	4.92	0.00
   endpolyln
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Polylines Parameters: IDPolygon, IDGroupe, Style PolyLine, Closed (= 1)
   # Vertex  Parameters: IDStation, Offset XYZ Components
-  polyln	1	1	3	0
-    vertex	2500210	-24.68	67.41	41.84
-    vertex	100280	-36.64	-22.00	0.00
-    vertex	2900090	-22.55	38.37	0.00
-    vertex	2900040	-8.98	25.49	0.00
-    vertex	2900020	0.08	5.56	0.00
-    vertex	2600050	-0.49	2.64	0.00
-    vertex	2900130	-3.36	-11.14	0.00
-    vertex	3100090	20.19	-11.88	0.00
-    vertex	3100070	19.73	15.30	0.00
-    vertex	2500030	-4.58	-3.16	0.00
-    vertex	2500010	-6.16	-0.34	0.00
-    vertex	2400010	1.39	0.65	0.00
-    vertex	1200050	-0.24	-0.49	0.00
-    vertex	400020	-3.08	4.57	0.00
-    vertex	100130	5.11	10.04	0.00
-    vertex	100120	-7.02	-8.29	0.00
-    vertex	100140	16.66	-22.39	0.00
+  polyln	1	0	6	0
+    vertex	100030	19.39	-37.33	43.09
+    vertex	900010	-4.65	-36.80	0.00
+    vertex	900010	-1.52	-75.58	0.00
+    vertex	3100090	47.33	-18.97	0.00
+    vertex	3100100	55.80	-41.76	0.00
+    vertex	3100090	93.83	-47.15	0.00
+    vertex	900010	12.69	-65.95	0.00
+    vertex	100030	13.12	-69.61	0.00
+    vertex	900010	32.69	-95.82	0.00
+    vertex	100030	28.06	-99.73	0.00
+    vertex	100030	24.93	-39.50	0.00
+  endpolyln
+  # Last modification: 10/08/2021 16:42:27
+  # Polylines Parameters: IDPolygon, IDGroupe, Style PolyLine, Closed (= 1)
+  # Vertex  Parameters: IDStation, Offset XYZ Components
+  polyln	2	1	1	0
+    vertex	2800030	-19.12	-24.10	40.24
+    vertex	2500110	3.21	-2.14	0.00
+    vertex	2500120	21.72	-20.86	0.00
+    vertex	3100090	36.97	-9.33	0.00
+    vertex	3100070	17.44	-5.66	0.00
+    vertex	900010	-4.65	-16.08	0.00
+    vertex	500020	17.70	24.49	0.00
+  endpolyln
+  # Last modification: 10/08/2021 16:42:27
+  # Polylines Parameters: IDPolygon, IDGroupe, Style PolyLine, Closed (= 1)
+  # Vertex  Parameters: IDStation, Offset XYZ Components
+  polyln	3	1	5	0
+    vertex	100290	-45.42	4.55	47.22
+    vertex	2900090	-22.19	18.67	0.00
+    vertex	2300030	-12.36	-10.81	0.00
+    vertex	2500120	5.58	-32.90	0.00
+    vertex	3100100	23.52	-36.46	0.00
+    vertex	3100100	28.82	-54.05	0.00
   endpolyln
 endpolylineobjects
 # Section: Polygons (3 elements)
@@ -2886,7 +2905,7 @@ endpolylineobjects
 
 polygonobjects
   polyentity	0	0	1
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Polygon Parameters: IDPolygon, IDGroupe, Style Polygon
   # Vertex  Parameters: IDStation, Offset XYZ Components
     vertex	2700010	0.40	2.03	40.88
@@ -2924,7 +2943,7 @@ polygonobjects
     vertex	2700010	0.37	1.57	0.00
   endpolyentity
   polyentity	1	0	12
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Polygon Parameters: IDPolygon, IDGroupe, Style Polygon
   # Vertex  Parameters: IDStation, Offset XYZ Components
     vertex	2700020	2.71	0.77	40.94
@@ -2934,7 +2953,7 @@ polygonobjects
     vertex	2700020	3.23	0.80	0.00
   endpolyentity
   polyentity	2	0	9
-  # Last modification: 04/08/2021 00:37:24
+  # Last modification: 10/08/2021 16:42:27
   # Polygon Parameters: IDPolygon, IDGroupe, Style Polygon
   # Vertex  Parameters: IDStation, Offset XYZ Components
     vertex	2800020	-2.45	-2.77	39.91
@@ -2974,21 +2993,21 @@ endpolygonobjects
 # Parameters: ID, IDGroupe, Style Text, IDStation, Offset XYZ Components, Text Alignment, MaxLength, Text string
 
 textobjects
-    text 	0	0	7	100290	-12.17	2.14	0.00	3	16	%s%s %l %a %p %z	04/08/2021 00:37:24
-    text 	1	0	3	100280	-5.85	-4.13	0.00	9	2	%z	04/08/2021 00:37:24
+    text 	0	0	7	100290	-12.17	2.14	0.00	3	16	%s%s %l %a %p %z	10/08/2021 16:42:27
+    text 	1	0	3	100280	-5.85	-4.13	0.00	9	2	%z	10/08/2021 16:42:27
 endtextobjects
 # Section: Symbols (9 elements)
 #-------------------------------------------------------
 # Parameters: ID, IDGroupe, TypeObject, Colour, IDStation, Offset XYZ Coordinates, Rotation, XY Scale, Legend or filename, Tag, Display photo
 
 ponctualobjects
-    ponctualobject 	0	1	18	36	3100080	11.94	-5.60	0.00	0.00	1.00	1.00		0	1	04/08/2021 00:37:24
-    ponctualobject 	1	1	5	36	2500030	6.44	6.19	0.00	0.00	1.00	1.00		0	1	04/08/2021 00:37:24
-    ponctualobject 	2	1	2	36	100180	-0.32	0.02	0.00	0.00	1.00	1.00		0	1	04/08/2021 00:37:24
-    ponctualobject 	3	1	0	36	3300010	-0.03	-0.40	0.00	0.00	1.00	1.00		0	0	04/08/2021 00:37:24
-    ponctualobject 	4	0	21	36	100260	-3.86	-2.61	0.00	0.00	1.00	1.00	toto	0	1	04/08/2021 00:37:24
-    ponctualobject 	5	0	21	36	2900090	-2.92	4.70	0.00	0.00	1.00	1.00	Miaou	0	1	04/08/2021 00:37:24
-    ponctualobject 	6	0	21	36	600020	3.17	5.59	0.00	0.00	1.00	1.00	Cui cui	0	1	04/08/2021 00:37:24
-    ponctualobject 	7	0	19	36	2500030	-0.27	-0.80	0.00	0.00	1.00	1.00		0	1	04/08/2021 00:37:24
-    ponctualobject 	8	1	20	36	100290	0.59	2.14	0.00	0.00	1.00	1.00		0	1	04/08/2021 00:37:24
+    ponctualobject 	0	1	18	36	3100080	11.94	-5.60	0.00	0.00	1.00	1.00		0	1	10/08/2021 16:42:27
+    ponctualobject 	1	1	5	36	2500030	6.44	6.19	0.00	0.00	1.00	1.00		0	1	10/08/2021 16:42:27
+    ponctualobject 	2	1	2	36	100180	-0.32	0.02	0.00	0.00	1.00	1.00		0	1	10/08/2021 16:42:27
+    ponctualobject 	3	1	0	36	3300010	-0.03	-0.40	0.00	0.00	1.00	1.00		0	0	10/08/2021 16:42:27
+    ponctualobject 	4	0	21	36	100260	-3.86	-2.61	0.00	0.00	1.00	1.00	toto	0	1	10/08/2021 16:42:27
+    ponctualobject 	5	0	21	36	2900090	-2.92	4.70	0.00	0.00	1.00	1.00	Miaou	0	1	10/08/2021 16:42:27
+    ponctualobject 	6	0	21	36	600020	3.17	5.59	0.00	0.00	1.00	1.00	Cui cui	0	1	10/08/2021 16:42:27
+    ponctualobject 	7	0	19	36	2500030	-0.27	-0.80	0.00	0.00	1.00	1.00		0	1	10/08/2021 16:42:27
+    ponctualobject 	8	1	20	36	100290	0.59	2.14	0.00	0.00	1.00	1.00		0	1	10/08/2021 16:42:27
 endponctualobjects

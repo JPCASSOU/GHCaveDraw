@@ -1285,7 +1285,7 @@ begin
       QIdTexte                  := StrToInt64Def(FMainSqlQuery.Fields[0].AsString, 0);                              // IDTexte
       MyTexte.IDGroupe          := StrToInt64Def(FMainSqlQuery.Fields[1].AsString, 0) mod NB_MAX_OBJ_PAR_CAVITE;    // IDGroupe
       MyTexte.IDStyleTexte      := TNatureObjetTexte(StrToIntDef(FMainSqlQuery.Fields[2].AsString, 0));             // TypeTexte
-      MyTexte.IDBaseSt          := StrToInt64Def(FMainSqlQuery.Fields[3].AsString, 0) mod MULT_IDX_CAVITE;          // IDBasePoint
+      MyTexte.IDBaseStation     := StrToInt64Def(FMainSqlQuery.Fields[3].AsString, 0) mod MULT_IDX_CAVITE;          // IDBasePoint
       MyTexte.Offset.X          := ConvertirEnNombreReel(FMainSqlQuery.Fields[4].AsString, 0.00);                           // Offset_X
       MyTexte.Offset.Y          := ConvertirEnNombreReel(FMainSqlQuery.Fields[5].AsString, 0.00);                           // Offset_Y
       MyTexte.Alignment         := StrToIntDef(FMainSqlQuery.Fields[6].AsString, 0);                                // Alignment
@@ -1873,7 +1873,7 @@ var
               QIdxTexte,
               CalcIdxGroupeForCavite(NumCavite, BP.IDGroupe),
               BP.IDStyleTexte,
-              CalcIdxBasepointForCavite(NumCavite, BP.IDBaseSt),
+              CalcIdxBasepointForCavite(NumCavite, BP.IDBaseStation),
               BP.Offset.X, BP.Offset.Y,
               BP.Alignment, BP.MaxLength,
               mysqli_real_escape_string(BP.Text)

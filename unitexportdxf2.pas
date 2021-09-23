@@ -155,12 +155,14 @@ end;
 function TDXFExport2.GetLayerByName(const QLayerName: string): TDxfLayer;
 var
   Nb, i: Integer;
+  EWE: String;
 begin
   Nb := self.GetNbLayers(); // Nb forcément non nul: des couches ont été créées dans Initialiser()
+  EWE := LowerCase(QLayerName);
   for i := 0 to Nb-1 do
   begin
     Result := self.GetLayer(i);
-    if (QLayerName = Result.LayerName) then exit(Result);
+    if (EWE = LowerCase(Result.LayerName)) then exit(Result);
   end;
   Result := self.GetLayer(0);  // sinon retourne la couche 0
 end;

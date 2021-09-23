@@ -1,12 +1,12 @@
 object dlgExportSIG: TdlgExportSIG
-  Left = 422
-  Height = 395
-  Top = 302
-  Width = 741
+  Left = 491
+  Height = 429
+  Top = 475
+  Width = 767
   BorderStyle = bsDialog
   Caption = 'Export vers SIG'
-  ClientHeight = 395
-  ClientWidth = 741
+  ClientHeight = 429
+  ClientWidth = 767
   Font.CharSet = ARABIC_CHARSET
   Font.Height = -13
   Font.Name = 'Arial'
@@ -17,9 +17,9 @@ object dlgExportSIG: TdlgExportSIG
   Position = poScreenCenter
   LCLVersion = '2.0.0.4'
   object BitBtn1: TBitBtn
-    Left = 616
+    Left = 642
     Height = 30
-    Top = 361
+    Top = 395
     Width = 119
     Anchors = [akRight, akBottom]
     DefaultCaption = True
@@ -39,7 +39,7 @@ object dlgExportSIG: TdlgExportSIG
     Left = 128
     Height = 24
     Top = 4
-    Width = 607
+    Width = 633
     FileName = 'scraps.kml'
     DialogKind = dkSave
     DialogOptions = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
@@ -56,7 +56,7 @@ object dlgExportSIG: TdlgExportSIG
   object btnDoExport: TButton
     Left = 4
     Height = 30
-    Top = 361
+    Top = 395
     Width = 252
     Anchors = [akLeft, akBottom]
     Caption = 'btnDoExport'
@@ -66,18 +66,18 @@ object dlgExportSIG: TdlgExportSIG
   object pnlProgression: TPanel
     Left = 4
     Height = 49
-    Top = 310
-    Width = 731
+    Top = 344
+    Width = 757
     Anchors = [akLeft, akRight, akBottom]
     BevelInner = bvLowered
     ClientHeight = 49
-    ClientWidth = 731
+    ClientWidth = 757
     TabOrder = 3
     object lbEtape: TLabel
       Left = 4
       Height = 16
       Top = 4
-      Width = 720
+      Width = 746
       Anchors = [akTop, akLeft, akRight]
       Caption = 'lbEtape'
       ParentColor = False
@@ -86,13 +86,13 @@ object dlgExportSIG: TdlgExportSIG
       Left = 4
       Height = 20
       Top = 24
-      Width = 720
+      Width = 746
       Anchors = [akTop, akLeft, akRight, akBottom]
       TabOrder = 0
     end
   end
   object Label6: TLabel
-    Left = 425
+    Left = 451
     Height = 16
     Top = 32
     Width = 204
@@ -101,7 +101,7 @@ object dlgExportSIG: TdlgExportSIG
     ParentColor = False
   end
   object btnChooseSystemeEPSG: TButton
-    Left = 425
+    Left = 451
     Height = 25
     Top = 51
     Width = 310
@@ -110,95 +110,8 @@ object dlgExportSIG: TdlgExportSIG
     OnClick = btnChooseSystemeEPSGClick
     TabOrder = 4
   end
-  object Panel1: TPanel
-    Left = 4
-    Height = 96
-    Top = 32
-    Width = 416
-    Anchors = [akTop, akLeft, akRight]
-    BevelOuter = bvLowered
-    ClientHeight = 96
-    ClientWidth = 416
-    TabOrder = 5
-    object btnColorSilhouette: TColorButton
-      Left = 116
-      Height = 29
-      Top = 32
-      Width = 142
-      BorderWidth = 2
-      ButtonColorSize = 16
-      ButtonColor = clRed
-    end
-    object Label2: TLabel
-      Left = 4
-      Height = 16
-      Top = 32
-      Width = 50
-      Caption = 'Couleur'
-      ParentColor = False
-    end
-    object Label3: TLabel
-      Left = 4
-      Height = 16
-      Top = 66
-      Width = 86
-      Caption = 'Transparence'
-      ParentColor = False
-    end
-    object StaticText1: TStaticText
-      Left = 116
-      Height = 22
-      Top = 66
-      Width = 20
-      BorderStyle = sbsSingle
-      TabOrder = 0
-    end
-    object trkBarTransparence: TTrackBar
-      Left = 137
-      Height = 22
-      Top = 66
-      Width = 251
-      Max = 255
-      Position = 64
-      ShowSelRange = False
-      TickStyle = tsNone
-      Anchors = [akTop, akLeft, akRight]
-      TabOrder = 1
-    end
-    object StaticText2: TStaticText
-      Left = 390
-      Height = 22
-      Top = 66
-      Width = 20
-      Anchors = [akTop, akRight]
-      BorderStyle = sbsSingle
-      Color = clBlack
-      ParentColor = False
-      TabOrder = 2
-    end
-    object chkDoUseDefaultStyle: TCheckBox
-      Left = 4
-      Height = 20
-      Top = 4
-      Width = 182
-      Caption = 'Utiliser le style par défaut'
-      Checked = True
-      State = cbChecked
-      TabOrder = 3
-    end
-    object chkScrapsFilled: TCheckBox
-      Left = 204
-      Height = 20
-      Top = 4
-      Width = 114
-      Caption = 'Scraps remplis'
-      Checked = True
-      State = cbChecked
-      TabOrder = 4
-    end
-  end
   object Panel2: TPanel
-    Left = 424
+    Left = 450
     Height = 192
     Top = 80
     Width = 311
@@ -206,7 +119,7 @@ object dlgExportSIG: TdlgExportSIG
     BevelOuter = bvLowered
     ClientHeight = 192
     ClientWidth = 311
-    TabOrder = 6
+    TabOrder = 5
     object editMapWidth: TCurrencyEdit
       Left = 132
       Height = 24
@@ -295,38 +208,171 @@ object dlgExportSIG: TdlgExportSIG
       }
     end
   end
-  object chkWithEntrances: TCheckBox
-    Left = 4
-    Height = 20
-    Top = 136
-    Width = 102
-    Caption = 'Avec entrées'
-    Checked = True
-    State = cbChecked
+  object btnLeafletBySuperGroupes: TButton
+    Left = 451
+    Height = 25
+    Top = 280
+    Width = 199
+    Anchors = [akTop, akRight]
+    Caption = 'btnLeafletBySuperGroupes'
+    OnClick = btnLeafletBySuperGroupesClick
+    TabOrder = 6
+  end
+  object Button1: TButton
+    Left = 451
+    Height = 25
+    Top = 312
+    Width = 199
+    Anchors = [akTop, akRight]
+    Caption = 'btnKMLBySupergroupes'
+    OnClick = Button1Click
     TabOrder = 7
   end
-  object chkWithCenterlines: TCheckBox
+  object grbxOptions: TGroupBox
     Left = 4
-    Height = 20
-    Top = 156
-    Width = 132
-    Caption = 'Avec polygonales'
+    Height = 180
+    Top = 160
+    Width = 438
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Caption = 'Options'
+    ClientHeight = 159
+    ClientWidth = 434
     TabOrder = 8
+    object chkWithWalls: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 4
+      Width = 94
+      Caption = 'Avec parois'
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+    end
+    object chkWithEntrances: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 102
+      Caption = 'Avec entrées'
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+    end
+    object chkWithCenterlines: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 84
+      Width = 132
+      Caption = 'Avec polygonales'
+      TabOrder = 2
+    end
+    object chkWithPOI: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 60
+      Width = 220
+      Caption = 'Avec points remarquables (POI)'
+      TabOrder = 3
+    end
+    object chkWithMetadata: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 108
+      Width = 141
+      Caption = 'Avec métadonnées'
+      TabOrder = 4
+    end
   end
-  object chkWithPOI: TCheckBox
+  object grbxScraps: TGroupBox
     Left = 4
-    Height = 20
-    Top = 176
-    Width = 220
-    Caption = 'Avec points remarquables (POI)'
+    Height = 114
+    Top = 40
+    Width = 438
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'Scraps'
+    ClientHeight = 93
+    ClientWidth = 434
     TabOrder = 9
-  end
-  object chkWithMetadata: TCheckBox
-    Left = 4
-    Height = 20
-    Top = 196
-    Width = 141
-    Caption = 'Avec métadonnées'
-    TabOrder = 10
+    object chkWithScraps: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 4
+      Width = 95
+      Caption = 'Avec scraps'
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+    end
+    object chkScrapsFilled: TCheckBox
+      Left = 160
+      Height = 20
+      Top = 4
+      Width = 114
+      Caption = 'Scraps remplis'
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+    end
+    object chkDoUseDefaultStyle: TCheckBox
+      Left = 4
+      Height = 20
+      Top = 28
+      Width = 182
+      Caption = 'Utiliser le style par défaut'
+      Checked = True
+      State = cbChecked
+      TabOrder = 2
+    end
+    object btnColorSilhouette: TColorButton
+      Left = 286
+      Height = 29
+      Top = 4
+      Width = 142
+      Anchors = [akTop, akRight]
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clRed
+    end
+    object Label3: TLabel
+      Left = 4
+      Height = 16
+      Top = 64
+      Width = 86
+      Anchors = [akLeft, akBottom]
+      Caption = 'Transparence'
+      ParentColor = False
+    end
+    object trkBarTransparence: TTrackBar
+      Left = 120
+      Height = 22
+      Top = 64
+      Width = 284
+      Max = 255
+      Position = 64
+      ShowSelRange = False
+      TickStyle = tsNone
+      Anchors = [akLeft, akRight, akBottom]
+      TabOrder = 3
+    end
+    object StaticText1: TStaticText
+      Left = 100
+      Height = 22
+      Top = 64
+      Width = 20
+      Anchors = [akLeft, akBottom]
+      BorderStyle = sbsSingle
+      TabOrder = 4
+    end
+    object StaticText2: TStaticText
+      Left = 408
+      Height = 22
+      Top = 64
+      Width = 20
+      Anchors = [akRight, akBottom]
+      BorderStyle = sbsSingle
+      Color = clBlack
+      ParentColor = False
+      TabOrder = 5
+    end
   end
 end

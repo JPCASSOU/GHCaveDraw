@@ -1,7 +1,7 @@
 object frmHelpSystem: TfrmHelpSystem
-  Left = 315
+  Left = 521
   Height = 682
-  Top = 203
+  Top = 401
   Width = 1002
   HorzScrollBar.Page = 484
   HorzScrollBar.Range = 484
@@ -37,9 +37,9 @@ object frmHelpSystem: TfrmHelpSystem
     Height = 640
     Top = 4
     Width = 995
-    ActivePage = tabShtTextures
+    ActivePage = tabShtAbout
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 3
+    TabIndex = 0
     TabOrder = 1
     OnChange = PageControl1Change
     object tabShtAbout: TTabSheet
@@ -236,11 +236,8 @@ object frmHelpSystem: TfrmHelpSystem
           ClientHeight = 569
           ClientWidth = 985
           inherited TextEditor: TSynEdit
-            Left = 0
-            Height = 924
-            Top = 0
-            Width = 1763
-            Align = alNone
+            Height = 567
+            Width = 983
           end
         end
       end
@@ -893,6 +890,8 @@ object frmHelpSystem: TfrmHelpSystem
           Width = 571
           ClientHeight = 336
           ClientWidth = 571
+          DesignLeft = 1076
+          DesignTop = 386
           inherited Panel1: TPanel
             Width = 569
             ClientWidth = 569

@@ -8,6 +8,9 @@
 unit GHCD_Types;
 interface
 uses
+  {$IFDEF LANGUAGE_FRENCH}
+  UnitMessages_fr,
+  {$ENDIF}
   SysUtils,
   Classes,
   Graphics,
@@ -46,7 +49,9 @@ const CODE_EPSG_GOOGLE                     = 379009;
 const
   DEFAULT_SYSTEME_COORDONNEES_NOM       = NOM_LAMBERT_93;       // évolutif en LT93
   DEFAULT_SYSTEME_COORDONNEES_CODE_EPSG = CODE_EPSG_LAMBERT_93; // évolutif en LT93
-
+// Hauteur du libellé des points topo en mm
+const HAUTEUR_LBL_BASESTATION_IN_MM     = 1.80;
+const HAUTEUR_LBL_BASESTATION_IN_PIXELS = 10;
 ////////////////////////////////////////////////////////////////////////////////
 // Typages renforcés
 type TStringDirectoryFileName = type UTF8String;    // noms de fichiers
@@ -148,13 +153,15 @@ type TBarbule = (tbNONE,
                  tbCHENAL_VOUTE,
                  tbMINI_RESSAUT);
 type TCourbesOrPolylignes = (tcpCOURBE, tcpPOLYLIGNE);
-type TTypeQuadrillage     = (tqGRID, tqCROSS);
+type TTypeQuadrillage     = (tqGRID, tqCROSS, tqPOINTS, tqNONE);
 type TModeEdition         = (medCREATION, medMODIF);     // modes d'édition des dialogues de groupes, objets, etc ..
 ////////////////////////////////////////////////////////////////////////////////
 // Ensembles (sets)
 type TWithExportGIS = set of (gisWITH_ENTRANCES,            // mode d'export vers logiciels de SIG
-                              gisWITH_CENTERLINES,
+                              gisWITH_SCRAPS,
+                              gisWITH_WALLS,
                               gisWITH_POI,
+                              gisWITH_CENTERLINES,
                               gisWITH_METADATA);
 type TELementsDrawn = set of (tedECHELLE_NORD            // dessin de l'échelle et du nord
                              ,tedCENTERLINES                    // dessin des centerlines
@@ -220,6 +227,7 @@ type
     function  GetNbElements(): integer;
     function  fromString(const S: string): boolean;
     function  toString(): string;
+    procedure RemoveElement(const Idx: integer);
 end;
 
 type TZoomParameters = record
@@ -232,24 +240,29 @@ type TZoomParameters = record
   procedure setFrom(const QIdx: integer; const QX1, QY1, QX2, QY2: double; const QCaption: string = '');
 end;
 
-type
-
-{ TPoint3Df }
-
- TPoint3Df = record
+type TPoint3Df = record
   X: double;
   Y: double;
   Z: double;
+
   procedure setFrom(const QX, QY, QZ: double); overload;
   procedure setFrom(const QX, QY, QZ: string); overload;
   procedure Empty();
-  function DebugString(const QCaption: string = ''): string;
+  function  DebugString(const QCaption: string = ''): string;
+  function  Norme(): double;
 end;
-type TPoint2Df = record
+type
+
+{ TPoint2Df }
+
+ TPoint2Df = record
   X: double;
   Y: double;
-  procedure setFrom(const QX, QY: double);
   procedure Empty();
+  procedure setFrom(const QX, QY: double); overload;
+  procedure setFrom(const QX, QY: string); overload;
+  function  DebugString(const QCaption: string = ''): string;
+  function  Norme(): double;
 end;
 type TSinusoide          = array[0..9] of TPoint2Df;   // sinusoide pour représentation des arrivées d'eau
 type TArrayPoints2Df     = array of TPoint2Df;
@@ -289,12 +302,26 @@ type TToporobotIDStation = record
 end;
 
 // super-groupes === réseaux
-type TSuperGroupe = record
+type
+
+{ TSuperGroupe }
+
+ TSuperGroupe = record
+  Couleur       : TColor;
   NomSuperGroupe: string;
   Displayed     : boolean;
+  BoundingBox   : TBoundingBox;
   ListeGroupes  : TArrayOfIdxGroupes;
+  function toLineGCD(const QIdx: integer): string;
+  function getNbGroupes(): integer;
+  function  ListeGroupesToText(): string;
+  procedure RemoveGroupe(const Idx: integer);
 end;
-type TGroupeEntites   = record
+type
+
+{ TGroupeEntites }
+
+ TGroupeEntites   = record
   IDGroupeEntites : TIDGroupeEntites;
   // IDSuperGroupeEntites;   /!\ NON ! Un groupe peut appartenir à plusieurs super-groupes
   NomGroupe       : string;
@@ -307,11 +334,16 @@ type TGroupeEntites   = record
   ZOrder          : double;
   Filtres         : string;
   NombreObjets    : integer;
+  function toLineGCD(const QIdx: integer): string;
 end;
 
 
 // stations calculées par GHTopo = station de référence, indexées par les entités
-type TBaseStation = record
+type
+
+{ TBaseStation }
+
+ TBaseStation = record
   IDStation      : TIDBaseStation;
   IDTerrain      : string; // étiquette de terrain
   TypeStation    : TTypeStation;
@@ -321,9 +353,14 @@ type TBaseStation = record
   PosPG          : TPoint3Df; //
   PosPD          : TPoint3Df;
   Enabled        : boolean; // activé par le MétaFiltre
-  function getToporobotIDStation(): TToporobotIDStation;
-  function getToporobotIDStationAsString(const WithIDTerrain: boolean = false): string;
-  function getToporobotIDStationWithIDTerrainPriority(): string;
+  function  getToporobotIDStation(): TToporobotIDStation;
+  function  getToporobotIDStationAsString(const WithIDTerrain: boolean = false): string;
+  function  getToporobotIDStationWithIDTerrainPriority(): string;
+  procedure fromLineGCP(const MyLine: string);
+  function  toLineGCP(): string;
+
+  function IsStationTopo(): boolean;
+
 end;
 
 type TStyleCourbe = record // pour lignes, polylignes et courbes
@@ -331,7 +368,6 @@ type TStyleCourbe = record // pour lignes, polylignes et courbes
   DescStyle   : string;
   NameSVGStyle: string;
   SeuilVisibilite: TSeuilVisibilite;
-
   LineWidth   : integer;
   PrintLineWidth: double;
   LineColor   : TColor;
@@ -376,20 +412,21 @@ type TStyleTexte = record // styles de texte
 end;
 
 // styles d'objets ponctuels
-type TStyleSymboles = record
+type
+
+{ TStyleSymboles }
+
+ TStyleSymboles = record
   IDStyle     : integer;
   DescStyle   : string;
   NameSVGStyle: string;
   SeuilVisibilite: TSeuilVisibilite;
   Color       : TColor;
+  procedure setFrom(const QIDStyle: integer; const QNameSVGStyle, QDescStyle: string; const QColor: TColor; const QSeuilVisibilite: TSeuilVisibilite);
 end;
 
 // type de point de courbe
-type
-
-{ TVertexCourbe }
-
- TVertexCourbe = record
+type TVertexCourbe = record
   IDStation      : TIDBaseStation;
   Offset         : TPoint3Df;
   TangGauche     : TPoint3Df;
@@ -403,22 +440,24 @@ type TCrossSectionVertexCourbe = record
 end;
 type TArrayVertexCourbe = array of TVertexCourbe;
 // type de point de courbe
-type TVertexPolygon = record
+type  TVertexPolygon = record
   IDStation      : TIDBaseStation;
   Offset         : TPoint3Df;
+  function toLineGCD(const QIdx: integer): string;
 end;
 // Ne pas transformer en quasi-classe: débogage pénible ++++
 type TArrayVertexPolygon = array of TVertexPolygon;
 //*)
 // type d'arc de courbe
 // GHCaveDraw individualise les arcs de courbes
-type TArcCourbe = record
+type  TArcCourbe = record
   IDStationP1      : TIDBaseStation;
   OffsetP1         : TPoint3Df;
   TangP1           : TPoint3Df; // tangente = dx, dy. C'est un vecteur, pas une position
   IDStationP2      : TIDBaseStation;
   OffsetP2         : TPoint3Df;
   TangP2           : TPoint3Df;
+  function toLineGCD(const QIdx: integer): string;
 end;
 type TArrayArcsCourbes = array of TArcCourbe;
 // arcs de Bézier (différents des TArcCourbe)
@@ -432,12 +471,7 @@ end;
 
 
 // TODO: Voir si on peut chaîner plusieurs courbes
-type
-  pTCourbe = ^TCourbe;
-
-  { TCourbe }
-
-  TCourbe = record
+type TCourbe = record
   private
 
   public
@@ -454,14 +488,13 @@ type
   function  getNbArcs(): integer;
   function  getArc(const Idx: integer): TArcCourbe;
   procedure setArc(const Idx: integer; const A: TArcCourbe);
+  function  toLineGCD_Begin(const QIdx: integer): string;
+  function  toLineGCD_End(): string;
+
 end;
 type TArrayOfTCourbe = array of TCourbe;
 
-type
-
-{ TScrap }
-
- TScrap = record
+type TScrap = record
   IDGroupe       : TIDGroupeEntites;
   Nom            : string;
   Couleur        : TColor;
@@ -480,8 +513,14 @@ type
   function  getVertex(const idx: integer): TVertexPolygon;
   procedure putVertex(const idx: integer; const V: TVertexPolygon);
   function  ReverseVertex(): boolean;
+  function  toLineGCD_Begin(const QIdx: integer): string;
+  function  toLineGCD_End(): string;
 end;
-type TPolygone = record
+type
+
+{ TPolygone }
+
+ TPolygone = record
 
   IDGroupe       : TIDGroupeEntites;
   IDStylePolygone: TNatureObjetPolygone; //integer;
@@ -499,17 +538,23 @@ type TPolygone = record
   function  getVertex(const idx: integer): TVertexPolygon;
   procedure putVertex(const idx: integer; const V: TVertexPolygon);
   function  ReverseVertex(): boolean;
+  function  toLineGCD_Begin(const QIdx: integer): string;
+  function  toLineGCD_End(): string;
+
 end;
 type TArrayOfTPolygone = array of TPolygone;
 // Nouveauté 2015: Polyligne (notamment pour les plans de carrières souterraines)
 // Une polyligne est une restriction de la Courbe
-type TPolyLigne = record
+type
+
+{ TPolyLigne }
+
+ TPolyLigne = record
   IDGroupe       : TIDGroupeEntites;
   IDStylePolyLine: TNatureObjetCourbe;
   BoundingBox    : TBoundingBox;
   Area           : double;
   Perimeter      : double;
-
   LastModified   : TDateTime;      // date de modification
   Closed         : boolean;
   MarkToDelete   : boolean;
@@ -521,10 +566,16 @@ type TPolyLigne = record
   function  getVertex(const idx: integer): TVertexPolygon;
   procedure putVertex(const idx: integer; const V: TVertexPolygon);
   function  ReverseVertex(): boolean;
+  function  toLineGCD_Begin(const QIdx: integer): string;
+  function  toLineGCD_End(): string;
 end;
 type TArrayOfTPolyligne = array of TPolyLigne;
 
-type TSymbole = record
+type
+
+{ TSymbole }
+
+ TSymbole = record
   IDGroupe       : TIDGroupeEntites;
   TypeObject     : TNatureObjetSymbole; //byte; //TTypePonctualObject;
   Couleur        : TColor;
@@ -538,12 +589,13 @@ type TSymbole = record
   PhotoDisplayed : boolean;        // pour affichage de photos
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
+  function toLineGCD(const QIdx: integer): string;
 end;
 
 // objets Lignes Simples
 type TExtremiteLigne = byte; // flèche,
 
-type TSimpleLigne = record
+type  TSimpleLigne = record
   IDGroupe       : TIDGroupeEntites;
   IDStyleLigne   : TNatureObjetLigne; //integer;
   BoundingBox    : TBoundingBox;
@@ -555,18 +607,24 @@ type TSimpleLigne = record
   ExtrLin2       : TExtremiteLigne; // byte
   LastModified   : TDateTime;      // date de modification
   MarkToDelete   : boolean;
+  function toLineGCD(const QIdx: integer): string;
 end;
 // textes
-type TTextObject = record
+type
+
+{ TTextObject }
+
+  TTextObject = record
   IDStyleTexte  : TNatureObjetTexte; //integer;
   IDGroupe      : TIDGroupeEntites;
-  IDBaseSt      : TIDBaseStation;
+  IDBaseStation : TIDBaseStation;
   Offset        : TPoint3Df;
   Alignment     : byte;
   Text          : string;
   MaxLength     : integer;
   LastModified  : TDateTime;      // date de modification
   MarkToDelete  : boolean;
+  function toLineGCD(const QIdx: integer): string;
 end;
 
 // objets images pour le layer d'aides au dessin
@@ -579,9 +637,14 @@ type TImageObject = record
   PositionCoinsImage: TRect2Df; // position des coins opposés de l'image
   Opacite         : byte;
   Description     : string;
+
 end;
 // contexte pour la grille de dessin
-type TQuadrillage = record
+type
+
+{ TQuadrillage }
+
+ TQuadrillage = record
   TypeQuadrillage: TTypeQuadrillage;
   CrossSize      : double;
   Color          : TColor;
@@ -592,8 +655,13 @@ type TQuadrillage = record
                     const QColor: TColor;
                     const QSpacing, QCrossSize: double;
                     const QDoDisplay, QDoDrawCoords: boolean);
+  function DescTypeQuadrillage(): string;
 end;
-type TParamsVue2D = record
+type
+
+{ TParamsVue2D }
+
+ TParamsVue2D = record
   BackGroundColor        : TColor;
   ElementsDrawn          : TELementsDrawn;
   PenteLimiteDisp        : double;
@@ -613,7 +681,7 @@ type TProcAbortQuestionON     = function(): boolean of Object;
 type TProcAfficherProgression = procedure(const Etape: string; const Min, Max, Position: integer) of object;
 
 type TProcActualiserOnglet = procedure(const MyFiltre: string) of object;
-type TProcGetInfoBasePoint = procedure(const B: TBaseStation) of object;
+type TProcGetInfoBasePoint = procedure(const B: TBaseStation)  of object;
 type TProcGetScrap         = procedure(const S: TScrap;           const IdxScrap: Int64) of object;
 type TProcGetCourbe        = procedure(const C: TCourbe;          const IdxCourbe: Int64) of object;
 type TProcGetPolyLigne     = procedure(const P: TPolyLigne;       const IdxPolygone: Int64) of object;
@@ -744,15 +812,13 @@ const
 
 const
   NOENTITIES   = '# **** NO ENTITIES IN %s section ***';
-  ENTITYARCBEZIER    = '    arc'+ #9 + FORMAT_BASEPOINT + #9 +   // ID Base Station
+  ENTITY_ARC_BEZIER    = '    arc'+ #9 + FORMAT_BASEPOINT + #9 +   // ID Base Station
                        FMT_COORDS + #9 +   // Offset P1
                        FMT_COORDS + #9 +   // Tan P1
                        FORMAT_BASEPOINT + #9 +
                        FMT_COORDS + #9 +   // Offset P2
                        FMT_COORDS;          // Tan P2
-
-  ENTITYVERTEXPOLYGON= '    vertex'+ #9 + FORMAT_BASEPOINT +
-                                     #9 + FMT_COORDS;
+  ENTITY_VERTEX_POLYGON= '    vertex'+ #9 + FORMAT_BASEPOINT + #9 + FMT_COORDS;
 
 
 // mots_clés du langage GHCaveDraw
@@ -832,6 +898,7 @@ const
   ENDPOLYLINESSECTION   = ENDSEC + POLYLINESSECTION;
   // lignes simples
   LINESECTION        = 'lineobjects';
+    SIMPLE_LINE_ITEM = 'line';
   ENDLINESECTION     = ENDSEC + LINESECTION;
   // polygones
   POLYGONSECTION     = 'polygonobjects';
@@ -876,55 +943,56 @@ const
 // Paramètres de noms de styles pour exportations vers logiciels de dessin
 // styles
 const
-  STYLES_CENTERLINES_VISEES   = 'centerline-shots';
-  STYLES_CENTERLINES_ANTENNES = 'centerline-antennas';
-  STYLES_CENTERLINES_SECTIONS = 'centerline-sections';
-  STYLES_CENTERLINES_ENTREES  = 'centerline-entrances';
+  STYLE_STANDARD = 'standard';
+  SVG_STYLES_CENTERLINES_VISEES   = 'centerline-shots';
+  SVG_STYLES_CENTERLINES_ANTENNES = 'centerline-antennas';
+  SVG_STYLES_CENTERLINES_SECTIONS = 'centerline-sections';
+  SVG_STYLES_CENTERLINES_ENTREES  = 'centerline-entrances';
   GROUPE_CARTOUCHE            = 'GroupeCartouche';
   GROUPE_ECHELLE              = 'GroupeEchelle';
   GROUPE_CENTERLINES          = 'GroupeCenterlines';
   GROUPE_CENTERLINES_ENTREES  = 'GroupeCenterlinesEntrees';
   // styles de scrap
-  STYLE_SCRAP                 = 'ScrapStyle';
+  SVG_STYLE_SCRAP                 = 'ScrapStyle';
   // styles de courbes
-  STYLE_COURBE_DEFAULT        = 'standard';
-  STYLE_COURBE_PAROIS         = 'CourbeParois';
-  STYLE_COURBE_PAROIS_CACHEES = 'CourbeParoisCachees';
-  STYLE_COURBE_ECOULEMENTS    = 'CourbeEcoulement';
-  STYLE_COURBE_RESSAUTS       = 'CourbeRessauts';
-  STYLE_COURBE_MINI_RESSAUTS  = 'CourbeMiniRessauts';
-  STYLE_COURBE_PENTES         = 'CourbePente';
-  STYLE_COURBE_SURPLOMB       = 'CourbeSurplomb';
-  STYLE_COURBE_CHENAL         = 'CourbeChenal';
+  SVG_STYLE_COURBE_DEFAULT        = STYLE_STANDARD;
+  SVG_STYLE_COURBE_PAROIS         = 'CourbeParois';
+  SVG_STYLE_COURBE_PAROIS_CACHEES = 'CourbeParoisCachees';
+  SVG_STYLE_COURBE_ECOULEMENTS    = 'CourbeEcoulement';
+  SVG_STYLE_COURBE_RESSAUTS       = 'CourbeRessauts';
+  SVG_STYLE_COURBE_MINI_RESSAUTS  = 'CourbeMiniRessauts';
+  SVG_STYLE_COURBE_PENTES         = 'CourbePente';
+  SVG_STYLE_COURBE_SURPLOMB       = 'CourbeSurplomb';
+  SVG_STYLE_COURBE_CHENAL         = 'CourbeChenal';
   // styles de polygones
-  STYLE_POLYGONE_DEFAUT       = 'standard';
-  STYLE_POLYGONE_LAC          = 'PolygonLac';
-  STYLE_POLYGONE_ARGILE       = 'PolygonArgile';
-  STYLE_POLYGONE_SABLE        = 'PolygonSable';
-  STYLE_POLYGONE_EBOULIS      = 'PolygonBlocs';
-  STYLE_POLYGONE_GALETS       = 'PolygonGalets';
-  STYLE_POLYGONE_NEIGE        = 'PolygonNeige';
-  STYLE_POLYGONE_SILHOUETTE   = 'PolygonSilhouette';
-  STYLE_POLYGONE_GROS_BLOC    = 'PolygonGrosBloc';
-  STYLE_POLYGONE_GOUR         = 'PolygonGour';
-  STYLE_POLYGONE_SIPHON       = 'PolygonSiphon';
-  STYLE_POLYGONE_VARVES       = 'PolygonVarves';
-  STYLE_POLYGONE_CHEMIN       = 'PolygonChemin';
+  SVG_STYLE_POLYGONE_DEFAUT       = STYLE_STANDARD;
+  SVG_STYLE_POLYGONE_LAC          = 'PolygonLac';
+  SVG_STYLE_POLYGONE_ARGILE       = 'PolygonArgile';
+  SVG_STYLE_POLYGONE_SABLE        = 'PolygonSable';
+  SVG_STYLE_POLYGONE_EBOULIS      = 'PolygonBlocs';
+  SVG_STYLE_POLYGONE_GALETS       = 'PolygonGalets';
+  SVG_STYLE_POLYGONE_NEIGE        = 'PolygonNeige';
+  SVG_STYLE_POLYGONE_SILHOUETTE   = 'PolygonSilhouette';
+  SVG_STYLE_POLYGONE_GROS_BLOC    = 'PolygonGrosBloc';
+  SVG_STYLE_POLYGONE_GOUR         = 'PolygonGour';
+  SVG_STYLE_POLYGONE_SIPHON       = 'PolygonSiphon';
+  SVG_STYLE_POLYGONE_VARVES       = 'PolygonVarves';
+  SVG_STYLE_POLYGONE_CHEMIN       = 'PolygonChemin';
   // styles de lignes
-  STYLE_LIGNE_DEFAULT         = 'standard';
-  STYLE_LIGNE_FLECHE          = 'LigneFleche';
-  STYLE_LIGNE_SUITE_RESEAU    = 'LigneContinuation';
-  STYLE_LIGNE_FRACTURE        = 'LigneFracture';
-  STYLE_LIGNE_PENTE           = 'LignePente';
+  SVG_STYLE_LIGNE_DEFAULT         = STYLE_STANDARD;
+  SVG_STYLE_LIGNE_FLECHE          = 'LigneFleche';
+  SVG_STYLE_LIGNE_SUITE_RESEAU    = 'LigneContinuation';
+  SVG_STYLE_LIGNE_FRACTURE        = 'LigneFracture';
+  SVG_STYLE_LIGNE_PENTE           = 'LignePente';
   // styles de texte
-  STYLE_TEXTE_DEFAULT         = 'standard';
-  STYLE_TEXTE_TITRES          = 'TexteTitres';
-  STYLE_TEXTE_SOUS_TITRES     = 'TexteSousTitres';
-  STYLE_TEXTE_COTATION        = 'TexteCotation';
-  STYLE_TEXTE_ORDINAIRE_1     = 'TexteOrdinaire1';
-  STYLE_TEXTE_ORDINAIRE_2     = 'TexteOrdinaire2';
-  STYLE_TEXTE_DEBUG           = 'TexteDebug';
-  STYLE_TEXTE_LIEU_DIT        = 'TexteLieuDit';
+  SVG_STYLE_TEXTE_DEFAULT         = STYLE_STANDARD;
+  SVG_STYLE_TEXTE_TITRES          = 'TexteTitres';
+  SVG_STYLE_TEXTE_SOUS_TITRES     = 'TexteSousTitres';
+  SVG_STYLE_TEXTE_COTATION        = 'TexteCotation';
+  SVG_STYLE_TEXTE_ORDINAIRE_1     = 'TexteOrdinaire1';
+  SVG_STYLE_TEXTE_ORDINAIRE_2     = 'TexteOrdinaire2';
+  SVG_STYLE_TEXTE_DEBUG           = 'TexteDebug';
+  SVG_STYLE_TEXTE_LIEU_DIT        = 'TexteLieuDit';
 
 
   // **********************************************
@@ -937,27 +1005,6 @@ const
     Y : double;
   end;
   type TsvgpsArrayPts2Df = array of TsvgpsPoint2Df;
-
-  // Fontes pour PostScript
-  type TFontPSProperties = record
-    Name  : string;
-    Size  : integer;
-    Height: integer;
-    Color : TColor;
-    Style : TFontStyles;
-  end;
-  type TPenPSProperties = record
-    Name    : string;
-    Color   : TColor;
-    fWidth  : double;
-    nWidth  : integer;
-    Style   : TPenStyle;
-  end;
-  type TBrushPSProperties = record
-    Color   : TColor;
-    Alpha   : integer;
-    Style   : TBrushStyle;
-  end;
 // constantes d'erreur
 //------------------------------------------------------------------------------
 
@@ -1075,14 +1122,8 @@ type TUtilisateurOCM = record
   Login            : string;
   DateInscription  : TDateTime;
 end;
-
-// sections transversales
-
-
-
-
 //**********************************************
-// Types pour l'éditeur de sections
+// Types pour l'éditeur de sections transversales
 //**********************************************
 type TCrossSectionArcCourbe = record
   CoordsP1       : TPoint2Df;
@@ -1112,20 +1153,304 @@ type TCrossSectionTexte = record
   Text           : string;
 end;
 
+//****************************************
+// Echelle de couleurs en fonction de l'altitude
+type TColorScaleItem = record
+  ZMax    : double;
+  Couleur : TColor;
+  AcadColorIdx: byte;
+end;
+type TArrayColorScales = array of TColorScaleItem;
+type
 
+{ TColorScaleByAltitudes }
 
-
-
-
-//******************************************************************************
-// Variables pour les scripts JS dans les exports vers SIG
-//******************************************************************************
-
-
+ TColorScaleByAltitudes = record
+  private
+    FArrColorScales: TArrayColorScales;
+  public
+    ZMini     , ZMaxi     : double;
+    ColorZMini, ColorZMaxi: TColor;
+    procedure Empty();
+    function  getNbElements(): integer;
+    function  getScaleItem(const idx: integer): TColorScaleItem;
+    function  DebugDescScaleItem(const idx: integer): string;
+    procedure MakeRegularScale(const NbIntervalles: integer; const QZMini, QZMaxi: double; const QColorZMini, QColorZMaxi: TColor);
+    procedure setColorScaleItemWithZMax(const Idx: integer; const QZMax: double; const QCouleur: TColor);
+    procedure setColorScaleItemWithoutZMax(const Idx: integer; const QCouleur: TColor);
+    function  getColorForZ(const QZ: double): TColor;
+    function  getDegradeColorForZ(const QZ: double): TColor;
+end;
 implementation
 uses
   DGCDummyUnit,
   GeneralFunctions;
+
+{ TColorScaleByAltitude }
+
+procedure TColorScaleByAltitudes.Empty();
+begin
+  MakeRegularScale(8, 0.00, 69.00, clSilver, clBlack);
+end;
+
+function TColorScaleByAltitudes.getNbElements(): integer;
+begin
+  result := length(self.FArrColorScales);
+end;
+
+function TColorScaleByAltitudes.getScaleItem(const idx: integer): TColorScaleItem;
+begin
+  result := self.FArrColorScales[Idx];
+end;
+
+function TColorScaleByAltitudes.DebugDescScaleItem(const idx: integer): string;
+var
+  EWE: TColorScaleItem;
+  WU: String;
+begin
+  EWE := self.getScaleItem(idx);
+  WU  := IntToHex(EWE.Couleur, 8);
+  result := format('ScaleItem #%d: ZMax = %.2f, Color: %s - AcadColorIdx: %d', [idx, EWE.ZMax, WU, EWE.AcadColorIdx]);
+end;
+
+procedure TColorScaleByAltitudes.MakeRegularScale(const NbIntervalles: integer; const QZMini, QZMaxi: double; const QColorZMini, QColorZMaxi: TColor);
+var
+  n, i: Integer;
+  DeltaZ, Z: Double;
+  C: TColor;
+begin
+  ZMini := QZMini;
+  ZMaxi := QZMaxi;
+  ColorZMini := QColorZMini;
+  ColorZMaxi := QColorZMaxi;
+  // ---------- ZMin ------------------------------------------------ ZMax -------------
+  //      0      |    1     |    2    |    3    |    ...    |    n    |    1
+  // ---------------------------------------------------------------------------------- -
+  n := NbIntervalles;
+  SetLength(self.FArrColorScales, n + 2);
+  // Hors plage: éléments 0 et (n+1)
+  setColorScaleItemWithZMax(0  ,  ZMini, ColorZMini);  // Item 0 = tout ce qui est en dessous de ZMin
+  setColorScaleItemWithZMax(n+1, 8848.0, ColorZMaxi);  // Item n+1 = tout ce qui est en dessus de  ZMax
+  // Items
+  DeltaZ := (self.ZMaxi - self.ZMini) / n;
+  for i := 1 to n do
+  begin
+    Z := self.ZMini + i * DeltaZ;
+    C := GetColorDegrade(Z, ZMini, ZMaxi, ColorZMini, ColorZMaxi);
+    setColorScaleItemWithZMax(i, Z, C);
+  end;
+end;
+
+procedure TColorScaleByAltitudes.setColorScaleItemWithZMax(const Idx: integer; const QZMax: double; const QCouleur: TColor);
+begin
+  self.FArrColorScales[Idx].Couleur      := QCouleur;
+  self.FArrColorScales[Idx].AcadColorIdx := RGB2Acad(QCouleur);
+  self.FArrColorScales[Idx].ZMax         := QZMax;
+end;
+procedure TColorScaleByAltitudes.setColorScaleItemWithoutZMax(const Idx: integer; const QCouleur: TColor);
+begin
+  self.FArrColorScales[Idx].Couleur      := QCouleur;
+  self.FArrColorScales[Idx].AcadColorIdx := RGB2Acad(QCouleur);
+end;
+
+function TColorScaleByAltitudes.getColorForZ(const QZ: double): TColor;
+var
+  EWE0, EWE1: TColorScaleItem;
+  i: Integer;
+begin
+  result := clGray;
+  if (QZ < Self.ZMini) then exit(self.ColorZMini);
+  if (QZ > Self.ZMaxi) then exit(self.ColorZMaxi);
+
+  for i := 1 to Self.getNbElements() - 1 do
+  begin
+    EWE0 :=  self.getScaleItem(i-1);
+    EWE1 :=  self.getScaleItem(i);
+    Result := EWE0.Couleur;
+    if (IsInRange(QZ, EWE0.ZMax, EWE1.ZMax)) then exit(Result);
+  end;
+end;
+
+function TColorScaleByAltitudes.getDegradeColorForZ(const QZ: double): TColor;
+begin
+  result := GetColorDegrade(QZ, self.ZMini, self.ZMaxi, self.ColorZMini, self.ColorZMaxi);
+end;
+
+{ TStyleSymboles }
+
+procedure TStyleSymboles.setFrom(const QIDStyle: integer; const QNameSVGStyle, QDescStyle: string; const QColor: TColor; const QSeuilVisibilite: TSeuilVisibilite);
+begin
+  self.IDStyle         := QIDStyle;
+  self.NameSVGStyle    := LowerCase(QNameSVGStyle);
+  self.DescStyle       := QDescStyle;
+  self.Color           := QColor;
+  self.SeuilVisibilite := QSeuilVisibilite;
+end;
+
+{ TSimpleLigne }
+
+function TSimpleLigne.toLineGCD(const QIdx: integer): string;
+begin
+  Result := Format('    %s '+ #9 + '%d' + #9 + '%d' + #9 + '%d' + //ID, Groupe, Style
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' +
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' +
+                                #9 + '%s',
+                       [SIMPLE_LINE_ITEM,
+                        QIdx, self.IDGroupe, self.IDStyleLigne,
+                        self.IDBaseStExt1,
+                          FormatterNombreWithDotDecimal(self.OffsetExtr1.X, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetExtr1.Y, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetExtr1.Z, 2),
+                        self.IDBaseStExt2,
+                          FormatterNombreWithDotDecimal(self.OffsetExtr2.X, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetExtr2.Y, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetExtr2.Z, 2),
+                        DateTimeToStr(Now)
+                       ]);
+end;
+
+{ TArcCourbe }
+
+function TArcCourbe.toLineGCD(const QIdx: integer): string;
+begin
+   Result := Format(ENTITY_ARC_BEZIER,
+                        [self.IDStationP1,
+                          FormatterNombreWithDotDecimal(self.OffsetP1.X, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetP1.Y, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetP1.Z, 2),
+                         FormatterNombreWithDotDecimal(self.TangP1.X, 2),
+                         FormatterNombreWithDotDecimal(self.TangP1.Y, 2),
+                         FormatterNombreWithDotDecimal(-1.00, 2),
+                         self.IDStationP2,
+                          FormatterNombreWithDotDecimal(self.OffsetP2.X, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetP2.Y, 2),
+                          FormatterNombreWithDotDecimal(self.OffsetP2.Z, 2),
+                         FormatterNombreWithDotDecimal(self.TangP2.X, 2),
+                         FormatterNombreWithDotDecimal(self.TangP2.Y, 2),
+                         FormatterNombreWithDotDecimal(-2.00, 2)
+                        ]);
+end;
+
+
+
+{ TVertexPolygon }
+
+function TVertexPolygon.toLineGCD(const QIdx: integer): string;
+begin
+  Result := Format(ENTITY_VERTEX_POLYGON,
+                      [self.IDStation,
+                       FormatterNombreWithDotDecimal(self.Offset.X, 2),
+                       FormatterNombreWithDotDecimal(self.Offset.Y, 2),
+                       FormatterNombreWithDotDecimal(self.Offset.Z, 2)
+                      ]);
+end;
+
+
+{ TGroupeEntites }
+
+function TGroupeEntites.toLineGCD(const QIdx: integer): string;
+begin
+  Result := Format('  %s'+ #9 +'%d' + #9 +
+                       '%s' + #9 + '%d' + #9 +
+                       FMT_COORDS + #9 +
+                       '%d' + #9 + '%s' +
+                       #9 + '%d' +
+                       #9 + '%.2f' +
+                       #9 + '%s', [
+                         GROUPE_ITEM,
+                         self.IDGroupeEntites,
+                         self.NomGroupe,
+                         self.CouleurGroupe,
+                         FormatterNombreWithDotDecimal(self.Decalage.X, 2),
+                         FormatterNombreWithDotDecimal(self.Decalage.Y, 2),
+                         FormatterNombreWithDotDecimal(self.Decalage.Z, 2),
+                         0,
+                         DateTimeToStr(self.DateLastModif),
+                         IIF(self.DecalageActif, 1, 0),
+                         self.ZOrder,
+                         self.Filtres
+                       ]);
+end;
+
+{ TSuperGroupe }
+
+function TSuperGroupe.toLineGCD(const QIdx: integer): string;
+begin
+  Result := format('  %s' + #9 + '%d' + #9 +
+                       '%s' + #9 + '%d' + #9 + '%d' + #9 +
+                       FMT_COORDS + #9 + '%s',
+                       [SUPERGROUPE_ITEM,
+                        self.Couleur, //self.ID,
+                        self.NomSuperGroupe,
+                        IIF(self.Displayed, 1, 0),
+                        0, //IIF(self.Locked, 1, 0),
+                        FormatterNombreWithDotDecimal(0.00, 2),
+                        FormatterNombreWithDotDecimal(0.00, 2),
+                        FormatterNombreWithDotDecimal(0.00, 2),//self.Decalage.X, self.Decalage.Y, self.Decalage.Z,
+                        self.ListeGroupes.toString()//ArrayOfIdxGroupesToStr(self.ListeGroupes)
+                       ]);
+end;
+
+function TSuperGroupe.getNbGroupes(): integer;
+begin
+  result := self.ListeGroupes.GetNbElements();
+end;
+
+function TSuperGroupe.ListeGroupesToText(): string;
+var
+  i, Nb: Integer;
+begin
+  result := self.ListeGroupes.toString();
+end;
+
+procedure TSuperGroupe.RemoveGroupe(const Idx: integer);
+begin
+  self.ListeGroupes.RemoveElement(Idx);
+end;
+
+{ TTextObject }
+
+function TTextObject.toLineGCD(const QIdx: integer): string;
+begin
+  Result := Format('    %s '+ #9 + '%d' + #9 + '%d' + #9 + '%d' + //ID, Groupe, Style
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' +
+                                #9 + '%d' + #9 + '%d'+ #9 + '%s' + #9 + '%s',
+                       [TEXT_ITEM,
+                        QIdx, self.IDGroupe, self.IDStyleTexte,
+                        self.IDBaseStation,
+                          FormatterNombreWithDotDecimal(self.Offset.X, 2),
+                          FormatterNombreWithDotDecimal(self.Offset.Y, 2),
+                          FormatterNombreWithDotDecimal(self.Offset.Z, 2),
+                        self.Alignment, self.MaxLength, self.Text,
+                        DateTimeToStr(Now)
+                       ]);
+end;
+
+
+{ TSymbole }
+
+function TSymbole.toLineGCD(const QIdx: integer): string;
+begin
+  Result := Format('    %s '+ #9 + '%d' + #9 + '%d' + #9 + '%d' +  #9 + '%d' + //IDXGroupe, TypeObject, Couleur,
+                                #9 + FORMAT_BASEPOINT + #9 + '%s' + #9 + '%s' + #9 + '%s' + // IDBase, Offset
+                                #9 + '%s' + #9 + '%s' + #9 + '%s' +
+                                #9 +'%s' + // texte
+                                #9 + '%d' + #9 + '%d' + #9 + '%s',
+                       [PONCT_OBECT_ITEM,
+                        QIdx, self.IDGroupe, self.TypeObject, self.Couleur,
+                        self.IDBaseStation,
+                          FormatterNombreWithDotDecimal(self.Offset.X, 2),
+                          FormatterNombreWithDotDecimal(self.Offset.Y, 2),
+                          FormatterNombreWithDotDecimal(self.Offset.Z, 2),
+                        FormatterNombreWithDotDecimal(self.AngleRot , 2),
+                        FormatterNombreWithDotDecimal(self.ScaleX   , 2),
+                        FormatterNombreWithDotDecimal(self.ScaleY   , 2),
+                        self.TagTexte,
+                        self.UnTag, IIF(self.PhotoDisplayed, 1, 0),
+                        DateTimeToStr(Now)
+                       ]);
+end;
+
 
 { TVertexCourbe }
 
@@ -1161,6 +1486,16 @@ begin
   self.Arcs[Idx] := A;
 end;
 
+function TCourbe.toLineGCD_Begin(const QIdx: integer): string;
+begin
+  Result := Format('  ' + ENTITYCURVE + FMT_CURVE, [QIdx, Self.IDGroupe, Self.IDStyleCourbe, IIF(Self.Closed, 1, 0)]);
+end;
+
+function TCourbe.toLineGCD_End(): string;
+begin
+  Result := '  ' + ENDENTITYCURVE;
+end;
+
 { TScrap }
 
 procedure TScrap.Empty();
@@ -1192,6 +1527,20 @@ function TScrap.ReverseVertex(): boolean;
 begin
   result := ReverseVertexesOfPoly(self.Sommets);
 end;
+
+function TScrap.toLineGCD_Begin(const QIdx: integer): string;
+begin
+  Result := Format('  ' + SCRAP + FMT_SCRAP, [QIdx, Self.IDGroupe,
+                                                   Red(Self.Couleur), Green(Self.Couleur), Blue(Self.Couleur),
+                                                   Self.Opacite,
+                                                   Self.Nom]);
+end;
+
+function TScrap.toLineGCD_End(): string;
+begin
+  Result := '  ' + ENDSCRAP;
+end;
+
 
 
 { TPolygone }
@@ -1226,6 +1575,16 @@ begin
   result := ReverseVertexesOfPoly(self.Sommets);
 end;
 
+function TPolygone.toLineGCD_Begin(const QIdx: integer): string;
+begin
+  Result := Format('  ' + ENTITYPOLYGON + FMT_POLYGON, [QIdx, self.IDGroupe, self.IDStylePolygone]);
+end;
+
+function TPolygone.toLineGCD_End(): string;
+begin
+  Result := '  ' + ENDENTITYPOLYGON;
+end;
+
 { TPolyLigne }
 
 procedure TPolyLigne.Empty();
@@ -1258,6 +1617,16 @@ begin
   result := ReverseVertexesOfPoly(self.Sommets);
 end;
 
+function TPolyLigne.toLineGCD_Begin(const QIdx: integer): string;
+begin
+  Result := Format('  ' + ENTITYPOLYLINE + FMT_POLYLINE, [QIdx, Self.IDGroupe, Self.IDStylePolyLine, IIF(Self.Closed, 1, 0)]);
+end;
+
+function TPolyLigne.toLineGCD_End(): string;
+begin
+  Result := '  ' + ENDENTITYPOLYLINE;
+end;
+
 
 
 { TArrayOfIdxGroupes }
@@ -1277,7 +1646,15 @@ var
   n: Integer;
 begin
   n := length(self.M);
-  SetLength(self.M, n+1);
+  (* Note sur SetLength():
+  https://docwiki.embarcadero.com/Libraries/Sydney/fr/System.SetLength (valable aussi pour FreePascal)
+  Pour une variable tableau dynamique, SetLength réalloue le tableau référencé par S sur la longueur donnée.
+  Les éléments existants du tableau sont préservés et l'espace nouvellement alloué est défini sur 0 ou nil.
+  Pour les tableaux dynamiques multidimensionnels, SetLength peut prendre plusieurs paramètres de longueur
+  (jusqu'au nombre de dimensions du tableau).
+  Chaque paramètre spécifie le nombre d'éléments avec une dimension particulière.
+  //*)
+  SetLength(self.M, n+1); // Fonctionne comme le REDIM PRESERVE du Basic
   self.M[n] := IDG;
 end;
 
@@ -1302,13 +1679,15 @@ var
   i: Integer;
   QIdx: Int64;
 begin
-  EWE := SplitEx(Trim(S), [';'], true);
+  result := false;
+  EWE := SplitEx(Trim(S) + ' ', [';'], true);    // Espace indispensable
   self.Empty();
   for i := 0 to High(EWE) do
   begin
     QIdx := StrToInt64Def(EWE[i], -1);
     if (QIdx >= 0) then self.AddElement(QIdx);
   end;
+  result := true;
 end;
 
 function TArrayOfIdxGroupes.toString(): string;
@@ -1316,8 +1695,28 @@ var
   i: Integer;
 begin
   Result := '';
+  if (0 = length(M)) then exit;
   for i := 0 to High(self.M) do Result += Format('%d;',[self.M[i]]);
 end;
+
+procedure TArrayOfIdxGroupes.RemoveElement(const Idx: integer);
+var
+  i, nb: Integer;
+  EWE: String;
+begin
+  nb := self.GetNbElements();
+  if (0 = nb) then exit;
+  AfficherMessageErreur('++RemoveElement: ' + self.toString());
+  EWE := '';
+  for i := 0 to Nb - 1 do
+  begin
+    if (i <> Idx) then EWE += Format('%d;', [M[i]]);
+  end;
+  EWE += ';';
+  AfficherMessageErreur('++RemoveElement: ' + EWE);
+  self.fromString(EWE);
+end;
+
 function TArrayOfIdxGroupes.AddElementAndSort(const Idx: TIDGroupeEntites): boolean;
 var
   i, n: Integer;
@@ -1393,6 +1792,12 @@ begin
   self.DoDrawCoords           := QDoDrawCoords;
 end;
 
+function TQuadrillage.DescTypeQuadrillage(): string;
+begin
+  // type TTypeQuadrillage     = (tqGRID, tqCROSS, tqPOINTS, tqNONE);
+  Result := ChooseString(Ord(self.TypeQuadrillage), [rsPRN_QDQUADRILLES, rsPRN_QDCROSS, rsPRN_QDPOINTS, rsPRN_QDNONE]);
+end;
+
 { TToporobotIDStation }
 
 procedure TToporobotIDStation.setFrom(const QaSerie, QaStation: integer; const QaIDTerrain: string);
@@ -1438,6 +1843,60 @@ begin
   EWE := self.getToporobotIDStation(); //GetToporobotIDStation(ST);
   if (Trim(EWE.aIDTerrain) <> '') then Result := EWE.aIDTerrain
                                   else Result := Format('%d.%d', [EWE.aSerie, EWE.aStation]);
+end;
+
+procedure TBaseStation.fromLineGCP(const MyLine: string);
+var
+  q: integer;
+  AP: TGHStringArray;
+begin
+  AP := Split(MyLine, #9);
+  //120400160	L3-16	0	10027212	119.56	215.88	-179.25	121.33	219.20	-180.62	120.44	219.67	-179.25	122.21	218.73	-178.75
+  {$IFDEF TIDBASEPOINT_AS_TEXT}
+  self.IDStation     := UpperCase(Trim(AP[0]));
+  {$ELSE}
+  self.IDStation     := StrToInt64Def(AP[0], -1);
+  {$ENDIF TIDBASEPOINT_AS_TEXT}
+
+  self.IDTerrain     := Trim(AP[1]);
+  self.TypeStation   := StrToIntDef(AP[2], 0);
+  self.Couleur       := StrToIntDef(AP[3], 0);
+
+  self.PosExtr0.setFrom(AP[4], AP[5], AP[6]);
+  self.PosStation.setFrom(AP[7], AP[8], AP[9]);
+  self.PosPG.setFrom(AP[10], AP[11], AP[12]);
+  self.PosPD.setFrom(AP[13], AP[14], AP[15]);
+end;
+
+function TBaseStation.toLineGCP(): string;
+begin
+  Result := (Format(FMT_BASE_STS,
+                       [self.IDStation,
+                        self.IDTerrain,
+                        self.TypeStation, self.Couleur,
+                          FormatterNombreWithDotDecimal(self.PosExtr0.X    , 2),
+                          FormatterNombreWithDotDecimal(self.PosExtr0.Y    , 2),
+                          FormatterNombreWithDotDecimal(self.PosExtr0.Z    , 2),
+                          FormatterNombreWithDotDecimal(self.PosStation.X  , 2),
+                          FormatterNombreWithDotDecimal(self.PosStation.Y  , 2),
+                          FormatterNombreWithDotDecimal(self.PosStation.Z  , 2),
+                          FormatterNombreWithDotDecimal(self.PosPG.X       , 2),
+                          FormatterNombreWithDotDecimal(self.PosPG.Y       , 2),
+                          FormatterNombreWithDotDecimal(self.PosPG.Z       , 2),
+                          FormatterNombreWithDotDecimal(self.PosPD.X       , 2),
+                          FormatterNombreWithDotDecimal(self.PosPD.Y       , 2),
+                          FormatterNombreWithDotDecimal(self.PosPD.Z       , 2),
+                        self.IDTerrain
+                       ]));
+end;
+// Station valide (= n'est pas une visée radiante)
+function TBaseStation.IsStationTopo(): boolean;
+begin
+  {$IFDEF TIDBASEPOINT_AS_TEXT}
+  Result := (self.IDStation <> '');
+  {$ELSE}
+  Result := (self.IDStation > 0);
+  {$ENDIF TIDBASEPOINT_AS_TEXT}
 end;
 
 { TProjUV }
@@ -1543,11 +2002,30 @@ begin
   self.X := QX;
   self.Y := QY;
 end;
+
+procedure TPoint2Df.setFrom(const QX, QY: string);
+begin
+  self.X := ConvertirEnNombreReel(QX, 0.00);
+  self.Y := ConvertirEnNombreReel(QY, 0.00);
+end;
+
+function TPoint2Df.DebugString(const QCaption: string): string;
+begin
+  Result := Format('%s: %.3f, %.3f, %.3f', [QCaption, self.X, self.Y]);
+end;
+
+function TPoint2Df.Norme(): double;
+begin
+  result := sqrt(self.X*self.X + self.Y*self.Y);
+end;
+
 procedure TPoint2Df.Empty();
 begin
   self.X := 0.00;
   self.Y := 0.00;
 end;
+
+
 
 { TPoint3Df }
 
@@ -1563,7 +2041,6 @@ begin
   self.X := ConvertirEnNombreReel(QX, 0.00);
   self.Y := ConvertirEnNombreReel(QY, 0.00);
   self.Z := ConvertirEnNombreReel(QZ, 0.00);
-
 end;
 
 procedure TPoint3Df.Empty();
@@ -1576,6 +2053,11 @@ end;
 function TPoint3Df.DebugString(const QCaption: string = ''): string;
 begin
   Result := Format('%s: %.3f, %.3f, %.3f', [QCaption, self.X, self.Y, self.Z]);
+end;
+
+function TPoint3Df.Norme(): double;
+begin
+  result := sqrt(self.X*self.X + self.Y*self.Y + self.Z*self.Z);
 end;
 
 end.

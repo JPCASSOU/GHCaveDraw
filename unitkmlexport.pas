@@ -26,26 +26,25 @@ type
     procedure DefineLineStyle(const Indent: integer; const LWidth: double; const LColor: TColor; const Opacity: byte = 255);
     procedure DefineFillStyle(const Indent: integer; const LColor: TColor; const Opacity: byte=255);
 
-
+    procedure BeginCDATA(const Indent: integer);
+    procedure WriteCDATAString(const Indent: integer; const S: string);
+    procedure EndCDATA(const Indent: integer);
   public
     function  Initialiser(const Filename: string): boolean;
     procedure Finaliser();
+    procedure WriteHeader();
+    procedure WriteFooter();
     procedure WriteCommentaire(const S: string);
     procedure BeginFolder(const Indent: integer; const S: string);
     procedure EndFolder(const Indent: integer; const S: string);
     procedure DefineStylePoly(const StyleName: string; const LineWidth: double; const LineColor, FillColor: TColor; const LineOpacity, FillOpacity: byte);
-    procedure BeginCDATA(const Indent: integer);
-    procedure WriteCDATAString(const Indent: integer; const S: string);
-    procedure EndCDATA(const Indent: integer);
 
-    procedure AddPoint(const Lat, Lon, Alt: double; const Name: string; const Description: string);
-
-    procedure BeginPolygon(const Name: string; const StyleURL: string);
-    procedure AddVertex(const Lat, Lon, Alt: double);
-    procedure EndPolygon();
     procedure BeginPolyline(const Name: string; const StyleURL: string);
     procedure EndPolyline();
-
+    procedure BeginPolygon(const Name: string; const StyleURL: string);
+    procedure EndPolygon();
+    procedure AddPoint(const Lat, Lon, Alt: double; const Name: string; const Description: string);
+    procedure AddVertex(const Lat, Lon, Alt: double);
 end;
 
 implementation
@@ -87,14 +86,6 @@ begin
   AssignFile(FP, FKMLFilename);
   try
     ReWrite(fp);
-    WriteLn(fp, FormatterVersionEncodageXML('1.0', 'UTF-8'));
-    WriteLn(fp, Format('<kml xmlns="%s" xmlns:gx="%s" xmlns:kml="%s" xmlns:atom="%s">',
-                [KML_OPENGIS_WEBSITE,
-                 KML_GOOGLE_KML_WEBSITE,
-                 KML_OPENGIS_WEBSITE,
-                 W3C_W3_WEBSITE
-                ]));
-    BaliseOuvrante(1, KML_KEYWORD_DOCUMENT);
     Result := True;
   except
 
@@ -104,12 +95,28 @@ end;
 procedure TKMLExport.Finaliser();
 begin
   try
-    BaliseFermante(1, KML_KEYWORD_DOCUMENT);
-    BaliseFermante(0, 'kml');
-    CloseFile(fp);
-  finally
 
+  finally
+    CloseFile(fp);
   end;
+end;
+
+procedure TKMLExport.WriteHeader();
+begin
+  WriteLn(fp, FormatterVersionEncodageXML('1.0', 'UTF-8'));
+  WriteLn(fp, Format('<kml xmlns="%s" xmlns:gx="%s" xmlns:kml="%s" xmlns:atom="%s">',
+                [KML_OPENGIS_WEBSITE,
+                 KML_GOOGLE_KML_WEBSITE,
+                 KML_OPENGIS_WEBSITE,
+                 W3C_W3_WEBSITE
+                ]));
+  BaliseOuvrante(1, KML_KEYWORD_DOCUMENT);
+end;
+
+procedure TKMLExport.WriteFooter();
+begin
+  BaliseFermante(1, KML_KEYWORD_DOCUMENT);
+  BaliseFermante(0, 'kml');
 end;
 
 procedure TKMLExport.WriteCommentaire(const S: string);

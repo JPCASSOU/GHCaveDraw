@@ -10,10 +10,12 @@ uses
   ConvertisseurJPC,
   UnitDocDessin,
   unitGenererFichePointTopo,
-  SysUtils, Classes, Graphics,
+  SysUtils, Classes, Types, Graphics,
   Controls,
   Forms,
   stdctrls,
+  ExtCtrls,
+  PopupNotifier,
   Dialogs,
   extdlgs,
   Printers,      //, OSPrinters, // OSPrinters est INDISPENSABLE ici !!
@@ -76,7 +78,7 @@ uses
                               const Topics: string;
                               const ReadOnly: boolean = false);
   // hiérarchie des objets (inutilisé)
-  //procedure DisplayHierarchieObjets(const MyDocDessin:TDocumentDessin);
+  procedure DisplayHierarchieObjets(const MyDocDessin:TDocumentDessin);
   // supergroupe
   procedure DisplaySuperGroupes(const MyDocDessin: TDocumentDessin; var Idx: TIDSuperGroupe; out QTodo: byte);
   // objets d'un groupe
@@ -113,6 +115,12 @@ uses
 
   // sélection d'un système de coordonnées
   function SelectCoordinatesSystem(const FC: TConversionSysteme; out SC: TLabelSystemesCoordsEPSG): boolean;
+  // choix d'une couleur AutoCAD
+  function SelectCouleurAutocad(const OldIdx: integer): integer;
+  // bac à sable
+  function DisplaySandbox(const FD: TDocumentDessin): boolean;
+  // toast
+  procedure DisplayToast(AOwner: TWinControl; const Msg: string; const DureeInMS: integer = 1500);
 implementation
 uses
   DGCDummyUnit
@@ -136,16 +144,18 @@ uses
  ,frmListePOI              // pour la liste des POI
  ,frmObjetsOfGroupe        // pour les objets du groupe
  ,frmDisplaySuperGroupes   // gestion des super-groupes
+ ,dlgAutocadColor          // palette AutoCAD
+ ,frmhierarchieobjets
+ ,frmSandbox               // bac à sable
  ;
-(*
+
 procedure DisplayHierarchieObjets(const MyDocDessin:TDocumentDessin);
 var
-  DLG: TdlgHierarchieObjets;
+  DLG: TdlgHierarchieDesObjets;
 begin
-  DLG := TdlgHierarchieObjets.Create(Application);
+  DLG := TdlgHierarchieDesObjets.Create(Application);
   try
-    if (DLG.Initialise(MyDocDessin)) then DLG.ShowModal;
-    DLG.Finalise();
+    if (DLG.Initialiser(MyDocDessin)) then DLG.ShowModal;
   finally
     DLG.Release;
   end;
@@ -601,7 +611,7 @@ end;
 
 function SelectIndexGroupe(const FD: TDocumentDessin;
                            const IdxGroupe: TIDGroupeEntites;
-                           out IdxSelected: TIDGroupeEntites): boolean;
+                           out   IdxSelected: TIDGroupeEntites): boolean;
 var
   DG: TdlgListeGroupes;
 begin
@@ -720,5 +730,80 @@ begin
     FreeAndNil(TD);
   end;
 end;
+
+function SelectCouleurAutocad(const OldIdx: integer): integer;
+var
+  TD: TdlgSelectAutocadColor;
+begin
+  Result := OldIdx;
+  TD := TdlgSelectAutocadColor.Create(Application);
+  try
+    TD.Initialiser(OldIdx);
+    TD.ShowModal;
+    if (TD.ModalResult = mrOK) then Result  := TD.GetIdxColor();
+  finally
+    TD.Release;
+  end;
+end;
+// bac à sable
+function DisplaySandbox(const FD: TDocumentDessin): boolean;
+var
+  TD: TdlgBacASable;
+begin
+  TD := TdlgBacASable.Create(Application);
+  try
+    TD.Initialiser(FD);
+    TD.ShowModal;
+  finally
+    TD.Release;
+  end;
+end;
+
+procedure DisplayToast(AOwner: TWinControl; const Msg: string; const DureeInMS: integer = 1500);
+const
+  TW = 400;
+  TH =  60;
+var
+  MyToast : TPanel;
+  MyParent: TComponent;
+  t: TDateTime;
+  DELAI   : TDateTime;
+  R: TSize;
+begin
+  DELAI := DureeInMS / (1000.0 * 86400.0);
+
+  MyToast := TPanel.Create(AOwner);
+  //try
+
+    MyToast.Parent      := AOwner;
+    MyToast.Color       := clInfoBk;
+    MyToast.Caption     := Msg;
+    //MyToast.AutoSize    := True;
+
+    MyToast.Width       := TW;
+    MyToast.Height      := TH;
+    MyToast.Left        := (AOwner.Width  - TW) div 2;
+    MyToast.Top         := (AOwner.Height - TH) div 2;
+    MyToast.Enabled     := True;
+    MyToast.Show;
+    t := Now();
+    while (Now() < (t + DELAI)) do Application.ProcessMessages;
+    //Application.ProcessMessages;
+    MyToast.Hide;
+
+    (*
+
+    MyToast.AutoSize    := True;
+    MyToast.Caption     := Msg;
+
+
+
+
+    //*)
+  //finally
+  //  FreeAndNil(MyToast);
+  //end;
+end;
+
 end.
 

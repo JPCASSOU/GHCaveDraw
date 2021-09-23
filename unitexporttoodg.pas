@@ -205,9 +205,9 @@ begin
   // 7 8 9
   // 4 5 6
   // 1 2 3
-  if (FMyDocDessin.GetBasePointByIndex(T.IDBaseSt, BP)) then
+  if (FMyDocDessin.GetBasePointByIndex(T.IDBaseStation, BP)) then
   begin
-    PP1 := QGetCoordsGCS(T.IDBaseSt, T.IDGroupe, T.Offset);
+    PP1 := QGetCoordsGCS(T.IDBaseStation, T.IDGroupe, T.Offset);
     ConversionCoordonnees(PP1.X, PP1.Y, X1, Y1);
     EWE := SelectSVGStyleTexte(T.IDStyleTexte);
     WU  := InterpreterTexteAnnotation(T.Text, T.MaxLength, BP);
@@ -271,7 +271,7 @@ begin
     ConversionCoordonnees(PP.X, PP.Y, ST.X, ST.Y);
     PolySommets[i] := ST; // Ne pas toucher
   end;
-  FODGContexte.DessinPolygoneSVG(STYLE_SCRAP, PolySommets, True, True);
+  FODGContexte.DessinPolygoneSVG(SVG_STYLE_SCRAP, PolySommets, True, True);
 end;
 
 
@@ -286,50 +286,50 @@ begin
   if (FODGContexte.InitialiserFichierContent) then
   begin
     // définition des styles
-    FODGContexte.AddUsuallyStyleGraphic('standard'                  , 'solid', 0.00, clBlack     , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLES_CENTERLINES_VISEES   , 'solid', 0.00, clMaroon    , 100, 'solid', clWhite  , 100);  // style Polygone controle
-    FODGContexte.AddUsuallyStyleGraphic(STYLES_CENTERLINES_ANTENNES , 'solid', 0.00, clGray      , 100, 'solid', clWhite  , 100);  // style Polygone controle
-    FODGContexte.AddUsuallyStyleGraphic(STYLES_CENTERLINES_SECTIONS , 'solid', 0.00, clSilver    , 100, 'solid', clWhite  , 100);  // style Polygone controle
-    FODGContexte.AddUsuallyStyleGraphic(STYLES_CENTERLINES_ENTREES  , 'solid', 0.00, clBlack     , 100, 'solid', clGreen  , 100);  // style Polygone controle
+    FODGContexte.AddUsuallyStyleGraphic(STYLE_STANDARD                  , 'solid', 0.00, clBlack     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLES_CENTERLINES_VISEES   , 'solid', 0.00, clMaroon    , 100, 'solid', clWhite  , 100);  // style Polygone controle
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLES_CENTERLINES_ANTENNES , 'solid', 0.00, clGray      , 100, 'solid', clWhite  , 100);  // style Polygone controle
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLES_CENTERLINES_SECTIONS , 'solid', 0.00, clSilver    , 100, 'solid', clWhite  , 100);  // style Polygone controle
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLES_CENTERLINES_ENTREES  , 'solid', 0.00, clBlack     , 100, 'solid', clGreen  , 100);  // style Polygone controle
     // scrap
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_SCRAP                 , 'solid', 0.00, clSilver    , 100, 'solid', clSilver , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_SCRAP                 , 'solid', 0.00, clSilver    , 100, 'solid', clSilver , 100);
     // courbes
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_PAROIS         , 'solid', 0.045, clMaroon   , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_PAROIS_CACHEES , 'solid', 0.045, clGray     , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_ECOULEMENTS    , 'solid', 0.070, clBlue     , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_RESSAUTS       , 'solid', 0.01 , clPurple   , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_MINI_RESSAUTS  , 'solid', 0.01 , clOlive    , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_PENTES         , 'solid', 0.00 , clGray     , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_SURPLOMB       , 'solid', 0.01 , clGreen    , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_COURBE_CHENAL         , 'solid', 0.01 , clNavy     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_PAROIS         , 'solid', 0.045, clMaroon   , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_PAROIS_CACHEES , 'solid', 0.045, clGray     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_ECOULEMENTS    , 'solid', 0.070, clBlue     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_RESSAUTS       , 'solid', 0.01 , clPurple   , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_MINI_RESSAUTS  , 'solid', 0.01 , clOlive    , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_PENTES         , 'solid', 0.00 , clGray     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_SURPLOMB       , 'solid', 0.01 , clGreen    , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_COURBE_CHENAL         , 'solid', 0.01 , clNavy     , 100, 'solid', clWhite  , 100);
     // polygones
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_DEFAUT       , 'solid', 0.00, clBlack     , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_LAC          , 'solid', 0.00, clBlue      , 100, 'solid', clBlue   , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_SILHOUETTE   , 'solid', 0.00, clGray      , 100, 'solid', clGray   , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_ARGILE       , 'none' , 0.00, clBlack     , 100, 'solid', clMaroon , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_SABLE        , 'none' , 0.00, clBlack     , 100, 'solid', clOlive  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_EBOULIS      , 'none' , 0.00, clBlack     , 100, 'solid', clSilver , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_GALETS       , 'none' , 0.00, clBlack     , 100, 'solid', clPurple , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_NEIGE        , 'solid', 0.00, clBlue      , 100, 'solid', clAqua   , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_GROS_BLOC    , 'solid', 0.00, clGray      , 100, 'solid', clTeal   , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_GOUR         , 'solid', 0.00, clMaroon    , 100, 'solid', clAqua   , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_SIPHON       , 'none' , 0.00, clNavy      , 100, 'solid', clNavy   , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_VARVES       , 'none' , 0.00, clMaroon    , 100, 'solid', clCream  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_POLYGONE_CHEMIN       , 'solid', 0.00, clRed       , 100, 'solid', clYellow , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_DEFAUT       , 'solid', 0.00, clBlack     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_LAC          , 'solid', 0.00, clBlue      , 100, 'solid', clBlue   , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_SILHOUETTE   , 'solid', 0.00, clGray      , 100, 'solid', clGray   , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_ARGILE       , 'none' , 0.00, clBlack     , 100, 'solid', clMaroon , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_SABLE        , 'none' , 0.00, clBlack     , 100, 'solid', clOlive  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_EBOULIS      , 'none' , 0.00, clBlack     , 100, 'solid', clSilver , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_GALETS       , 'none' , 0.00, clBlack     , 100, 'solid', clPurple , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_NEIGE        , 'solid', 0.00, clBlue      , 100, 'solid', clAqua   , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_GROS_BLOC    , 'solid', 0.00, clGray      , 100, 'solid', clTeal   , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_GOUR         , 'solid', 0.00, clMaroon    , 100, 'solid', clAqua   , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_SIPHON       , 'none' , 0.00, clNavy      , 100, 'solid', clNavy   , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_VARVES       , 'none' , 0.00, clMaroon    , 100, 'solid', clCream  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_POLYGONE_CHEMIN       , 'solid', 0.00, clRed       , 100, 'solid', clYellow , 100);
     // lignes
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_LIGNE_DEFAULT         , 'solid', 0.00, clBlack     , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_LIGNE_FLECHE          , 'solid', 0.00, clBlack     , 100, 'solid', clBlack  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_LIGNE_SUITE_RESEAU    , 'solid', 0.00, clNavy      , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_LIGNE_FRACTURE        , 'solid', 0.00, clRed       , 100, 'solid', clWhite  , 100);
-    FODGContexte.AddUsuallyStyleGraphic(STYLE_LIGNE_PENTE           , 'solid', 0.00, clBlack     , 100, 'solid', clBlack  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_LIGNE_DEFAULT         , 'solid', 0.00, clBlack     , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_LIGNE_FLECHE          , 'solid', 0.00, clBlack     , 100, 'solid', clBlack  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_LIGNE_SUITE_RESEAU    , 'solid', 0.00, clNavy      , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_LIGNE_FRACTURE        , 'solid', 0.00, clRed       , 100, 'solid', clWhite  , 100);
+    FODGContexte.AddUsuallyStyleGraphic(SVG_STYLE_LIGNE_PENTE           , 'solid', 0.00, clBlack     , 100, 'solid', clBlack  , 100);
 
     // textes
-    FODGContexte.AddUsuallyStyleText(STYLE_TEXTE_TITRES      , clWhite ,'Arial' , clBlack  , [fsBold, fsUnderline], 12, 0);
-    FODGContexte.AddUsuallyStyleText(STYLE_TEXTE_SOUS_TITRES , clWhite ,'Arial' , clGray   , [fsBold], 10.5, 0);
-    FODGContexte.AddUsuallyStyleText(STYLE_TEXTE_COTATION    , clWhite ,'Arial' , clBlue   , [fsBold], 8, 0);
-    FODGContexte.AddUsuallyStyleText(STYLE_TEXTE_ORDINAIRE_1 , clWhite ,'Arial' , clMaroon , [], 7, 0);
-    FODGContexte.AddUsuallyStyleText(STYLE_TEXTE_ORDINAIRE_1 , clWhite ,'Arial' , clMaroon , [], 6, 0);
-    FODGContexte.AddUsuallyStyleText(STYLE_TEXTE_DEBUG       , clWhite ,'Arial' , clRed    , [], 6, 0);
+    FODGContexte.AddUsuallyStyleText(SVG_STYLE_TEXTE_TITRES      , clWhite ,'Arial' , clBlack  , [fsBold, fsUnderline], 12, 0);
+    FODGContexte.AddUsuallyStyleText(SVG_STYLE_TEXTE_SOUS_TITRES , clWhite ,'Arial' , clGray   , [fsBold], 10.5, 0);
+    FODGContexte.AddUsuallyStyleText(SVG_STYLE_TEXTE_COTATION    , clWhite ,'Arial' , clBlue   , [fsBold], 8, 0);
+    FODGContexte.AddUsuallyStyleText(SVG_STYLE_TEXTE_ORDINAIRE_1 , clWhite ,'Arial' , clMaroon , [], 7, 0);
+    FODGContexte.AddUsuallyStyleText(SVG_STYLE_TEXTE_ORDINAIRE_1 , clWhite ,'Arial' , clMaroon , [], 6, 0);
+    FODGContexte.AddUsuallyStyleText(SVG_STYLE_TEXTE_DEBUG       , clWhite ,'Arial' , clRed    , [], 6, 0);
     //--------------
     FODGContexte.AddUsuallyStyleGraphic('00_PolygoneControle', 'solid', 0.00, clAqua, 100, 'solid', clWhite, 100);  // style Polygone controle
     FODGContexte.AddUsuallyStyleGraphic('00_Rectangle', 'solid', 0.00, clRed, 100, 'solid', clBlue, 58);            // style Rectangle
@@ -425,14 +425,14 @@ begin
       ConversionCoordonnees(BP.PosExtr0.X, BP.PosExtr0.Y, QX1, QY1);
       ConversionCoordonnees(BP.PosStation.X, BP.PosStation.Y, QX2, QY2);
       {$IFDEF TIDBASEPOINT_AS_TEXT}
-      QS := IIF(BP.IDStation <> '', STYLES_CENTERLINES_VISEES, STYLES_CENTERLINES_ANTENNES);
+      QS := IIF(BP.IDStation <> '', STYLES_CENTERLINES_VISEES, SVG_STYLES_CENTERLINES_ANTENNES);
       {$ELSE}
-      QS := IIF(BP.IDStation > 0, STYLES_CENTERLINES_VISEES, STYLES_CENTERLINES_ANTENNES);
+      QS := IIF(BP.IDStation > 0, SVG_STYLES_CENTERLINES_VISEES, SVG_STYLES_CENTERLINES_ANTENNES);
       {$ENDIF TIDBASEPOINT_AS_TEXT}
       FODGContexte.DessinLigne(QS, QX1, QY1, QX2, QY2);
       ConversionCoordonnees(BP.PosPD.X, BP.PosPD.Y, QX1, QY1);
       ConversionCoordonnees(BP.PosPG.X, BP.PosPG.Y, QX2, QY2);
-      FODGContexte.DessinLigne(STYLES_CENTERLINES_SECTIONS, QX1, QY1, QX2, QY2);
+      FODGContexte.DessinLigne(SVG_STYLES_CENTERLINES_SECTIONS, QX1, QY1, QX2, QY2);
     end;
   end;
   FinDeGroupe(GROUPE_CENTERLINES);
@@ -452,7 +452,7 @@ begin
     if (BP.TypeStation = 1) then
     begin
       ConversionCoordonnees(BP.PosStation.X, BP.PosStation.Y, QX1, QY1);
-      FODGContexte.DessinEllipseC(STYLES_CENTERLINES_ENTREES, QX1, QY1, 100, 100);
+      FODGContexte.DessinEllipseC(SVG_STYLES_CENTERLINES_ENTREES, QX1, QY1, 100, 100);
     end;
   end;
   FinDeGroupe(GROUPE_CENTERLINES);
